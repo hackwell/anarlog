@@ -11,19 +11,19 @@ expression: "canonicalize_json(serde_json::json!({\n    \"protocol_version\": in
       "description": "Meeting metadata, note, summaries, people, and action items",
       "mimeType": "text/markdown",
       "name": "Session Echo meeting",
-      "uriTemplate": "anarlog://meetings/{meeting_id}"
+      "uriTemplate": "sessionecho://meetings/{meeting_id}"
     },
     {
       "description": "A bounded page of meeting transcript text",
       "mimeType": "text/plain",
       "name": "Session Echo meeting transcript",
-      "uriTemplate": "anarlog://meetings/{meeting_id}/transcript{?offset,limit}"
+      "uriTemplate": "sessionecho://meetings/{meeting_id}/transcript{?offset,limit}"
     },
     {
       "description": "Recurring meeting history",
       "mimeType": "text/markdown",
       "name": "Session Echo meeting series",
-      "uriTemplate": "anarlog://series/{series_id}"
+      "uriTemplate": "sessionecho://series/{series_id}"
     }
   ],
   "tools": [

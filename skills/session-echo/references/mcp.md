@@ -73,8 +73,8 @@ The `kind` and `source` fields you see on a returned proposal are not inputs and
 
 ## Resources
 
-- `anarlog://meetings/{meeting_id}`
-- `anarlog://meetings/{meeting_id}/transcript{?offset,limit}`
-- `anarlog://series/{series_id}`
+- `sessionecho://meetings/{meeting_id}`
+- `sessionecho://meetings/{meeting_id}/transcript{?offset,limit}`
+- `sessionecho://series/{series_id}`
 
 Prefer tools when the workflow needs structured JSON. Use resources when the client needs concise Markdown or plain-text context.

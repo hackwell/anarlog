@@ -300,7 +300,7 @@ impl ServerHandler for AnarlogMcpServer {
                 } else {
                     meeting.title
                 };
-                RawResource::new(format!("anarlog://meetings/{}", meeting.id), name)
+                RawResource::new(format!("sessionecho://meetings/{}", meeting.id), name)
                     .with_description("Session Echo meeting context")
                     .with_mime_type("text/markdown")
                     .no_annotation()
@@ -322,19 +322,22 @@ impl ServerHandler for AnarlogMcpServer {
         use rmcp::model::AnnotateAble;
 
         Ok(ListResourceTemplatesResult::with_all_items(vec![
-            RawResourceTemplate::new("anarlog://meetings/{meeting_id}", "Session Echo meeting")
-                .with_description("Meeting metadata, note, summaries, people, and action items")
-                .with_mime_type("text/markdown")
-                .no_annotation(),
             RawResourceTemplate::new(
-                "anarlog://meetings/{meeting_id}/transcript{?offset,limit}",
+                "sessionecho://meetings/{meeting_id}",
+                "Session Echo meeting",
+            )
+            .with_description("Meeting metadata, note, summaries, people, and action items")
+            .with_mime_type("text/markdown")
+            .no_annotation(),
+            RawResourceTemplate::new(
+                "sessionecho://meetings/{meeting_id}/transcript{?offset,limit}",
                 "Session Echo meeting transcript",
             )
             .with_description("A bounded page of meeting transcript text")
             .with_mime_type("text/plain")
             .no_annotation(),
             RawResourceTemplate::new(
-                "anarlog://series/{series_id}",
+                "sessionecho://series/{series_id}",
                 "Session Echo meeting series",
             )
             .with_description("Recurring meeting history")
@@ -401,7 +404,10 @@ impl ServerHandler for AnarlogMcpServer {
                         } else {
                             &meeting.started_at
                         };
-                        format!("- {date} — [{title}](anarlog://meetings/{})", meeting.id)
+                        format!(
+                            "- {date} — [{title}](sessionecho://meetings/{})",
+                            meeting.id
+                        )
                     })
                     .collect::<Vec<_>>()
                     .join("\n");
@@ -428,9 +434,9 @@ pub async fn serve(db: Arc<anlg_db_core::Db>) -> crate::Result<()> {
 fn parse_resource_uri(uri: &str) -> std::result::Result<ResourceRequest, McpError> {
     let url = url::Url::parse(uri)
         .map_err(|_| McpError::invalid_params("invalid Session Echo resource URI", None))?;
-    if url.scheme() != "anarlog" {
+    if url.scheme() != "sessionecho" {
         return Err(McpError::invalid_params(
-            "resource URI must use the anarlog scheme",
+            "resource URI must use the sessionecho scheme",
             None,
         ));
     }
@@ -511,13 +517,13 @@ mod tests {
     #[test]
     fn parses_supported_resource_uris_and_bounds_transcript_limit() {
         assert_eq!(
-            parse_resource_uri("anarlog://meetings/meeting-1").unwrap(),
+            parse_resource_uri("sessionecho://meetings/meeting-1").unwrap(),
             ResourceRequest::Meeting {
                 meeting_id: "meeting-1".to_string()
             }
         );
         assert_eq!(
-            parse_resource_uri("anarlog://meetings/meeting-1/transcript?offset=4&limit=900")
+            parse_resource_uri("sessionecho://meetings/meeting-1/transcript?offset=4&limit=900")
                 .unwrap(),
             ResourceRequest::Transcript {
                 meeting_id: "meeting-1".to_string(),
@@ -683,17 +689,17 @@ mod tests {
             [
                 (
                     "Session Echo meeting".to_string(),
-                    "anarlog://meetings/{meeting_id}".to_string(),
+                    "sessionecho://meetings/{meeting_id}".to_string(),
                     None,
                 ),
                 (
                     "Session Echo meeting transcript".to_string(),
-                    "anarlog://meetings/{meeting_id}/transcript{?offset,limit}".to_string(),
+                    "sessionecho://meetings/{meeting_id}/transcript{?offset,limit}".to_string(),
                     None,
                 ),
                 (
                     "Session Echo meeting series".to_string(),
-                    "anarlog://series/{series_id}".to_string(),
+                    "sessionecho://series/{series_id}".to_string(),
                     None,
                 ),
             ]
@@ -706,7 +712,7 @@ mod tests {
         }
         assert_eq!(resources.len(), 1);
         assert_eq!(resources[0].raw.name, "Planning");
-        assert_eq!(resources[0].raw.uri, "anarlog://meetings/meeting-1");
+        assert_eq!(resources[0].raw.uri, "sessionecho://meetings/meeting-1");
         assert!(resources[0].annotations.is_none());
 
         client.cancel().await.unwrap();

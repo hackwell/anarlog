@@ -246,7 +246,7 @@ function SignInInstruction({ onBack }: { onBack: () => void }) {
             <Input
               type="text"
               className="h-10 font-mono text-xs"
-              placeholder="anarlog://auth/callback?access_token=..."
+              placeholder="sessionecho://auth/callback?access_token=..."
               value={callbackUrl}
               onChange={(e) => setCallbackUrl(e.target.value)}
             />
