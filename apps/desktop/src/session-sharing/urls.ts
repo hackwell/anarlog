@@ -123,10 +123,13 @@ function withDesktopScheme(
   url: URL,
   desktopScheme: ShareDesktopScheme | undefined,
 ) {
-  if (!desktopScheme || desktopScheme === "anarlog") {
+  if (!desktopScheme || desktopScheme === "sessionecho") {
     return url;
   }
-  if (desktopScheme !== "anarlog-staging" && desktopScheme !== "sessionecho") {
+  if (
+    desktopScheme !== "sessionecho-staging" &&
+    desktopScheme !== "sessionecho-dev"
+  ) {
     throw invalidUrl();
   }
   url.searchParams.set("scheme", desktopScheme);

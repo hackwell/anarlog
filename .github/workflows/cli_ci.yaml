@@ -129,7 +129,7 @@ jobs:
           auth_logout="$(ANARLOG_AUTH_PATH="$auth_path" target/release/anarlog --json auth logout)"
           grep -q '"command": "auth.logout"' <<<"$auth_logout"
           grep -q '"signed_in": false' <<<"$auth_logout"
-          if auth_error="$(printf '%s\n' 'anarlog://auth/callback?access_token=cli-auth-secret-sentinel' | ANARLOG_AUTH_PATH="$auth_path" target/release/anarlog --json auth login 2>&1)"; then
+          if auth_error="$(printf '%s\n' 'sessionecho://auth/callback?access_token=cli-auth-secret-sentinel' | ANARLOG_AUTH_PATH="$auth_path" target/release/anarlog --json auth login 2>&1)"; then
             echo "incomplete auth callback unexpectedly succeeded"
             exit 1
           fi
@@ -202,7 +202,7 @@ jobs:
           auth_logout="$(ANARLOG_AUTH_PATH="$auth_path" target/release/anarlog.exe --json auth logout)"
           grep -q '"command": "auth.logout"' <<<"$auth_logout"
           grep -q '"signed_in": false' <<<"$auth_logout"
-          if auth_error="$(printf '%s\n' 'anarlog://auth/callback?access_token=cli-auth-secret-sentinel' | ANARLOG_AUTH_PATH="$auth_path" target/release/anarlog.exe --json auth login 2>&1)"; then
+          if auth_error="$(printf '%s\n' 'sessionecho://auth/callback?access_token=cli-auth-secret-sentinel' | ANARLOG_AUTH_PATH="$auth_path" target/release/anarlog.exe --json auth login 2>&1)"; then
             echo "incomplete auth callback unexpectedly succeeded"
             exit 1
           fi

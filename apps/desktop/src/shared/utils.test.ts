@@ -16,10 +16,10 @@ describe("getScheme", () => {
   });
 
   it.each([
-    ["de.flagbit.sessionecho", "anarlog"],
-    ["de.flagbit.sessionecho.staging", "anarlog-staging"],
-    ["de.flagbit.sessionecho.dev", "sessionecho"],
-    ["unknown", "anarlog"],
+    ["de.flagbit.sessionecho", "sessionecho"],
+    ["de.flagbit.sessionecho.staging", "sessionecho-staging"],
+    ["de.flagbit.sessionecho.dev", "sessionecho-dev"],
+    ["unknown", "sessionecho"],
   ])("maps %s to %s", async (identifier, scheme) => {
     mocks.getIdentifier.mockResolvedValue(identifier);
 

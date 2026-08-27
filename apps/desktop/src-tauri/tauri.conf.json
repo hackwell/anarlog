@@ -103,7 +103,7 @@
     "deep-link": {
       "desktop": {
         "schemes": [
-          "sessionecho"
+          "sessionecho-dev"
         ]
       }
     },

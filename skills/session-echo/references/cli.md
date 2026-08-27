@@ -12,7 +12,7 @@ anarlog --json auth status
 anarlog auth logout
 ```
 
-For `auth login`, give the printed URL to the user. They may open it on another device, sign in, choose **Copy URL**, and paste the resulting `anarlog://auth/callback` link into the hidden prompt. Never ask the user to paste that callback link into chat or expose it in command arguments because it contains account tokens.
+For `auth login`, give the printed URL to the user. They may open it on another device, sign in, choose **Copy URL**, and paste the resulting `sessionecho://auth/callback` link into the hidden prompt. Never ask the user to paste that callback link into chat or expose it in command arguments because it contains account tokens.
 
 On Linux, sessions use Secret Service when available and otherwise use the desktop-compatible local auth file with mode `0600`.
 

@@ -14,12 +14,10 @@ use serde::{Deserialize, Serialize};
 use specta::Type;
 use std::str::FromStr;
 
-const SHARE_OPEN_PREFIXES: [&str; 5] = [
-    "anarlog://share/open",
-    "anarlog-staging://share/open",
+const SHARE_OPEN_PREFIXES: [&str; 3] = [
     "sessionecho://share/open",
-    "hyprnote://share/open",
-    "hyprnote-staging://share/open",
+    "sessionecho-staging://share/open",
+    "sessionecho-dev://share/open",
 ];
 const MAX_SHARE_OPEN_URL_BYTES: usize = 512;
 

@@ -416,18 +416,18 @@ impl Environment {
             .unwrap_or_default();
         if executable.contains("staging") {
             return Self {
-                scheme: "anarlog-staging",
+                scheme: "sessionecho-staging",
                 bundle_id: "de.flagbit.sessionecho.staging",
             };
         }
         if executable.contains("dev") {
             return Self {
-                scheme: "sessionecho",
+                scheme: "sessionecho-dev",
                 bundle_id: "de.flagbit.sessionecho.dev",
             };
         }
         Self {
-            scheme: "anarlog",
+            scheme: "sessionecho",
             bundle_id: "de.flagbit.sessionecho",
         }
     }
@@ -447,16 +447,16 @@ mod tests {
     #[test]
     fn builds_headless_browser_login_url() {
         assert_eq!(
-            login_url("anarlog").unwrap().as_str(),
-            "https://sessionecho.flagbit.de/auth?flow=desktop&scheme=anarlog"
+            login_url("sessionecho").unwrap().as_str(),
+            "https://sessionecho.flagbit.de/auth?flow=desktop&scheme=sessionecho"
         );
     }
 
     #[test]
     fn parses_desktop_callback_without_logging_tokens() {
         let callback = CallbackTokens::parse(
-            "anarlog://auth/callback?access_token=access%2Etoken&refresh_token=refresh-token",
-            "anarlog",
+            "sessionecho://auth/callback?access_token=access%2Etoken&refresh_token=refresh-token",
+            "sessionecho",
         )
         .unwrap();
 
@@ -469,18 +469,21 @@ mod tests {
         assert!(
             CallbackTokens::parse(
                 "https://auth/callback?access_token=access&refresh_token=refresh",
-                "anarlog"
+                "sessionecho"
             )
             .is_err()
         );
         assert!(
-            CallbackTokens::parse("anarlog://auth/callback?access_token=access", "anarlog")
-                .is_err()
+            CallbackTokens::parse(
+                "sessionecho://auth/callback?access_token=access",
+                "sessionecho"
+            )
+            .is_err()
         );
         assert!(
             CallbackTokens::parse(
-                "anarlog://auth/callback?access_token=one&access_token=two&refresh_token=refresh",
-                "anarlog"
+                "sessionecho://auth/callback?access_token=one&access_token=two&refresh_token=refresh",
+                "sessionecho"
             )
             .is_err()
         );

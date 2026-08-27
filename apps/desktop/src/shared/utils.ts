@@ -8,16 +8,19 @@ import { env } from "~/env";
 
 export const id = () => crypto.randomUUID() as string;
 
-export type DesktopScheme = "anarlog" | "anarlog-staging" | "sessionecho";
+export type DesktopScheme =
+  | "sessionecho"
+  | "sessionecho-staging"
+  | "sessionecho-dev";
 
 export const getScheme = async (): Promise<DesktopScheme> => {
   const id = await getIdentifier();
   const schemes: Record<string, DesktopScheme> = {
-    "de.flagbit.sessionecho": "anarlog",
-    "de.flagbit.sessionecho.staging": "anarlog-staging",
-    "de.flagbit.sessionecho.dev": "sessionecho",
+    "de.flagbit.sessionecho": "sessionecho",
+    "de.flagbit.sessionecho.staging": "sessionecho-staging",
+    "de.flagbit.sessionecho.dev": "sessionecho-dev",
   };
-  return schemes[id] ?? "anarlog";
+  return schemes[id] ?? "sessionecho";
 };
 
 type DesktopFlowPath =

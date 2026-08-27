@@ -127,26 +127,26 @@ describe("session share URLs", () => {
         appBaseUrl: "https://sessionecho.flagbit.de",
         linkId,
         linkToken: token,
-        desktopScheme: "anarlog-staging",
+        desktopScheme: "sessionecho-staging",
       }),
     );
-    expect(linkUrl.searchParams.get("scheme")).toBe("anarlog-staging");
+    expect(linkUrl.searchParams.get("scheme")).toBe("sessionecho-staging");
     expect(linkUrl.hash).toBe(`#token=${token}`);
 
     const publicUrl = new URL(
       buildPublicSessionShareUrl({
         appBaseUrl: "https://sessionecho.flagbit.de",
         publicSlug,
-        desktopScheme: "sessionecho",
+        desktopScheme: "sessionecho-dev",
       }),
     );
-    expect(publicUrl.searchParams.get("scheme")).toBe("sessionecho");
+    expect(publicUrl.searchParams.get("scheme")).toBe("sessionecho-dev");
 
     const stableUrl = new URL(
       buildAccountSessionShareUrl({
         appBaseUrl: "https://sessionecho.flagbit.de",
         shareId,
-        desktopScheme: "anarlog",
+        desktopScheme: "sessionecho",
       }),
     );
     expect(stableUrl.search).toBe("");

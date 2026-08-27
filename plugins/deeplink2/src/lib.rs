@@ -168,8 +168,8 @@ mod test {
     #[test]
     fn redacts_query_and_fragment_from_logged_urls() {
         let value = redact_url(
-            "anarlog://share/open?mode=handoff&request_id=ba5ca57a-8f88-44e8-ab92-f9e10c89425c#secret",
+            "sessionecho://share/open?mode=handoff&request_id=ba5ca57a-8f88-44e8-ab92-f9e10c89425c#secret",
         );
-        assert_eq!(value, "anarlog://share/open");
+        assert_eq!(value, "sessionecho://share/open");
     }
 }
