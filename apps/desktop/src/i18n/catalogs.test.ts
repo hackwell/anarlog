@@ -9,27 +9,27 @@ describe("i18n catalogs", () => {
   });
 
   it("loads the active locale with English as its fallback", () => {
-    expect(getCatalogLocalesForDisplayLocale("ko")).toEqual(["en", "ko"]);
+    expect(getCatalogLocalesForDisplayLocale("de")).toEqual(["en", "de"]);
   });
 
   it("caches and activates dynamically imported catalogs", async () => {
-    const first = await createI18n("ko");
-    const second = await createI18n("ko");
+    const first = await createI18n("de");
+    const second = await createI18n("de");
 
     expect(first).toBe(i18n);
-    expect(first.locale).toBe("ko");
-    expect(second.locale).toBe("ko");
-    expect(first._("dEgA5A")).not.toBe("dEgA5A");
+    expect(first.locale).toBe("de");
+    expect(second.locale).toBe("de");
+    expect(first._("0L47q7")).not.toBe("0L47q7");
   });
 
   it("does not let a slower catalog overwrite a newer locale", async () => {
-    const stale = createI18n("ko");
-    const latest = createI18n("ja");
+    const stale = createI18n("de");
+    const latest = createI18n("en");
 
     await latest;
-    expect(i18n.locale).toBe("ja");
+    expect(i18n.locale).toBe("en");
 
     await stale;
-    expect(i18n.locale).toBe("ja");
+    expect(i18n.locale).toBe("en");
   });
 });

@@ -4,23 +4,15 @@ import { resolveDisplayLocale, SUPPORTED_DISPLAY_LOCALES } from "./locales";
 
 describe("resolveDisplayLocale", () => {
   test("uses exact supported locales", () => {
-    expect(resolveDisplayLocale("es")).toBe("es");
+    expect(resolveDisplayLocale("de")).toBe("de");
   });
 
-  test("includes broad settings main-language options", () => {
-    expect(SUPPORTED_DISPLAY_LOCALES).toContain("ar");
-    expect(SUPPORTED_DISPLAY_LOCALES).toContain("hi");
-    expect(SUPPORTED_DISPLAY_LOCALES).toContain("nl");
-    expect(SUPPORTED_DISPLAY_LOCALES).toContain("pl");
-    expect(SUPPORTED_DISPLAY_LOCALES).toContain("ru");
-    expect(SUPPORTED_DISPLAY_LOCALES).toContain("tr");
-    expect(SUPPORTED_DISPLAY_LOCALES).toContain("uk");
-    expect(SUPPORTED_DISPLAY_LOCALES).toContain("vi");
+  test("supports German and English", () => {
+    expect(SUPPORTED_DISPLAY_LOCALES).toEqual(["de", "en"]);
   });
 
   test("uses base language for regional variants", () => {
-    expect(resolveDisplayLocale("pt-BR")).toBe("pt");
-    expect(resolveDisplayLocale("zh-Hans")).toBe("zh");
+    expect(resolveDisplayLocale("de-AT")).toBe("de");
   });
 
   test("falls back to English for unsupported languages", () => {
