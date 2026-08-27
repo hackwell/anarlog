@@ -113,7 +113,6 @@ const renderers: RendererMap = {
         key: entity.key,
         icon: Monitor,
         label: "Device",
-        tab: { type: "settings", state: { tab: "sync" } },
       };
     },
   },

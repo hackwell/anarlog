@@ -328,7 +328,7 @@ describe("ContextBar", () => {
     });
   });
 
-  it("opens account and device chips in settings", () => {
+  it("opens the account chip in settings and leaves the device chip inert", () => {
     render(
       <ContextBar
         entities={[
@@ -354,13 +354,10 @@ describe("ContextBar", () => {
     fireEvent.click(screen.getByText("Account"));
     fireEvent.click(screen.getByText("Device"));
 
-    expect(openNewMock).toHaveBeenNthCalledWith(1, {
+    expect(openNewMock).toHaveBeenCalledTimes(1);
+    expect(openNewMock).toHaveBeenCalledWith({
       type: "settings",
       state: { tab: "account" },
-    });
-    expect(openNewMock).toHaveBeenNthCalledWith(2, {
-      type: "settings",
-      state: { tab: "sync" },
     });
   });
 
