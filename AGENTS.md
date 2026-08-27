@@ -1,6 +1,6 @@
 # Overview
 
-Tauri desktop note-taking app (`apps/desktop/`) with a web app (`apps/web/`).
+Tauri desktop note-taking app (`apps/desktop/`) with a CLI (`apps/cli/`).
 Uses pnpm workspaces.
 SQLite is the primary data store (schema and migrations in `crates/db-app/`, desktop transport in `plugins/db/`), Zustand is used for UI state, and ProseMirror powers the editor (`packages/editor`, via `@handlewithcare/react-prosemirror`); documents are stored as TipTap-dialect ProseMirror JSON (converters/validation in `crates/tiptap`). Sessions are the core entity — all notes are backed by sessions.
 
@@ -10,7 +10,6 @@ SQLite is the primary data store (schema and migrations in `crates/db-app/`, des
 - Typecheck (TS): `pnpm -r typecheck`
 - Typecheck (Rust): `cargo check`
 - Desktop dev: `turbo dev:desktop`
-- Web dev: `turbo dev:web`
 
 ## Pre-commit verification
 
@@ -73,12 +72,11 @@ Naming rules:
 
 Environment is Ubuntu 24.04 x86_64. Node 22, pnpm 11.1.1, and Rust 1.94.0 are pre-provisioned, and the Linux system libraries needed for the Tauri desktop build (from `scripts/setup-linux-tauri.sh` + `scripts/setup-linux-others.sh`: webkit2gtk-4.1, gtk-3/4, alsa, pulse, pipewire, clang/libclang, cmake, patchelf, etc.) plus `xvfb`/`dbus-x11` are baked into the base image. The startup update script only runs `pnpm install --frozen-lockfile` and builds `@anlg/ui`; it does not re-install system packages.
 
-- Prefer `turbo dev:desktop` / `turbo dev:web` over the raw `pnpm dev:*` scripts: turbo builds `@anlg/ui` first via its `dependsOn`, so you never have to remember the separate `pnpm -F @anlg/ui build` step (raw `pnpm dev:*` does not).
+- Prefer `turbo dev:desktop` over the raw `pnpm dev:desktop` script: turbo builds `@anlg/ui` first via its `dependsOn`, so you never have to remember the separate `pnpm -F @anlg/ui build` step (raw `pnpm dev:*` does not).
 - No `start`/`terminals` are configured in the environment (only the `install`/update script). Dev servers are started on demand, not auto-launched on boot.
 - A real XFCE desktop runs on the VNC display `:1` (this is what computer-use sees). Run the desktop app there instead of `xvfb` so it is visible: `DISPLAY=:1 LIBGL_ALWAYS_SOFTWARE=1 GALLIUM_DRIVER=llvmpipe WEBKIT_DISABLE_COMPOSITING_MODE=1 WEBKIT_DISABLE_DMABUF_RENDERER=1 turbo dev:desktop`. First `tauri dev` compiles the whole Rust workspace (~2000 crates) and is slow; the desktop Vite frontend serves on `:1422`.
-- Both apps are local-first and boot without secrets: `dotenvx` loads `.env.supabase`/`.env` with `--ignore MISSING_ENV_FILE`. Cloud/Pro features (auth, CloudSync, hosted STT/LLM, web billing) need local Supabase (`task supabase-start`, requires Docker) and `cargo run -p api`. LLM/STT provider keys are entered in-app.
-- Web dev: `turbo dev:web` serves on `:3000` and renders without Supabase; only auth/DB-backed routes require the Supabase stack.
+- The desktop app is local-first and boots without secrets: `dotenvx` loads `.env.supabase`/`.env` with `--ignore MISSING_ENV_FILE`. LLM/STT provider keys are entered in-app. The hosted API was removed, so the remaining Cloud/Pro features cannot be brought up locally; tasks 6 and 7 of the rebrand plan remove them from the app.
 - `pnpm fmt:check` (`dprint check`) reports ~67 failures on Linux, all Swift files ("Cannot start formatter process") because `dprint` shells out to `swift format`, which is macOS-only. These are not real diffs; non-Swift formatting still validates. Scope fmt checks to changed non-Swift files on Linux.
-- No audio input device exists in the headless pod; use `crates/audio-mock` for recording flows. `apps/mobile` (Expo) and `apps/cli-ui` (Swift) cannot be built/run on Linux.
+- No audio input device exists in the headless pod; use `crates/audio-mock` for recording flows.
 - The default `cc`/`c++` are clang (not gcc). The desktop build compiles a C++ dependency (`knf-rs-sys` from pyannote-rs) via cmake, and clang selects the newest GCC install dir for `libstdc++`, so `libstdc++-14-dev` must be present (it is in the base image). Data path is verified: creating a note writes to `sessions`/`session_documents` (ProseMirror JSON) in the SQLite DB at `~/.local/share/com.hyprnote.dev/app.db`.
 - Changelog, release, and QA skills are exposed to Cursor Cloud via `.cursor/skills/` shims (`new-changelog`, `release-new-version`, `qa-critical-ux`, `qa-cli-mcp-api`). Canonical copies live in `.agents/skills/`; edit those only. `qa-critical-ux` is macOS-native and is not a cloud-environment gate.
