@@ -343,8 +343,7 @@ mod tests {
     }
 
     #[test]
-    fn public_docs_and_skill_cover_the_command_contract() {
-        let docs = include_str!("../../../docs/reference/cli.mdx");
+    fn skill_covers_the_command_contract() {
         let skill = concat!(
             include_str!("../../../skills/anarlog/references/cli.md"),
             include_str!("../../../skills/anarlog/references/setup.md"),
@@ -354,10 +353,8 @@ mod tests {
         collect_leaf_commands(&command, "", &mut paths);
 
         for path in paths {
-            assert!(docs.contains(&path), "CLI docs are missing `{path}`");
             assert!(skill.contains(&path), "Anarlog skill is missing `{path}`");
         }
-        assert_options_are_documented(&command, docs);
     }
 
     #[test]

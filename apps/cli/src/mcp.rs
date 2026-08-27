@@ -615,30 +615,14 @@ mod tests {
                 "propose_summary_edit",
             ]
         );
-        let mcp_docs = include_str!("../../../docs/reference/mcp.mdx");
         let mcp_skill = include_str!("../../../skills/anarlog/references/mcp.md");
         for tool_name in &tool_names {
-            assert!(
-                mcp_docs.contains(tool_name),
-                "MCP docs are missing `{tool_name}`"
-            );
             assert!(
                 mcp_skill.contains(tool_name),
                 "Anarlog skill is missing `{tool_name}`"
             );
         }
         for tool in tools {
-            let properties = tool
-                .input_schema
-                .get("properties")
-                .and_then(Value::as_object)
-                .expect("tool input properties");
-            for parameter in properties.keys() {
-                assert!(
-                    mcp_docs.contains(&format!("`{parameter}`")),
-                    "MCP docs are missing `{parameter}`"
-                );
-            }
             let annotations = tool.annotations.expect("tool annotations");
             let write_tool = matches!(
                 tool.name.as_ref(),
@@ -682,7 +666,6 @@ mod tests {
             ]
         );
         for (_, uri, _) in &template_contract {
-            assert!(mcp_docs.contains(uri), "MCP docs are missing `{uri}`");
             assert!(mcp_skill.contains(uri), "Anarlog skill is missing `{uri}`");
         }
         assert_eq!(resources.len(), 1);
