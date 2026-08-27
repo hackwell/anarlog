@@ -5112,10 +5112,6 @@ msgstr "Webhooks"
 msgid "Week starts on"
 msgstr "Week starts on"
 
-#: src/onboarding/index.tsx
-msgid "Welcome to Session Echo"
-msgstr "Welcome to Session Echo"
-
 #: src/chat/components/body/empty.tsx
 msgid "What are my action items from this meeting?"
 msgstr "What are my action items from this meeting?"
