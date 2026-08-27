@@ -52,7 +52,7 @@ Turbo builds shared UI packages before starting the app.
 | `crates/db-app` | SQLite schema and migrations |
 | `supabase` | Hosted database schema, functions, and tests |
 | `skills/anarlog` | Published CLI and MCP agent skill |
-| `docs` | Mintlify product and reference documentation |
+| `docs/superpowers` | Implementation plans and design specifications |
 
 Sessions are the core data entity. Notes, transcripts, and summaries are all backed by sessions. ProseMirror documents use the TipTap JSON dialect.
 
@@ -83,14 +83,11 @@ cargo check
 cargo test -p <affected-package>
 ```
 
-For documentation changes:
+For documentation changes to `docs/superpowers`:
 
 ```bash
-pnpm exec dprint fmt 'docs/**/*'
-pnpm exec dprint check 'docs/**/*'
-cd docs
-mint validate
-mint broken-links --check-anchors --check-redirects
+pnpm exec dprint fmt 'docs/superpowers/**/*'
+pnpm exec dprint check 'docs/superpowers/**/*'
 ```
 
 Check the affected workflow under `.github/workflows/` for stricter package-specific commands.
