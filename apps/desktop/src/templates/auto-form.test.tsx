@@ -16,11 +16,6 @@ const mocks = vi.hoisted(() => ({
   toastError: vi.fn(),
   inferSummaryFormat: vi.fn(),
   model: { modelId: "test-model" },
-  billing: {
-    isPro: true,
-    isUpgradingToPro: false,
-    upgradeToPro: vi.fn(),
-  },
   values: {
     auto_summary_prompt: "",
     selected_template_id: "",
@@ -119,10 +114,6 @@ vi.mock("~/settings/queries", () => ({
   setSettingValue: mocks.setSettingValue,
 }));
 
-vi.mock("~/auth/billing-context", () => ({
-  useBillingAccess: () => mocks.billing,
-}));
-
 vi.mock("~/shared/config", () => ({
   useConfigValue: (key: string) => mocks.values[key] ?? "",
 }));
@@ -145,9 +136,6 @@ describe("Auto format editor", () => {
     vi.clearAllMocks();
     mocks.values.auto_summary_prompt = "";
     mocks.values.selected_template_id = "";
-    mocks.billing.isPro = true;
-    mocks.billing.isUpgradingToPro = false;
-    mocks.billing.upgradeToPro.mockClear();
     mocks.getTemplateSource.mockResolvedValue({
       status: "ok",
       data: defaultFormat,
@@ -171,49 +159,6 @@ describe("Auto format editor", () => {
     ).toHaveProperty("value", defaultFormat);
     expect(mocks.getTemplateSource).toHaveBeenCalledWith("enhanceFormat");
     expect(screen.queryByText("Variables")).toBeNull();
-  });
-
-  it("keeps the format visible and read-only for Free users", () => {
-    mocks.billing.isPro = false;
-
-    renderWithQueryClient(
-      <AutoFormatForm defaultFormat={defaultFormat} formatOverride="" />,
-    );
-
-    expect(
-      screen.getByRole("textbox", {
-        name: "Auto summary format",
-      }) as HTMLTextAreaElement,
-    ).toHaveProperty("readOnly", true);
-    expect(
-      screen.getByText(
-        "Preview the summary format, then upgrade to Pro to customize it.",
-      ),
-    ).toBeTruthy();
-
-    fireEvent.click(
-      screen.getByRole("button", { name: "Get Pro to customize" }),
-    );
-
-    expect(mocks.billing.upgradeToPro).toHaveBeenCalledOnce();
-    expect(mocks.setSettingValue).not.toHaveBeenCalled();
-  });
-
-  it("routes example generation to the Pro upgrade for Free users", () => {
-    mocks.billing.isPro = false;
-
-    renderWithQueryClient(
-      <AutoFormatForm defaultFormat={defaultFormat} formatOverride="" />,
-    );
-
-    fireEvent.click(
-      screen.getByRole("button", { name: "Improve with examples" }),
-    );
-
-    expect(mocks.billing.upgradeToPro).toHaveBeenCalledOnce();
-    expect(
-      screen.queryByRole("dialog", { name: "Improve summary format" }),
-    ).toBeNull();
   });
 
   it("generates an editable format from up to three transient examples", async () => {

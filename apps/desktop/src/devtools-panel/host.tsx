@@ -11,7 +11,6 @@ import {
 
 import { useBillingAccess } from "~/auth/billing-context";
 import { TrialEndedDialog } from "~/billing/trial-ended-dialog";
-import { TrialStartedDialog } from "~/billing/trial-started-dialog";
 import { executeTransaction } from "~/db";
 import { useDevtoolsUserId } from "~/devtools-panel/hooks";
 import { createSession, updateSession } from "~/session/queries";
@@ -53,7 +52,6 @@ type DevtoolsPanelAction =
   | "notifications:auto-stop"
   | "notifications:batch-done"
   | "notifications:clear"
-  | "billing:trial-started"
   | "billing:trial-ended"
   | "countdown:note-60"
   | "countdown:note-300"
@@ -136,7 +134,7 @@ function DevtoolsFloatingPanelSync() {
 function useDevtoolsPanelActions() {
   const openNew = useTabs((s) => s.openNew);
   const user_id = useDevtoolsUserId();
-  const { trialDaysRemaining, upgradeToPro } = useBillingAccess();
+  const { upgradeToPro } = useBillingAccess();
   const showToastPreview = useDevtoolsToastPreview(
     (state) => state.showPreview,
   );
@@ -145,7 +143,6 @@ function useDevtoolsPanelActions() {
   );
   const showOtaPreview = useDevtoolsOtaPreview((state) => state.showPreview);
   const clearOtaPreview = useDevtoolsOtaPreview((state) => state.clearPreview);
-  const [trialStartedOpen, setTrialStartedOpen] = useState(false);
   const [trialEndedOpen, setTrialEndedOpen] = useState(false);
   const [shouldThrow, setShouldThrow] = useState(false);
 
@@ -429,9 +426,6 @@ function useDevtoolsPanelActions() {
         case "notifications:clear":
           void clearNotifications();
           return;
-        case "billing:trial-started":
-          setTrialStartedOpen(true);
-          return;
         case "billing:trial-ended":
           setTrialEndedOpen(true);
           return;
@@ -475,19 +469,11 @@ function useDevtoolsPanelActions() {
 
   return {
     dialogs: (
-      <>
-        <TrialStartedDialog
-          open={trialStartedOpen}
-          onOpenChange={setTrialStartedOpen}
-          trialDaysRemaining={trialDaysRemaining}
-          hasPaymentMethod={false}
-        />
-        <TrialEndedDialog
-          open={trialEndedOpen}
-          onOpenChange={setTrialEndedOpen}
-          onUpgrade={upgradeToPro}
-        />
-      </>
+      <TrialEndedDialog
+        open={trialEndedOpen}
+        onOpenChange={setTrialEndedOpen}
+        onUpgrade={upgradeToPro}
+      />
     ),
     handleAction,
     shouldThrow,

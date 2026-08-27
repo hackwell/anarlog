@@ -1,12 +1,10 @@
 import { Trans, useLingui } from "@lingui/react/macro";
-import { CircleNotch, LockSimple } from "@phosphor-icons/react";
 import { useQuery } from "@tanstack/react-query";
 import { getIdentifier } from "@tauri-apps/api/app";
 import { platform } from "@tauri-apps/plugin-os";
 
 import { cn } from "@anlg/utils";
 
-import { useBillingAccess } from "~/auth/billing-context";
 import { useSetSettingValue } from "~/settings/queries";
 import { useConfigValue } from "~/shared/config";
 import {
@@ -36,7 +34,6 @@ const PREVIEW_CLASS =
 
 export function AppIconSelector() {
   const { t } = useLingui();
-  const billing = useBillingAccess();
   const value = normalizeAppIconPreference(useConfigValue("app_icon"));
   const storedTheme = useConfigValue("theme") as ThemePreference;
   const theme: ThemePreference =
@@ -89,7 +86,6 @@ export function AppIconSelector() {
             resolveAppIconName(option, appIdentifier) === selectedIconName;
           const previewName = resolveAppIconName(option, appIdentifier);
           const hasDarkVariant = hasDarkAppIconVariant(previewName);
-          const locked = !billing.isPro && !selected;
 
           return (
             <button
@@ -97,10 +93,8 @@ export function AppIconSelector() {
               type="button"
               role="radio"
               aria-checked={selected}
-              aria-disabled={locked}
               aria-label={labels[option]}
               title={labels[option]}
-              disabled={locked && billing.isUpgradingToPro}
               className={cn([
                 "group text-foreground focus-visible:ring-ring focus-visible:ring-offset-background relative flex cursor-pointer items-center justify-center rounded-[22px] border bg-transparent p-0.5 transition-[border-color,scale] duration-150 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none active:scale-[0.98] disabled:cursor-wait",
                 selected
@@ -108,11 +102,6 @@ export function AppIconSelector() {
                   : "border-border hover:border-foreground/30",
               ])}
               onClick={() => {
-                if (locked) {
-                  billing.upgradeToPro();
-                  return;
-                }
-
                 void applyAppIconPreference(option, theme);
                 setAppIcon(option);
               }}
@@ -157,15 +146,6 @@ export function AppIconSelector() {
                   />
                 )}
               </span>
-              {locked ? (
-                <span className="bg-background border-border text-muted-foreground pointer-events-none absolute right-0.5 bottom-0.5 flex size-5 items-center justify-center rounded-full border shadow-sm">
-                  {billing.isUpgradingToPro ? (
-                    <CircleNotch className="size-3 animate-spin" aria-hidden />
-                  ) : (
-                    <LockSimple className="size-3" aria-hidden />
-                  )}
-                </span>
-              ) : null}
             </button>
           );
         })}

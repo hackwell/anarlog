@@ -5,7 +5,6 @@ import {
   Bell,
   BookOpen,
   CalendarDots,
-  CircleNotch,
   Code,
   DownloadSimple,
   FileText,
@@ -29,9 +28,7 @@ import { cn } from "@anlg/utils";
 
 import { CustomSidebarHeader } from "./custom-sidebar-header";
 
-import { useBillingAccess } from "~/auth/billing-context";
 import { privacyMessages } from "~/settings/general/app-settings";
-import { useMyWorkspacesWithMirror } from "~/settings/team/mirror";
 import { type SettingsTab, type TabInput, useTabs } from "~/store/zustand/tabs";
 
 type SettingsNavItem =
@@ -39,23 +36,18 @@ type SettingsNavItem =
       id: SettingsTab;
       label: string;
       icon: Icon;
-      requiresPro?: boolean;
     }
   | {
       id: "automations" | "calendar" | "contacts" | "templates";
       label: string;
       icon: Icon;
       destination: TabInput;
-      requiresPro?: boolean;
     };
 
 type SettingsNavGroup = { label: string; items: SettingsNavItem[] };
 
 export function SettingsNav() {
   const { i18n, t } = useLingui();
-  const { isPro, upgradeToPro, isUpgradingToPro } = useBillingAccess();
-  const workspaces = useMyWorkspacesWithMirror();
-  const hasExistingWorkspace = (workspaces.data?.length ?? 0) > 0;
   const [search, setSearch] = useState("");
   const currentTab = useTabs((state) => state.currentTab);
   const updateSettingsTabState = useTabs(
@@ -82,12 +74,7 @@ export function SettingsNav() {
       items: [
         { id: "app", label: t`General`, icon: Gear },
         { id: "account", label: t`Account`, icon: User },
-        {
-          id: "team",
-          label: t`Team`,
-          icon: UsersThree,
-          requiresPro: !workspaces.isLoading && !hasExistingWorkspace,
-        },
+        { id: "team", label: t`Team`, icon: UsersThree },
         { id: "appearance", label: t`Appearance`, icon: Sun },
         { id: "notifications", label: t`Notifications`, icon: Bell },
       ],
@@ -119,7 +106,6 @@ export function SettingsNav() {
           label: t`Automations`,
           icon: Lightning,
           destination: { type: "automations" },
-          requiresPro: true,
         },
       ],
     },
@@ -128,23 +114,13 @@ export function SettingsNav() {
       items: [
         { id: "transcription", label: t`Transcription`, icon: Sparkle },
         { id: "intelligence", label: t`Intelligence`, icon: Sparkle },
-        {
-          id: "dictionary",
-          label: t`Dictionary`,
-          icon: BookOpen,
-          requiresPro: true,
-        },
+        { id: "dictionary", label: t`Dictionary`, icon: BookOpen },
       ],
     },
     {
       label: t`Data`,
       items: [
-        {
-          id: "sync",
-          label: t`Sync`,
-          icon: ArrowsClockwise,
-          requiresPro: true,
-        },
+        { id: "sync", label: t`Sync`, icon: ArrowsClockwise },
         { id: "imports", label: t`Imports`, icon: DownloadSimple },
       ],
     },
@@ -236,16 +212,11 @@ export function SettingsNav() {
                 {group.label}
               </span>
               {group.items.map((item) => {
-                const requiresPro = Boolean(item.requiresPro && !isPro);
-
                 return (
                   <div key={item.id} className="group/row relative">
                     <button
                       type="button"
-                      aria-disabled={requiresPro}
                       onClick={() => {
-                        if (requiresPro) return;
-
                         if ("destination" in item) {
                           openNew(item.destination);
                           return;
@@ -259,7 +230,6 @@ export function SettingsNav() {
                         activeTab === item.id
                           ? "bg-sidebar-accent text-foreground font-medium"
                           : "text-muted-foreground hover:bg-sidebar-accent/50 hover:text-foreground",
-                        requiresPro && "opacity-60",
                       ])}
                     >
                       <item.icon
@@ -267,19 +237,11 @@ export function SettingsNav() {
                         className="shrink-0"
                         data-testid={`settings-nav-icon-${item.id}`}
                       />
-                      <span
-                        className={cn([
-                          "flex min-w-0 flex-1 items-center gap-2 transition-opacity duration-150",
-                          requiresPro &&
-                            "group-focus-within/row:opacity-0 group-hover/row:opacity-0",
-                        ])}
-                      >
+                      <span className="flex min-w-0 flex-1 items-center gap-2 transition-opacity duration-150">
                         <span className="min-w-0 flex-1 truncate">
                           {item.label}
                         </span>
-                        {requiresPro ? (
-                          <Lock aria-hidden className="size-3.5 shrink-0" />
-                        ) : "destination" in item ? (
+                        {"destination" in item ? (
                           <ArrowUpRight
                             aria-hidden
                             className="text-muted-foreground/70 size-3.5 shrink-0"
@@ -288,23 +250,6 @@ export function SettingsNav() {
                         ) : null}
                       </span>
                     </button>
-                    {requiresPro ? (
-                      <button
-                        type="button"
-                        onClick={upgradeToPro}
-                        disabled={isUpgradingToPro}
-                        className="border-primary bg-primary text-primary-foreground hover:bg-primary/90 focus-visible:ring-ring pointer-events-none absolute top-1/2 right-1 flex translate-x-1 -translate-y-1/2 items-center gap-1 rounded-full border-2 px-3 py-1 text-xs font-medium opacity-0 shadow-[0_4px_14px_rgba(87,83,78,0.18)] transition-all duration-150 group-focus-within/row:pointer-events-auto group-focus-within/row:translate-x-0 group-focus-within/row:opacity-100 group-hover/row:pointer-events-auto group-hover/row:translate-x-0 group-hover/row:opacity-100 focus-visible:ring-2 focus-visible:outline-none disabled:opacity-70"
-                        aria-label={t`Upgrade to Pro for ${item.label}`}
-                      >
-                        {isUpgradingToPro ? (
-                          <CircleNotch
-                            className="size-3 animate-spin"
-                            aria-hidden
-                          />
-                        ) : null}
-                        <Trans>Upgrade to Pro</Trans>
-                      </button>
-                    ) : null}
                   </div>
                 );
               })}

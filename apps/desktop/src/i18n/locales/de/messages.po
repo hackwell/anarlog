@@ -602,10 +602,6 @@ msgstr "{0} neue Meetings importiert. {1} waren bereits vorhanden."
 msgid "Browser handoff not working? Paste the callback link instead"
 msgstr "Übergabe über den Browser funktioniert nicht? Stattdessen den Callback-Link einfügen"
 
-#: src/settings/dictionary/index.tsx
-msgid "Build a custom dictionary with Session Echo Pro"
-msgstr "Eigenes Wörterbuch mit Session Echo Pro erstellen"
-
 #: src/settings/general/audio-settings.tsx
 msgid "Build voiceprints from meeting audio so speakers you name in a transcript are recognized in later meetings. Voiceprints never leave this device, and unnamed ones are deleted after 45 days."
 msgstr "Erstellt Stimmprofile aus Meeting-Audio, damit von Ihnen benannte Sprecher in einem Transkript auch in späteren Meetings erkannt werden. Stimmprofile verlassen dieses Gerät nie, unbenannte werden nach 45 Tagen gelöscht."
@@ -1973,10 +1969,6 @@ msgstr "Transkript wird generiert …"
 msgid "Get Pro"
 msgstr "Pro holen"
 
-#: src/templates/auto-form.tsx
-msgid "Get Pro to customize"
-msgstr "Pro holen, um anzupassen"
-
 #: src/settings/general/account.tsx
 #: src/sidebar/automations.tsx
 msgid "Get started"
@@ -2046,10 +2038,6 @@ msgstr "Session Echo helfen, Sie zu hören"
 #: src/onboarding/permissions.tsx
 msgid "Help Session Echo read meeting activity"
 msgstr "Session Echo helfen, Meeting-Aktivitäten zu lesen"
-
-#: src/settings/dictionary/index.tsx
-msgid "Help transcription recognize names, jargon, and product terms."
-msgstr "Der Transkription helfen, Namen, Fachbegriffe und Produktbezeichnungen zu erkennen."
 
 #: src/chat/components/body/empty.tsx
 msgid "Hi, I'm Session Echo AI. Set up a language model and I'll be ready to help."
@@ -3222,10 +3210,6 @@ msgstr "Vorschau"
 #: src/settings/developers/devtools.tsx
 msgid "Preview notifications, toasts, updates, and billing dialogs. Only available in dev and staging builds."
 msgstr "Benachrichtigungen, Toasts, Updates und Abrechnungsdialoge in der Vorschau ansehen. Nur in Dev- und Staging-Builds verfügbar."
-
-#: src/templates/auto-form.tsx
-msgid "Preview the summary format, then upgrade to Pro to customize it."
-msgstr "Zusammenfassungsformat in der Vorschau ansehen, dann auf Pro upgraden, um es anzupassen."
 
 #: src/session/components/note-input/search/bar.tsx
 msgid "Previous match"
@@ -4917,10 +4901,6 @@ msgstr "Für private Repositories upgraden."
 msgid "Upgrade to connect"
 msgstr "Zum Verbinden upgraden"
 
-#: src/templates/auto-form.tsx
-msgid "Upgrade to customize"
-msgstr "Zum Anpassen upgraden"
-
 #: src/settings/automations/index.tsx
 msgid "Upgrade to enable"
 msgstr "Zum Aktivieren upgraden"
@@ -4929,22 +4909,14 @@ msgstr "Zum Aktivieren upgraden"
 #: src/calendar/components/sidebar.tsx
 #: src/session-sharing/index.tsx
 #: src/settings/developers/cloud-api.tsx
-#: src/settings/dictionary/index.tsx
 #: src/settings/team/index.tsx
-#: src/sidebar/settings.tsx
 msgid "Upgrade to Pro"
 msgstr "Auf Pro upgraden"
 
-#. placeholder {0}: item.label
 #. placeholder {0}: provider.displayName
 #: src/calendar/components/sidebar.tsx
-#: src/sidebar/settings.tsx
 msgid "Upgrade to Pro for {0}"
 msgstr "Für {0} auf Pro upgraden"
-
-#: src/templates/auto-form.tsx
-msgid "Upgrade to Pro to customize Auto format"
-msgstr "Auf Pro upgraden, um das Auto-Format anzupassen"
 
 #: src/session-sharing/index.tsx
 msgid "Upgrade to Pro to invite people and share this note with them."
