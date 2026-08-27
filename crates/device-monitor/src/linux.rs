@@ -69,7 +69,7 @@ fn setup_pulseaudio(stop_rx: &mpsc::Receiver<()>) -> Option<PulseAudioHandles> {
     if proplist
         .set_str(
             libpulse_binding::proplist::properties::APPLICATION_NAME,
-            "Char Device Monitor",
+            "Session Echo Device Monitor",
         )
         .is_err()
     {
