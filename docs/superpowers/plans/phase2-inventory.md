@@ -181,6 +181,34 @@ decision needed beyond confirming and moving on.
 
 ## ui-gate
 
+> **CORRECTION, 2026-08-27 — this table is not the complete set of upgrade prompts.**
+>
+> Applying it removed the paywall from the sixteen files listed, but three
+> user-visible upgrade prompts survive because they were never classified here:
+>
+> | File                                    | Prompt                   | Attached to                                    |
+> | --------------------------------------- | ------------------------ | ---------------------------------------------- |
+> | `settings/ai/stt/select.tsx:913`        | "Upgrade to use"         | the `cloud` STT model (`model.id === "cloud"`) |
+> | `settings/todo/provider-content.tsx:92` | `onClick={upgradeToPro}` | todo provider connections, gated on `isPaid`   |
+> | `settings/todo/github.tsx:106`          | `onClick={upgradeToPro}` | GitHub todo connections, gated on `isPaid`     |
+>
+> Each is attached to a cloud feature that a later stage removes, so the prompt
+> goes with its feature rather than being stripped on its own. **But do not treat
+> "the paywall is gone" as true until those three are handled.**
+>
+> Two rows of the table below could also not be applied in isolation and are
+> deferred, not skipped:
+>
+> - `billing/trial-started-dialog.tsx` and its test — `auth/billing.tsx:25` imports
+>   `TrialStartedDialog` for the live trial flow. Goes when `auth/` goes.
+> - `settings/ai/stt/context.tsx` and its test — `settings/ai/stt/select.tsx:40`
+>   imports `useSttSettings` from it. Goes when the hosted-STT model does.
+>
+> The lesson for the remaining tables: this inventory was built from grep patterns,
+> and a prompt phrased "Upgrade to use" matches none of
+> `isPro|useSubscription|billing|checkout|cloudSync|CloudSync`. Before planning from
+> any table here, search for the _user-visible copy_ as well as the symbols.
+
 16 files. Every row's Decision column is final — Task 6 should apply it
 without re-deciding. All of these ship unconditionally except the two
 trial/CTA-only files, which are removed outright since Session Echo has no
