@@ -355,6 +355,7 @@ mod tests {
         for path in paths {
             assert!(skill.contains(&path), "Anarlog skill is missing `{path}`");
         }
+        assert_options_are_documented(&command, skill);
     }
 
     #[test]

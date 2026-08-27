@@ -19,17 +19,25 @@ On Linux, sessions use Secret Service when available and otherwise use the deskt
 ```bash
 anarlog --json doctor
 anarlog --json meetings list --query "planning" --limit 20 --offset 0
+anarlog --json meetings list --series-id SERIES_ID --limit 20 --offset 0
 anarlog --json meetings get MEETING_ID
 anarlog --json meetings note MEETING_ID --kind note
 anarlog --json meetings note MEETING_ID --kind summary
 anarlog --json meetings history MEETING_ID --limit 20 --offset 0
 anarlog --json proposals list --meeting MEETING_ID
+anarlog --json proposals list --meeting MEETING_ID --status "pending"
 anarlog --json proposals create --meeting MEETING_ID --kind summary --content "Replacement markdown"
+anarlog --json proposals create --meeting MEETING_ID --kind summary --content-file replacement.md
+anarlog --json proposals create --meeting MEETING_ID --target TARGET_ID --kind summary --content "Replacement markdown"
 anarlog --json proposals show PROPOSAL_ID
 anarlog --json proposals decline PROPOSAL_ID
 ```
 
-`proposals create` stages a pending edit. Do not claim the meeting changed. A human applies or declines it in the Anarlog desktop app.
+`proposals create` stages a pending edit. Do not claim the meeting changed. A human applies or declines it in the Anarlog desktop app. Provide either `--content` for inline markdown or `--content-file` to read it from a file; exactly one is required. The `--target` option is optional and specifies a target ID within the document to edit.
+
+`proposals list` accepts an optional `--status` filter (e.g. "pending", "accepted", "declined") to narrow the results by proposal state.
+
+`meetings list` accepts an optional `--series-id` filter to show only meetings from a recurring series.
 
 `doctor` exits with status 1 when its response contains `ready: false`.
 
