@@ -24,7 +24,11 @@
 - Never introduce a new outbound network host. Model downloads go to `huggingface.co` only
 - Formatting: `pnpm exec dprint fmt` before every commit, then `pnpm fmt:check`
 - Commits: Conventional Commits, English, on branch `chore/session-echo-rebrand`
-- No commit may leave `cargo check` or `pnpm -F desktop typecheck` failing
+- No commit may leave `cargo check --all-targets` or `pnpm -F desktop typecheck` failing.
+  **`--all-targets` is not optional.** Plain `cargo check` skips `#[cfg(test)]` code, and
+  `apps/cli` pulled deleted documentation in via `include_str!` inside a test — the break
+  was invisible to `cargo check` and to CI's own lint job, but `cargo test -p anarlog-cli`
+  fails on it. After any deletion, check with `--all-targets`.
 
 ## Ordering note (refines the spec)
 
