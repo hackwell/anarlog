@@ -60,22 +60,7 @@ fn resolve_default_path_for_command(data_dir: &Path, command_name: Option<&OsStr
         return data_dir.join(identifier).join("app.db");
     }
 
-    let current = data_dir.join("anarlog").join("app.db");
-    if current.is_file() {
-        return current;
-    }
-
-    let legacy = data_dir.join("hyprnote").join("app.db");
-    if legacy.is_file() {
-        return legacy;
-    }
-
-    let identifier = data_dir.join("com.hyprnote.stable").join("app.db");
-    if identifier.is_file() {
-        return identifier;
-    }
-
-    current
+    data_dir.join("sessionecho").join("app.db")
 }
 
 #[cfg(test)]
@@ -83,49 +68,43 @@ mod tests {
     use super::*;
 
     #[test]
-    fn default_path_prefers_current_then_legacy_then_identifier() {
+    fn default_path_uses_sessionecho_for_new_installs() {
         let dir = tempfile::tempdir().unwrap();
-        let current = dir.path().join("anarlog/app.db");
-        let legacy = dir.path().join("hyprnote/app.db");
-        let identifier = dir.path().join("com.hyprnote.stable/app.db");
-
-        std::fs::create_dir_all(identifier.parent().unwrap()).unwrap();
-        std::fs::write(&identifier, "").unwrap();
         assert_eq!(
             resolve_default_path_for_command(dir.path(), Some(OsStr::new("anarlog"))),
-            identifier
-        );
-
-        std::fs::create_dir_all(legacy.parent().unwrap()).unwrap();
-        std::fs::write(&legacy, "").unwrap();
-        assert_eq!(
-            resolve_default_path_for_command(dir.path(), Some(OsStr::new("anarlog"))),
-            legacy
-        );
-
-        std::fs::create_dir_all(current.parent().unwrap()).unwrap();
-        std::fs::write(&current, "").unwrap();
-        assert_eq!(
-            resolve_default_path_for_command(dir.path(), Some(OsStr::new("anarlog"))),
-            current
+            dir.path().join("sessionecho/app.db")
         );
     }
 
     #[test]
-    fn default_path_targets_current_location_for_new_installs() {
+    fn default_path_finds_sessionecho_database() {
         let dir = tempfile::tempdir().unwrap();
+        let sessionecho = dir.path().join("sessionecho/app.db");
+        std::fs::create_dir_all(sessionecho.parent().unwrap()).unwrap();
+        std::fs::write(&sessionecho, "").unwrap();
+
         assert_eq!(
             resolve_default_path_for_command(dir.path(), Some(OsStr::new("anarlog"))),
-            dir.path().join("anarlog/app.db")
+            dir.path().join("sessionecho/app.db")
+        );
+    }
+
+    #[test]
+    fn default_path_ignores_populated_anarlog_folder() {
+        let dir = tempfile::tempdir().unwrap();
+        let anarlog = dir.path().join("anarlog/app.db");
+        std::fs::create_dir_all(anarlog.parent().unwrap()).unwrap();
+        std::fs::write(&anarlog, "").unwrap();
+
+        assert_eq!(
+            resolve_default_path_for_command(dir.path(), Some(OsStr::new("anarlog"))),
+            dir.path().join("sessionecho/app.db")
         );
     }
 
     #[test]
     fn channel_commands_target_their_channel_database() {
         let dir = tempfile::tempdir().unwrap();
-        let stable = dir.path().join("anarlog/app.db");
-        std::fs::create_dir_all(stable.parent().unwrap()).unwrap();
-        std::fs::write(stable, "").unwrap();
 
         assert_eq!(
             resolve_default_path_for_command(dir.path(), Some(OsStr::new("anarlog-dev"))),
