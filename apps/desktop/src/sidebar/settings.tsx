@@ -1,7 +1,6 @@
 import { Trans, useLingui } from "@lingui/react/macro";
 import {
   ArrowUpRight,
-  ArrowsClockwise,
   Bell,
   BookOpen,
   CalendarDots,
@@ -119,10 +118,7 @@ export function SettingsNav() {
     },
     {
       label: t`Data`,
-      items: [
-        { id: "sync", label: t`Sync`, icon: ArrowsClockwise },
-        { id: "imports", label: t`Imports`, icon: DownloadSimple },
-      ],
+      items: [{ id: "imports", label: t`Imports`, icon: DownloadSimple }],
     },
     {
       label: t`Advanced`,

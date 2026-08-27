@@ -409,15 +409,6 @@ describe("Basic Tab Actions", () => {
     ]);
   });
 
-  test("openNew preserves sync settings tab requests", () => {
-    useTabs.getState().openNew({ type: "settings", state: { tab: "sync" } });
-
-    expect(useTabs.getState()).toHaveCurrentTab({
-      type: "settings",
-      state: { tab: "sync" },
-    });
-  });
-
   test("openNew preserves privacy settings tab requests", () => {
     useTabs.getState().openNew({
       type: "settings",

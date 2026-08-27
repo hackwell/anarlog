@@ -129,7 +129,6 @@ describe("SettingsNav", () => {
       "Intelligence",
       "Dictionary",
       "Data",
-      "Sync",
       "Imports",
       "Advanced",
       "Privacy",
@@ -233,17 +232,6 @@ describe("SettingsNav", () => {
     expect(mocks.updateSettingsTabState).toHaveBeenCalledWith(
       mocks.currentTab,
       { tab: "dictionary" },
-    );
-  });
-
-  it("opens Sync inside settings", () => {
-    render(<SettingsNav />);
-
-    fireEvent.click(screen.getByRole("button", { name: "Sync" }));
-
-    expect(mocks.updateSettingsTabState).toHaveBeenCalledWith(
-      mocks.currentTab,
-      { tab: "sync" },
     );
   });
 
