@@ -7,6 +7,55 @@ this inventory finds `logic-branch` + `crate-boundary` well over the 60-file
 threshold defined in the Task 4 brief, both under the brief's literal Step 1
 commands alone and more so once known gaps in those commands are accounted for.
 
+## CORRECTION, 2026-08-27 — `plugin-fs-sync` is not a cloud plugin
+
+A follow-up spike established that **`plugin-fs-sync` must be kept**, and that this
+inventory's treatment of it as a `crate-boundary` plugin to remove is wrong.
+
+Evidence:
+
+- Its 26 commands are all local filesystem operations — `audio_path`, `audio_import`,
+  `session_dir`, `delete_session_folder`, `attachment_save`, `read_document_batch`,
+  `create_folder`, and so on. None uploads, downloads or synchronises anything.
+- **It has no network dependency**, neither in `plugins/fs-sync/Cargo.toml` nor in
+  `crates/fs-sync-core`, where the implementation lives. It cannot reach a network.
+- The single occurrence of the string `upload` is a local temporary filename,
+  `audio-upload-{pid}-{nonce}.{ext}`, in the session directory.
+- `crates/fs-sync-core` is also a dependency of `plugins/db`, a core plugin.
+
+The `sync` in its name means filesystem synchronisation — persisting app state to disk
+as files — not cloud synchronisation. Removing it would break recording (`audio_path`),
+transcription (`useUploadFile`, `resume-listening`), attachments, session folders, and
+document reads and writes.
+
+### What this invalidates
+
+Line 104 of this document records that 28 files were classified `crate-boundary`
+**because of `plugin-fs-sync` alone**. Those classifications do not hold: importing
+`@anlg/plugin-fs-sync` is not evidence of cloud coupling. The `crate-boundary` count of
+58 is therefore overstated, by up to 28, and the `logic-branch` + `crate-boundary` total
+of 169 with it.
+
+**The tables below have not been recomputed.** Anyone planning from the `crate-boundary`
+table must first re-derive it, treating a bare `@anlg/plugin-fs-sync` import as neutral.
+Files with a dual concern — `audio-player/provider.tsx` pairs an fs-sync import with an
+`isPro` gate — still belong somewhere, just not here on fs-sync's account.
+
+### The same test applied to the other three plugins
+
+| Plugin                   | Network deps | Command semantics                                                                        | Verdict        |
+| ------------------------ | ------------ | ---------------------------------------------------------------------------------------- | -------------- |
+| `plugin-fs-sync`         | none         | local filesystem layout                                                                  | **keep**       |
+| `plugin-attachment-sync` | **none**     | `prepare_upload`, `download_and_restore`, `download_shared_attachment`, plus `anlg-e2ee` | remove — cloud |
+| `plugin-auth`            | supabase     | authentication                                                                           | remove — cloud |
+| `plugin-relay`           | reqwest      | relay                                                                                    | remove — cloud |
+
+Note `plugin-attachment-sync`: it has **no** network dependency either, so a
+dependency check alone would have cleared it. It is the local half of a cloud transfer —
+it encrypts, chunks and stages uploads, and something else performs the HTTP. **Absence
+of a network dependency does not prove a component is local.** In both cases the command
+names decided it.
+
 ## Step 1: raw hit counts (as run)
 
 ```
