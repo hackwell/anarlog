@@ -16,58 +16,62 @@ Read tools are idempotent. Proposal tools insert or decline staged edits; they n
 
 ## Tool parameters
 
-**`list_meetings`** accepts optional filters:
+Each list below is the complete input schema for that tool. A parameter that is not listed is not accepted.
 
-- `query`: Case-insensitive title or meeting ID substring
-- `series_id`: Exact recurring series ID
-- `limit`: Maximum results (1–200, defaults to 20)
-- `offset`: Number of results to skip (defaults to 0)
+**`list_meetings`**
 
-**`get_meeting`** requires:
+- `query` (optional): Case-insensitive substring matched against the meeting title or meeting ID
+- `series_id` (optional): Exact recurring series ID
+- `limit` (optional): Maximum results, 1–200; defaults to 20
+- `offset` (optional): Number of results to skip; defaults to 0
 
-- `meeting_id`: Anarlog meeting ID
+**`get_meeting`**
 
-**`get_meeting_transcript`** requires `meeting_id` and accepts:
+- `meeting_id` (required): Anarlog meeting ID
 
-- `offset`: Word offset (defaults to 0)
-- `limit`: Maximum words (1–500, defaults to 200)
+**`get_meeting_transcript`**
 
-**`get_recurring_meeting_history`** requires `meeting_id` and accepts:
+- `meeting_id` (required): Anarlog meeting ID
+- `offset` (optional): Word offset to start from; defaults to 0
+- `limit` (optional): Maximum transcript words, 1–500; defaults to 200
 
-- `limit`: Maximum results (1–200, defaults to 20)
-- `offset`: Number of results to skip (defaults to 0)
+**`get_recurring_meeting_history`**
 
-**`propose_summary_edit`** requires:
+- `meeting_id` (required): A meeting ID used to resolve its recurring series
+- `limit` (optional): Maximum results, 1–200; defaults to 20
+- `offset` (optional): Number of results to skip; defaults to 0
 
-- `meeting_id`: Anarlog meeting ID
-- `kind`: Document type — `summary` or `memo` (or `note` as alias for memo)
-- `content`: Complete replacement markdown; cannot be empty
+**`propose_summary_edit`**
 
-Accepts optional:
+- `meeting_id` (required): Anarlog meeting ID
+- `content` (required): Complete replacement markdown; cannot be empty
+- `target_id` (optional): ID of the existing summary to replace. Required when the meeting has more than one summary; may be omitted when it has exactly one. The call fails when the meeting has no summary at all.
 
-- `target_id`: For summaries, names which existing summary to replace; ignored for memos
-- `source`: Origin of the proposal — `cli`, `mcp`, or `chat`
+**`propose_memo_edit`**
 
-**`propose_memo_edit`** is identical to `propose_summary_edit` (same input schema).
+- `meeting_id` (required): Anarlog meeting ID
+- `content` (required): Complete replacement markdown; cannot be empty
 
-**`list_proposals`** accepts optional filters:
+`propose_memo_edit` has no `target_id`: it always replaces the meeting's canonical note, and fails when the meeting has none. That is the one difference between the two proposal input schemas.
 
-- `meeting_id`: Limit results to one meeting
-- `status`: Filter by state — `pending`, `applied`, or `declined` (defaults to `pending`)
-- `limit`: Maximum results (1–200, defaults to 20)
-- `offset`: Number of results to skip (defaults to 0)
+The `kind` and `source` fields you see on a returned proposal are not inputs and cannot be passed. The tool you call decides the kind — `propose_summary_edit` records `summary_replace`, `propose_memo_edit` records `memo_replace` — and the MCP server always records `source: mcp`.
 
-**`get_proposal`** requires:
+**`list_proposals`**
 
-- `proposal_id`: Proposal ID
+- `meeting_id` (optional): Limit results to one meeting
+- `status` (optional): `pending`, `applied`, `declined`, or `all` for every state; defaults to `pending`
+- `limit` (optional): Maximum results, 1–200; defaults to 20
+- `offset` (optional): Number of results to skip; defaults to 0
 
-**`decline_proposal`** requires:
+**`get_proposal`**
 
-- `proposal_id`: Proposal ID
+- `proposal_id` (required): Proposal ID
 
-Transcript limits are measured in words. The default is 200 and the maximum is 500.
+**`decline_proposal`**
 
-Available resources:
+- `proposal_id` (required): Proposal ID
+
+## Resources
 
 - `anarlog://meetings/{meeting_id}`
 - `anarlog://meetings/{meeting_id}/transcript{?offset,limit}`

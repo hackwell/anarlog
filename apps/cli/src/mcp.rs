@@ -622,18 +622,38 @@ mod tests {
                 "Anarlog skill is missing `{tool_name}`"
             );
         }
+        let documented = documented_tool_parameters(mcp_skill);
+        assert_eq!(
+            documented.keys().cloned().collect::<Vec<_>>(),
+            tool_names,
+            "the `## Tool parameters` section documents a different set of tools than the server exposes"
+        );
         for tool in tools {
-            let properties = tool
+            let mut schema_parameters = tool
                 .input_schema
                 .get("properties")
                 .and_then(Value::as_object)
-                .expect("tool input properties");
-            for parameter in properties.keys() {
-                assert!(
-                    mcp_skill.contains(&format!("`{parameter}`")),
-                    "Anarlog skill is missing `{parameter}`"
-                );
-            }
+                .expect("tool input properties")
+                .keys()
+                .cloned()
+                .collect::<Vec<_>>();
+            schema_parameters.sort();
+            let listed = &documented[tool.name.as_ref()];
+            let undocumented = schema_parameters
+                .iter()
+                .filter(|parameter| !listed.contains(parameter))
+                .cloned()
+                .collect::<Vec<_>>();
+            let invented = listed
+                .iter()
+                .filter(|parameter| !schema_parameters.contains(parameter))
+                .cloned()
+                .collect::<Vec<_>>();
+            assert!(
+                undocumented.is_empty() && invented.is_empty(),
+                "Anarlog skill parameters for `{}` disagree with its input schema: undocumented {undocumented:?}, documented but not in the schema {invented:?}",
+                tool.name
+            );
             let annotations = tool.annotations.expect("tool annotations");
             let write_tool = matches!(
                 tool.name.as_ref(),
@@ -687,6 +707,48 @@ mod tests {
         client.cancel().await.unwrap();
         let server = server_handle.await.unwrap().unwrap();
         server.cancel().await.unwrap();
+    }
+
+    /// Reads the per-tool parameter lists out of the `## Tool parameters` section of the skill
+    /// reference. A tool block starts at a ``**`tool_name`**`` line; every following ``- `name` ``
+    /// bullet documents one parameter of that tool.
+    fn documented_tool_parameters(skill: &str) -> std::collections::BTreeMap<String, Vec<String>> {
+        let section = skill
+            .split_once("\n## Tool parameters\n")
+            .expect("`## Tool parameters` section")
+            .1;
+        let section = section.split("\n## ").next().expect("section body");
+
+        let mut documented = std::collections::BTreeMap::<String, Vec<String>>::new();
+        let mut tool: Option<String> = None;
+        for line in section.lines() {
+            if let Some(rest) = line.strip_prefix("**`")
+                && let Some((name, "**")) = rest.split_once('`')
+            {
+                assert!(
+                    documented.insert(name.to_string(), Vec::new()).is_none(),
+                    "`{name}` is documented twice in the `## Tool parameters` section"
+                );
+                tool = Some(name.to_string());
+                continue;
+            }
+            if let Some(rest) = line.strip_prefix("- `") {
+                let (parameter, _) = rest
+                    .split_once('`')
+                    .unwrap_or_else(|| panic!("unterminated parameter name in {line:?}"));
+                let tool = tool
+                    .as_deref()
+                    .unwrap_or_else(|| panic!("parameter bullet before any tool header: {line:?}"));
+                documented
+                    .get_mut(tool)
+                    .expect("tool block")
+                    .push(parameter.to_string());
+            }
+        }
+        for parameters in documented.values_mut() {
+            parameters.sort();
+        }
+        documented
     }
 
     fn canonicalize_json(value: Value) -> Value {
