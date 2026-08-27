@@ -3696,7 +3696,6 @@ msgstr "Upgrade to Pro"
 msgid "Upgrade to Pro for {0}"
 msgstr "Upgrade to Pro for {0}"
 
-#: src/settings/ai/llm/select.tsx
 #: src/settings/ai/stt/select.tsx
 msgid "Upgrade to Pro to use this provider."
 msgstr "Upgrade to Pro to use this provider."
