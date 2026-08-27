@@ -7,13 +7,13 @@ import {
 
 describe("meeting import providers", () => {
   it("keeps every researched provider in the catalog", () => {
-    expect(MEETING_IMPORT_PROVIDERS).toHaveLength(31);
+    expect(MEETING_IMPORT_PROVIDERS).toHaveLength(25);
     expect(
       new Set(MEETING_IMPORT_PROVIDERS.map((provider) => provider.id)).size,
     ).toBe(MEETING_IMPORT_PROVIDERS.length);
   });
 
-  it("enables direct OAuth imports for MCP providers and Nango meeting sources", () => {
+  it("only offers local MCP and CLI providers a direct import", () => {
     expect(
       MEETING_IMPORT_PROVIDERS.filter((provider) => provider.directImport).map(
         (provider) => provider.id,
@@ -23,19 +23,18 @@ describe("meeting import providers", () => {
       "circleback",
       "fireflies",
       "krisp",
-      "fathom",
       "read-ai",
-      "notion",
       "fellow",
       "tactiq",
       "jiminny",
       "plaud",
       "pocket",
-      "zoom",
-      "microsoft-teams",
-      "google-meet",
-      "webex",
     ]);
+    expect(
+      new Set(
+        MEETING_IMPORT_PROVIDERS.map((provider) => provider.directImport),
+      ),
+    ).toEqual(new Set([undefined, "cli", "mcp-oauth"]));
     expect(
       MEETING_IMPORT_PROVIDERS.find((provider) => provider.id === "plaud"),
     ).toMatchObject({
@@ -47,31 +46,12 @@ describe("meeting import providers", () => {
       directImport: "mcp-oauth",
       helpUrl: "https://docs.heypocketai.com/docs",
     });
-    expect(
-      MEETING_IMPORT_PROVIDERS.find((provider) => provider.id === "zoom"),
-    ).toMatchObject({
-      directImport: "nango-oauth",
-      nangoIntegrationId: "zoom",
-    });
-    expect(
-      MEETING_IMPORT_PROVIDERS.filter(
-        (provider) => provider.directImport === "nango-oauth",
-      ).map((provider) => provider.nangoIntegrationId),
-    ).toEqual([
-      "fathom",
-      "notion",
-      "zoom",
-      "microsoft-teams",
-      "google-meet",
-      "webex",
-    ]);
   });
 
   it("detects exact native names and bundle identifiers", () => {
     const providers = detectMeetingImportProviders([
       { id: "com.granola.app", name: "Granola" },
       { id: "ai.plaud.desktop.plaud", name: "Plaud Desktop" },
-      { id: "com.microsoft.teams2", name: "Microsoft Teams" },
       { id: "com.openvisionengineering.pocket-desktop-app", name: "Pocket" },
     ]);
 
@@ -79,15 +59,11 @@ describe("meeting import providers", () => {
       "granola",
       "plaud",
       "pocket",
-      "microsoft-teams",
-      "google-meet",
     ]);
     expect(providers.map((provider) => provider.installedAppId)).toEqual([
       "com.granola.app",
       "ai.plaud.desktop.plaud",
       "com.openvisionengineering.pocket-desktop-app",
-      "com.microsoft.teams2",
-      "google-meet",
     ]);
   });
 
@@ -100,7 +76,6 @@ describe("meeting import providers", () => {
     expect(providers.map((provider) => provider.id)).toEqual([
       "plaud",
       "pocket",
-      "google-meet",
     ]);
   });
 
@@ -109,7 +84,7 @@ describe("meeting import providers", () => {
       detectMeetingImportProviders([
         { id: "com.electron.pocket-casts", name: "Pocket Casts" },
       ]).map((provider) => provider.id),
-    ).toEqual(["google-meet"]);
+    ).toEqual([]);
   });
 
   it("does not accept bundle identifier prefixes", () => {
@@ -117,7 +92,7 @@ describe("meeting import providers", () => {
       detectMeetingImportProviders([
         { id: "com.granola.app.helper", name: "Something Else" },
       ]).map((provider) => provider.id),
-    ).toEqual(["google-meet"]);
+    ).toEqual([]);
   });
 
   it("does not infer extension-only products from a browser", () => {
@@ -125,6 +100,6 @@ describe("meeting import providers", () => {
       detectMeetingImportProviders([
         { id: "com.google.Chrome", name: "Google Chrome" },
       ]).map((provider) => provider.id),
-    ).toEqual(["google-meet"]);
+    ).toEqual([]);
   });
 });

@@ -2192,7 +2192,6 @@ msgstr "Meeting-Link öffnen, wenn das Zuhören beginnt."
 msgid "Opening sign-in…"
 msgstr "Anmeldung wird geöffnet …"
 
-#: src/imports/screen.tsx
 #: src/session/components/note-input/enhanced/enhance-error.tsx
 msgid "Opening…"
 msgstr "Wird geöffnet …"
@@ -2933,10 +2932,6 @@ msgstr "Anmelden"
 #: src/main/sync-status.tsx
 msgid "Sign in again"
 msgstr "Erneut anmelden"
-
-#: src/imports/screen.tsx
-msgid "Sign in to connect"
-msgstr "Zum Verbinden anmelden"
 
 #: src/session/components/note-input/enhanced/enhance-error.tsx
 msgid "Sign in to generate this summary"

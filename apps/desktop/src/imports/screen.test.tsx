@@ -13,33 +13,7 @@ const mocks = vi.hoisted(() => ({
   detectImportSources: vi.fn(),
   cancelConnectedImport: vi.fn(),
   connectConnectedImport: vi.fn(),
-  connectNangoImport: vi.fn(),
   disconnectConnectedImport: vi.fn(),
-  disconnectNangoImport: vi.fn(),
-  signIn: vi.fn(),
-  signedIn: true,
-  connections: [] as Array<{
-    connection_id: string;
-    integration_id: string;
-    status?: string | null;
-  }>,
-}));
-
-vi.mock("~/auth", () => ({
-  useAuth: () => ({
-    session: mocks.signedIn ? { user: { id: "user-1" } } : null,
-    signIn: mocks.signIn,
-    getHeaders: () =>
-      mocks.signedIn ? { Authorization: "Bearer test" } : null,
-  }),
-}));
-
-vi.mock("~/auth/useConnections", () => ({
-  useConnections: () => ({
-    data: mocks.connections,
-    error: null,
-    isPending: false,
-  }),
 }));
 
 vi.mock("./detection", () => ({
@@ -56,18 +30,11 @@ vi.mock("./queries", () => ({
 vi.mock("./connected-import", () => ({
   cancelConnectedImport: mocks.cancelConnectedImport,
   connectConnectedImport: mocks.connectConnectedImport,
-  connectNangoImport: mocks.connectNangoImport,
   disconnectConnectedImport: mocks.disconnectConnectedImport,
-  disconnectNangoImport: mocks.disconnectNangoImport,
   isDirectMeetingImport: (provider: { directImport?: string }) =>
     Boolean(provider.directImport),
-  isNangoMeetingImport: (provider: { directImport?: string }) =>
-    provider.directImport === "nango-oauth",
   isLocalConnectedImport: (provider: { directImport?: string }) =>
     provider.directImport === "mcp-oauth" || provider.directImport === "cli",
-  nangoConnectionIsReady: (
-    connection: { status?: string | null } | undefined,
-  ) => Boolean(connection) && connection?.status !== "reconnect_required",
   connectedImportCredentialsQueryKey: (providerId: string) => [
     "meeting-import",
     providerId,
@@ -88,26 +55,6 @@ vi.mock("./connected-import", () => ({
     enabled: boolean,
   ) => ({
     queryKey: ["meeting-import", provider.id, "sync"],
-    queryFn: async () => ({
-      result: {
-        discovered: 0,
-        imported: 0,
-        matched: 0,
-        conflicts: 0,
-        errors: 0,
-      },
-      warnings: [],
-    }),
-    enabled,
-    retry: false,
-  }),
-  nangoImportSyncQueryOptions: (
-    provider: { id: string },
-    connectionId: string | undefined,
-    _headers: Record<string, string> | null,
-    enabled: boolean,
-  ) => ({
-    queryKey: ["meeting-import", provider.id, "sync", connectionId],
     queryFn: async () => ({
       result: {
         discovered: 0,
@@ -163,26 +110,13 @@ function mockDetected(ids: string[]) {
 describe("MeetingImportScreen", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mocks.signedIn = true;
-    mocks.connections = [];
     mocks.cancelConnectedImport.mockResolvedValue(true);
-    mocks.connectNangoImport.mockResolvedValue({
-      connection_id: "zoom-1",
-      integration_id: "zoom",
-    });
-    mocks.signIn.mockResolvedValue(undefined);
   });
 
   afterEach(cleanup);
 
   it("lists only detected apps with native icons", async () => {
-    mockDetected([
-      "chatgpt-record",
-      "circleback",
-      "granola",
-      "slack-huddles",
-      "zoom",
-    ]);
+    mockDetected(["chatgpt-record", "circleback", "granola", "slack-huddles"]);
 
     const { container } = renderImports();
 
@@ -190,7 +124,6 @@ describe("MeetingImportScreen", () => {
     expect(screen.getByText("Circleback")).toBeTruthy();
     expect(screen.getByText("Granola")).toBeTruthy();
     expect(screen.getByText("Slack Huddles")).toBeTruthy();
-    expect(screen.getByText("Zoom")).toBeTruthy();
     expect(screen.queryByText("Avoma")).toBeNull();
     expect(screen.queryByText("Fireflies.ai")).toBeNull();
     expect(screen.queryByText("Krisp")).toBeNull();
@@ -201,9 +134,9 @@ describe("MeetingImportScreen", () => {
     expect(screen.queryByText("Export help")).toBeNull();
     expect(
       screen.getAllByRole("button", { name: "Connect & import" }),
-    ).toHaveLength(3);
+    ).toHaveLength(2);
     expect(screen.getAllByRole("button", { name: "Use files" })).toHaveLength(
-      3,
+      2,
     );
     expect(screen.queryByRole("menuitem", { name: "Use files" })).toBeNull();
     expect(
@@ -211,29 +144,15 @@ describe("MeetingImportScreen", () => {
     ).toHaveLength(2);
     expect(
       screen.getAllByText(/keep new meetings coming in while you switch/i),
-    ).toHaveLength(3);
+    ).toHaveLength(2);
     expect(
       container.querySelectorAll('img[src^="data:image/png;base64,"]'),
     ).toHaveLength(4);
-    expect(
-      container.querySelector('img[src="/assets/zoom-icon.svg"]'),
-    ).toBeTruthy();
     expect(container.querySelector("iconify-icon")).toBeNull();
   });
 
-  it("uses official Meet and Zoom marks instead of a letter or wordmark", async () => {
+  it("falls back to brand marks with optical sizing when an app has no icon", async () => {
     mocks.detectImportSources.mockResolvedValue([
-      {
-        ...MEETING_IMPORT_PROVIDERS.find(
-          (provider) => provider.id === "google-meet",
-        )!,
-        installedAppId: "google-meet",
-      },
-      {
-        ...MEETING_IMPORT_PROVIDERS.find((provider) => provider.id === "zoom")!,
-        installedAppId: "us.zoom.xos",
-        iconUrl: "data:image/png;base64,zoom-wordmark",
-      },
       {
         ...MEETING_IMPORT_PROVIDERS.find(
           (provider) => provider.id === "granola",
@@ -257,13 +176,7 @@ describe("MeetingImportScreen", () => {
 
     const { container } = renderImports();
 
-    expect(await screen.findByText("Google Meet")).toBeTruthy();
-    expect(
-      container.querySelector('img[src="/assets/google-meet.svg"]'),
-    ).toBeTruthy();
-    expect(
-      container.querySelector('img[src="/assets/zoom-icon.svg"]'),
-    ).toBeTruthy();
+    expect(await screen.findByText("ChatGPT Record")).toBeTruthy();
     expect(
       container.querySelector('img[src="data:image/png;base64,granola"]')
         ?.className,
@@ -291,27 +204,6 @@ describe("MeetingImportScreen", () => {
     expect(
       await screen.findByRole("menuitem", { name: "Use files" }),
     ).toBeTruthy();
-  });
-
-  it("prompts signed-out users to sign in before connecting", async () => {
-    mocks.signedIn = false;
-    mockDetected(["granola"]);
-
-    renderImports();
-
-    const signInButton = await screen.findByRole("button", {
-      name: "Sign in to connect",
-    });
-    expect(screen.getByText("Connect & import")).toBeTruthy();
-    expect(screen.getAllByText("Sign in to connect")).toHaveLength(2);
-    expect(screen.getByRole("button", { name: "Use files" })).toBeTruthy();
-
-    fireEvent.click(signInButton);
-
-    await waitFor(() => {
-      expect(mocks.signIn).toHaveBeenCalledOnce();
-    });
-    expect(mocks.connectConnectedImport).not.toHaveBeenCalled();
   });
 
   it("renders the same detected list in the compact onboarding layout", async () => {
@@ -384,27 +276,6 @@ describe("MeetingImportScreen", () => {
     });
   });
 
-  it("connects Zoom through Nango OAuth instead of file-only import", async () => {
-    mockDetected(["zoom"]);
-
-    renderImports();
-
-    fireEvent.click(
-      await screen.findByRole("button", { name: "Connect & import" }),
-    );
-
-    await waitFor(() => {
-      expect(mocks.connectNangoImport).toHaveBeenCalledOnce();
-    });
-    expect(mocks.connectConnectedImport).not.toHaveBeenCalled();
-    expect(
-      screen.getByText(/keep new meetings coming in while you switch/i),
-    ).toBeTruthy();
-    expect(
-      screen.queryByText(/Direct connection is not available yet/i),
-    ).toBeNull();
-  });
-
   it("connects Plaud by running the local CLI instead of file-only import", async () => {
     mockDetected(["plaud"]);
     mocks.connectConnectedImport.mockResolvedValue({
@@ -422,7 +293,6 @@ describe("MeetingImportScreen", () => {
     await waitFor(() => {
       expect(mocks.connectConnectedImport).toHaveBeenCalledOnce();
     });
-    expect(mocks.connectNangoImport).not.toHaveBeenCalled();
     expect(
       screen.getByText(
         /Connected · New meetings are imported automatically while Session Echo is running/i,
@@ -450,7 +320,6 @@ describe("MeetingImportScreen", () => {
     await waitFor(() => {
       expect(mocks.connectConnectedImport).toHaveBeenCalledOnce();
     });
-    expect(mocks.connectNangoImport).not.toHaveBeenCalled();
     expect(
       screen.getByText(
         /Connected · New meetings are imported automatically while Session Echo is running/i,

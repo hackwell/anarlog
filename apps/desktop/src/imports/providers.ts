@@ -5,8 +5,7 @@ export type MeetingImportProvider = {
   name: string;
   access: "API" | "CLI" | "Export" | "MCP" | "OAuth" | "Webhook";
   helpUrl: string;
-  directImport?: "cli" | "mcp-oauth" | "nango-oauth";
-  nangoIntegrationId?: string;
+  directImport?: "cli" | "mcp-oauth";
   nativeNames?: string[];
   bundleIds?: string[];
   alwaysAvailable?: boolean;
@@ -54,16 +53,6 @@ export const MEETING_IMPORT_PROVIDERS: MeetingImportProvider[] = [
     bundleIds: ["ai.krisp.krispMac"],
   },
   {
-    id: "fathom",
-    name: "Fathom",
-    access: "OAuth",
-    helpUrl: "https://developers.fathom.ai/sdks/oauth",
-    directImport: "nango-oauth",
-    nangoIntegrationId: "fathom",
-    nativeNames: ["Fathom"],
-    bundleIds: ["Fathom"],
-  },
-  {
     id: "read-ai",
     name: "Read AI",
     access: "MCP",
@@ -71,16 +60,6 @@ export const MEETING_IMPORT_PROVIDERS: MeetingImportProvider[] = [
       "https://support.read.ai/hc/en-us/articles/49379985941523-Read-AI-API-and-MCP-Overview",
     directImport: "mcp-oauth",
     nativeNames: ["Read AI"],
-  },
-  {
-    id: "notion",
-    name: "Notion AI Meeting Notes",
-    access: "OAuth",
-    helpUrl: "https://developers.notion.com/reference/query-meeting-notes",
-    directImport: "nango-oauth",
-    nangoIntegrationId: "notion",
-    nativeNames: ["Notion"],
-    bundleIds: ["notion.id", "notion"],
   },
   {
     id: "fellow",
@@ -179,49 +158,6 @@ export const MEETING_IMPORT_PROVIDERS: MeetingImportProvider[] = [
     directImport: "mcp-oauth",
     nativeNames: ["Pocket", "Pocket Desktop", "Pocket AI"],
     bundleIds: ["com.openvisionengineering.pocket-desktop-app"],
-  },
-  {
-    id: "zoom",
-    name: "Zoom",
-    access: "OAuth",
-    helpUrl: "https://developers.zoom.us/docs/api/meetings/",
-    directImport: "nango-oauth",
-    nangoIntegrationId: "zoom",
-    nativeNames: ["zoom.us", "Zoom", "Zoom Workplace"],
-    bundleIds: ["us.zoom.xos"],
-  },
-  {
-    id: "microsoft-teams",
-    name: "Microsoft Teams",
-    access: "OAuth",
-    helpUrl:
-      "https://learn.microsoft.com/en-us/graph/api/onlinemeeting-list-transcripts?view=graph-rest-1.0",
-    directImport: "nango-oauth",
-    nangoIntegrationId: "microsoft-teams",
-    nativeNames: ["Microsoft Teams", "Microsoft Teams (work or school)"],
-    bundleIds: ["com.microsoft.teams", "com.microsoft.teams2"],
-  },
-  {
-    id: "google-meet",
-    name: "Google Meet",
-    access: "OAuth",
-    helpUrl:
-      "https://developers.google.com/workspace/meet/api/guides/artifacts",
-    directImport: "nango-oauth",
-    nangoIntegrationId: "google-meet",
-    nativeNames: ["Google Meet"],
-    alwaysAvailable: true,
-  },
-  {
-    id: "webex",
-    name: "Webex",
-    access: "OAuth",
-    helpUrl:
-      "https://developer.webex.com/meeting/docs/api/v1/meeting-transcripts",
-    directImport: "nango-oauth",
-    nangoIntegrationId: "webex",
-    nativeNames: ["Webex", "Cisco Webex Meetings"],
-    bundleIds: ["com.cisco.webex", "com.webex"],
   },
   {
     id: "sembly",

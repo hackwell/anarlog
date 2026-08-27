@@ -30,18 +30,13 @@ import { cn } from "@anlg/utils";
 import {
   cancelConnectedImport,
   connectConnectedImport,
-  connectNangoImport,
   connectedImportCredentialsQueryKey,
   connectedImportCredentialsQueryOptions,
   connectedImportSyncQueryKey,
   connectedImportSyncQueryOptions,
   disconnectConnectedImport,
-  disconnectNangoImport,
   isDirectMeetingImport,
   isLocalConnectedImport,
-  isNangoMeetingImport,
-  nangoConnectionIsReady,
-  nangoImportSyncQueryOptions,
 } from "./connected-import";
 import { detectImportSources } from "./detection";
 import { providerIconOpticalClass, providerIconSrc } from "./icons";
@@ -56,8 +51,6 @@ import {
 } from "./queries";
 import { pauseCompetingApplicationTermination } from "./termination-pause";
 
-import { useAuth } from "~/auth";
-import { useConnections } from "~/auth/useConnections";
 import { useMountEffect } from "~/shared/hooks/useMountEffect";
 
 const IMPORT_EXTENSIONS = [
@@ -111,12 +104,8 @@ export function MeetingImportScreen({
   secondaryAction?: ReactNode;
 }) {
   const { t } = useLingui();
-  const auth = useAuth();
   const queryClient = useQueryClient();
   const connectAbortController = useRef<AbortController | null>(null);
-  const signedIn = Boolean(auth.session);
-  const headers = auth.getHeaders();
-  const connectionsQuery = useConnections(signedIn);
   const detectionQuery = useQuery({
     queryKey: ["meeting-import-sources"],
     queryFn: detectImportSources,
@@ -130,7 +119,6 @@ export function MeetingImportScreen({
     .filter((provider) => isDirectMeetingImport(provider))
     .sort((left, right) => left.name.localeCompare(right.name));
   const mcpProviders = connectedProviders.filter(isLocalConnectedImport);
-  const nangoProviders = connectedProviders.filter(isNangoMeetingImport);
   const fileProviders = detectedProviders
     .filter((provider) => !provider.directImport)
     .sort((left, right) => left.name.localeCompare(right.name));
@@ -164,28 +152,12 @@ export function MeetingImportScreen({
     queries: connectedProvidersForQueries.map((provider, index) =>
       connectedImportSyncQueryOptions(
         provider,
-        signedIn && Boolean(credentialQueries[index]?.data),
+        Boolean(credentialQueries[index]?.data),
       ),
     ),
   });
-  const nangoSyncQueries = useQueries({
-    queries: nangoProviders.map((provider) => {
-      const connection = connectionsQuery.data?.find(
-        (item) => item.integration_id === provider.nangoIntegrationId,
-      );
-      return nangoImportSyncQueryOptions(
-        provider,
-        connection?.connection_id,
-        headers,
-        signedIn && nangoConnectionIsReady(connection),
-      );
-    }),
-  });
   const connectedProviderIndexes = new Map(
     connectedProvidersForQueries.map((provider, index) => [provider.id, index]),
-  );
-  const nangoProviderIndexes = new Map(
-    nangoProviders.map((provider, index) => [provider.id, index]),
   );
 
   const fileImportMutation = useMutation({
@@ -219,17 +191,6 @@ export function MeetingImportScreen({
       const controller = new AbortController();
       connectAbortController.current = controller;
       try {
-        if (isNangoMeetingImport(provider)) {
-          const sessionHeaders = auth.getHeaders();
-          if (!sessionHeaders) {
-            throw new Error("No authentication session is available");
-          }
-          return await connectNangoImport(
-            provider,
-            sessionHeaders,
-            controller.signal,
-          );
-        }
         return await connectConnectedImport(provider, controller.signal);
       } catch (error) {
         if (controller.signal.aborted) return null;
@@ -240,14 +201,8 @@ export function MeetingImportScreen({
         }
       }
     },
-    onSuccess: async (result) => {
+    onSuccess: (result) => {
       if (!result) return;
-      if ("connection_id" in result) {
-        await queryClient.invalidateQueries({
-          queryKey: ["integration-status"],
-        });
-        return;
-      }
       queryClient.setQueryData(
         connectedImportCredentialsQueryKey(result.providerId),
         result,
@@ -255,42 +210,14 @@ export function MeetingImportScreen({
     },
   });
 
-  const signInMutation = useMutation({
-    mutationFn: () => auth.signIn(),
-  });
-
   const cancelConnectMutation = useMutation({
     mutationFn: cancelConnectedImport,
   });
 
   const disconnectMutation = useMutation({
-    mutationFn: async (input: {
-      providerId: string;
-      nangoIntegrationId?: string;
-      connectionId?: string;
-    }) => {
-      if (input.nangoIntegrationId && input.connectionId) {
-        await disconnectNangoImport(
-          input.nangoIntegrationId,
-          input.connectionId,
-        );
-        return;
-      }
-      await disconnectConnectedImport(input.providerId);
-    },
+    mutationFn: (input: { providerId: string }) =>
+      disconnectConnectedImport(input.providerId),
     onSuccess: async (_, input) => {
-      if (input.nangoIntegrationId) {
-        await queryClient.invalidateQueries({
-          queryKey: ["integration-status"],
-        });
-        await queryClient.cancelQueries({
-          queryKey: connectedImportSyncQueryKey(input.providerId),
-        });
-        queryClient.removeQueries({
-          queryKey: connectedImportSyncQueryKey(input.providerId),
-        });
-        return;
-      }
       queryClient.setQueryData(
         connectedImportCredentialsQueryKey(input.providerId),
         null,
@@ -306,17 +233,13 @@ export function MeetingImportScreen({
 
   const connectedError =
     credentialQueries.find((query) => query.error)?.error ??
-    connectionsQuery.error ??
-    signInMutation.error ??
     connectMutation.error ??
     cancelConnectMutation.error ??
     disconnectMutation.error ??
-    syncQueries.find((query) => query.error)?.error ??
-    nangoSyncQueries.find((query) => query.error)?.error;
+    syncQueries.find((query) => query.error)?.error;
   const latestResult =
     fileImportMutation.data ??
     syncQueries.find((query) => query.data)?.data?.result ??
-    nangoSyncQueries.find((query) => query.data)?.data?.result ??
     null;
 
   return (
@@ -359,7 +282,6 @@ export function MeetingImportScreen({
       ) : null}
       {syncQueries
         .flatMap((query) => query.data?.warnings ?? [])
-        .concat(nangoSyncQueries.flatMap((query) => query.data?.warnings ?? []))
         .map((warning) => (
           <p key={warning} className="text-muted-foreground text-xs">
             {warning}
@@ -384,34 +306,19 @@ export function MeetingImportScreen({
                   fileImportMutation.isPending &&
                   fileImportMutation.variables.id === provider.id;
                 const connectedProvider = isDirectMeetingImport(provider);
-                const nangoProvider = isNangoMeetingImport(provider);
                 const connectedIndex = connectedProviderIndexes.get(
                   provider.id,
                 );
-                const nangoIndex = nangoProviderIndexes.get(provider.id);
                 const credentialsQuery =
                   connectedIndex === undefined
                     ? undefined
                     : credentialQueries[connectedIndex];
-                const nangoConnection = nangoProvider
-                  ? connectionsQuery.data?.find(
-                      (item) =>
-                        item.integration_id === provider.nangoIntegrationId,
-                    )
-                  : undefined;
-                const syncQuery = nangoProvider
-                  ? nangoIndex === undefined
-                    ? undefined
-                    : nangoSyncQueries[nangoIndex]
-                  : connectedIndex === undefined
+                const syncQuery =
+                  connectedIndex === undefined
                     ? undefined
                     : syncQueries[connectedIndex];
-                const connected = nangoProvider
-                  ? signedIn && nangoConnectionIsReady(nangoConnection)
-                  : signedIn && Boolean(credentialsQuery?.data);
-                const checkingConnection = nangoProvider
-                  ? signedIn && connectionsQuery.isPending
-                  : Boolean(credentialsQuery?.isPending);
+                const connected = Boolean(credentialsQuery?.data);
+                const checkingConnection = Boolean(credentialsQuery?.isPending);
                 const connecting =
                   connectMutation.isPending &&
                   connectMutation.variables.id === provider.id;
@@ -501,10 +408,6 @@ export function MeetingImportScreen({
                               onClick={() =>
                                 disconnectMutation.mutate({
                                   providerId: provider.id,
-                                  nangoIntegrationId: nangoProvider
-                                    ? provider.nangoIntegrationId
-                                    : undefined,
-                                  connectionId: nangoConnection?.connection_id,
                                 })
                               }
                             >
@@ -516,66 +419,29 @@ export function MeetingImportScreen({
                             <Button
                               type="button"
                               size="sm"
-                              variant={signedIn ? "default" : "outline"}
-                              aria-label={
-                                signedIn ? undefined : t`Sign in to connect`
-                              }
                               disabled={
-                                signedIn
-                                  ? checkingConnection ||
-                                    cancelConnectMutation.isPending ||
-                                    connectionCancellationRequested ||
-                                    (connectMutation.isPending && !connecting)
-                                  : signInMutation.isPending
+                                checkingConnection ||
+                                cancelConnectMutation.isPending ||
+                                connectionCancellationRequested ||
+                                (connectMutation.isPending && !connecting)
                               }
-                              className={cn([
-                                !signedIn &&
-                                  "group/sign-in bg-muted hover:border-primary hover:bg-primary hover:text-primary-foreground focus-visible:border-primary focus-visible:bg-primary focus-visible:text-primary-foreground",
-                              ])}
                               onClick={() => {
-                                if (!signedIn) {
-                                  signInMutation.mutate();
-                                  return;
-                                }
                                 if (connecting) {
                                   connectAbortController.current?.abort();
-                                  if (!nangoProvider) {
-                                    cancelConnectMutation.mutate(provider.id);
-                                  }
+                                  cancelConnectMutation.mutate(provider.id);
                                   return;
                                 }
                                 connectMutation.mutate(provider);
                               }}
                             >
-                              {!signedIn ? (
-                                signInMutation.isPending ? (
-                                  <>
-                                    <CircleNotch className="size-3.5 animate-spin" />
-                                    <Trans>Opening…</Trans>
-                                  </>
-                                ) : (
-                                  <span className="grid items-center overflow-hidden">
-                                    <span className="invisible col-start-1 row-start-1">
-                                      <Trans>Sign in to connect</Trans>
-                                    </span>
-                                    <span className="col-start-1 row-start-1 flex items-center justify-center gap-2 transition-transform duration-200 group-hover/sign-in:translate-y-full group-focus-visible/sign-in:translate-y-full">
-                                      <PlugsConnected className="size-3.5" />
-                                      <Trans>Connect & import</Trans>
-                                    </span>
-                                    <span className="col-start-1 row-start-1 flex -translate-y-full items-center justify-center transition-transform duration-200 group-hover/sign-in:translate-y-0 group-focus-visible/sign-in:translate-y-0">
-                                      <Trans>Sign in to connect</Trans>
-                                    </span>
-                                  </span>
-                                )
-                              ) : checkingConnection ||
-                                connecting ||
-                                cancellingConnection ? (
+                              {checkingConnection ||
+                              connecting ||
+                              cancellingConnection ? (
                                 <CircleNotch className="size-3.5 animate-spin" />
                               ) : (
                                 <PlugsConnected className="size-3.5" />
                               )}
-                              {!signedIn ? null : connecting ||
-                                cancellingConnection ? (
+                              {connecting || cancellingConnection ? (
                                 <Trans>Cancel</Trans>
                               ) : checkingConnection ? (
                                 <Trans>Checking connection</Trans>
@@ -588,15 +454,9 @@ export function MeetingImportScreen({
                                 <Button
                                   type="button"
                                   size="sm"
-                                  variant={signedIn ? "default" : "outline"}
                                   aria-label={t`Use files`}
                                   disabled={fileImportMutation.isPending}
-                                  className={cn([
-                                    "relative w-6 px-0 before:absolute before:inset-y-1.5 before:left-0 before:w-px",
-                                    signedIn
-                                      ? "before:bg-primary-foreground/20"
-                                      : "before:bg-border",
-                                  ])}
+                                  className="before:bg-primary-foreground/20 relative w-6 px-0 before:absolute before:inset-y-1.5 before:left-0 before:w-px"
                                 >
                                   <CaretDown className="size-3.5" />
                                 </Button>
