@@ -35,8 +35,6 @@
     <a href="https://deepwiki.com/fastrepl/anarlog"><img src="https://deepwiki.com/badge.svg" alt="Ask DeepWiki" /></a>
   </p>
 
-  <img width="100%" src="apps/web/public/og.jpg" alt="anarlog" />
-
 </div>
 
 <br />
@@ -89,12 +87,7 @@ Product docs live at [docs.anarlog.so](https://docs.anarlog.so). To build the de
 | Path | What lives there |
 | --- | --- |
 | `apps/desktop` | Tauri v2 desktop app: React and TypeScript UI, Rust backend |
-| `apps/web` | anarlog.so website, account portal, and shared-note pages; not the desktop notepad |
-| `apps/api` | Optional hosted services for AI, sync, sharing, and integrations |
 | `apps/cli` | Local CLI and MCP server |
-| `apps/mobile` | Mobile client source; no mobile app is currently distributed |
-| `apps/stripe` | Billing integration |
-| `apps/watch/apple` | watchOS companion source built with the mobile app |
 | `plugins/*` | Tauri capabilities such as local STT, database access, calendar, export, and notifications |
 | `crates/*` | Rust libraries for audio capture, transcription, diarization, storage, and services |
 | `packages/*` | Shared TypeScript packages for the editor, database, UI, and plugin SDK |

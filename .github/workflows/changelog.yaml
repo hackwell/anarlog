@@ -60,8 +60,6 @@ jobs:
         with:
           model: zai-coding-plan/glm-4.7
           prompt: |
-            Read and follow positioning guidelines in `apps/web/content/AGENTS.md`.
-
             1.
             Create packages/changelog/content/${{ steps.version.outputs.version }}.md.
             Changelog should be generated from commits between ${{ steps.version.outputs.prev }} ~ ${{ steps.version.outputs.current }}.
