@@ -33,9 +33,9 @@ anarlog --json proposals show PROPOSAL_ID
 anarlog --json proposals decline PROPOSAL_ID
 ```
 
-`proposals create` stages a pending edit. Do not claim the meeting changed. A human applies or declines it in the Anarlog desktop app. Provide either `--content` for inline markdown or `--content-file` to read it from a file; exactly one is required. The `--target` option is optional and specifies a target ID within the document to edit.
+`proposals create` stages a pending edit. Do not claim the meeting changed. A human applies or declines it in the Anarlog desktop app. Provide either `--content` for inline markdown or `--content-file` to read it from a file; exactly one is required. For summaries, the `--target` option names which existing summary to replace (ignored for memos); it is required when a meeting has multiple summaries, and optional when exactly one exists.
 
-`proposals list` accepts an optional `--status` filter (e.g. "pending", "accepted", "declined") to narrow the results by proposal state.
+`proposals list` accepts an optional `--status` filter to narrow the results by proposal state. Valid values are: `pending`, `applied`, `declined` (defaults to `pending`).
 
 `meetings list` accepts an optional `--series-id` filter to show only meetings from a recurring series.
 
