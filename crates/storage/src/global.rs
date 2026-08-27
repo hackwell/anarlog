@@ -33,7 +33,7 @@ mod tests {
 
         assert_eq!(
             resolve_app_folder(temp.path(), "de.flagbit.sessionecho", false),
-            RELEASE_APP_FOLDER
+            "sessionecho"
         );
     }
 
@@ -46,7 +46,7 @@ mod tests {
 
         assert_eq!(
             resolve_app_folder(temp.path(), "de.flagbit.sessionecho", false),
-            RELEASE_APP_FOLDER
+            "sessionecho"
         );
     }
 
@@ -55,8 +55,8 @@ mod tests {
         let temp = tempdir().unwrap();
 
         assert_eq!(
-            resolve_app_folder(temp.path(), STAGING_BUNDLE_ID, false),
-            STAGING_BUNDLE_ID
+            resolve_app_folder(temp.path(), "de.flagbit.sessionecho.staging", false),
+            "de.flagbit.sessionecho.staging"
         );
     }
 
