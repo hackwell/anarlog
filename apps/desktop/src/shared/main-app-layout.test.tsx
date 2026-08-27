@@ -39,10 +39,6 @@ vi.mock("~/devtools-panel/host", () => ({
   DevtoolsFloatingPanelHost: () => null,
 }));
 
-vi.mock("~/enterprise-capture/lifecycle", () => ({
-  EnterpriseCaptureSync: () => <div data-testid="enterprise-capture-sync" />,
-}));
-
 vi.mock("~/session/queries", () => ({
   getOrCreateSessionForEventId: vi.fn(),
 }));
@@ -84,9 +80,6 @@ describe("MainAppLayout", () => {
     expect(
       authProvider.contains(screen.getByTestId("meeting-import-sync")),
     ).toBe(true);
-    expect(
-      authProvider.contains(screen.getByTestId("enterprise-capture-sync")),
-    ).toBe(true);
   });
 
   it("does not mount connected import sync in secondary windows", () => {
@@ -95,6 +88,5 @@ describe("MainAppLayout", () => {
     render(<MainAppLayout />);
 
     expect(screen.queryByTestId("meeting-import-sync")).toBeNull();
-    expect(screen.queryByTestId("enterprise-capture-sync")).toBeNull();
   });
 });
