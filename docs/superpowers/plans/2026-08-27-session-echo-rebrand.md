@@ -837,7 +837,8 @@ git add -A && git commit -m "feat(i18n): reduce catalogs to de and en"
 **Files:**
 
 - Modify: every file reported by Step 1
-- Modify: `apps/desktop/src-tauri/icons/` — replace with the Session Echo icon set
+- Rename: `agent-plugins/anarlog/` → `agent-plugins/session-echo/`
+- Modify: `apps/desktop/src-tauri/icons/{dev,staging,stable,src}/` — regenerate from the `brand/` master
 
 **Interfaces:**
 
@@ -850,24 +851,68 @@ git add -A && git commit -m "feat(i18n): reduce catalogs to de and en"
 cd /Users/weller/Development/anarlog
 grep -riIln -E "anarlog|hyprnote|fastrepl" . \
   --exclude-dir=node_modules --exclude-dir=target --exclude-dir=.git \
-  --exclude-dir=locales --exclude="pnpm-lock.yaml" --exclude="Cargo.lock"
+  --exclude="pnpm-lock.yaml" --exclude="Cargo.lock"
 ```
+
+The locale catalogs are deliberately NOT excluded. `locales/en/messages.po` carries
+172 `Anarlog` occurrences after Task 11 regenerates, and Step 5 verifies without an
+exclusion, so skipping them here would guarantee a failure there.
 
 - [ ] **Step 2: Replace user-visible strings**
 
 Apply: `Anarlog` → `Session Echo`, `anarlog` → `sessionecho` in identifiers and paths, `anarlog.so` → `sessionecho.flagbit.de`. Skip `LICENSE`, `NOTICE`, `README.md` and `competitors.rs`.
 
-- [ ] **Step 3: Copy the icon set from the existing project**
+Do not hand-edit `apps/desktop/src/i18n/locales/*/messages.po`. Those msgids are
+generated from the source strings — fix the components, then regenerate in Step 3b.
+A hand-edited catalog is overwritten on the next extraction, silently restoring the
+old brand name.
+
+Rename the published agent skill directory too:
 
 ```bash
-cp /Users/weller/Development/sessionecho/desktop/src-tauri/icons/icon.png \
-   /Users/weller/Development/sessionecho/desktop/src-tauri/icons/icon.icns \
-   /Users/weller/Development/sessionecho/desktop/src-tauri/icons/icon.ico \
-   /Users/weller/Development/anarlog/apps/desktop/src-tauri/icons/
+git mv agent-plugins/anarlog agent-plugins/session-echo
 ```
 
-If the target directory expects additional sizes, regenerate them with
-`pnpm -F desktop exec tauri icon apps/desktop/src-tauri/icons/icon.png`.
+Then sweep its contents for the old name.
+
+- [ ] **Step 3: Regenerate the per-channel icon sets from the brand master**
+
+`apps/desktop/src-tauri/icons/` is NOT a flat icon set. It holds one subdirectory
+per release channel — `dev/` and `staging/` (5 files each), `stable/` (19 files,
+including `android/`, `ios/` and the Windows `Square*Logo.png` store assets) — plus
+`src/` holding the per-channel source PNGs. `tauri.conf.json` points at `icons/dev/*`.
+
+The brand master is already committed at `brand/app-icon-1024.png` (1024×1024 RGBA
+with alpha). Regenerate each channel from it:
+
+```bash
+cd /Users/weller/Development/anarlog
+for ch in dev staging stable; do
+  pnpm -F desktop exec tauri icon ../../brand/app-icon-1024.png \
+    -o apps/desktop/src-tauri/icons/$ch
+done
+```
+
+Verify `tauri icon` emitted the names `tauri.conf.json` expects — at minimum
+`32x32.png`, `128x128.png`, `128x128@2x.png`, `icon.icns`, `icon.ico` in `dev/`. If
+a name differs, fix the config reference rather than renaming generated files.
+
+Then replace the `anarlog-*.png` sources in `icons/src/` with the Session Echo
+masters from `brand/`, and delete the leftover `anarlog-*` files.
+
+All three channels intentionally use the same full-colour master, so dev and stable
+look identical in the Dock. Do not invent per-channel artwork.
+
+- [ ] **Step 3b: Regenerate the locale catalogs after the sweep**
+
+```bash
+pnpm -F desktop exec lingui extract --clean --workers 1
+pnpm -F desktop exec lingui compile --strict --workers 1
+pnpm -F desktop i18n:check
+```
+
+Re-run until output stops changing. Step 2 changed source strings, so the msgids
+must be re-extracted before Step 5 can pass.
 
 - [ ] **Step 4: Verify**
 
@@ -1352,7 +1397,7 @@ git commit -m "docs: record notarized build verification"
 - Modify: `LICENSE`
 - Create: `NOTICE`
 - Modify: `README.md`
-- Delete: `agent-plugins/anarlog/LICENSE` if `agent-plugins/` is removed, otherwise update its copyright the same way
+- Modify: `agent-plugins/session-echo/LICENSE` — add the Flagbit copyright beside Fastrepl's, exactly as in the root `LICENSE`. This is unconditional: `agent-plugins/` is never removed by any task, and Task 12 renamed the directory.
 
 **Interfaces:**
 
