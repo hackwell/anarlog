@@ -934,10 +934,6 @@ msgstr "Could not restore deleted note"
 msgid "Could not save the automation draft"
 msgstr "Could not save the automation draft"
 
-#: src/shared/integration.ts
-msgid "Could not start the integration setup. Try again."
-msgstr "Could not start the integration setup. Try again."
-
 #: src/chat/components/input/use-dictation.ts
 msgid "Could not start voice input"
 msgstr "Could not start voice input"
