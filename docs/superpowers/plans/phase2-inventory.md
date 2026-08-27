@@ -530,3 +530,25 @@ files.
    imports `plugin-fs-sync` directly. It's not a "cloud feature" file by any
    reading of its role, which makes the plugin-fs-sync removal in Task 8
    riskier than the other, more clearly cloud-only crate-boundary files.
+
+## Pattern, recorded 2026-08-27 — components are mixed more often than not
+
+Four components on this inventory's cloud list turned out not to match their label.
+Each was established by reading command names and consumers, never by the label:
+
+| Component                | Assumed                 | Actually                                                                                                                                                                                          |
+| ------------------------ | ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `plugin-fs-sync`         | cloud, remove           | **pure local** — 26 filesystem commands, no network dependency                                                                                                                                    |
+| `plugin-attachment-sync` | cloud, remove           | cloud — but with **no network dependency**, so a dependency check alone would have cleared it                                                                                                     |
+| `automations/`           | cloud directory, remove | **mixed** — a local rules engine whose action list includes cloud destinations (Linear, Notion, Slack) alongside `plugin-local-api`                                                               |
+| `plugins/todo`           | dead end to end         | **mixed** — the integration half called the deleted API, but `github_issue_state/detail/comments` render GitHub previews through the **public** API with no auth, and two live consumers use them |
+
+The `plugins/todo` case is the sharpest: the evidence for "dead" was `env!("VITE_API_URL")`
+in `lib.rs`. That was true of the connection half and false of the preview half, and a
+literal deletion would have broken `editor-bridge/app-link-view.tsx` and
+`task/resource-view.tsx`.
+
+**Before removing anything else on this inventory, establish what each of its commands
+or exports actually does and who calls them.** Neither the name, nor the directory, nor
+the dependency list has been sufficient — in all four cases only the command semantics
+and the consumer list settled it.
