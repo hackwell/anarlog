@@ -814,11 +814,6 @@ msgstr "Connect"
 msgid "Connect {0}"
 msgstr "Connect {0}"
 
-#. placeholder {0}: config.displayName
-#: src/calendar/components/oauth/provider-content.tsx
-msgid "Connect {0} Calendar"
-msgstr "Connect {0} Calendar"
-
 #: src/imports/screen.tsx
 msgid "Connect & import"
 msgstr "Connect & import"
@@ -1140,7 +1135,6 @@ msgstr "Direct connection is not available yet. You can still bring your history
 msgid "Disable"
 msgstr "Disable"
 
-#: src/calendar/components/oauth/provider-content.tsx
 #: src/calendar/components/sidebar.tsx
 #: src/imports/screen.tsx
 msgid "Disconnect"
@@ -1321,10 +1315,6 @@ msgstr "Export the meeting as Markdown"
 #: src/session/components/outer-header/overflow/export-modal.tsx
 msgid "Exporting..."
 msgstr "Exporting..."
-
-#: src/calendar/components/oauth/provider-content.tsx
-msgid "Failed to load integration status"
-msgstr "Failed to load integration status"
 
 #: src/task/resource-view.tsx
 msgid "Failed to load issue"
@@ -2218,7 +2208,6 @@ msgid "Opens System Settings and guides you to add Session Echo to the {0} list.
 msgstr "Opens System Settings and guides you to add Session Echo to the {0} list."
 
 #: src/calendar/components/apple/permission.tsx
-#: src/calendar/components/oauth/provider-content.tsx
 #: src/settings/ai/shared/index.tsx
 msgid "or"
 msgstr "or"
@@ -2394,19 +2383,9 @@ msgstr "received"
 msgid "Recent"
 msgstr "Recent"
 
-#: src/calendar/components/oauth/provider-content.tsx
 #: src/calendar/components/sidebar.tsx
 msgid "Reconnect"
 msgstr "Reconnect"
-
-#: src/calendar/components/oauth/status.tsx
-msgid "Reconnect required"
-msgstr "Reconnect required"
-
-#. placeholder {0}: config.displayName
-#: src/calendar/components/oauth/provider-content.tsx
-msgid "Reconnect required for {0} Calendar"
-msgstr "Reconnect required for {0} Calendar"
 
 #: src/session/components/outer-header/index.tsx
 msgid "Record"
@@ -2958,10 +2937,6 @@ msgstr "Sign in again"
 #: src/imports/screen.tsx
 msgid "Sign in to connect"
 msgstr "Sign in to connect"
-
-#: src/calendar/components/oauth/provider-content.tsx
-msgid "Sign in to connect your calendar"
-msgstr "Sign in to connect your calendar"
 
 #: src/session/components/note-input/enhanced/enhance-error.tsx
 msgid "Sign in to generate this summary"
@@ -3516,10 +3491,6 @@ msgstr "Upcoming Event"
 #: src/sidebar/toast/registry.tsx
 msgid "Upgrade"
 msgstr "Upgrade"
-
-#: src/calendar/components/oauth/provider-content.tsx
-msgid "Upgrade to connect"
-msgstr "Upgrade to connect"
 
 #: src/billing/trial-ended-dialog.tsx
 msgid "Upgrade to Pro"

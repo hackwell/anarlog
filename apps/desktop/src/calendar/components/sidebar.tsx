@@ -56,10 +56,7 @@ export function CalendarSidebarContent() {
   const calendar = usePermission("calendar");
 
   const visibleProviders = useMemo(
-    () =>
-      PROVIDERS.filter(
-        (p) => p.platform === "all" || (p.platform === "macos" && isMacos),
-      ),
+    () => PROVIDERS.filter((p) => p.platform !== "macos" || isMacos),
     [isMacos],
   );
   const defaultOpenProviders = useMemo(

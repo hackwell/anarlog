@@ -56,7 +56,7 @@ describe("calendar SQLite selection", () => {
         tracking_id_calendar: "primary",
         name: "Work",
         enabled: 1,
-        provider: "google",
+        provider: "apple",
         source: "work@example.com",
         color: "#4285f4",
         connection_id: "connection-1",
@@ -64,9 +64,9 @@ describe("calendar SQLite selection", () => {
       },
     ];
 
-    const { result } = renderHook(() => useCalendarRows("google"));
+    const { result } = renderHook(() => useCalendarRows("apple"));
 
-    expect(mocks.liveQueryOptions?.params).toEqual(["google", "google"]);
+    expect(mocks.liveQueryOptions?.params).toEqual(["apple", "apple"]);
     expect(result.current).toEqual([
       {
         ...mocks.liveRows[0],
