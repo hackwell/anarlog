@@ -149,11 +149,6 @@ msgstr "Add"
 msgid "Add \"{0}\""
 msgstr "Add \"{0}\""
 
-#. placeholder {0}: provider.displayName
-#: src/calendar/components/sidebar.tsx
-msgid "Add {0} account"
-msgstr "Add {0} account"
-
 #. placeholder {0}: formatLanguageList(needsSystemSettings)
 #: src/settings/ai/stt/select.tsx
 msgid "Add {0} in System Settings > General > Language & Region to transcribe with {model}, or choose another model."
@@ -178,10 +173,6 @@ msgstr "Add an action"
 #: src/settings/automations/index.tsx
 msgid "Add and configure at least one action first."
 msgstr "Add and configure at least one action first."
-
-#: src/onboarding/calendar.tsx
-msgid "Add another account"
-msgstr "Add another account"
 
 #: src/session/components/note-input/enhanced/config-error.tsx
 msgid "Add API key"
@@ -837,18 +828,10 @@ msgstr "Connect & import"
 msgid "Connect calendar"
 msgstr "Connect calendar"
 
-#: src/onboarding/calendar.tsx
-msgid "Connect Google Calendar"
-msgstr "Connect Google Calendar"
-
 #. placeholder {0}: provider.name
 #: src/imports/screen.tsx
 msgid "Connect once to bring over your {0} history and keep new meetings coming in while you switch."
 msgstr "Connect once to bring over your {0} history and keep new meetings coming in while you switch."
-
-#: src/onboarding/calendar.tsx
-msgid "Connect Outlook"
-msgstr "Connect Outlook"
 
 #: src/instruction/index.tsx
 msgid "Connect your integration"
@@ -1339,10 +1322,6 @@ msgstr "Export the meeting as Markdown"
 msgid "Exporting..."
 msgstr "Exporting..."
 
-#: src/onboarding/calendar.tsx
-msgid "Failed to load Google Calendar"
-msgstr "Failed to load Google Calendar"
-
 #: src/calendar/components/oauth/provider-content.tsx
 msgid "Failed to load integration status"
 msgstr "Failed to load integration status"
@@ -1350,10 +1329,6 @@ msgstr "Failed to load integration status"
 #: src/task/resource-view.tsx
 msgid "Failed to load issue"
 msgstr "Failed to load issue"
-
-#: src/onboarding/calendar.tsx
-msgid "Failed to load Outlook Calendar"
-msgstr "Failed to load Outlook Calendar"
 
 #: src/task/resource-view.tsx
 msgid "Failed to load pull request"
@@ -2981,7 +2956,6 @@ msgid "Sign in again"
 msgstr "Sign in again"
 
 #: src/imports/screen.tsx
-#: src/onboarding/calendar.tsx
 msgid "Sign in to connect"
 msgstr "Sign in to connect"
 
@@ -3548,14 +3522,8 @@ msgid "Upgrade to connect"
 msgstr "Upgrade to connect"
 
 #: src/billing/trial-ended-dialog.tsx
-#: src/calendar/components/sidebar.tsx
 msgid "Upgrade to Pro"
 msgstr "Upgrade to Pro"
-
-#. placeholder {0}: provider.displayName
-#: src/calendar/components/sidebar.tsx
-msgid "Upgrade to Pro for {0}"
-msgstr "Upgrade to Pro for {0}"
 
 #: src/settings/ai/stt/select.tsx
 msgid "Upgrade to Pro to use this provider."

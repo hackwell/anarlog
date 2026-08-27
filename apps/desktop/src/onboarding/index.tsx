@@ -19,7 +19,6 @@ import { PermissionsSection } from "./permissions";
 import { OnboardingSection } from "./shared";
 
 import { trackAnalyticsEvent } from "~/analytics";
-import { useAuth } from "~/auth";
 import { useWindowControlsGutter } from "~/shared/hooks/useWindowControlsGutter";
 import { StandaloneWindowShell } from "~/shared/window-shell";
 import { type Tab, useTabs } from "~/store/zustand/tabs";
@@ -81,7 +80,6 @@ function OnboardingScreenContent({
   headerDragRegion?: boolean;
 }) {
   const queryClient = useQueryClient();
-  const auth = useAuth();
   const [currentStep, setCurrentStep] = useState(getInitialStep);
   const currentPlatform = platform();
   const showWindowControlsGutter = useWindowControlsGutter();
@@ -108,10 +106,6 @@ function OnboardingScreenContent({
     const prev = getPrevStep(currentStep);
     if (prev) setCurrentStep(prev);
   }, [currentStep]);
-
-  const handleCalendarSignIn = useCallback(() => {
-    void auth.signIn();
-  }, [auth]);
 
   useEffect(() => {
     trackAnalyticsEvent("onboarding_step_viewed", {
@@ -195,10 +189,7 @@ function OnboardingScreenContent({
             onNext={goNext}
             onSkip={skipCurrentStep}
           >
-            <CalendarSection
-              onContinue={goNext}
-              onSignIn={handleCalendarSignIn}
-            />
+            <CalendarSection onContinue={goNext} />
           </OnboardingSection>
 
           <OnboardingSection

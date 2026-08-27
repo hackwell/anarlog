@@ -35,7 +35,6 @@ const mocks = vi.hoisted(() => ({
     reset: vi.fn(),
     error: null as string | null,
   },
-  openIntegration: vi.fn(),
   removeDisconnectedCalendarConnection: vi.fn(),
   allowReconnectedCalendarConnections: vi.fn(),
   syncCalendarEvents: vi.fn(),
@@ -44,27 +43,6 @@ const mocks = vi.hoisted(() => ({
 
 vi.mock("@tauri-apps/plugin-os", () => ({
   platform: () => "macos",
-}));
-
-vi.mock("~/auth", () => ({
-  useAuth: () => ({ session: {} }),
-}));
-
-vi.mock("~/auth/billing-context", () => ({
-  useBillingAccess: () => ({
-    isPaid: true,
-    isPro: true,
-    upgradeToPro: vi.fn(),
-    isUpgradingToPro: false,
-  }),
-}));
-
-vi.mock("~/auth/useConnections", () => ({
-  useConnections: () => ({
-    data: [],
-    isPending: false,
-    isError: false,
-  }),
 }));
 
 vi.mock("~/shared/hooks/useNativeContextMenu", () => ({
@@ -76,14 +54,6 @@ vi.mock("~/shared/hooks/useNativeContextMenu", () => ({
 
 vi.mock("~/shared/hooks/usePermissions", () => ({
   usePermission: () => mocks.calendar,
-}));
-
-vi.mock("~/shared/integration", () => ({
-  openIntegrationUrl: vi.fn(),
-  useOpenIntegrationUrl: () => ({
-    openIntegration: mocks.openIntegration,
-    openingAction: null,
-  }),
 }));
 
 vi.mock("~/services/calendar", () => ({
