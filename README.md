@@ -144,7 +144,6 @@ Issues, pull requests, bug reports, and docs fixes are all welcome.
 ## License
 
 - Community application: [MIT](LICENSE)
-- Full boundary: [LICENSING.md](LICENSING.md)
 
 Maintained by [fastrepl](https://github.com/fastrepl).
 
