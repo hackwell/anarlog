@@ -40,15 +40,6 @@ pnpm exec turbo dev:desktop
 
 Turbo builds shared UI packages before starting the app.
 
-CloudSync, hosted AI, authentication, billing, and connected integrations require the optional local services:
-
-```bash
-task supabase-start
-cargo run -p api
-```
-
-The Supabase stack requires Docker. Provider credentials and service-specific configuration are not required for local notes, recording, or on-device features.
-
 ## Find the right code
 
 | Path | Scope |
