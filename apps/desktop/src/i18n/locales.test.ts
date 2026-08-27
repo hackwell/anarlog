@@ -23,3 +23,13 @@ describe("resolveDisplayLocale", () => {
     expect(resolveDisplayLocale("not a locale")).toBe("en");
   });
 });
+
+describe("SUPPORTED_DISPLAY_LOCALES", () => {
+  test("matches lingui.config.ts", async () => {
+    const { default: linguiConfig } = await import("../../lingui.config");
+
+    expect([...SUPPORTED_DISPLAY_LOCALES].sort()).toEqual(
+      [...linguiConfig.locales].sort(),
+    );
+  });
+});
