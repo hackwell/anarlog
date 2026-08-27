@@ -10,7 +10,7 @@
 
 - Pool opening, pragmas, SQLite hooks, or CloudSync runtime wiring belong in `db-core`.
 - Migration execution semantics belong in `db-migrate`.
-- One-shot transport or live-query transport belongs in `db-execute`, `plugins/db`, or `mobile-bridge`.
+- One-shot transport or live-query transport belongs in `db-execute` or `plugins/db`.
 - Reactive invalidation logic belongs in `db-reactive`.
 
 ## Hard Rules

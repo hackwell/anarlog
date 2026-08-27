@@ -113,29 +113,28 @@ fn repair_macos_keychain_access() -> Result<(), String> {
     Ok(())
 }
 
-fn legacy_secret_locations(identifier: &str, scope: &str, key: &str) -> Vec<(String, String)> {
-    let service = secure_store_service(identifier);
+// Keychain/Secret Service entries are ACL-bound to the signing identity that
+// created them, so a differently-signed build can never read another
+// identifier's secrets. There is deliberately no cross-identity migration
+// here — the only stale location worth checking is this identifier's own
+// pre-v2 (unversioned) dev account, from before the ad-hoc-signature rotation.
+fn pre_v2_dev_secret_location(identifier: &str, scope: &str, key: &str) -> Vec<(String, String)> {
     let account = format!("{scope}:{key}");
     let current_account = secure_store_account(identifier, scope, key);
-    let legacy_service = format!("{identifier}.{SECURE_STORE_SUFFIX}");
-    let mut locations = Vec::new();
 
-    if account != current_account {
-        locations.push((service.clone(), account.clone()));
-    }
-    if legacy_service != service {
-        locations.push((legacy_service, account));
+    if account == current_account {
+        return Vec::new();
     }
 
-    locations
+    vec![(secure_store_service(identifier), account)]
 }
 
-fn legacy_secret_entries<R: tauri::Runtime>(
+fn pre_v2_dev_secret_entries<R: tauri::Runtime>(
     app: &tauri::AppHandle<R>,
     scope: &str,
     key: &str,
 ) -> Result<Vec<keyring::Entry>, String> {
-    legacy_secret_locations(&app.config().identifier, scope, key)
+    pre_v2_dev_secret_location(&app.config().identifier, scope, key)
         .into_iter()
         .map(|(service, account)| {
             keyring::Entry::new(&service, &account).map_err(secure_store_error)
@@ -322,11 +321,11 @@ fn read_secret_blocking_for<R: tauri::Runtime>(
     match entry.get_password() {
         Ok(secret) => Ok(Some(secret)),
         Err(keyring::Error::NoEntry) => {
-            for legacy_entry in legacy_secret_entries(app, scope, key)? {
-                match legacy_entry.get_password() {
+            for pre_v2_entry in pre_v2_dev_secret_entries(app, scope, key)? {
+                match pre_v2_entry.get_password() {
                     Ok(secret) => {
                         if entry.set_password(&secret).is_ok() {
-                            let _ = legacy_entry.delete_credential();
+                            let _ = pre_v2_entry.delete_credential();
                         }
                         return Ok(Some(secret));
                     }
@@ -394,8 +393,8 @@ fn write_secret_blocking_for<R: tauri::Runtime>(
     validate_secret_coordinate(caller, scope, key)?;
     let entry = secret_entry(app, scope, key)?;
     entry.set_password(value).map_err(secure_store_error)?;
-    for legacy_entry in legacy_secret_entries(app, scope, key)? {
-        let _ = legacy_entry.delete_credential();
+    for pre_v2_entry in pre_v2_dev_secret_entries(app, scope, key)? {
+        let _ = pre_v2_entry.delete_credential();
     }
     Ok(())
 }
@@ -439,8 +438,8 @@ fn delete_secret_blocking_for<R: tauri::Runtime>(
     key: &str,
 ) -> Result<(), String> {
     validate_secret_coordinate(caller, scope, key)?;
-    for legacy_entry in legacy_secret_entries(app, scope, key)? {
-        match legacy_entry.delete_credential() {
+    for pre_v2_entry in pre_v2_dev_secret_entries(app, scope, key)? {
+        match pre_v2_entry.delete_credential() {
             Ok(()) | Err(keyring::Error::NoEntry | keyring::Error::PlatformFailure(_)) => {}
             Err(error) => return Err(secure_store_error(error)),
         }
@@ -494,12 +493,9 @@ mod tests {
     }
 
     #[test]
-    fn migrates_all_previous_dev_secret_locations() {
-        // The hyprnote/anarlog service-name split collapsed into a single
-        // identifier under the Session Echo rename, so the only remaining
-        // legacy location is the pre-v2 (unversioned) dev account.
+    fn finds_the_pre_v2_dev_secret_location() {
         assert_eq!(
-            legacy_secret_locations("de.flagbit.sessionecho.dev", "provider", "deepgram"),
+            pre_v2_dev_secret_location("de.flagbit.sessionecho.dev", "provider", "deepgram"),
             vec![(
                 "de.flagbit.sessionecho.dev.secure-store".to_string(),
                 "provider:deepgram".to_string(),
@@ -508,8 +504,27 @@ mod tests {
     }
 
     #[test]
-    fn skips_duplicate_legacy_secret_locations() {
-        assert!(legacy_secret_locations("com.example.app", "provider", "deepgram").is_empty());
+    fn finds_nothing_for_an_identity_with_no_pending_rotation() {
+        assert!(pre_v2_dev_secret_location("com.example.app", "provider", "deepgram").is_empty());
+    }
+
+    #[test]
+    fn does_not_migrate_secrets_across_identities() {
+        // Keychain/Secret Service items are ACL-bound to the signing identity
+        // that created them, so an anarlog- or hyprnote-signed build's
+        // secrets are unreachable to a differently-signed Session Echo build
+        // regardless of service-name lookups. There is deliberately no
+        // branch here that can produce a location under another identity's
+        // service name — this documents that decision so it isn't
+        // "restored" by accident.
+        let locations =
+            pre_v2_dev_secret_location("de.flagbit.sessionecho", "provider", "deepgram");
+        assert!(locations.is_empty());
+        assert!(
+            locations.iter().all(|(service, _)| {
+                !service.contains("anarlog") && !service.contains("hyprnote")
+            })
+        );
     }
 
     #[test]
