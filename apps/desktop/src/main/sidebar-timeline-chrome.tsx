@@ -8,16 +8,12 @@ import { memo, type ReactNode } from "react";
 
 import { cn } from "@anlg/utils";
 
-import type { SidebarNoteFilter } from "~/sidebar/note-filter";
-import { SidebarNoteFilterMenu } from "~/sidebar/note-filter-menu";
 import { useSidebarUpcomingMeetingStatus } from "~/sidebar/timeline/upcoming-meeting";
 
 export const SidebarTimelineChromeWithUpcomingMeeting = memo(
   function SidebarTimelineChromeWithUpcomingMeeting({
     currentSessionId,
-    noteFilter,
     onNewNote,
-    onNoteFilterChange,
     onSearch,
     onToggleSidebar,
     sidebarExpanded,
@@ -25,9 +21,7 @@ export const SidebarTimelineChromeWithUpcomingMeeting = memo(
     showIgnoredTimelineEvents,
   }: {
     currentSessionId?: string;
-    noteFilter: SidebarNoteFilter;
     onNewNote: () => void;
-    onNoteFilterChange: (filter: SidebarNoteFilter) => void;
     onSearch: () => void;
     onToggleSidebar: () => void;
     sidebarExpanded: boolean;
@@ -45,9 +39,7 @@ export const SidebarTimelineChromeWithUpcomingMeeting = memo(
     return (
       <SidebarTimelineChrome
         hasUpcomingMeeting={hasUpcomingMeeting}
-        noteFilter={noteFilter}
         onNewNote={onNewNote}
-        onNoteFilterChange={onNoteFilterChange}
         onSearch={onSearch}
         onToggleSidebar={onToggleSidebar}
         sidebarExpanded={sidebarExpanded}
@@ -59,18 +51,14 @@ export const SidebarTimelineChromeWithUpcomingMeeting = memo(
 
 function SidebarTimelineChrome({
   hasUpcomingMeeting,
-  noteFilter,
   onNewNote,
-  onNoteFilterChange,
   onSearch,
   onToggleSidebar,
   sidebarExpanded,
   showSidebarToggle,
 }: {
   hasUpcomingMeeting: boolean;
-  noteFilter: SidebarNoteFilter;
   onNewNote: () => void;
-  onNoteFilterChange: (filter: SidebarNoteFilter) => void;
   onSearch: () => void;
   onToggleSidebar: () => void;
   sidebarExpanded: boolean;
@@ -112,10 +100,6 @@ function SidebarTimelineChrome({
             <LeftSurfaceChromeButton ariaLabel="New note" onClick={onNewNote}>
               <NotePencil size={15} />
             </LeftSurfaceChromeButton>
-            <SidebarNoteFilterMenu
-              value={noteFilter}
-              onValueChange={onNoteFilterChange}
-            />
           </>
         ) : null}
       </div>

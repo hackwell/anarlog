@@ -718,10 +718,6 @@ msgstr "Choose the speakers that play other participants so Session Echo records
 msgid "Choose which day begins your calendar week."
 msgstr "Choose which day begins your calendar week."
 
-#: src/settings/general/default-share-access.tsx
-msgid "Choose who can access notes from new meetings."
-msgstr "Choose who can access notes from new meetings."
-
 #: src/settings/general/storage/legacy-cleanup.tsx
 msgid "Clean Up"
 msgstr "Clean Up"
@@ -1216,10 +1212,6 @@ msgstr "Decline"
 msgid "Default"
 msgstr "Default"
 
-#: src/settings/general/default-share-access.tsx
-msgid "Default sharing"
-msgstr "Default sharing"
-
 #: src/contacts/contact-page-header.tsx
 #: src/session/components/outer-header/overflow/delete.tsx
 #: src/sidebar/automations.tsx
@@ -1499,14 +1491,6 @@ msgstr "Event notifications"
 msgid "Everyone in {0}"
 msgstr "Everyone in {0}"
 
-#: src/settings/general/default-share-access.tsx
-msgid "Everyone in {workspaceLabel}"
-msgstr "Everyone in {workspaceLabel}"
-
-#: src/settings/general/default-share-access.tsx
-msgid "Everyone in the workspace"
-msgstr "Everyone in the workspace"
-
 #: src/imports/screen.tsx
 msgid "Everything is already here."
 msgstr "Everything is already here."
@@ -1587,10 +1571,6 @@ msgstr "File"
 #: src/session/components/outer-header/overflow/export-modal.tsx
 msgid "File format"
 msgstr "File format"
-
-#: src/sidebar/note-filter-menu.tsx
-msgid "Filter notes"
-msgstr "Filter notes"
 
 #: src/shared/open-note-dialog.tsx
 msgid "Find a note..."
@@ -2231,10 +2211,6 @@ msgstr "Move up"
 msgid "My automations"
 msgstr "My automations"
 
-#: src/sidebar/note-filter-menu.tsx
-msgid "My notes"
-msgstr "My notes"
-
 #: src/contacts/details.tsx
 #: src/contacts/organization-details.tsx
 msgid "Name"
@@ -2396,10 +2372,6 @@ msgstr "No related notes found"
 msgid "No results found."
 msgstr "No results found."
 
-#: src/sidebar/shared-notes.tsx
-msgid "No shared notes"
-msgstr "No shared notes"
-
 #: src/chat/components/input/use-dictation.ts
 msgid "No speech detected"
 msgstr "No speech detected"
@@ -2480,10 +2452,6 @@ msgstr "Oldest"
 #: src/session/components/note-input/enhanced/streaming.tsx
 msgid "On-device models can take a few minutes to warm up before text appears."
 msgstr "On-device models can take a few minutes to warm up before text appears."
-
-#: src/settings/general/default-share-access.tsx
-msgid "Only me"
-msgstr "Only me"
 
 #: src/session-sharing/general-access.tsx
 msgid "Only people invited"
@@ -2655,10 +2623,6 @@ msgstr "Paused"
 #: src/session/components/note-input/transcript/renderer/speaker-assign.tsx
 msgid "People"
 msgstr "People"
-
-#: src/settings/general/default-share-access.tsx
-msgid "People in the meeting"
-msgstr "People in the meeting"
 
 #: src/session-sharing/draft-panel.tsx
 #: src/session-sharing/management-panel.tsx
@@ -3162,10 +3126,6 @@ msgstr "Select an organization to view details"
 msgid "Select day"
 msgstr "Select day"
 
-#: src/settings/general/default-share-access.tsx
-msgid "Select default sharing"
-msgstr "Select default sharing"
-
 #: src/session/components/folder-picker.tsx
 msgid "Select folder"
 msgstr "Select folder"
@@ -3380,18 +3340,9 @@ msgstr "Share notes with others"
 msgid "Share usage data"
 msgstr "Share usage data"
 
-#: src/sidebar/note-filter-menu.tsx
-msgid "Shared"
-msgstr "Shared"
-
 #: src/shared-notes/index.tsx
 msgid "Shared link · View only"
 msgstr "Shared link · View only"
-
-#: src/sidebar/shared-notes.tsx
-#: src/sidebar/timeline/item.tsx
-msgid "Shared note"
-msgstr "Shared note"
 
 #: src/shared-notes/index.tsx
 msgid "Shared note · Owner"
@@ -4096,7 +4047,6 @@ msgstr "Unpin"
 #: src/shared-notes/index.tsx
 #: src/shared/open-note-dialog.tsx
 #: src/shared/ui/resource-list/preview-header.tsx
-#: src/sidebar/shared-notes.tsx
 #: src/sidebar/timeline/item.tsx
 #: src/sidebar/toast/undo-delete-toast.tsx
 #: src/templates/details.tsx

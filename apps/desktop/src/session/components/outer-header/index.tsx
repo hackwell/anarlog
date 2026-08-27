@@ -25,7 +25,6 @@ import {
   buildWelcomeNoteDemoUrl,
   WELCOME_NOTE_TRACKING_ID,
 } from "~/onboarding/welcome-note.constants";
-import { SessionShareButton } from "~/session-sharing";
 import { useEventCountdown } from "~/session/hooks/useEventCountdown";
 import {
   getRemoteMeeting,
@@ -114,7 +113,6 @@ export function OuterHeader({
         />
         <FolderPicker sessionId={sessionId} align="end" />
         <MetadataButton sessionId={sessionId} />
-        <SessionShareButton key={sessionId} sessionId={sessionId} />
         <OverflowButton
           standaloneWindow={standaloneWindow}
           sessionId={sessionId}

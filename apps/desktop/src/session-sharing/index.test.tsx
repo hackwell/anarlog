@@ -157,7 +157,7 @@ vi.mock("./sync-state", () => ({
   useSessionShareSyncStatus: () => mocks.syncStatus,
 }));
 
-vi.mock("./editor-activity", () => ({
+vi.mock("~/session/editor-activity", () => ({
   flushCanonicalSessionEditorChanges: mocks.flushCanonicalSessionEditorChanges,
 }));
 

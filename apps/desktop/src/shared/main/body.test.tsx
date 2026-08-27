@@ -120,10 +120,6 @@ vi.mock("~/main/tab-content", () => ({
     ),
 }));
 
-vi.mock("~/sidebar/note-filter-menu", () => ({
-  SidebarNoteFilterMenu: () => <button type="button">Filter notes</button>,
-}));
-
 vi.mock("~/sidebar/timeline/upcoming-meeting", () => ({
   useSidebarUpcomingMeetingStatus: () => mocks.upcomingMeetingStatus,
 }));
@@ -405,25 +401,19 @@ describe("ClassicMainBody", () => {
     },
   );
 
-  it("shows the note filter beside the new note button", () => {
+  it("lays out the sidebar chrome controls in order", () => {
     render(<ClassicMainBody />);
 
     const sidebarToggle = screen.getByRole("button", { name: "Hide sidebar" });
     const searchButton = screen.getByRole("button", { name: "Search" });
     const newNoteButton = screen.getByRole("button", { name: "New note" });
-    const filterButton = screen.getByRole("button", { name: "Filter notes" });
     const chrome = sidebarToggle.parentElement?.parentElement;
     const chromeFrame = chrome?.parentElement;
     const timelineHeader = document.querySelector<HTMLElement>(
       "[data-sidebar-timeline-header]",
     );
 
-    expect(filterButton).toBeTruthy();
-    expect(filterButton.parentElement).toBe(sidebarToggle.parentElement);
     expect(searchButton.compareDocumentPosition(newNoteButton)).toBe(
-      Node.DOCUMENT_POSITION_FOLLOWING,
-    );
-    expect(newNoteButton.compareDocumentPosition(filterButton)).toBe(
       Node.DOCUMENT_POSITION_FOLLOWING,
     );
     expect(searchButton.parentElement).toBe(sidebarToggle.parentElement);
@@ -434,7 +424,7 @@ describe("ClassicMainBody", () => {
     expect(chromeFrame?.className).not.toContain("pr-3");
   });
 
-  it("hides the note filter while the sidebar is collapsed", () => {
+  it("hides the sidebar chrome actions while the sidebar is collapsed", () => {
     mocks.leftSidebarExpanded = false;
 
     render(<ClassicMainBody />);
@@ -443,7 +433,7 @@ describe("ClassicMainBody", () => {
 
     fireEvent.click(sidebarToggle);
 
-    expect(screen.queryByRole("button", { name: "Filter notes" })).toBeNull();
+    expect(screen.queryByRole("button", { name: "New note" })).toBeNull();
     expect(mocks.toggleLeftSidebar).toHaveBeenCalledTimes(1);
   });
 

@@ -1,13 +1,11 @@
 import { useLingui } from "@lingui/react/macro";
-import { Lock, LockOpen, Square, Users } from "@phosphor-icons/react";
+import { Lock, LockOpen, Square } from "@phosphor-icons/react";
 import { platform } from "@tauri-apps/plugin-os";
 import {
-  createContext,
   memo,
   type DragEvent,
   type RefCallback,
   useCallback,
-  useContext,
   useMemo,
   useState,
 } from "react";
@@ -48,11 +46,6 @@ import { useTimelineSelection } from "~/store/zustand/timeline-selection";
 import { useListener } from "~/stt/contexts";
 
 const EMPTY_TIMELINE_ITEM_KEYS: string[] = [];
-const EMPTY_MANAGED_SHARED_SESSION_IDS = new Set<string>();
-
-export const ManagedSharedSessionIdsContext = createContext<
-  ReadonlySet<string>
->(EMPTY_MANAGED_SHARED_SESSION_IDS);
 
 type ItemBaseProps = {
   title: string;
@@ -60,7 +53,6 @@ type ItemBaseProps = {
   isLive?: boolean;
   amplitude?: number;
   showSpinner?: boolean;
-  isShared?: boolean;
   isLocked?: boolean;
   isLockRevealed?: boolean;
   selected: boolean;
@@ -152,7 +144,6 @@ const ItemBase = memo(function ItemBase({
   isLive,
   amplitude,
   showSpinner,
-  isShared,
   isLocked,
   isLockRevealed,
   selected,
@@ -270,12 +261,6 @@ const ItemBase = memo(function ItemBase({
               />
             )
           ) : null}
-          {isShared ? (
-            <Users
-              aria-label={t`Shared note`}
-              className="text-muted-foreground size-3.5 shrink-0"
-            />
-          ) : null}
         </div>
       </InteractiveButton>
       {showUpcomingGauge ? (
@@ -346,7 +331,6 @@ function itemBasePropsAreEqual(prev: ItemBaseProps, next: ItemBaseProps) {
     prev.isLive === next.isLive &&
     prev.amplitude === next.amplitude &&
     prev.showSpinner === next.showSpinner &&
-    prev.isShared === next.isShared &&
     prev.isLocked === next.isLocked &&
     prev.isLockRevealed === next.isLockRevealed &&
     prev.selected === next.selected &&
@@ -563,7 +547,6 @@ const SessionItem = memo(
     const { t } = useLingui();
     const openCurrent = useTabs((state) => state.openCurrent);
     const deleteSession = useDeleteSession();
-    const managedSharedSessionIds = useContext(ManagedSharedSessionIdsContext);
 
     const sessionId = item.id;
     const title = useSessionTitle(sessionId, item.data.title ?? undefined);
@@ -729,7 +712,6 @@ const SessionItem = memo(
           Math.min(Math.hypot(amplitude?.mic ?? 0, amplitude?.speaker ?? 0), 1),
         )}
         showSpinner={showSpinner}
-        isShared={managedSharedSessionIds.has(sessionId)}
         isLocked={noteLocked}
         isLockRevealed={noteRevealed}
         selected={selected}

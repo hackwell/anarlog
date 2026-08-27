@@ -27,18 +27,15 @@ import {
   scrollTimelineItemIntoView,
   shouldClearTimelineSelectionOnPointerDown,
 } from "./interaction";
-import { ManagedSharedSessionIdsContext } from "./item";
 import { useCurrentTimeMs } from "./realtime";
 import {
   useUpcomingMeetingStatus,
   useUpcomingMeetingLabelFormatter,
 } from "./upcoming-meeting";
 
-import { useAuth } from "~/auth";
 import { useIgnoredEvents } from "~/calendar/ignored-events";
 import { useTimelineTables } from "~/calendar/queries";
 import { useDeleteSession } from "~/session/hooks/useDeleteSession";
-import { useActivatedSessionShareIds } from "~/shared-notes/cache";
 import { useConfigValue } from "~/shared/config";
 import { scrollElementByWheel } from "~/shared/dom/scroll-wheel";
 import { useMountEffect } from "~/shared/hooks/useMountEffect";
@@ -63,8 +60,6 @@ export const TimelineView = memo(function TimelineView({
 } = {}) {
   const { t } = useLingui();
   const timezone = useConfigValue("timezone") || undefined;
-  const { session } = useAuth();
-  const managedSharedSessionIds = useActivatedSessionShareIds(session?.user.id);
   const { timelineEventsTable, timelineSessionsTable } = useTimelineTables();
   const [uncontrolledShowIgnored, setUncontrolledShowIgnored] = useState(false);
   const showIgnored = showIgnoredEvents ?? uncontrolledShowIgnored;
@@ -466,7 +461,7 @@ export const TimelineView = memo(function TimelineView({
   const pendingDeleteCount = pendingDeleteSessionIds.length;
 
   return (
-    <ManagedSharedSessionIdsContext.Provider value={managedSharedSessionIds}>
+    <>
       <DestructiveConfirmationDialog
         open={pendingDeleteCount > 0}
         onOpenChange={(open) => {
@@ -592,6 +587,6 @@ export const TimelineView = memo(function TimelineView({
             </TimelineNowChip>
           )}
       </div>
-    </ManagedSharedSessionIdsContext.Provider>
+    </>
   );
 });

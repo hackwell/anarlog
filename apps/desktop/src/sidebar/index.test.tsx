@@ -50,10 +50,6 @@ vi.mock("~/sidebar/templates", () => ({
   TemplatesNav: () => <div data-testid="templates-nav" />,
 }));
 
-vi.mock("~/sidebar/shared-notes", () => ({
-  SharedNotesNav: () => <div data-testid="shared-notes-nav" />,
-}));
-
 import { LeftSidebar } from "./index";
 
 describe("LeftSidebar", () => {
@@ -104,13 +100,6 @@ describe("LeftSidebar", () => {
         .getByTestId("timeline-view")
         .getAttribute("data-top-chips-overlap-header"),
     ).toBe("true");
-  });
-
-  it("shows received notes without the personal timeline", () => {
-    render(<LeftSidebar noteFilter="shared" />);
-
-    expect(screen.queryByTestId("timeline-view")).toBeNull();
-    expect(screen.getByTestId("shared-notes-nav")).toBeTruthy();
   });
 
   it.each([

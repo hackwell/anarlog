@@ -43,7 +43,6 @@ import {
 import { getMainContentMinWidth } from "~/shared/main/layout-widths";
 import { useOpenNoteDialog } from "~/shared/open-note-dialog";
 import { useNewNote } from "~/shared/useNewNote";
-import type { SidebarNoteFilter } from "~/sidebar/note-filter";
 import {
   hasCustomSidebarTab,
   hasLeftSurfaceCustomSidebarTab,
@@ -80,7 +79,6 @@ export function ClassicMainBody({
   const syncDefaultLeftSidebarPanelSizeRef = useRef<() => void>(() => {});
   const [showIgnoredTimelineEvents, setShowIgnoredTimelineEvents] =
     useState(false);
-  const [noteFilter, setNoteFilter] = useState<SidebarNoteFilter>("mine");
   const showWindowControlsGutter = useWindowControlsGutter();
   const showSidebarToggleInBody = !usesWindowsStyleTitleBar();
   leftSidebarPanelConstraintsRef.current = leftSidebarPanelConstraints;
@@ -408,12 +406,10 @@ export function ClassicMainBody({
       {showSidebarTimeline ? (
         <SidebarTimelineChromeWithUpcomingMeeting
           currentSessionId={currentSessionId}
-          noteFilter={noteFilter}
           sidebarExpanded
           showSidebarToggle={showSidebarToggleInBody}
           showIgnoredTimelineEvents={showIgnoredTimelineEvents}
           onNewNote={createNewNote}
-          onNoteFilterChange={setNoteFilter}
           onSearch={handleOpenNoteDialog}
           onToggleSidebar={handleToggleLeftSidebar}
         />
@@ -447,12 +443,10 @@ export function ClassicMainBody({
           >
             <SidebarTimelineChromeWithUpcomingMeeting
               currentSessionId={currentSessionId}
-              noteFilter={noteFilter}
               sidebarExpanded={false}
               showSidebarToggle={showSidebarToggleInBody}
               showIgnoredTimelineEvents={showIgnoredTimelineEvents}
               onNewNote={createNewNote}
-              onNoteFilterChange={setNoteFilter}
               onSearch={handleOpenNoteDialog}
               onToggleSidebar={handleToggleLeftSidebar}
             />
@@ -520,7 +514,6 @@ export function ClassicMainBody({
                 ])}
               >
                 <ClassicMainSidebar
-                  noteFilter={noteFilter}
                   timelineHeader={timelineHeader}
                   showIgnoredTimelineEvents={showIgnoredTimelineEvents}
                   onShowIgnoredTimelineEventsChange={

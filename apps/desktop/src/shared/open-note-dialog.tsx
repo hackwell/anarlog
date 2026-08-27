@@ -1,5 +1,5 @@
 import { Trans, useLingui } from "@lingui/react/macro";
-import { FileText, MagnifyingGlass, Users, X } from "@phosphor-icons/react";
+import { FileText, MagnifyingGlass, X } from "@phosphor-icons/react";
 import { Command as CommandPrimitive } from "cmdk";
 import {
   createContext,
@@ -19,9 +19,7 @@ import {
 import { cn } from "@anlg/utils";
 
 import { trackAnalyticsEvent } from "~/analytics";
-import { useAuth } from "~/auth";
 import { useSessionSummaries } from "~/session/queries";
-import { useDurableSharedNotes } from "~/shared-notes/cache";
 import { useMainContentCenterOffset } from "~/shared/main/content-offset";
 import { useTabs } from "~/store/zustand/tabs";
 
@@ -38,7 +36,7 @@ type OpenNoteDialogContextValue = {
 };
 
 type NoteResult = {
-  resourceType: "session" | "shared_session";
+  resourceType: "session";
   id: string;
   title: string;
   createdAt: string;
@@ -101,10 +99,7 @@ export function OpenNoteDialog({
   const recentlyOpenedSessionIds = useTabs(
     (state) => state.recentlyOpenedSessionIds,
   );
-  const { session } = useAuth();
-
   const sessions = useSessionSummaries();
-  const sharedNotes = useDurableSharedNotes(session?.user.id);
 
   const sessionsMap = useMemo(() => {
     return new Map<string, NoteResult>(
@@ -121,25 +116,11 @@ export function OpenNoteDialog({
   }, [sessions, t]);
 
   const allNotesSortedByDate = useMemo(() => {
-    return [
-      ...sessionsMap.values(),
-      ...sharedNotes
-        .filter(
-          (note) => !(note.manageAccess && sessionsMap.has(note.sessionId)),
-        )
-        .map(
-          (note): NoteResult => ({
-            resourceType: "shared_session",
-            id: note.shareId,
-            title: note.title || t`Untitled`,
-            createdAt: note.publishedAt,
-          }),
-        ),
-    ].sort((a, b) => {
+    return [...sessionsMap.values()].sort((a, b) => {
       if (!a.createdAt || !b.createdAt) return 0;
       return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
     });
-  }, [sessionsMap, sharedNotes, t]);
+  }, [sessionsMap]);
 
   const recentSessions = useMemo(() => {
     return recentlyOpenedSessionIds
@@ -154,9 +135,7 @@ export function OpenNoteDialog({
 
   const otherNotes = useMemo(() => {
     return allNotesSortedByDate.filter(
-      (note) =>
-        note.resourceType === "shared_session" ||
-        !recentSessionIdSet.has(note.id),
+      (note) => !recentSessionIdSet.has(note.id),
     );
   }, [allNotesSortedByDate, recentSessionIdSet]);
 
@@ -219,11 +198,7 @@ export function OpenNoteDialog({
         had_query: Boolean(query.trim()),
       });
       handleOpenChange(false);
-      openCurrent(
-        note.resourceType === "shared_session"
-          ? { type: "shared_sessions", id: note.id }
-          : { type: "sessions", id: note.id },
-      );
+      openCurrent({ type: "sessions", id: note.id });
     },
     [handleOpenChange, openCurrent, query],
   );
@@ -357,14 +332,7 @@ export function OpenNoteDialog({
                             "transition-colors",
                           ])}
                         >
-                          {note.resourceType === "shared_session" ? (
-                            <Users
-                              className="text-muted-foreground h-4 w-4 shrink-0"
-                              data-testid="shared-note-icon"
-                            />
-                          ) : (
-                            <FileText className="text-muted-foreground h-4 w-4 shrink-0" />
-                          )}
+                          <FileText className="text-muted-foreground h-4 w-4 shrink-0" />
                           <span className="truncate">{note.title}</span>
                         </CommandPrimitive.Item>
                       ))}

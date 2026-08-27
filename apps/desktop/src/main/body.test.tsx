@@ -198,10 +198,6 @@ vi.mock("./sync-status", () => ({
   SyncStatusIndicator: () => <div data-testid="sync-status-indicator" />,
 }));
 
-vi.mock("~/sidebar/note-filter-menu", () => ({
-  SidebarNoteFilterMenu: () => <button type="button">Filter notes</button>,
-}));
-
 vi.mock("./useShortcuts", () => ({
   useClassicMainShortcuts: () => ({ runEscapeShortcut: vi.fn() }),
 }));
@@ -623,18 +619,6 @@ describe("ClassicMainBody", () => {
       screen.getByTestId("collapsed-sidebar-upcoming-meeting-badge"),
     ).toBeTruthy();
     expect(mocks.tabContentRenderCount).toBe(initialRenderCount);
-  });
-
-  it("keeps the note filter beside the new note button", () => {
-    render(<ClassicMainBody />);
-
-    const newNoteButton = screen.getByRole("button", { name: "New note" });
-    const filterButton = screen.getByRole("button", { name: "Filter notes" });
-
-    expect(filterButton.parentElement).toBe(newNoteButton.parentElement);
-    expect(newNoteButton.compareDocumentPosition(filterButton)).toBe(
-      Node.DOCUMENT_POSITION_FOLLOWING,
-    );
   });
 
   it("keeps near-equal sidebar size commits in sync with drag-time CSS variables", () => {
