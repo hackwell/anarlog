@@ -116,7 +116,6 @@ describe("SettingsNav", () => {
       "General",
       "Appearance",
       "Account",
-      "Team",
       "Notifications",
       "Workspace",
       "Meetings",
@@ -232,17 +231,6 @@ describe("SettingsNav", () => {
     expect(mocks.updateSettingsTabState).toHaveBeenCalledWith(
       mocks.currentTab,
       { tab: "dictionary" },
-    );
-  });
-
-  it("opens Team inside settings", () => {
-    render(<SettingsNav />);
-
-    fireEvent.click(screen.getByRole("button", { name: "Team" }));
-
-    expect(mocks.updateSettingsTabState).toHaveBeenCalledWith(
-      mocks.currentTab,
-      { tab: "team" },
     );
   });
 

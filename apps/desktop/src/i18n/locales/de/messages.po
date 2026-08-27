@@ -156,10 +156,6 @@ msgstr "Bedienungshilfen"
 msgid "Account"
 msgstr "Konto"
 
-#: src/settings/team/index.tsx
-msgid "Acme"
-msgstr "Acme"
-
 #: src/settings/automations/index.tsx
 #: src/settings/automations/workflow-builder.tsx
 msgid "Action"
@@ -275,10 +271,6 @@ msgstr "Webhook hinzufügen"
 msgid "Additional spoken languages"
 msgstr "Weitere gesprochene Sprachen"
 
-#: src/settings/team/index.tsx
-msgid "Admin"
-msgstr "Admin"
-
 #: src/settings/ai/shared/index.tsx
 #: src/sidebar/settings.tsx
 msgid "Advanced"
@@ -316,14 +308,6 @@ msgstr "Alle Ereignisse"
 #: src/shared/open-note-dialog.tsx
 msgid "All Notes"
 msgstr "Alle Notizen"
-
-#: src/settings/team/index.tsx
-msgid "Allow anyone-with-the-link sharing"
-msgstr "Freigabe für alle mit Link zulassen"
-
-#: src/settings/team/index.tsx
-msgid "Allow public indexing"
-msgstr "Öffentliche Indexierung zulassen"
 
 #: src/shared/control.tsx
 msgid "An unexpected error occurred."
@@ -557,10 +541,6 @@ msgstr "Kalender"
 msgid "Calendar connected"
 msgstr "Kalender verbunden"
 
-#: src/settings/team/index.tsx
-msgid "Calendar-scheduled capture jobs. Canceling stops the bot from joining."
-msgstr "Kalendergesteuerte Aufnahmeaufträge. Abbrechen verhindert, dass der Bot beitritt."
-
 #: src/session-sharing/access-management.tsx
 msgid "Can comment"
 msgstr "Kann kommentieren"
@@ -588,17 +568,9 @@ msgstr "Kann ansehen"
 msgid "Cancel"
 msgstr "Abbrechen"
 
-#: src/settings/team/index.tsx
-msgid "Cancel bot"
-msgstr "Bot abbrechen"
-
 #: src/session/components/outer-header/metadata/date.tsx
 msgid "Cancel date edit"
 msgstr "Datumsbearbeitung abbrechen"
-
-#: src/settings/team/index.tsx
-msgid "Cancel invitation"
-msgstr "Einladung zurückziehen"
 
 #: src/settings/general/meeting-settings.tsx
 msgid "Capture meeting chat in Memos"
@@ -749,10 +721,6 @@ msgstr "Festlegen, mit welchem Tag Ihre Kalenderwoche beginnt."
 #: src/settings/general/default-share-access.tsx
 msgid "Choose who can access notes from new meetings."
 msgstr "Festlegen, wer auf Notizen neuer Meetings zugreifen kann."
-
-#: src/settings/team/index.tsx
-msgid "Claim email domain"
-msgstr "E-Mail-Domain beanspruchen"
 
 #: src/settings/general/storage/legacy-cleanup.tsx
 msgid "Clean Up"
@@ -1175,10 +1143,6 @@ msgstr "Zugriff dieser Person konnte nicht aktualisiert werden."
 msgid "Could not use the selected model"
 msgstr "Ausgewähltes Modell konnte nicht verwendet werden"
 
-#: src/settings/team/index.tsx
-msgid "Create"
-msgstr "Erstellen"
-
 #: src/session/components/folder-picker.tsx
 msgid "Create \"{folderName}\""
 msgstr "\"{folderName}\" erstellen"
@@ -1190,10 +1154,6 @@ msgstr "Briefing erstellen, um dieses Meeting vorzubereiten"
 #: src/settings/general/e2ee-setup.tsx
 msgid "Create a recovery key"
 msgstr "Wiederherstellungsschlüssel erstellen"
-
-#: src/settings/team/index.tsx
-msgid "Create a shared workspace"
-msgstr "Gemeinsamen Workspace erstellen"
 
 #: src/session/components/note-input/transcript/renderer/speaker-assign.tsx
 msgid "Create new speaker"
@@ -1273,10 +1233,6 @@ msgstr "Löschen"
 msgid "Delete {pendingDeleteCount} selected notes?"
 msgstr "{pendingDeleteCount} ausgewählte Notizen löschen?"
 
-#: src/settings/team/index.tsx
-msgid "Delete {workspaceName} for everyone?"
-msgstr "{workspaceName} für alle löschen?"
-
 #: src/sidebar/timeline/index.tsx
 msgid "Delete 1 selected note?"
 msgstr "1 ausgewählte Notiz löschen?"
@@ -1316,14 +1272,6 @@ msgstr "Auswahl löschen ({sessionCount})"
 #: src/sidebar/timeline/item.tsx
 msgid "Delete This Event"
 msgstr "Diesen Termin löschen"
-
-#: src/settings/team/index.tsx
-msgid "Delete workspace"
-msgstr "Workspace löschen"
-
-#: src/settings/team/index.tsx
-msgid "Deleting removes the workspace for everyone. Transfer ownership first if you only want to leave."
-msgstr "Löschen entfernt den Workspace für alle. Übertragen Sie zuerst die Inhaberschaft, wenn Sie nur austreten möchten."
 
 #: src/session/components/outer-header/overflow/delete.tsx
 msgid "Deleting..."
@@ -1365,10 +1313,6 @@ msgstr "Geräteauthentifizierung ist auf diesem Computer nicht verfügbar."
 #: src/main/sync-status.tsx
 msgid "Device limit reached"
 msgstr "Gerätelimit erreicht"
-
-#: src/settings/team/index.tsx
-msgid "Devices"
-msgstr "Geräte"
 
 #: src/settings/developers/devtools.tsx
 msgid "Devtools"
@@ -1484,7 +1428,6 @@ msgstr "E-Mail oder Name"
 
 #: src/session-sharing/access-management.tsx
 #: src/session-sharing/invitation-management.ts
-#: src/settings/team/invitation.ts
 msgid "Email unavailable. Invite link copied instead."
 msgstr "E-Mail nicht verfügbar. Einladungslink stattdessen kopiert."
 
@@ -1927,13 +1870,11 @@ msgid "Intelligence"
 msgstr "Intelligenz"
 
 #: src/session-sharing/access-management.tsx
-#: src/settings/team/index.tsx
 msgid "Invitation pending"
 msgstr "Einladung ausstehend"
 
 #: src/session-sharing/access-management.tsx
 #: src/session-sharing/invitation-management.ts
-#: src/settings/team/invitation.ts
 msgid "Invitation sent."
 msgstr "Einladung gesendet."
 
@@ -1942,7 +1883,6 @@ msgid "Invitations sent."
 msgstr "Einladungen gesendet."
 
 #: src/session-sharing/invite-recipients.tsx
-#: src/settings/team/index.tsx
 msgid "Invite"
 msgstr "Einladen"
 
@@ -1955,10 +1895,6 @@ msgstr "Personen einladen"
 #: src/session-sharing/management-panel.tsx
 msgid "Invite people to this note."
 msgstr "Personen zu dieser Notiz einladen."
-
-#: src/settings/team/index.tsx
-msgid "Invite teammates, share notes across the workspace, and manage who has access. Your personal notes stay private."
-msgstr "Teammitglieder einladen, Notizen im Workspace teilen und verwalten, wer Zugriff hat. Ihre persönlichen Notizen bleiben privat."
 
 #. placeholder {0}: sent.length
 #: src/session-sharing/invitation-management.ts
@@ -1988,10 +1924,6 @@ msgstr "Geplanten Meetings beitreten"
 #: src/session-sharing/management-panel.tsx
 msgid "Keep desktop edits"
 msgstr "Desktop-Änderungen behalten"
-
-#: src/settings/team/index.tsx
-msgid "Keep forever"
-msgstr "Für immer behalten"
 
 #: src/settings/ai/llm/subscriptions/connect.tsx
 msgid "Kimi Code API key"
@@ -2035,18 +1967,6 @@ msgstr "Zuletzt synchronisiert {0}"
 msgid "Learn how to fix this"
 msgstr "Erfahren, wie sich das beheben lässt"
 
-#: src/settings/team/index.tsx
-msgid "Leave {workspaceName}?"
-msgstr "{workspaceName} verlassen?"
-
-#: src/settings/team/index.tsx
-msgid "Leave workspace"
-msgstr "Workspace verlassen"
-
-#: src/settings/team/index.tsx
-msgid "Leaving gives up your access to shared notes here."
-msgstr "Beim Verlassen verlieren Sie den Zugriff auf hier geteilte Notizen."
-
 #: src/session-sharing/attachment-controls.tsx
 msgid "Let people with access play the recording."
 msgstr "Personen mit Zugriff erlauben, die Aufnahme abzuspielen."
@@ -2086,10 +2006,6 @@ msgstr "Bearbeitung wird geladen …"
 #: src/settings/ai/shared/model-combobox.tsx
 msgid "Loading models..."
 msgstr "Modelle werden geladen …"
-
-#: src/settings/team/index.tsx
-msgid "Loading scheduled captures…"
-msgstr "Geplante Aufnahmen werden geladen …"
 
 #: src/settings/general/index.tsx
 #: src/settings/hydration-boundary.tsx
@@ -2135,10 +2051,6 @@ msgstr "macOS konnte nicht auf Ihren Wiederherstellungsschlüssel zugreifen. Sch
 #: src/settings/general/main-language.tsx
 msgid "Main language"
 msgstr "Hauptsprache"
-
-#: src/settings/team/index.tsx
-msgid "Make owner"
-msgstr "Zum Inhaber machen"
 
 #: src/settings/general/account.tsx
 msgid "Manage billing"
@@ -2226,21 +2138,9 @@ msgstr "Meetings"
 msgid "member"
 msgstr "Mitglied"
 
-#: src/settings/team/index.tsx
-msgid "Member"
-msgstr "Mitglied"
-
 #: src/contacts/organization-details.tsx
 msgid "members"
 msgstr "Mitglieder"
-
-#: src/settings/team/index.tsx
-msgid "Members"
-msgstr "Mitglieder"
-
-#: src/settings/team/index.tsx
-msgid "Members on a claimed email domain must sign in with SSO instead of Google, GitHub, or email."
-msgstr "Mitglieder mit einer beanspruchten E-Mail-Domain müssen sich per SSO anmelden statt über Google, GitHub oder E-Mail."
 
 #: src/edit/tab-content.tsx
 #: src/session/components/outer-header/overflow/export-modal.tsx
@@ -2512,10 +2412,6 @@ msgstr "Noch keine Vorlagen"
 msgid "No transcript available"
 msgstr "Kein Transkript verfügbar"
 
-#: src/settings/team/index.tsx
-msgid "No upcoming bots."
-msgstr "Keine bevorstehenden Bots."
-
 #: src/settings/developers/cli.tsx
 msgid "Not installed"
 msgstr "Nicht installiert"
@@ -2592,10 +2488,6 @@ msgstr "Nur ich"
 #: src/session-sharing/general-access.tsx
 msgid "Only people invited"
 msgstr "Nur eingeladene Personen"
-
-#: src/settings/team/index.tsx
-msgid "Only workspace admins can see who has access. You are a member of this workspace."
-msgstr "Nur Workspace-Admins können sehen, wer Zugriff hat. Sie sind Mitglied dieses Workspace."
 
 #: src/calendar/components/apple/permission.tsx
 #: src/task/resource-view.tsx
@@ -2810,10 +2702,6 @@ msgstr "Pläne"
 msgid "Play from here"
 msgstr "Ab hier abspielen"
 
-#: src/settings/team/index.tsx
-msgid "Policies"
-msgstr "Richtlinien"
-
 #: src/settings/general/meeting-settings.tsx
 msgid "Post recording disclosure in meeting chat"
 msgstr "Aufnahmehinweis im Meeting-Chat posten"
@@ -3002,10 +2890,6 @@ msgstr "Beispiel {0} entfernen"
 msgid "Remove photo"
 msgstr "Foto entfernen"
 
-#: src/settings/team/index.tsx
-msgid "Rename workspace"
-msgstr "Workspace umbenennen"
-
 #: src/automations/starters.tsx
 msgid "Render canonical Markdown"
 msgstr "Kanonisches Markdown rendern"
@@ -3062,10 +2946,6 @@ msgstr "{0}-Berechtigung anfragen"
 msgid "Requested {0}"
 msgstr "Angefragt {0}"
 
-#: src/settings/team/index.tsx
-msgid "Require SSO"
-msgstr "SSO erforderlich"
-
 #: src/settings/privacy/index.tsx
 msgid "Require Touch ID or your password when opening Session Echo."
 msgstr "Touch ID oder Passwort beim Öffnen von Session Echo verlangen."
@@ -3073,10 +2953,6 @@ msgstr "Touch ID oder Passwort beim Öffnen von Session Echo verlangen."
 #: src/settings/privacy/index.tsx
 msgid "Require Windows Hello face, PIN, or password when opening Session Echo."
 msgstr "Windows Hello Gesichtserkennung, PIN oder Passwort beim Öffnen von Session Echo verlangen."
-
-#: src/settings/team/index.tsx
-msgid "Resend invitation"
-msgstr "Einladung erneut senden"
 
 #: src/session-sharing/access-management.tsx
 msgid "Resend invite"
@@ -3128,10 +3004,6 @@ msgstr "Zuhören fortsetzen"
 msgid "Resume sync"
 msgstr "Synchronisierung fortsetzen"
 
-#: src/settings/team/index.tsx
-msgid "Retention (days)"
-msgstr "Aufbewahrung (Tage)"
-
 #: src/chat/components/message/error.tsx
 #: src/main/sync-status.tsx
 #: src/session/components/note-input/enhanced/enhance-error.tsx
@@ -3173,18 +3045,6 @@ msgstr "Datum speichern"
 msgid "Save draft"
 msgstr "Entwurf speichern"
 
-#: src/settings/team/index.tsx
-msgid "Save policies"
-msgstr "Richtlinien speichern"
-
-#: src/settings/team/index.tsx
-msgid "Save SCIM token"
-msgstr "SCIM-Token speichern"
-
-#: src/settings/team/index.tsx
-msgid "Save subdomain"
-msgstr "Subdomain speichern"
-
 #: src/settings/general/e2ee-setup.tsx
 msgid "Save this key in a password manager. New devices can usually be approved from another device; this key is your fallback and will not be shown again."
 msgstr "Diesen Schlüssel in einem Passwort-Manager speichern. Neue Geräte lassen sich meist über ein anderes Gerät genehmigen; dieser Schlüssel ist Ihre Rückfalloption und wird nicht erneut angezeigt."
@@ -3196,10 +3056,6 @@ msgstr "Sichtbaren Chat unterstützter Meetings über Bedienungshilfen speichern
 #: src/main/sync-status.tsx
 msgid "Saved locally"
 msgstr "Lokal gespeichert"
-
-#: src/settings/team/index.tsx
-msgid "SCIM bearer token"
-msgstr "SCIM-Bearer-Token"
 
 #: src/session/components/note-input/transcript/renderer/index.tsx
 msgid "Scroll to bottom"
@@ -3271,10 +3127,6 @@ msgstr "Zeitzone durchsuchen …"
 #: src/settings/general/searchable-select.tsx
 msgid "Search..."
 msgstr "Suchen …"
-
-#: src/settings/team/index.tsx
-msgid "Seats"
-msgstr "Plätze"
 
 #: src/templates/sections-editor.tsx
 msgid "Section actions"
@@ -3437,7 +3289,6 @@ msgid "Session Echo Pro is required to use cloud sync."
 msgstr "Session Echo Pro ist für die Cloud-Synchronisierung erforderlich."
 
 #: src/main/sync-status.tsx
-#: src/settings/team/index.tsx
 msgid "Session Echo Pro required"
 msgstr "Session Echo Pro erforderlich"
 
@@ -3566,14 +3417,6 @@ msgstr "Mit mir geteilt · Kann bearbeiten"
 msgid "Shared with me · View only"
 msgstr "Mit mir geteilt · Nur Ansicht"
 
-#: src/settings/team/index.tsx
-msgid "Shares (30d)"
-msgstr "Freigaben (30 T.)"
-
-#: src/settings/team/index.tsx
-msgid "Sharing domain"
-msgstr "Freigabe-Domain"
-
 #: src/session-sharing/management-panel.tsx
 msgid "Sharing paused to protect your edits"
 msgstr "Freigabe pausiert, um Ihre Änderungen zu schützen"
@@ -3664,10 +3507,6 @@ msgstr "Zum Verbinden anmelden"
 #: src/calendar/components/oauth/provider-content.tsx
 msgid "Sign in to connect your calendar"
 msgstr "Anmelden, um Ihren Kalender zu verbinden"
-
-#: src/settings/team/index.tsx
-msgid "Sign in to create a shared workspace for your team."
-msgstr "Anmelden, um einen gemeinsamen Workspace für Ihr Team zu erstellen."
 
 #: src/session/components/note-input/enhanced/enhance-error.tsx
 msgid "Sign in to generate this summary"
@@ -4011,15 +3850,6 @@ msgstr "Systemaudio aktiviert"
 msgid "Teach coding agents when and how to use the Session Echo CLI and MCP"
 msgstr "Coding-Agenten beibringen, wann und wie sie die Session Echo CLI und MCP verwenden"
 
-#: src/settings/team/index.tsx
-#: src/sidebar/settings.tsx
-msgid "Team"
-msgstr "Team"
-
-#: src/settings/team/index.tsx
-msgid "teammate@company.com"
-msgstr "teammate@company.com"
-
 #: src/settings/general/meeting-settings.tsx
 msgid "Tell participants when listening starts; this does not confirm consent."
 msgstr "Teilnehmer informieren, wenn das Zuhören beginnt; dies bestätigt keine Einwilligung."
@@ -4088,10 +3918,6 @@ msgstr "Thema"
 #: src/settings/automations/workflow-builder.tsx
 msgid "Then"
 msgstr "Dann"
-
-#: src/settings/team/index.tsx
-msgid "These rules apply to every member. Sharing changes fail closed on the server."
-msgstr "Diese Regeln gelten für alle Mitglieder. Freigabeänderungen werden serverseitig im Zweifel blockiert."
 
 #: src/chat/components/message/loading.tsx
 msgid "Thinking..."
@@ -4291,10 +4117,6 @@ msgstr "Unbenannte Notiz"
 msgid "Untitled session"
 msgstr "Unbenannte Session"
 
-#: src/settings/team/index.tsx
-msgid "Upcoming bot attendance"
-msgstr "Bevorstehende Bot-Teilnahme"
-
 #: src/services/event-notification/index.ts
 msgid "Upcoming Event"
 msgstr "Bevorstehender Termin"
@@ -4318,7 +4140,6 @@ msgstr "Zum Verbinden upgraden"
 #: src/billing/trial-ended-dialog.tsx
 #: src/calendar/components/sidebar.tsx
 #: src/session-sharing/index.tsx
-#: src/settings/team/index.tsx
 msgid "Upgrade to Pro"
 msgstr "Auf Pro upgraden"
 
@@ -4360,10 +4181,6 @@ msgstr "Transkript hochladen"
 msgid "Upload Transcript"
 msgstr "Transkript hochladen"
 
-#: src/settings/team/index.tsx
-msgid "Usage"
-msgstr "Nutzung"
-
 #: src/automations/starters.tsx
 msgid "Use a stable filename in the configured export directory."
 msgstr "Einen festen Dateinamen im konfigurierten Exportverzeichnis verwenden."
@@ -4380,10 +4197,6 @@ msgstr "Dateien verwenden"
 msgid "Use system audio to capture other speakers"
 msgstr "Systemaudio verwenden, um andere Sprecher aufzunehmen"
 
-#: src/settings/team/index.tsx
-msgid "Use this domain for links shared from this workspace."
-msgstr "Diese Domain für Links verwenden, die aus diesem Workspace geteilt werden."
-
 #: src/settings/general/main-language.tsx
 msgid "Use this language for summaries and AI responses."
 msgstr "Diese Sprache für Zusammenfassungen und KI-Antworten verwenden."
@@ -4399,10 +4212,6 @@ msgstr "Windows Hello Gesichtserkennung, PIN oder Passwort verwenden, um anzuzei
 #: src/onboarding/permissions.tsx
 msgid "Use your microphone to capture your voice"
 msgstr "Ihr Mikrofon verwenden, um Ihre Stimme aufzunehmen"
-
-#: src/settings/team/index.tsx
-msgid "Verify domain"
-msgstr "Domain verifizieren"
 
 #: src/settings/general/storage/legacy-cleanup.tsx
 msgid "Verifying the SQLite migration status"
@@ -4488,18 +4297,6 @@ msgstr "Workflow"
 msgid "Workspace"
 msgstr "Workspace"
 
-#: src/settings/team/index.tsx
-msgid "Workspace activity from metadata only. Note content stays unreadable on the server."
-msgstr "Workspace-Aktivität nur anhand von Metadaten. Notizinhalte bleiben auf dem Server unlesbar."
-
-#: src/settings/team/index.tsx
-msgid "Workspace name"
-msgstr "Workspace-Name"
-
-#: src/settings/team/index.tsx
-msgid "Workspace subdomain"
-msgstr "Workspace-Subdomain"
-
 #: src/automations/starters.tsx
 msgid "Write to a folder"
 msgstr "In einen Ordner schreiben"
@@ -4509,7 +4306,6 @@ msgid "Yesterday"
 msgstr "Gestern"
 
 #: src/session-sharing/comments.tsx
-#: src/settings/team/index.tsx
 msgid "You"
 msgstr "Sie"
 

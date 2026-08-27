@@ -166,7 +166,7 @@ const useNavigationEvents = () => {
 };
 
 // Renders nothing; keeps the local workspace mirror fresh so sharing scopes are
-// available without visiting Team settings.
+// available before any workspace-backed view is opened.
 function SharedWorkspaceMirror() {
   useMyWorkspacesWithMirror();
   return null;
