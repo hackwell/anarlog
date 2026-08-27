@@ -1472,23 +1472,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "attachment-sync-core"
-version = "0.1.0"
-dependencies = [
- "e2ee",
- "futures-util",
- "reqwest 0.13.2",
- "sha2 0.11.0",
- "sqlx",
- "tempfile",
- "thiserror 2.0.18",
- "tokio",
- "tokio-util",
- "url",
- "uuid",
-]
-
-[[package]]
 name = "audacity"
 version = "0.1.0"
 
@@ -4618,7 +4601,6 @@ dependencies = [
  "tauri-plugin-agent",
  "tauri-plugin-analytics",
  "tauri-plugin-anlg-tray",
- "tauri-plugin-attachment-sync",
  "tauri-plugin-audio-priority",
  "tauri-plugin-auth",
  "tauri-plugin-automation",
@@ -17093,30 +17075,6 @@ dependencies = [
  "tokio",
  "tracing",
  "unicode-width 0.2.2",
-]
-
-[[package]]
-name = "tauri-plugin-attachment-sync"
-version = "0.1.0"
-dependencies = [
- "attachment-sync-core",
- "e2ee",
- "fs-sync-core",
- "serde",
- "serde_json",
- "sha2 0.11.0",
- "specta",
- "specta-typescript",
- "sqlx",
- "tauri",
- "tauri-plugin",
- "tauri-plugin-db",
- "tauri-plugin-settings",
- "tauri-specta",
- "tempfile",
- "tokio",
- "tokio-util",
- "uuid",
 ]
 
 [[package]]

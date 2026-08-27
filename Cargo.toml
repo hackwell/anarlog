@@ -49,7 +49,6 @@ anlg-apple-calendar = { path = "crates/apple-calendar", package = "apple-calenda
 anlg-apple-note = { path = "crates/apple-note", package = "apple-note" }
 anlg-apple-todo = { path = "crates/apple-todo", package = "apple-todo" }
 anlg-askama-utils = { path = "crates/askama-utils", package = "askama-utils" }
-anlg-attachment-sync-core = { path = "crates/attachment-sync-core", package = "attachment-sync-core" }
 anlg-audacity = { path = "crates/audacity", package = "audacity" }
 anlg-audio = { path = "crates/audio", package = "audio" }
 anlg-audio-actual = { path = "crates/audio-actual", package = "audio-actual" }
@@ -198,7 +197,6 @@ tauri-plugin-window-state = "2.4"
 
 tauri-plugin-agent = { path = "plugins/agent" }
 tauri-plugin-analytics = { path = "plugins/analytics" }
-tauri-plugin-attachment-sync = { path = "plugins/attachment-sync" }
 tauri-plugin-audio-priority = { path = "plugins/audio-priority" }
 tauri-plugin-auth = { path = "plugins/auth" }
 tauri-plugin-bedrock = { path = "plugins/bedrock" }
