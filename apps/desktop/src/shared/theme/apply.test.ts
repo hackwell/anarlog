@@ -1,3 +1,5 @@
+import { readFile } from "node:fs/promises";
+import { resolve } from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const getStoredSettingValues = vi.hoisted(() => vi.fn());
@@ -11,6 +13,7 @@ import {
   normalizeThemePreference,
   readStoredThemePreference,
   resolveBootIsDark,
+  THEME_STORAGE_KEY,
 } from "./apply";
 
 function mockSystemTheme(prefersDark: boolean) {
@@ -53,10 +56,14 @@ describe("normalizeThemePreference", () => {
 });
 
 describe("readStoredThemePreference", () => {
-  it("falls back to the legacy storage key", () => {
-    localStorage.setItem("hypr-theme", "dark");
+  it("reads the current storage key", () => {
+    localStorage.setItem(THEME_STORAGE_KEY, "dark");
 
     expect(readStoredThemePreference()).toBe("dark");
+  });
+
+  it("falls back to system when nothing is stored", () => {
+    expect(readStoredThemePreference()).toBe("system");
   });
 });
 
@@ -89,7 +96,7 @@ describe("bootstrapThemeFromSettings", () => {
     await bootstrapThemeFromSettings({ timeoutMs: 100 });
 
     expect(document.documentElement.classList.contains("dark")).toBe(true);
-    expect(localStorage.getItem("anarlog-theme")).toBe("dark");
+    expect(localStorage.getItem(THEME_STORAGE_KEY)).toBe("dark");
   });
 
   it("does not hold startup past the deadline when settings load stalls", async () => {
@@ -114,7 +121,7 @@ describe("bootstrapThemeFromSettings", () => {
     await vi.advanceTimersByTimeAsync(20);
 
     expect(resolved).toBe(true);
-    expect(localStorage.getItem("anarlog-theme")).toBe(null);
+    expect(localStorage.getItem(THEME_STORAGE_KEY)).toBe(null);
 
     resolveLoad({
       values: { theme: "dark" },
@@ -123,6 +130,17 @@ describe("bootstrapThemeFromSettings", () => {
     await Promise.resolve();
 
     expect(document.documentElement.classList.contains("dark")).toBe(true);
-    expect(localStorage.getItem("anarlog-theme")).toBe("dark");
+    expect(localStorage.getItem(THEME_STORAGE_KEY)).toBe("dark");
+  });
+});
+
+describe("public/theme-boot.js", () => {
+  it("reads the same storage key apply.ts writes", async () => {
+    const bootScript = await readFile(
+      resolve(process.cwd(), "public/theme-boot.js"),
+      "utf8",
+    );
+
+    expect(bootScript).toContain(`"${THEME_STORAGE_KEY}"`);
   });
 });
