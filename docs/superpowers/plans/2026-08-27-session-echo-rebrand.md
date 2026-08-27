@@ -228,6 +228,24 @@ will live at sessionecho.flagbit.de."
 
 ## Phase 2 — Remove cloud usage from the desktop app
 
+> **DEFERRED after Task 4, by human decision on 2026-08-27.**
+>
+> Task 4's inventory fired the stop condition decisively: `logic-branch` plus
+> `crate-boundary` came to 124 files using this plan's own grep commands and 169
+> once gaps in those commands were closed, against a threshold of 60. Task 4 also
+> showed `apps/desktop/src/auth/` to be a 10,170-line E2EE and keychain subsystem
+> holding both the cloud half and the local-credential half the app still needs —
+> replacement design work, not deletion.
+>
+> **Tasks 5 through 8 are not executed from this plan.** Phase 2 gets its own
+> brainstorm and spec, using `docs/superpowers/plans/phase2-inventory.md` as its
+> input. Execution continues at Task 9.
+>
+> Consequence for the rest of this plan: the cloud code stays in the tree. It is
+> already inert — Task 2 deleted the hosted API it talked to — but it is present,
+> and later tasks must neither assume it is gone nor claim in user-facing text
+> that it is.
+
 This is the phase with real uncertainty. 309 files match Pro-gate patterns and
 118 match auth patterns, but those numbers come from grep, not from reading.
 Task 4 exists to convert that guess into a list before any code is touched.
@@ -559,7 +577,7 @@ git commit -m "docs: record outbound-traffic evidence for the local-only claim"
 
 **Interfaces:**
 
-- Consumes: Task 8's tree
+- Consumes: Task 3's tree (Tasks 5-8 deferred; the cloud code is still present and must be left alone)
 - Produces: `compute_default_base(bundle_id) -> Option<PathBuf>` resolving to `<data_dir>/sessionecho` for stable builds, and to `<data_dir>/<bundle_id>` for debug and staging builds. `resolve_app_folder` keeps its signature `fn resolve_app_folder<'a>(data_dir: &Path, bundle_id: &'a str, is_debug: bool) -> &'a str` so callers are unaffected.
 
 Upstream carries a legacy-folder chain (`hyprnote` → `anarlog`) that keeps the
@@ -903,6 +921,31 @@ masters from `brand/`, and delete the leftover `anarlog-*` files.
 All three channels intentionally use the same full-colour master, so dev and stable
 look identical in the Dock. Do not invent per-channel artwork.
 
+- [ ] **Step 2b: Remove the in-app documentation links**
+
+Human decision on 2026-08-27: Session Echo publishes no documentation site, so these
+links are removed rather than repointed. Rewriting them to `sessionecho.flagbit.de`
+would turn links that work today into 404s.
+
+Remove the link, its URL constant, the control that triggers it, and the matching
+test assertion, at all 13 sites:
+
+| File                                      | What                                                      |
+| ----------------------------------------- | --------------------------------------------------------- |
+| `settings/imports/index.tsx:10,22`        | `IMPORTS_DOCUMENTATION_URL` + its opener call             |
+| `settings/ai/llm/shared.tsx:177,197,228`  | three `url:` fields (`#lm-studio`, `#ollama`, `#unsloth`) |
+| `settings/sync/index.tsx:79,972`          | `SYNC_GUIDE_URL` + its opener call                        |
+| `settings/developers/index.tsx:16,28`     | `DEVELOPERS_GUIDE_URL` + its opener call                  |
+| `calendar/components/shared.tsx:31,41,51` | three `docsPath` fields                                   |
+| `main/windows-title-bar.tsx:187`          | inline `openUrl("https://docs.anarlog.so")`               |
+
+Also update `settings/imports/index.test.tsx` and `settings/sync/index.test.tsx`,
+which assert on the removed URLs.
+
+Where a field is part of a shared shape (`url:`, `docsPath:`), check whether the
+field is optional before deleting it; if it is required, the surrounding UI element
+goes too. Do not leave a button that opens nothing.
+
 - [ ] **Step 3b: Regenerate the locale catalogs after the sweep**
 
 ```bash
@@ -1239,9 +1282,13 @@ cd ../..
 
 Drop any filename that does not exist rather than creating it.
 
-- [ ] **Step 3: Remove the CloudSync signing step**
+- [ ] **Step 3: Leave the CloudSync signing step alone**
 
-In `.github/workflows/desktop_cd.yaml` around lines 178 to 180, delete the step that codesigns `$CLOUDSYNC_DYLIB`. CloudSync was removed in Task 7, so the file no longer exists and the step would fail the build.
+Earlier drafts of this plan deleted the step at `.github/workflows/desktop_cd.yaml:178-180`
+that codesigns `$CLOUDSYNC_DYLIB`, on the grounds that Task 7 had removed CloudSync.
+**Task 7 is deferred, so that reasoning does not hold.** `crates/cloudsync/vendor/cloudsync/macos/<arch>/cloudsync.dylib`
+still exists and still ships inside the bundle; an unsigned dylib fails notarisation.
+Verify the path still resolves, and leave the step in place.
 
 - [ ] **Step 4: Remove the remaining cloud env**
 
@@ -1436,6 +1483,13 @@ This product includes software developed by Fastrepl, Inc.
 - [ ] **Step 4: Rewrite README**
 
 State what Session Echo is, that it is a fork of anarlog by Fastrepl, Inc., what was removed, and that transcription runs entirely on device. Naming the origin is both an MIT obligation and, for a German open-source product, evidence of clean provenance.
+
+**Be accurate about the cloud code.** Tasks 5-8 are deferred, so account, sync and
+subscription code is still in the tree — inert, because the hosted API it talked to
+was deleted, but present. Do not write that it was removed. Either say nothing about
+it, or say plainly that the remaining cloud integration is disconnected and slated
+for removal. A README claiming a clean local-only tree is falsifiable in one `grep`,
+and this file is the first thing a security reviewer reads.
 
 - [ ] **Step 5: Verify the license claims are true**
 
