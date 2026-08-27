@@ -57,17 +57,27 @@ describe("pinned tab persistence", () => {
     ]);
   });
 
-  it("never serializes an ephemeral shared-note preview", async () => {
+  it("serializes a pinned session tab without its runtime fields", async () => {
     await savePinnedTabs([
       {
-        type: "shared_note_preview",
-        id: "13697a87-f69b-456d-8679-4202d4f5d498",
+        type: "sessions",
+        id: "session-1",
+        state: { view: null, autoStart: null },
         active: true,
         pinned: true,
-        slotId: "slot-preview",
+        slotId: "slot-1",
       },
     ]);
 
-    expect(commands.setPinnedTabs).toHaveBeenCalledWith("[]");
+    expect(commands.setPinnedTabs).toHaveBeenCalledWith(
+      JSON.stringify([
+        {
+          type: "sessions",
+          id: "session-1",
+          state: { view: null, autoStart: null },
+          pinned: true,
+        },
+      ]),
+    );
   });
 });
