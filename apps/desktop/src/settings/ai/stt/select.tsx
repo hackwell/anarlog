@@ -102,7 +102,7 @@ export function SelectProviderAndModel() {
   const billing = useBillingAccess();
   const { providers: configuredProviders, isReady: providerSettingsReady } =
     useConfiguredMapping();
-  const { startDownload, startTrial } = useSttSettings();
+  const { startDownload } = useSttSettings();
   const health = useConnectionHealth();
   const [pendingProvider, setPendingProvider] = useState<ProviderId | null>(
     null,
@@ -350,7 +350,6 @@ export function SelectProviderAndModel() {
                       <ModelSelectItem
                         model={model}
                         onDownload={() => startDownload(model.id as LocalModel)}
-                        onStartTrial={startTrial}
                       />
                     </span>
                   );
@@ -675,22 +674,6 @@ function useConfiguredMapping(): {
         return [provider.id, { configured: false, models: [] }];
       }
 
-      if (provider.id === "anarlog") {
-        return [
-          provider.id,
-          {
-            configured: true,
-            models: [
-              {
-                id: "cloud",
-                isDownloaded: billing.isPaid,
-                category: "latest" as const,
-              },
-            ],
-          },
-        ];
-      }
-
       if (provider.id === "soniqo") {
         const models = buildOnDeviceModelEntries(
           soniqoModels,
@@ -801,13 +784,10 @@ function buildOnDeviceModelEntries(
 function ModelSelectItem({
   model,
   onDownload,
-  onStartTrial,
 }: {
   model: ModelEntry;
   onDownload: () => void;
-  onStartTrial: () => void;
 }) {
-  const isCloud = model.id === "cloud";
   const { activeDownloads } = useNotifications();
   const { queuedDownloads } = useSttSettings();
   const downloadInfo = activeDownloads.find((d) => d.model === model.id);
@@ -864,11 +844,7 @@ function ModelSelectItem({
     if (isDownloading) {
       return;
     }
-    if (isCloud) {
-      onStartTrial();
-    } else {
-      onDownload();
-    }
+    onDownload();
   };
 
   return (
@@ -876,7 +852,7 @@ function ModelSelectItem({
       className={cn([
         "relative flex items-center justify-between",
         "rounded-full py-1.5 text-sm outline-hidden",
-        isCloud ? "pr-1.5 pl-2" : "px-2",
+        "px-2",
         "cursor-pointer select-none",
         "hover:bg-accent hover:text-accent-foreground",
         "group",
@@ -904,13 +880,11 @@ function ModelSelectItem({
             "rounded-full px-2 text-[11px] font-medium",
             "opacity-0 group-hover:opacity-100",
             "transition-all duration-150",
-            isCloud
-              ? "bg-primary text-primary-foreground hover:bg-primary/90 py-1 shadow-xs hover:shadow-md dark:!bg-white dark:!text-black dark:hover:!bg-white/90"
-              : "from-muted to-accent text-foreground bg-linear-to-t py-0.5 shadow-xs hover:shadow-md",
+            "from-muted to-accent text-foreground bg-linear-to-t py-0.5 shadow-xs hover:shadow-md",
           ])}
           onClick={handleAction}
         >
-          {isCloud ? <Trans>Upgrade to use</Trans> : <Trans>Download</Trans>}
+          <Trans>Download</Trans>
         </button>
       )}
     </div>

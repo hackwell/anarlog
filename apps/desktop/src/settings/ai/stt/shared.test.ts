@@ -6,7 +6,6 @@ import { displayModelLabel, formatDownloadProgress, PROVIDERS } from "./shared";
 describe("STT providers", () => {
   test("orders providers by popularity", () => {
     expect(PROVIDERS.map(({ id }) => id)).toEqual([
-      "anarlog",
       "soniqo",
       "apple_speech",
       "local_file",

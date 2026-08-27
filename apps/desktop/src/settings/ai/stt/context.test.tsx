@@ -5,7 +5,6 @@ const mocks = vi.hoisted(() => ({
   clearTarget: vi.fn(),
   downloadModel: vi.fn(),
   toastError: vi.fn(),
-  upgradeToPro: vi.fn(),
 }));
 
 vi.mock("@anlg/plugin-local-stt", () => ({
@@ -14,10 +13,6 @@ vi.mock("@anlg/plugin-local-stt", () => ({
 
 vi.mock("@anlg/ui/components/ui/toast", () => ({
   sonnerToast: { error: mocks.toastError },
-}));
-
-vi.mock("~/auth/billing-context", () => ({
-  useBillingAccess: () => ({ upgradeToPro: mocks.upgradeToPro }),
 }));
 
 vi.mock("~/store/zustand/toast-action", () => ({

@@ -4931,10 +4931,6 @@ msgstr "Upgrade to Pro to use this provider."
 msgid "Upgrade to save"
 msgstr "Upgrade to save"
 
-#: src/settings/ai/stt/select.tsx
-msgid "Upgrade to use"
-msgstr "Upgrade to use"
-
 #: src/session/components/floating/options-menu.tsx
 #: src/session/components/note-input/transcript/screens/empty.tsx
 #: src/session/components/outer-header/overflow/index.tsx
