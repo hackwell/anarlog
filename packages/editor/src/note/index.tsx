@@ -53,8 +53,6 @@ import {
   clearMarksOnEnterPlugin,
   clipboardPlugin,
   clipPastePlugin,
-  type CommentAnchorsEvent,
-  commentAnchorsPlugin,
   docChangeListenerPlugin,
   ensureImageTrailingParagraphs,
   fileHandlerPlugin,
@@ -107,16 +105,6 @@ export type {
 };
 export { normalizePortableAttachmentUrls } from "./portable-attachments";
 export { schema };
-export {
-  type CommentAnchorInput,
-  type CommentAnchorsEvent,
-  commentAnchorsPluginKey,
-  getCommentAnchorRanges,
-  getCommentAnchorScreenPositions,
-  getSelectionScreenRect,
-  setActiveCommentAnchor,
-  setCommentAnchors,
-} from "../plugins/comment-anchors";
 export { useLinkedItemOpenBehavior };
 
 export interface JSONContent {
@@ -194,9 +182,6 @@ export interface NoteEditorProps {
   onViewDisposed?: (view: EditorView) => void;
   syncContentWhenFocused?: boolean;
   enforceTitleHeading?: boolean;
-  /** Fixed at mount: plugins are not reconfigurable afterwards. */
-  commentAnchorsEnabled?: boolean;
-  onCommentAnchorsEvent?: (event: CommentAnchorsEvent) => void;
   onCommentSelection?: () => void;
 }
 
@@ -610,13 +595,9 @@ export const NoteEditor = forwardRef<NoteEditorRef, NoteEditorProps>(
       onViewDisposed,
       syncContentWhenFocused = false,
       enforceTitleHeading = true,
-      commentAnchorsEnabled = false,
-      onCommentAnchorsEvent,
       onCommentSelection,
     } = props;
 
-    const commentAnchorsEventRef = useRef(onCommentAnchorsEvent);
-    commentAnchorsEventRef.current = onCommentAnchorsEvent;
     const onDocumentChangeRef = useRef(onDocumentChange);
     onDocumentChangeRef.current = onDocumentChange;
 
@@ -758,13 +739,6 @@ export const NoteEditor = forwardRef<NoteEditorRef, NoteEditorProps>(
         gapCursor(),
         clipboardPlugin(),
         hashtagPlugin(),
-        ...(commentAnchorsEnabled
-          ? [
-              commentAnchorsPlugin({
-                onEvent: (event) => commentAnchorsEventRef.current?.(event),
-              }),
-            ]
-          : []),
         imageTrailingParagraphPlugin(),
         searchPlugin(),
         placeholderPlugin(placeholderComponent, persistentPlaceholderComponent),
@@ -790,7 +764,6 @@ export const NoteEditor = forwardRef<NoteEditorRef, NoteEditorProps>(
         enforceTitleHeading,
         readOnly,
         setCompositionActive,
-        commentAnchorsEnabled,
         notifyDocumentChange,
       ],
     );

@@ -6,7 +6,6 @@
 @import "./prosemirror/nodes/search.css";
 @import "./prosemirror/nodes/ai-highlight.css";
 @import "./prosemirror/nodes/hashtag.css";
-@import "./prosemirror/nodes/comment-anchor.css";
 
 @import "./prosemirror/dark.css";
 @import "./prosemirror/mention.css";
