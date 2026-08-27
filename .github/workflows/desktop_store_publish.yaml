@@ -315,9 +315,9 @@ jobs:
           fi
           application_cert_sha1=$(printf '%s' "$application_cert_sha1" | tr '[:lower:]' '[:upper:]')
 
-          profile_app_prefix="${profile_app_id%.com.hyprnote.desktop}"
+          profile_app_prefix="${profile_app_id%.de.flagbit.sessionecho}"
           if [[ -z "$profile_app_prefix" || "$profile_app_prefix" == "$profile_app_id" ]]; then
-            echo "::error::Provisioning profile is for $profile_app_id, expected com.hyprnote.desktop"
+            echo "::error::Provisioning profile is for $profile_app_id, expected de.flagbit.sessionecho"
             exit 1
           fi
           if [[ "$profile_team_id" != "$APPLE_TEAM_ID" ]]; then
@@ -471,7 +471,7 @@ jobs:
           app_build_number=$(
             /usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' "$app/Contents/Info.plist"
           )
-          if [[ "$app_identifier" != "com.hyprnote.desktop" ]]; then
+          if [[ "$app_identifier" != "de.flagbit.sessionecho" ]]; then
             echo "::error::Mac App Store application has bundle ID $app_identifier"
             exit 1
           fi
@@ -608,7 +608,7 @@ jobs:
 
           node workflow-source/scripts/app-store-connect-submit.mjs \
             --build-version "$BUILD_NUMBER" \
-            --bundle-id com.hyprnote.desktop \
+            --bundle-id de.flagbit.sessionecho \
             --issuer-id "$APPSTORE_ISSUER_ID" \
             --key-id "$APPSTORE_API_KEY_ID" \
             --package "$PKG_PATH" \

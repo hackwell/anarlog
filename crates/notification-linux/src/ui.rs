@@ -236,7 +236,7 @@ impl NotificationManager {
         });
 
         Application::builder()
-            .application_id("com.hyprnote.notifications")
+            .application_id("de.flagbit.sessionecho.notifications")
             .build()
     }
 

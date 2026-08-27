@@ -13,7 +13,7 @@ const mocks = vi.hoisted(() => ({
   applyAppIconPreference: vi.fn(),
   appIcon: "default",
   theme: "system",
-  appIdentifier: "com.hyprnote.stable" as string | undefined,
+  appIdentifier: "de.flagbit.sessionecho" as string | undefined,
   billing: {
     isPro: true,
     isUpgradingToPro: false,
@@ -59,7 +59,7 @@ describe("AppIconSelector", () => {
     mocks.platform.mockReturnValue("macos");
     mocks.appIcon = "default";
     mocks.theme = "system";
-    mocks.appIdentifier = "com.hyprnote.stable";
+    mocks.appIdentifier = "de.flagbit.sessionecho";
     mocks.billing.isPro = true;
     mocks.billing.isUpgradingToPro = false;
   });
@@ -164,7 +164,7 @@ describe("AppIconSelector", () => {
   });
 
   it("previews the current channel icon for the default option", () => {
-    mocks.appIdentifier = "com.hyprnote.staging";
+    mocks.appIdentifier = "de.flagbit.sessionecho.staging";
 
     render(<AppIconSelector />);
 

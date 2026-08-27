@@ -217,7 +217,7 @@ jobs:
           fi
 
           app="${apps[0]}"
-          if [[ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$app/Contents/Info.plist")" != "com.hyprnote.desktop" ]]; then
+          if [[ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$app/Contents/Info.plist")" != "de.flagbit.sessionecho" ]]; then
             echo "::error::Mac App Store candidate has the wrong bundle identifier"
             exit 1
           fi

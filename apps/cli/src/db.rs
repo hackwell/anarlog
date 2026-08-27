@@ -52,8 +52,8 @@ fn resolve_default_path_for_command(data_dir: &Path, command_name: Option<&OsStr
         .and_then(|name| Path::new(name).file_stem())
         .and_then(OsStr::to_str);
     let channel_identifier = match command_name {
-        Some("anarlog-dev") => Some("com.hyprnote.dev"),
-        Some("anarlog-staging") => Some("com.hyprnote.staging"),
+        Some("anarlog-dev") => Some("de.flagbit.sessionecho.dev"),
+        Some("anarlog-staging") => Some("de.flagbit.sessionecho.staging"),
         _ => None,
     };
     if let Some(identifier) = channel_identifier {
@@ -108,19 +108,19 @@ mod tests {
 
         assert_eq!(
             resolve_default_path_for_command(dir.path(), Some(OsStr::new("anarlog-dev"))),
-            dir.path().join("com.hyprnote.dev/app.db")
+            dir.path().join("de.flagbit.sessionecho.dev/app.db")
         );
         assert_eq!(
             resolve_default_path_for_command(dir.path(), Some(OsStr::new("anarlog-staging"))),
-            dir.path().join("com.hyprnote.staging/app.db")
+            dir.path().join("de.flagbit.sessionecho.staging/app.db")
         );
         assert_eq!(
             resolve_default_path_for_command(dir.path(), Some(OsStr::new("anarlog-dev.exe"))),
-            dir.path().join("com.hyprnote.dev/app.db")
+            dir.path().join("de.flagbit.sessionecho.dev/app.db")
         );
         assert_eq!(
             resolve_default_path_for_command(dir.path(), Some(OsStr::new("anarlog-staging.exe"))),
-            dir.path().join("com.hyprnote.staging/app.db")
+            dir.path().join("de.flagbit.sessionecho.staging/app.db")
         );
     }
 }

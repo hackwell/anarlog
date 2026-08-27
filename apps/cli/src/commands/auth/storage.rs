@@ -6,7 +6,7 @@ use anlg_supabase_auth::session::Session;
 use crate::{Error, Result};
 
 #[cfg(target_os = "linux")]
-const SECRET_SERVICE: &str = "com.anarlog.stable.secure-store";
+const SECRET_SERVICE: &str = "de.flagbit.sessionecho.secure-store";
 #[cfg(target_os = "linux")]
 const SECRET_ACCOUNT: &str = "auth:supabase-storage";
 #[cfg(target_os = "linux")]
@@ -73,7 +73,7 @@ impl AuthStore {
                 .join("auth.json"),
         };
         #[cfg(target_os = "linux")]
-        let use_secret_service = override_path.is_none() && bundle_id == "com.hyprnote.stable";
+        let use_secret_service = override_path.is_none() && bundle_id == "de.flagbit.sessionecho";
         #[cfg(target_os = "linux")]
         let path = if use_secret_service {
             path.with_file_name(CLI_FALLBACK_FILENAME)
@@ -380,7 +380,7 @@ mod tests {
     #[test]
     fn file_store_round_trips_desktop_auth_shape() {
         let dir = tempdir().unwrap();
-        let store = AuthStore::at(dir.path().join("com.hyprnote.stable/auth.json"));
+        let store = AuthStore::at(dir.path().join("de.flagbit.sessionecho/auth.json"));
         let data = HashMap::from([(
             "sb-project-auth-token".to_string(),
             session_json("user-1", 100),

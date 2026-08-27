@@ -15,12 +15,7 @@ impl ShareOpenRequest {
     pub(crate) fn parse(parsed: &url::Url) -> Result<Self, crate::Error> {
         if !matches!(
             parsed.scheme(),
-            "anarlog"
-                | "anarlog-staging"
-                | "anarlog-dev"
-                | "hyprnote"
-                | "hyprnote-staging"
-                | "hypr"
+            "anarlog" | "anarlog-staging" | "sessionecho" | "hyprnote" | "hyprnote-staging"
         ) || parsed.host_str() != Some("share")
             || parsed.path() != "/open"
             || !parsed.username().is_empty()
@@ -115,10 +110,9 @@ mod tests {
         for scheme in [
             "anarlog",
             "anarlog-staging",
-            "anarlog-dev",
+            "sessionecho",
             "hyprnote",
             "hyprnote-staging",
-            "hypr",
         ] {
             assert!(matches!(
                 parse(&format!(

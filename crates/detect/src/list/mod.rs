@@ -26,14 +26,10 @@ pub fn list_installed_apps() -> Vec<InstalledApp> {
 }
 
 const SELF_BUNDLE_IDS: &[&str] = &[
-    "com.anarlog.dev",
-    "com.anarlog.stable",
-    "com.anarlog.staging",
-    "com.anarlog.nightly",
-    "com.hyprnote.dev",
-    "com.hyprnote.stable",
-    "com.hyprnote.staging",
-    "com.hyprnote.nightly",
+    "de.flagbit.sessionecho.dev",
+    "de.flagbit.sessionecho",
+    "de.flagbit.sessionecho.staging",
+    "de.flagbit.sessionecho.nightly",
 ];
 
 const SELF_APP_NAMES: &[&str] = &[
@@ -110,9 +106,8 @@ mod tests {
 
     #[test]
     fn test_is_self_app_matches_known_bundle_ids() {
-        assert!(is_self_app(&app("com.anarlog.stable", "Anarlog")));
-        assert!(is_self_app(&app("com.hyprnote.stable", "Anarlog")));
-        assert!(is_self_app(&app("com.hyprnote.Hyprnote", "Hyprnote")));
+        assert!(is_self_app(&app("de.flagbit.sessionecho", "Anarlog")));
+        assert!(is_self_app(&app("de.flagbit.sessionecho", "Hyprnote")));
     }
 
     #[test]

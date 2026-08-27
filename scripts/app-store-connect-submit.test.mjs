@@ -172,7 +172,7 @@ test("reuses the editable first version and submits a processed build", async ()
 
   const result = await publishMacApp({
     buildVersion: "2608.26.1",
-    bundleId: "com.hyprnote.desktop",
+    bundleId: "de.flagbit.sessionecho",
     client,
     packagePath: "/tmp/Anarlog.pkg",
     pollIntervalMs: 0,
@@ -274,7 +274,7 @@ test("reuses an existing processing build instead of uploading it again", async 
 
   const result = await publishMacApp({
     buildVersion: "1.4.13",
-    bundleId: "com.hyprnote.desktop",
+    bundleId: "de.flagbit.sessionecho",
     client,
     packagePath: "/tmp/Anarlog.pkg",
     pollIntervalMs: 0,
@@ -345,7 +345,7 @@ test("resubmits an unresolved review without adding its item twice", async () =>
 
   const result = await publishMacApp({
     buildVersion: "2608.26.1",
-    bundleId: "com.hyprnote.desktop",
+    bundleId: "de.flagbit.sessionecho",
     client,
     packagePath: "/tmp/Anarlog.pkg",
     pollIntervalMs: 0,
@@ -396,7 +396,7 @@ test("treats an already submitted version as an idempotent success", async () =>
 
   const result = await publishMacApp({
     buildVersion: "1.4.13",
-    bundleId: "com.hyprnote.desktop",
+    bundleId: "de.flagbit.sessionecho",
     client,
     packagePath: "/tmp/Anarlog.pkg",
     upload: async () => assert.fail("upload should not run"),
@@ -435,7 +435,7 @@ test("refuses to choose between multiple editable placeholder versions", async (
   await assert.rejects(
     publishMacApp({
       buildVersion: "1.4.13",
-      bundleId: "com.hyprnote.desktop",
+      bundleId: "de.flagbit.sessionecho",
       client,
       packagePath: "/tmp/Anarlog.pkg",
       upload: async () => {},

@@ -83,8 +83,8 @@ before the run:
 1. Quit the app, then delete its app data so `app.db` is gone:
 
    ```bash
-   rm -rf ~/Library/Application\ Support/com.hyprnote.dev      # Dev
-   rm -rf ~/Library/Application\ Support/com.hyprnote.staging  # staging
+   rm -rf ~/Library/Application\ Support/de.flagbit.sessionecho.dev      # Dev
+   rm -rf ~/Library/Application\ Support/de.flagbit.sessionecho.staging  # staging
    ```
 
 2. Launch with the onboarding flag, which clears auth, settings, and the

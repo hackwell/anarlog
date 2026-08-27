@@ -16,10 +16,9 @@ describe("getScheme", () => {
   });
 
   it.each([
-    ["com.hyprnote.stable", "anarlog"],
-    ["com.hyprnote.Hyprnote", "anarlog"],
-    ["com.hyprnote.staging", "anarlog-staging"],
-    ["com.hyprnote.dev", "anarlog-dev"],
+    ["de.flagbit.sessionecho", "anarlog"],
+    ["de.flagbit.sessionecho.staging", "anarlog-staging"],
+    ["de.flagbit.sessionecho.dev", "sessionecho"],
     ["so.anarlog.Anarlog", "anarlog"],
     ["unknown", "anarlog"],
   ])("maps %s to %s", async (identifier, scheme) => {

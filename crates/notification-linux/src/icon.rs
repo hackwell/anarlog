@@ -56,7 +56,7 @@ fn expand_home(path: &str) -> String {
 }
 
 fn default_app_icon() -> Option<Pixbuf> {
-    icon_theme_pixbuf("com.hyprnote.dev")
+    icon_theme_pixbuf("de.flagbit.sessionecho.dev")
         .or_else(|| icon_theme_pixbuf("anarlog"))
         .or_else(|| icon_theme_pixbuf("hyprnote"))
         .or_else(|| icon_theme_pixbuf("application-x-executable"))

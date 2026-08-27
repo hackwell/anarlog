@@ -42,7 +42,7 @@ export function AppIconSelector() {
   const theme: ThemePreference =
     storedTheme === "light" || storedTheme === "dark" ? storedTheme : "system";
   const setAppIcon = useSetSettingValue("app_icon");
-  const { data: appIdentifier = "com.hyprnote.stable" } = useQuery({
+  const { data: appIdentifier = "de.flagbit.sessionecho" } = useQuery({
     queryKey: ["tauri", "app-identifier"],
     queryFn: getIdentifier,
     staleTime: Infinity,

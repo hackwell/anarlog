@@ -256,12 +256,12 @@ They do not verify the separate Tauri updater .sig file.
 
 ### Application logs and diagnostics
 
-The stable bundle identifier is com.hyprnote.stable. The tracing plugin writes
+The stable bundle identifier is de.flagbit.sessionecho. The tracing plugin writes
 app.log and up to five rotated files, app.log.1 through app.log.5, under the
 Tauri app log directory.
 
 ```powershell
-$bundleId = "com.hyprnote.stable"
+$bundleId = "de.flagbit.sessionecho"
 $logDir = Join-Path $env:LOCALAPPDATA "$bundleId\logs"
 
 Get-ChildItem $logDir -Filter "app.log*" |
@@ -272,7 +272,7 @@ Get-Content (Join-Path $logDir "app.log") -Tail 500
 Select-String -Path (Join-Path $logDir "app.log*") -Pattern "mic_input_initialized|wasapi_loopback_initialized|mic_stream_error|queue_overflow|capture_stream_failed"
 ```
 
-Use com.hyprnote.staging for a staging package and com.hyprnote.dev for a dev
+Use de.flagbit.sessionecho.staging for a staging package and de.flagbit.sessionecho.dev for a dev
 build. The stable app database normally lives at
 $env:APPDATA\anarlog\app.db, but a migrated install can intentionally retain the
 legacy hyprnote or bundle-identifier directory.
@@ -281,7 +281,7 @@ legacy hyprnote or bundle-identifier directory.
 $dbCandidates = @(
   (Join-Path $env:APPDATA "anarlog\app.db"),
   (Join-Path $env:APPDATA "hyprnote\app.db"),
-  (Join-Path $env:APPDATA "com.hyprnote.stable\app.db")
+  (Join-Path $env:APPDATA "de.flagbit.sessionecho\app.db")
 )
 
 $dbCandidates |
@@ -295,7 +295,7 @@ Get-ChildItem (Join-Path $env:LOCALAPPDATA "char\cloudsync") -Recurse -Filter "c
 $authCandidates = @(
   (Join-Path $env:LOCALAPPDATA "anarlog\auth.dpapi"),
   (Join-Path $env:LOCALAPPDATA "hyprnote\auth.dpapi"),
-  (Join-Path $env:LOCALAPPDATA "com.hyprnote.stable\auth.dpapi")
+  (Join-Path $env:LOCALAPPDATA "de.flagbit.sessionecho\auth.dpapi")
 )
 
 $authCandidates |
@@ -306,10 +306,10 @@ $authCandidates |
 $plaintextAuthCandidates = @(
   (Join-Path $env:LOCALAPPDATA "anarlog\auth.json"),
   (Join-Path $env:LOCALAPPDATA "hyprnote\auth.json"),
-  (Join-Path $env:LOCALAPPDATA "com.hyprnote.stable\auth.json"),
+  (Join-Path $env:LOCALAPPDATA "de.flagbit.sessionecho\auth.json"),
   (Join-Path $env:APPDATA "anarlog\auth.json"),
   (Join-Path $env:APPDATA "hyprnote\auth.json"),
-  (Join-Path $env:APPDATA "com.hyprnote.stable\auth.json")
+  (Join-Path $env:APPDATA "de.flagbit.sessionecho\auth.json")
 )
 
 $plaintextAuthCandidates |

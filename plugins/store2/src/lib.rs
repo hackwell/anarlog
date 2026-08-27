@@ -81,7 +81,11 @@ mod test {
     impl TestVault {
         fn new(label: &str) -> Self {
             let counter = TEST_PATH_COUNTER.fetch_add(1, Ordering::Relaxed);
-            let identifier = format!("com.hyprnote.store2test{}{}", std::process::id(), counter);
+            let identifier = format!(
+                "de.flagbit.sessionecho.store2test{}{}",
+                std::process::id(),
+                counter
+            );
             let primary = std::env::temp_dir().join(format!(
                 "anarlog-store2-{label}-{}-{counter}",
                 std::process::id()

@@ -1,6 +1,6 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "identifier": "com.hyprnote.desktop",
+  "identifier": "de.flagbit.sessionecho",
   "app": {
     "macOSPrivateApi": false
   },

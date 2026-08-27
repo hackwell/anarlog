@@ -17,7 +17,7 @@ const setDockIcon = vi.hoisted(() =>
   vi.fn(async () => ({ status: "ok", data: null })),
 );
 const getIdentifier = vi.hoisted(() =>
-  vi.fn(async () => "com.hyprnote.stable"),
+  vi.fn(async () => "de.flagbit.sessionecho"),
 );
 const nativeTheme = vi.hoisted(() => vi.fn(async () => "light"));
 const setNativeTheme = vi.hoisted(() => vi.fn(async () => undefined));
@@ -81,7 +81,7 @@ describe("AppThemeProvider", () => {
     writeStoredThemePreference.mockClear();
     setDockIcon.mockClear();
     getIdentifier.mockReset();
-    getIdentifier.mockResolvedValue("com.hyprnote.stable");
+    getIdentifier.mockResolvedValue("de.flagbit.sessionecho");
     nativeTheme.mockReset();
     nativeTheme.mockResolvedValue("light");
     setNativeTheme.mockReset();
@@ -154,7 +154,7 @@ describe("AppThemeProvider", () => {
   });
 
   it("uses the channel-specific default Dock icon", async () => {
-    getIdentifier.mockResolvedValue("com.hyprnote.staging");
+    getIdentifier.mockResolvedValue("de.flagbit.sessionecho.staging");
     themeState.settingsReady = true;
 
     render(

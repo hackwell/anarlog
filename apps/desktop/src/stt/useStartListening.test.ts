@@ -3465,7 +3465,7 @@ describe("useStartListening", () => {
     listMicUsingApplicationsMock
       .mockResolvedValueOnce({
         status: "ok",
-        data: [{ id: "com.anarlog.dev", name: "Anarlog Dev" }],
+        data: [{ id: "de.flagbit.sessionecho.dev", name: "Anarlog Dev" }],
       })
       .mockResolvedValueOnce({
         status: "ok",
@@ -3499,7 +3499,7 @@ describe("useStartListening", () => {
     expect(sendMeetingChatMessageMock).toHaveBeenNthCalledWith(
       1,
       expect.stringContaining("https://anarlog.so"),
-      ["com.anarlog.dev"],
+      ["de.flagbit.sessionecho.dev"],
     );
     expect(sendMeetingChatMessageMock).toHaveBeenNthCalledWith(
       2,
@@ -3520,7 +3520,7 @@ describe("useStartListening", () => {
     listMicUsingApplicationsMock.mockResolvedValue({
       status: "ok",
       data: [
-        { id: "com.anarlog.dev", name: "Anarlog Dev" },
+        { id: "de.flagbit.sessionecho.dev", name: "Anarlog Dev" },
         { id: "com.tinyspeck.slackmacgap", name: "Slack" },
       ],
     });
@@ -3535,7 +3535,7 @@ describe("useStartListening", () => {
     await waitFor(() => {
       expect(sendMeetingChatMessageMock).toHaveBeenCalledWith(
         expect.stringContaining("https://anarlog.so"),
-        ["com.anarlog.dev", "com.tinyspeck.slackmacgap"],
+        ["de.flagbit.sessionecho.dev", "com.tinyspeck.slackmacgap"],
       );
     });
   });

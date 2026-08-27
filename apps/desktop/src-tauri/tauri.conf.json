@@ -1,8 +1,8 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "Anarlog Dev",
+  "productName": "Session Echo Dev",
   "mainBinaryName": "anarlog-dev",
-  "identifier": "com.hyprnote.dev",
+  "identifier": "de.flagbit.sessionecho.dev",
   "build": {
     "features": ["direct-distribution"],
     "beforeDevCommand": "pnpm -F desktop dev",
@@ -103,9 +103,7 @@
     "deep-link": {
       "desktop": {
         "schemes": [
-          "anarlog-dev",
-          "hypr",
-          "char"
+          "sessionecho"
         ]
       }
     },

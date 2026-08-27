@@ -27,7 +27,9 @@ fn test_chat_mutation_is_enabled_for_recognized_meeting_apps() {
             "{bundle_id} should be eligible for AX chat mutation"
         );
     }
-    assert!(!supports_meeting_chat_mutation("com.anarlog.dev"));
+    assert!(!supports_meeting_chat_mutation(
+        "de.flagbit.sessionecho.dev"
+    ));
 }
 
 #[test]
@@ -128,7 +130,7 @@ fn test_chat_mutation_scope_deduplicates_one_recognized_meeting_app() {
     let bundle_ids = vec![
         "com.tinyspeck.slackmacgap".to_string(),
         "com.tinyspeck.slackmacgap".to_string(),
-        "com.hyprnote.dev".to_string(),
+        "de.flagbit.sessionecho.dev".to_string(),
     ];
 
     assert_eq!(

@@ -107,7 +107,7 @@ describe("General Listener Slice", () => {
   beforeEach(() => {
     store = createListenerStore();
     vi.clearAllMocks();
-    getIdentifierMock.mockResolvedValue("com.anarlog.stable");
+    getIdentifierMock.mockResolvedValue("de.flagbit.sessionecho");
     getCaptureSnapshotMock.mockResolvedValue({
       status: "ok",
       data: {

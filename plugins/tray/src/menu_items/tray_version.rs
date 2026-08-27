@@ -10,9 +10,9 @@ pub struct TrayVersion;
 impl TrayVersion {
     fn get_channel(identifier: &str, app_name: &str) -> &'static str {
         match identifier {
-            "com.hyprnote.stable" | "com.hyprnote.Hyprnote" => "stable",
-            "com.hyprnote.staging" => "staging",
-            "com.hyprnote.dev" => "dev",
+            "de.flagbit.sessionecho" => "stable",
+            "de.flagbit.sessionecho.staging" => "staging",
+            "de.flagbit.sessionecho.dev" => "dev",
             _ => match app_name {
                 "Anarlog" | "Char" | "Hyprnote" => "stable",
                 "Anarlog Staging" | "Char Staging" | "Hyprnote Staging" => "staging",
@@ -46,15 +46,15 @@ mod tests {
     #[test]
     fn gets_channel_from_identifier() {
         assert_eq!(
-            TrayVersion::get_channel("com.hyprnote.stable", "Anarlog"),
+            TrayVersion::get_channel("de.flagbit.sessionecho", "Anarlog"),
             "stable"
         );
         assert_eq!(
-            TrayVersion::get_channel("com.hyprnote.staging", "Anarlog Staging"),
+            TrayVersion::get_channel("de.flagbit.sessionecho.staging", "Anarlog Staging"),
             "staging"
         );
         assert_eq!(
-            TrayVersion::get_channel("com.hyprnote.dev", "Anarlog Dev"),
+            TrayVersion::get_channel("de.flagbit.sessionecho.dev", "Anarlog Dev"),
             "dev"
         );
     }

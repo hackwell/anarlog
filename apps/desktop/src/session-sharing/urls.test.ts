@@ -133,10 +133,10 @@ describe("session share URLs", () => {
       buildPublicSessionShareUrl({
         appBaseUrl: "https://anarlog.so",
         publicSlug,
-        desktopScheme: "anarlog-dev",
+        desktopScheme: "sessionecho",
       }),
     );
-    expect(publicUrl.searchParams.get("scheme")).toBe("anarlog-dev");
+    expect(publicUrl.searchParams.get("scheme")).toBe("sessionecho");
 
     const stableUrl = new URL(
       buildAccountSessionShareUrl({

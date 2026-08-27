@@ -8,19 +8,15 @@ import { env } from "~/env";
 
 export const id = () => crypto.randomUUID() as string;
 
-export type DesktopScheme = "anarlog" | "anarlog-staging" | "anarlog-dev";
+export type DesktopScheme = "anarlog" | "anarlog-staging" | "sessionecho";
 
 export const getScheme = async (): Promise<DesktopScheme> => {
   const id = await getIdentifier();
   const schemes: Record<string, DesktopScheme> = {
-    "com.hyprnote.stable": "anarlog",
-    "com.hyprnote.Hyprnote": "anarlog",
-    "com.hyprnote.staging": "anarlog-staging",
-    "com.hyprnote.dev": "anarlog-dev",
+    "de.flagbit.sessionecho": "anarlog",
+    "de.flagbit.sessionecho.staging": "anarlog-staging",
+    "de.flagbit.sessionecho.dev": "sessionecho",
     "so.anarlog.Anarlog": "anarlog",
-    "com.anarlog.stable": "anarlog",
-    "com.anarlog.staging": "anarlog-staging",
-    "com.anarlog.dev": "anarlog-dev",
   };
   return schemes[id] ?? "anarlog";
 };

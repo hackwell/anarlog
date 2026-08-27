@@ -358,7 +358,7 @@ mod test {
         let temp = tempdir().unwrap();
         let legacy_auth_path = temp.path().join("hyprnote").join(FILENAME);
         let legacy_store_json_path = temp.path().join("hyprnote").join("store.json");
-        let new_auth_path = temp.path().join("com.hyprnote.stable").join(FILENAME);
+        let new_auth_path = temp.path().join("de.flagbit.sessionecho").join(FILENAME);
 
         std::fs::create_dir_all(legacy_auth_path.parent().unwrap()).unwrap();
         std::fs::write(&legacy_auth_path, auth_json("legacy-token")).unwrap();
@@ -377,7 +377,7 @@ mod test {
         let temp = tempdir().unwrap();
         let legacy_auth_path = temp.path().join("hyprnote").join(FILENAME);
         let legacy_store_json_path = temp.path().join("hyprnote").join("store.json");
-        let new_auth_path = temp.path().join("com.hyprnote.stable").join(FILENAME);
+        let new_auth_path = temp.path().join("de.flagbit.sessionecho").join(FILENAME);
 
         std::fs::create_dir_all(legacy_auth_path.parent().unwrap()).unwrap();
         std::fs::create_dir_all(new_auth_path.parent().unwrap()).unwrap();
@@ -398,7 +398,7 @@ mod test {
         let temp = tempdir().unwrap();
         let legacy_auth_path = temp.path().join("hyprnote").join(FILENAME);
         let legacy_store_json_path = temp.path().join("hyprnote").join("store.json");
-        let new_auth_path = temp.path().join("com.hyprnote.stable").join(FILENAME);
+        let new_auth_path = temp.path().join("de.flagbit.sessionecho").join(FILENAME);
 
         std::fs::create_dir_all(new_auth_path.parent().unwrap()).unwrap();
         std::fs::create_dir_all(legacy_store_json_path.parent().unwrap()).unwrap();
@@ -418,7 +418,7 @@ mod test {
         let temp = tempdir().unwrap();
         let legacy_auth_path = temp.path().join("hyprnote").join(FILENAME);
         let legacy_store_json_path = temp.path().join("hyprnote").join("store.json");
-        let new_auth_path = temp.path().join("com.hyprnote.stable").join(FILENAME);
+        let new_auth_path = temp.path().join("de.flagbit.sessionecho").join(FILENAME);
 
         std::fs::create_dir_all(legacy_store_json_path.parent().unwrap()).unwrap();
         std::fs::write(
@@ -454,7 +454,7 @@ mod test {
         let new_auth_path = temp
             .path()
             .join("nested")
-            .join("com.hyprnote.stable")
+            .join("de.flagbit.sessionecho")
             .join(FILENAME);
 
         std::fs::create_dir_all(legacy_auth_path.parent().unwrap()).unwrap();
@@ -470,8 +470,11 @@ mod test {
         let temp = tempdir().unwrap();
         let legacy_auth_path = temp.path().join("hyprnote").join(FILENAME);
         let legacy_store_json_path = temp.path().join("hyprnote").join("store.json");
-        let stable_auth_path = temp.path().join("com.hyprnote.stable").join(FILENAME);
-        let nightly_auth_path = temp.path().join("com.hyprnote.nightly").join(FILENAME);
+        let stable_auth_path = temp.path().join("de.flagbit.sessionecho").join(FILENAME);
+        let nightly_auth_path = temp
+            .path()
+            .join("de.flagbit.sessionecho.nightly")
+            .join(FILENAME);
 
         std::fs::create_dir_all(legacy_auth_path.parent().unwrap()).unwrap();
         std::fs::write(&legacy_auth_path, auth_json("legacy-token")).unwrap();
@@ -498,7 +501,7 @@ mod test {
         let temp = tempdir().unwrap();
         let legacy_auth_path = temp.path().join("hyprnote").join(FILENAME);
         let legacy_store_json_path = temp.path().join("hyprnote").join("store.json");
-        let new_auth_path = temp.path().join("com.hyprnote.stable").join(FILENAME);
+        let new_auth_path = temp.path().join("de.flagbit.sessionecho").join(FILENAME);
 
         std::fs::create_dir_all(legacy_store_json_path.parent().unwrap()).unwrap();
         std::fs::write(&legacy_store_json_path, "{ invalid json").unwrap();
@@ -519,7 +522,7 @@ mod test {
         let temp = tempdir().unwrap();
         let legacy_auth_path = temp.path().join("hyprnote").join(FILENAME);
         let legacy_store_json_path = temp.path().join("hyprnote").join("store.json");
-        let new_auth_path = temp.path().join("com.hyprnote.stable").join(FILENAME);
+        let new_auth_path = temp.path().join("de.flagbit.sessionecho").join(FILENAME);
 
         std::fs::create_dir_all(legacy_auth_path.parent().unwrap()).unwrap();
         std::fs::create_dir_all(&new_auth_path).unwrap();
@@ -555,11 +558,11 @@ mod test {
 
     #[test]
     fn cli_fallback_is_distinct_from_legacy_plaintext_auth() {
-        let auth_path = Path::new("/data/com.hyprnote.stable/auth.json");
+        let auth_path = Path::new("/data/de.flagbit.sessionecho/auth.json");
 
         assert_eq!(
             cli_fallback_auth_path(auth_path),
-            Path::new("/data/com.hyprnote.stable/auth.cli.json")
+            Path::new("/data/de.flagbit.sessionecho/auth.cli.json")
         );
     }
 

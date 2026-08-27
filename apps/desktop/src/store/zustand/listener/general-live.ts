@@ -477,7 +477,7 @@ export const startLiveSession = <T extends LiveStore>(
             .then((r) =>
               r.status === "ok" ? r.data.map((app) => app.id) : null,
             ),
-          getIdentifier().catch(() => "com.anarlog.stable"),
+          getIdentifier().catch(() => "de.flagbit.sessionecho"),
         ]),
       catch: (error) => error,
     });
@@ -863,7 +863,7 @@ export const stopLiveSession = <T extends GeneralState>(
             if (r.status === "error") throw new Error(r.error);
             return r.data;
           }),
-          getIdentifier().catch(() => "com.anarlog.stable"),
+          getIdentifier().catch(() => "de.flagbit.sessionecho"),
         ])
           .then(([dataDirPath, bundleId]) => {
             const sessionPath = getSessionResourcePath(dataDirPath, sessionId);

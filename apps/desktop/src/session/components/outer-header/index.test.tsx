@@ -187,7 +187,7 @@ describe("OuterHeader", () => {
       data: 43210,
     });
     mocks.getScheme.mockReset();
-    mocks.getScheme.mockResolvedValue("anarlog-dev");
+    mocks.getScheme.mockResolvedValue("sessionecho");
     mocks.startListening.mockClear();
     mocks.stopListening.mockClear();
     mocks.stopTranscription.mockClear();
@@ -803,7 +803,7 @@ describe("OuterHeader", () => {
     expect(mocks.startListening).toHaveBeenCalledOnce();
     await vi.waitFor(() => {
       expect(mocks.startCallbackServer).toHaveBeenCalledWith(
-        "anarlog-dev",
+        "sessionecho",
         null,
       );
       expect(mocks.openUrl).toHaveBeenCalledOnce();

@@ -417,18 +417,18 @@ impl Environment {
         if executable.contains("staging") {
             return Self {
                 scheme: "anarlog-staging",
-                bundle_id: "com.hyprnote.staging",
+                bundle_id: "de.flagbit.sessionecho.staging",
             };
         }
         if executable.contains("dev") {
             return Self {
-                scheme: "anarlog-dev",
-                bundle_id: "com.hyprnote.dev",
+                scheme: "sessionecho",
+                bundle_id: "de.flagbit.sessionecho.dev",
             };
         }
         Self {
             scheme: "anarlog",
-            bundle_id: "com.hyprnote.stable",
+            bundle_id: "de.flagbit.sessionecho",
         }
     }
 }

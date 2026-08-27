@@ -306,7 +306,7 @@ For removal, use sudo apt remove "$pkg", not purge.
 
 ### Application logs and audio backend markers
 
-The stable bundle identifier is com.hyprnote.stable. The tracing plugin writes
+The stable bundle identifier is de.flagbit.sessionecho. The tracing plugin writes
 app.log and up to five rotated files, app.log.1 through app.log.5, under the
 Tauri app log directory.
 
@@ -316,7 +316,7 @@ if [ -z "$data_dir" ]; then
   data_dir="$HOME/.local/share"
 fi
 
-log_dir="$data_dir/com.hyprnote.stable/logs"
+log_dir="$data_dir/de.flagbit.sessionecho/logs"
 find "$log_dir" -maxdepth 1 -type f -name "app.log*" -print
 tail -n 500 "$log_dir/app.log"
 
@@ -324,7 +324,7 @@ grep -E "mic_input_initialized|pipewire_capture_initialized|pipewire_capture_una
   "$log_dir"/app.log*
 ```
 
-Use com.hyprnote.staging for a staging package and com.hyprnote.dev for a dev
+Use de.flagbit.sessionecho.staging for a staging package and de.flagbit.sessionecho.dev for a dev
 build. To capture the foreground process as well as file logs:
 
 ```bash
@@ -356,7 +356,7 @@ hyprnote or bundle-identifier directory.
 for db in \
   "$data_dir/anarlog/app.db" \
   "$data_dir/hyprnote/app.db" \
-  "$data_dir/com.hyprnote.stable/app.db"
+  "$data_dir/de.flagbit.sessionecho/app.db"
 do
   if [ -f "$db" ]; then
     stat "$db"
@@ -374,7 +374,7 @@ busctl --user list | grep -F "org.freedesktop.secrets"
 
 The Secret Service command proves only service availability. Verify Anarlog credential
 metadata through the desktop credential manager or Seahorse without exposing values. The
-current secure-store service name is com.anarlog.stable.secure-store. The CloudSync
+current secure-store service name is de.flagbit.sessionecho.secure-store. The CloudSync
 cache path intentionally still uses char/cloudsync.
 
 For a desktop or audio-service failure, collect a bounded journal slice:
@@ -390,7 +390,7 @@ fi
 
 If Flatpak is later tested, its host-visible log path is expected under:
 
-    $HOME/.var/app/com.hyprnote.Hyprnote/data/com.hyprnote.Hyprnote/logs/
+    $HOME/.var/app/de.flagbit.sessionecho/data/de.flagbit.sessionecho/logs/
 
 Confirm the path from the running sandbox rather than assuming the native-package path.
 

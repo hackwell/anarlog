@@ -176,9 +176,9 @@ mod tests {
 
     #[test]
     fn dev_uses_an_isolated_persistent_database() {
-        let db_dir = desktop_db_dir("com.hyprnote.dev").unwrap();
+        let db_dir = desktop_db_dir("de.flagbit.sessionecho.dev").unwrap();
 
-        assert!(db_dir.ends_with("com.hyprnote.dev"));
+        assert!(db_dir.ends_with("de.flagbit.sessionecho.dev"));
     }
 
     #[test]

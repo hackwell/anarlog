@@ -21,43 +21,67 @@ describe("app icon preference", () => {
   });
 
   it("resolves the default icon from the app channel", () => {
-    expect(resolveAppIconName("default", "com.hyprnote.stable")).toBe("stable");
-    expect(resolveAppIconName("default", "com.hyprnote.staging")).toBe(
-      "staging",
+    expect(resolveAppIconName("default", "de.flagbit.sessionecho")).toBe(
+      "stable",
     );
-    expect(resolveAppIconName("default", "com.hyprnote.dev")).toBe("dev");
+    expect(
+      resolveAppIconName("default", "de.flagbit.sessionecho.staging"),
+    ).toBe("staging");
+    expect(resolveAppIconName("default", "de.flagbit.sessionecho.dev")).toBe(
+      "dev",
+    );
   });
 
   it("follows the system appearance for the system theme", () => {
     expect(
-      resolveDockIconName("anagram", "system", false, "com.hyprnote.dev"),
+      resolveDockIconName(
+        "anagram",
+        "system",
+        false,
+        "de.flagbit.sessionecho.dev",
+      ),
     ).toBe("anagram");
     expect(
-      resolveDockIconName("anagram", "system", true, "com.hyprnote.dev"),
+      resolveDockIconName(
+        "anagram",
+        "system",
+        true,
+        "de.flagbit.sessionecho.dev",
+      ),
     ).toBe("anagram-dark");
     expect(
-      resolveDockIconName("staging", "system", true, "com.hyprnote.stable"),
+      resolveDockIconName("staging", "system", true, "de.flagbit.sessionecho"),
     ).toBe("staging-dark");
   });
 
   it("overrides the system appearance with an explicit theme", () => {
     expect(
-      resolveDockIconName("anagram", "dark", false, "com.hyprnote.dev"),
+      resolveDockIconName(
+        "anagram",
+        "dark",
+        false,
+        "de.flagbit.sessionecho.dev",
+      ),
     ).toBe("anagram-dark");
     expect(
-      resolveDockIconName("anagram", "light", true, "com.hyprnote.dev"),
+      resolveDockIconName(
+        "anagram",
+        "light",
+        true,
+        "de.flagbit.sessionecho.dev",
+      ),
     ).toBe("anagram");
     expect(
-      resolveDockIconName("default", "dark", false, "com.hyprnote.stable"),
+      resolveDockIconName("default", "dark", false, "de.flagbit.sessionecho"),
     ).toBe("stable-dark");
   });
 
   it("keeps theme-independent icons unchanged", () => {
     expect(
-      resolveDockIconName("journal", "system", true, "com.hyprnote.stable"),
+      resolveDockIconName("journal", "system", true, "de.flagbit.sessionecho"),
     ).toBe("journal");
     expect(
-      resolveDockIconName("stone", "dark", false, "com.hyprnote.stable"),
+      resolveDockIconName("stone", "dark", false, "de.flagbit.sessionecho"),
     ).toBe("stone");
     expect(hasDarkAppIconVariant("anagram")).toBe(true);
     expect(hasDarkAppIconVariant("walnut")).toBe(false);
