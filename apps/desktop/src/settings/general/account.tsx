@@ -83,7 +83,7 @@ export function SettingsAccount() {
     onError: (error) => {
       const message = String(error).includes("unsent local changes")
         ? t`Sync your changes before signing out.`
-        : t`Anarlog couldn't sign you out. Try again.`;
+        : t`Session Echo couldn't sign you out. Try again.`;
       sonnerToast.error(message);
     },
   });
@@ -102,7 +102,9 @@ export function SettingsAccount() {
           <Container
             title={<Trans>Finish sign-in</Trans>}
             description={
-              <Trans>Finish in your browser, then return to Anarlog.</Trans>
+              <Trans>
+                Finish in your browser, then return to Session Echo.
+              </Trans>
             }
             action={
               <Button onClick={handleSignIn} variant="outline">
@@ -112,7 +114,8 @@ export function SettingsAccount() {
           >
             <p className="text-muted-foreground text-xs">
               <Trans>
-                If Anarlog stays closed, paste the link in the sign-in window.
+                If Session Echo stays closed, paste the link in the sign-in
+                window.
               </Trans>
             </p>
           </Container>
@@ -128,7 +131,7 @@ export function SettingsAccount() {
             <div className="flex min-w-0 flex-1 flex-col gap-4">
               <div className="flex flex-col gap-2">
                 <h3 className="text-sm font-medium">
-                  <Trans>Sign in to Anarlog</Trans>
+                  <Trans>Sign in to Session Echo</Trans>
                 </h3>
                 <div className="text-muted-foreground text-sm">
                   <Trans>
@@ -188,7 +191,7 @@ export function SettingsAccount() {
       <DestructiveConfirmationDialog
         open={isSignOutDialogOpen}
         onOpenChange={setIsSignOutDialogOpen}
-        title={t`Sign out of Anarlog?`}
+        title={t`Sign out of Session Echo?`}
         description={t`You'll need to sign in again to use cloud sync and account features.`}
         confirmLabel={t`Sign out`}
         pendingLabel={t`Signing out...`}

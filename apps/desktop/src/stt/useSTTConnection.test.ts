@@ -29,7 +29,7 @@ vi.mock("~/auth/billing-context", () => ({
 }));
 
 vi.mock("~/env", () => ({
-  env: { VITE_API_URL: "https://api.anarlog.so" },
+  env: { VITE_API_URL: "https://api.sessionecho.flagbit.de" },
 }));
 
 vi.mock("~/settings/providers", () => ({
@@ -63,7 +63,7 @@ describe("useSTTConnection", () => {
     startServerForPathMock.mockReset();
   });
 
-  it("uses the hosted STT URL when the stored Anarlog URL is blank", () => {
+  it("uses the hosted STT URL when the stored Session Echo URL is blank", () => {
     const queryClient = new QueryClient({
       defaultOptions: { queries: { retry: false } },
     });
@@ -75,7 +75,7 @@ describe("useSTTConnection", () => {
     expect(result.current.conn).toEqual({
       provider: "anarlog",
       model: "cloud",
-      baseUrl: "https://api.anarlog.so/stt",
+      baseUrl: "https://api.sessionecho.flagbit.de/stt",
       apiKey: "access-token",
     });
   });

@@ -183,7 +183,7 @@ export function NotificationSettingsView() {
               title={<Trans>Bounce app icon</Trans>}
               description={
                 <Trans>
-                  Get your attention when Anarlog finishes work in the
+                  Get your attention when Session Echo finishes work in the
                   background.
                 </Trans>
               }

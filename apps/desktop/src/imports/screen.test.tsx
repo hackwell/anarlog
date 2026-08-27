@@ -425,7 +425,7 @@ describe("MeetingImportScreen", () => {
     expect(mocks.connectNangoImport).not.toHaveBeenCalled();
     expect(
       screen.getByText(
-        /Connected · New meetings are imported automatically while Anarlog is running/i,
+        /Connected · New meetings are imported automatically while Session Echo is running/i,
       ),
     ).toBeTruthy();
     expect(
@@ -453,7 +453,7 @@ describe("MeetingImportScreen", () => {
     expect(mocks.connectNangoImport).not.toHaveBeenCalled();
     expect(
       screen.getByText(
-        /Connected · New meetings are imported automatically while Anarlog is running/i,
+        /Connected · New meetings are imported automatically while Session Echo is running/i,
       ),
     ).toBeTruthy();
   });

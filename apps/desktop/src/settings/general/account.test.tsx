@@ -15,7 +15,7 @@ const mocks = vi.hoisted(() => ({
   signIn: vi.fn(() => Promise.resolve()),
   signOut: vi.fn(() => Promise.resolve()),
   buildWebAppUrl: vi.fn((path: string) =>
-    Promise.resolve(`https://anarlog.so${path}`),
+    Promise.resolve(`https://sessionecho.flagbit.de${path}`),
   ),
   billing: {
     canStartTrial: { data: false, isPending: false },
@@ -110,7 +110,7 @@ describe("SettingsAccount", () => {
 
     expect(mocks.signOut).not.toHaveBeenCalled();
     expect(
-      screen.getByRole("heading", { name: "Sign out of Anarlog?" }),
+      screen.getByRole("heading", { name: "Sign out of Session Echo?" }),
     ).toBeTruthy();
     expect(screen.getByRole("dialog").className).toContain("max-w-[320px]");
 
@@ -138,7 +138,7 @@ describe("SettingsAccount", () => {
       expect(mocks.buildWebAppUrl).toHaveBeenCalledWith("/app/account"),
     );
     expect(mocks.openUrl).toHaveBeenCalledWith(
-      "https://anarlog.so/app/account",
+      "https://sessionecho.flagbit.de/app/account",
       null,
     );
   });

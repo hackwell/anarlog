@@ -263,7 +263,7 @@ mod platform {
             WINDOW_LABEL,
             WebviewUrl::App("app/live-caption".into()),
         )
-        .title("Anarlog")
+        .title("Session Echo")
         .inner_size(width, height)
         .visible(false)
         .focused(false)

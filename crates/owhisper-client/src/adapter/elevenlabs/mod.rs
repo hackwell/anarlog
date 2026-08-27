@@ -100,8 +100,8 @@ mod tests {
                 vec![],
             ),
             (
-                "https://api.anarlog.so?provider=elevenlabs",
-                "wss://api.anarlog.so/listen",
+                "https://api.sessionecho.flagbit.de?provider=elevenlabs",
+                "wss://api.sessionecho.flagbit.de/listen",
                 vec![("provider", "elevenlabs")],
             ),
             (

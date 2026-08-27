@@ -8,7 +8,7 @@ use anlg_agent_access::{DEFAULT_TRANSCRIPT_LIMIT, MAX_TRANSCRIPT_LIMIT};
 #[command(
     name = "anarlog",
     version,
-    about = "Access Anarlog from the command line"
+    about = "Access Session Echo from the command line"
 )]
 pub struct Args {
     #[arg(
@@ -75,7 +75,7 @@ impl Args {
 
 #[derive(Debug, Subcommand)]
 pub enum Command {
-    /// Sign in to an Anarlog account from a browser
+    /// Sign in to a Session Echo account from a browser
     Auth {
         #[command(subcommand)]
         command: AuthCommand,
@@ -92,7 +92,7 @@ pub enum Command {
         #[command(subcommand)]
         command: ProposalCommand,
     },
-    /// Run the Anarlog MCP server over stdio
+    /// Run the Session Echo MCP server over stdio
     Mcp,
 }
 
@@ -345,15 +345,18 @@ mod tests {
     #[test]
     fn skill_covers_the_command_contract() {
         let skill = concat!(
-            include_str!("../../../skills/anarlog/references/cli.md"),
-            include_str!("../../../skills/anarlog/references/setup.md"),
+            include_str!("../../../skills/session-echo/references/cli.md"),
+            include_str!("../../../skills/session-echo/references/setup.md"),
         );
         let command = Args::command();
         let mut paths = Vec::new();
         collect_leaf_commands(&command, "", &mut paths);
 
         for path in paths {
-            assert!(skill.contains(&path), "Anarlog skill is missing `{path}`");
+            assert!(
+                skill.contains(&path),
+                "Session Echo skill is missing `{path}`"
+            );
         }
         assert_options_are_documented(&command, skill);
     }

@@ -113,7 +113,7 @@ BEGIN
   SELECT
     p_workspace_id,
     v_slug,
-    format('https://%s.anarlog.so', v_slug);
+    format('https://%s.sessionecho.flagbit.de', v_slug);
 END;
 $$;
 

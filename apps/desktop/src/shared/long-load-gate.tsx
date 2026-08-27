@@ -105,7 +105,7 @@ function getStartupDetail(status: StartupStatus | undefined) {
 
 function StartupErrorView({ error }: { error: Error }) {
   const needsUpdate = error.message.includes(
-    "created by a newer version of Anarlog",
+    "created by a newer version of Session Echo",
   );
 
   const handleRestart = async () => {
@@ -127,11 +127,13 @@ function StartupErrorView({ error }: { error: Error }) {
     >
       <div className="flex max-w-sm flex-col items-center gap-4 text-center">
         <h1 className="text-foreground text-base font-semibold">
-          {needsUpdate ? "Anarlog needs an update" : "Anarlog could not start"}
+          {needsUpdate
+            ? "Session Echo needs an update"
+            : "Session Echo could not start"}
         </h1>
         <p className="text-muted-foreground text-sm leading-relaxed">
           {needsUpdate
-            ? "Your data was created by a newer version of Anarlog, and this older version cannot open it. Your existing data was left unchanged. Please install the latest version of Anarlog."
+            ? "Your data was created by a newer version of Session Echo, and this older version cannot open it. Your existing data was left unchanged. Please install the latest version of Session Echo."
             : "Your existing data was left unchanged. Please restart the app. If the problem continues, contact support."}
         </p>
         {needsUpdate ? null : (

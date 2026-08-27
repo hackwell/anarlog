@@ -8,7 +8,7 @@
       target: 200
     frequency: 1m
     kind: http
-    name: Anarlog API
+    name: Session Echo API
     openTelemetry: {}
     regions:
     - iad
@@ -19,7 +19,7 @@
     - jnb
     request:
       method: GET
-      url: https://api.anarlog.so/health
+      url: https://api.sessionecho.flagbit.de/health
     retry: 3
     timeout: 45000
 "11027":
@@ -32,7 +32,7 @@
       target: 200
     frequency: 1m
     kind: http
-    name: Anarlog Web
+    name: Session Echo Web
     openTelemetry: {}
     regions:
     - iad
@@ -43,30 +43,6 @@
     - jnb
     request:
       method: GET
-      url: https://anarlog.so
-    retry: 3
-    timeout: 45000
-"11028":
-  ID: 11028
-  Monitor:
-    active: true
-    assertions:
-    - compare: eq
-      kind: statusCode
-      target: 200
-    frequency: 1m
-    kind: http
-    name: Anarlog Docs
-    openTelemetry: {}
-    regions:
-    - iad
-    - arn
-    - sin
-    - syd
-    - gru
-    - jnb
-    request:
-      method: GET
-      url: https://docs.anarlog.so
+      url: https://sessionecho.flagbit.de
     retry: 3
     timeout: 45000

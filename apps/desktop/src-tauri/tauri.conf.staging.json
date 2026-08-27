@@ -1,6 +1,6 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "Anarlog Staging",
+  "productName": "Session Echo Staging",
   "mainBinaryName": "anarlog-staging",
   "identifier": "de.flagbit.sessionecho.staging",
   "plugins": {

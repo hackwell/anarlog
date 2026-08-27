@@ -19,7 +19,7 @@ describe("meeting recap delivery client", () => {
       .mockResolvedValue(new Response(null, { status: 204 }));
 
     await sendSessionShareRecapEmail({
-      apiBaseUrl: "https://api.anarlog.so",
+      apiBaseUrl: "https://api.sessionecho.flagbit.de",
       session: session(),
       shareId: "share-id",
       recipients: ["one@example.com"],
@@ -31,7 +31,9 @@ describe("meeting recap delivery client", () => {
     });
 
     expect(fetcher).toHaveBeenCalledWith(
-      new URL("https://api.anarlog.so/shared-notes/share-id/recap/email"),
+      new URL(
+        "https://api.sessionecho.flagbit.de/shared-notes/share-id/recap/email",
+      ),
       expect.objectContaining({
         method: "POST",
         body: JSON.stringify({
@@ -57,7 +59,7 @@ describe("meeting recap delivery client", () => {
 
     await expect(
       listSlackChannels({
-        apiBaseUrl: "https://api.anarlog.so",
+        apiBaseUrl: "https://api.sessionecho.flagbit.de",
         accessToken: "token",
         fetcher,
       }),
@@ -75,6 +77,6 @@ describe("meeting recap delivery client", () => {
     });
 
     expect(recap.length).toBeLessThanOrEqual(40_000);
-    expect(recap).toContain("Sent by Owner via Anarlog");
+    expect(recap).toContain("Sent by Owner via Session Echo");
   });
 });

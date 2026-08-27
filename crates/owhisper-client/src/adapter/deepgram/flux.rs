@@ -274,7 +274,7 @@ mod tests {
             model: Some("flux-general-multi".to_string()),
             languages: vec![ISO639::En.into(), ISO639::Ja.into()],
             sample_rate: 16000,
-            keywords: vec!["Anarlog".to_string()],
+            keywords: vec!["Session Echo".to_string()],
             ..Default::default()
         };
 
@@ -285,7 +285,7 @@ mod tests {
         assert!(url.as_str().contains("model=flux-general-multi"));
         assert!(url.as_str().contains("language_hint=en"));
         assert!(url.as_str().contains("language_hint=ja"));
-        assert!(url.as_str().contains("keyterm=Anarlog"));
+        assert!(url.as_str().contains("keyterm=Session Echo"));
         assert!(!url.as_str().contains("channels="));
     }
 

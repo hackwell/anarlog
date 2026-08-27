@@ -14,8 +14,8 @@ use crate::{Error, Result, output};
 
 use self::storage::{AuthStore, Backend};
 
-const WEB_APP_URL: &str = "https://anarlog.so";
-const API_URL: &str = "https://api.anarlog.so";
+const WEB_APP_URL: &str = "https://sessionecho.flagbit.de";
+const API_URL: &str = "https://api.sessionecho.flagbit.de";
 const MAX_CALLBACK_BYTES: usize = 32 * 1024;
 
 pub async fn run(command: &AuthCommand, json: bool) -> Result<()> {
@@ -112,7 +112,7 @@ fn emit_status(command: &'static str, status: AuthStatus, json: bool) -> Result<
     });
     if status.expired {
         output::emit(&format!(
-            "Signed in as {identity}. The access token has expired; open Anarlog or run the login command again to refresh it."
+            "Signed in as {identity}. The access token has expired; open Session Echo or run the login command again to refresh it."
         ));
     } else {
         output::emit(&format!("Signed in as {identity}."));
@@ -222,10 +222,10 @@ async fn verify_and_build_session(tokens: CallbackTokens) -> Result<Session> {
         .map_err(|error| Error::operation("verify login", error.to_string()))?;
     if !response.status().is_success() {
         let reason = if response.status() == reqwest::StatusCode::UNAUTHORIZED {
-            "Anarlog rejected the callback session".to_string()
+            "Session Echo rejected the callback session".to_string()
         } else {
             format!(
-                "Anarlog could not verify the callback session (HTTP {})",
+                "Session Echo could not verify the callback session (HTTP {})",
                 response.status().as_u16()
             )
         };
@@ -448,7 +448,7 @@ mod tests {
     fn builds_headless_browser_login_url() {
         assert_eq!(
             login_url("anarlog").unwrap().as_str(),
-            "https://anarlog.so/auth?flow=desktop&scheme=anarlog"
+            "https://sessionecho.flagbit.de/auth?flow=desktop&scheme=anarlog"
         );
     }
 

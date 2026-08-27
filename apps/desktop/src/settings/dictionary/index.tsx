@@ -35,7 +35,7 @@ export function SettingsDictionary() {
             </div>
             <div>
               <h3 className="text-sm font-medium">
-                <Trans>Build a custom dictionary with Anarlog Pro</Trans>
+                <Trans>Build a custom dictionary with Session Echo Pro</Trans>
               </h3>
               <p className="text-muted-foreground mt-1 text-xs leading-5">
                 <Trans>

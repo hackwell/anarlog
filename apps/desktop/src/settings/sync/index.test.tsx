@@ -511,7 +511,7 @@ describe("SettingsSync", () => {
     expect(screen.getByText("Background sync")).toBeTruthy();
     expect(
       screen.getByText(
-        "Anarlog couldn't complete this sync. Your notes are safe on this device.",
+        "Session Echo couldn't complete this sync. Your notes are safe on this device.",
       ),
     ).toBeTruthy();
     expect(screen.queryByText(/sqlx error/)).toBeNull();
@@ -527,12 +527,6 @@ describe("SettingsSync", () => {
 
     expect(await screen.findByText(/storage location is inside/)).toBeTruthy();
     expect(screen.getAllByText(/iCloud Drive/).length).toBeGreaterThan(0);
-
-    fireEvent.click(screen.getByRole("button", { name: "Learn more" }));
-    expect(mocks.openUrl).toHaveBeenCalledWith(
-      "https://docs.anarlog.so/sync",
-      null,
-    );
   });
 
   it("pauses cloud sync from its settings page", async () => {

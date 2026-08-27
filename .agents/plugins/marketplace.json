@@ -5,10 +5,10 @@
   },
   "plugins": [
     {
-      "name": "anarlog",
+      "name": "session-echo",
       "source": {
         "source": "local",
-        "path": "./agent-plugins/anarlog"
+        "path": "./agent-plugins/session-echo"
       },
       "policy": {
         "installation": "AVAILABLE",

@@ -4,7 +4,7 @@ assertion_line: 367
 expression: canonicalize_json(contract)
 ---
 {
-  "about": "Access Anarlog from the command line",
+  "about": "Access Session Echo from the command line",
   "global_options": [
     {
       "flags": "--base",
@@ -41,7 +41,7 @@ expression: canonicalize_json(contract)
   ],
   "subcommands": [
     {
-      "about": "Sign in to an Anarlog account from a browser",
+      "about": "Sign in to a Session Echo account from a browser",
       "name": "anarlog auth",
       "options": [
         {
@@ -467,7 +467,7 @@ expression: canonicalize_json(contract)
       "synopsis": "anarlog proposals [-h] <command>"
     },
     {
-      "about": "Run the Anarlog MCP server over stdio",
+      "about": "Run the Session Echo MCP server over stdio",
       "name": "anarlog mcp",
       "options": [
         {

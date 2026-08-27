@@ -40,7 +40,7 @@ impl AnarlogMcpServer {
 #[tool_router]
 impl AnarlogMcpServer {
     #[tool(
-        description = "List recent Anarlog meetings with pagination metadata. Use query to narrow by title or meeting id, then pass next_offset as offset to continue.",
+        description = "List recent Session Echo meetings with pagination metadata. Use query to narrow by title or meeting id, then pass next_offset as offset to continue.",
         annotations(
             read_only_hint = true,
             destructive_hint = false,
@@ -59,7 +59,7 @@ impl AnarlogMcpServer {
     }
 
     #[tool(
-        description = "Get one Anarlog meeting with its canonical note, summaries, participants, and action items. Use get_meeting_transcript separately for transcript words.",
+        description = "Get one Session Echo meeting with its canonical note, summaries, participants, and action items. Use get_meeting_transcript separately for transcript words.",
         annotations(
             read_only_hint = true,
             destructive_hint = false,
@@ -78,7 +78,7 @@ impl AnarlogMcpServer {
     }
 
     #[tool(
-        description = "Get a bounded page of transcript words and readable text for an Anarlog meeting. Pass pagination.next_offset as offset to continue.",
+        description = "Get a bounded page of transcript words and readable text for a Session Echo meeting. Pass pagination.next_offset as offset to continue.",
         annotations(
             read_only_hint = true,
             destructive_hint = false,
@@ -116,7 +116,7 @@ impl AnarlogMcpServer {
     }
 
     #[tool(
-        description = "Propose a complete summary replacement. The proposal stays pending until a human applies it in the Anarlog desktop app. Specify target_id when the meeting has multiple summaries.",
+        description = "Propose a complete summary replacement. The proposal stays pending until a human applies it in the Session Echo desktop app. Specify target_id when the meeting has multiple summaries.",
         annotations(
             read_only_hint = false,
             destructive_hint = false,
@@ -144,7 +144,7 @@ impl AnarlogMcpServer {
     }
 
     #[tool(
-        description = "Propose a complete memo replacement. The proposal stays pending until a human applies it in the Anarlog desktop app.",
+        description = "Propose a complete memo replacement. The proposal stays pending until a human applies it in the Session Echo desktop app.",
         annotations(
             read_only_hint = false,
             destructive_hint = false,
@@ -172,7 +172,7 @@ impl AnarlogMcpServer {
     }
 
     #[tool(
-        description = "List staged Anarlog meeting proposals. Defaults to pending proposals. Pass status all to include applied and declined rows, and next_offset as offset to continue.",
+        description = "List staged Session Echo meeting proposals. Defaults to pending proposals. Pass status all to include applied and declined rows, and next_offset as offset to continue.",
         annotations(
             read_only_hint = true,
             destructive_hint = false,
@@ -191,7 +191,7 @@ impl AnarlogMcpServer {
     }
 
     #[tool(
-        description = "Get one staged Anarlog proposal, including its unified diff. The proposal is not applied.",
+        description = "Get one staged Session Echo proposal, including its unified diff. The proposal is not applied.",
         annotations(
             read_only_hint = true,
             destructive_hint = false,
@@ -259,7 +259,7 @@ impl ServerHandler for AnarlogMcpServer {
             env!("CARGO_PKG_VERSION"),
         ))
         .with_instructions(
-            "Local access to Anarlog meeting data. Start with list_meetings to resolve a meeting_id, then call get_meeting for notes, summaries, participants, and action items. Request transcript pages with get_meeting_transcript and continue with pagination.next_offset; each page is capped at 500 words. Use get_recurring_meeting_history for series context. To persist an edit, call propose_summary_edit or propose_memo_edit; the result stays pending until a human applies it in the desktop app. List or inspect staged work with list_proposals and get_proposal. decline_proposal discards a pending proposal without changing the meeting. Never invent meeting ids, access SQLite directly, or claim a proposal was applied. Documentation: https://docs.anarlog.so",
+            "Local access to Session Echo meeting data. Start with list_meetings to resolve a meeting_id, then call get_meeting for notes, summaries, participants, and action items. Request transcript pages with get_meeting_transcript and continue with pagination.next_offset; each page is capped at 500 words. Use get_recurring_meeting_history for series context. To persist an edit, call propose_summary_edit or propose_memo_edit; the result stays pending until a human applies it in the desktop app. List or inspect staged work with list_proposals and get_proposal. decline_proposal discards a pending proposal without changing the meeting. Never invent meeting ids, access SQLite directly, or claim a proposal was applied.",
         )
     }
 
@@ -301,7 +301,7 @@ impl ServerHandler for AnarlogMcpServer {
                     meeting.title
                 };
                 RawResource::new(format!("anarlog://meetings/{}", meeting.id), name)
-                    .with_description("Anarlog meeting context")
+                    .with_description("Session Echo meeting context")
                     .with_mime_type("text/markdown")
                     .no_annotation()
             })
@@ -322,21 +322,24 @@ impl ServerHandler for AnarlogMcpServer {
         use rmcp::model::AnnotateAble;
 
         Ok(ListResourceTemplatesResult::with_all_items(vec![
-            RawResourceTemplate::new("anarlog://meetings/{meeting_id}", "Anarlog meeting")
+            RawResourceTemplate::new("anarlog://meetings/{meeting_id}", "Session Echo meeting")
                 .with_description("Meeting metadata, note, summaries, people, and action items")
                 .with_mime_type("text/markdown")
                 .no_annotation(),
             RawResourceTemplate::new(
                 "anarlog://meetings/{meeting_id}/transcript{?offset,limit}",
-                "Anarlog meeting transcript",
+                "Session Echo meeting transcript",
             )
             .with_description("A bounded page of meeting transcript text")
             .with_mime_type("text/plain")
             .no_annotation(),
-            RawResourceTemplate::new("anarlog://series/{series_id}", "Anarlog meeting series")
-                .with_description("Recurring meeting history")
-                .with_mime_type("text/markdown")
-                .no_annotation(),
+            RawResourceTemplate::new(
+                "anarlog://series/{series_id}",
+                "Session Echo meeting series",
+            )
+            .with_description("Recurring meeting history")
+            .with_mime_type("text/markdown")
+            .no_annotation(),
         ]))
     }
 
@@ -424,7 +427,7 @@ pub async fn serve(db: Arc<anlg_db_core::Db>) -> crate::Result<()> {
 
 fn parse_resource_uri(uri: &str) -> std::result::Result<ResourceRequest, McpError> {
     let url = url::Url::parse(uri)
-        .map_err(|_| McpError::invalid_params("invalid Anarlog resource URI", None))?;
+        .map_err(|_| McpError::invalid_params("invalid Session Echo resource URI", None))?;
     if url.scheme() != "anarlog" {
         return Err(McpError::invalid_params(
             "resource URI must use the anarlog scheme",
@@ -475,7 +478,7 @@ fn parse_resource_uri(uri: &str) -> std::result::Result<ResourceRequest, McpErro
             series_id: (*series_id).to_string(),
         }),
         _ => Err(McpError::invalid_params(
-            "unsupported Anarlog resource URI",
+            "unsupported Session Echo resource URI",
             None,
         )),
     }
@@ -533,7 +536,6 @@ mod tests {
         assert!(info.capabilities.resources.is_some());
         let instructions = info.instructions.unwrap();
         assert!(instructions.contains("Start with list_meetings"));
-        assert!(instructions.contains("https://docs.anarlog.so"));
         assert!(instructions.contains("propose_summary_edit"));
         assert!(instructions.contains("claim a proposal was applied"));
     }
@@ -615,11 +617,11 @@ mod tests {
                 "propose_summary_edit",
             ]
         );
-        let mcp_skill = include_str!("../../../skills/anarlog/references/mcp.md");
+        let mcp_skill = include_str!("../../../skills/session-echo/references/mcp.md");
         for tool_name in &tool_names {
             assert!(
                 mcp_skill.contains(tool_name),
-                "Anarlog skill is missing `{tool_name}`"
+                "Session Echo skill is missing `{tool_name}`"
             );
         }
         let documented = documented_tool_parameters(mcp_skill);
@@ -651,7 +653,7 @@ mod tests {
                 .collect::<Vec<_>>();
             assert!(
                 undocumented.is_empty() && invented.is_empty(),
-                "Anarlog skill parameters for `{}` disagree with its input schema: undocumented {undocumented:?}, documented but not in the schema {invented:?}",
+                "Session Echo skill parameters for `{}` disagree with its input schema: undocumented {undocumented:?}, documented but not in the schema {invented:?}",
                 tool.name
             );
             let annotations = tool.annotations.expect("tool annotations");
@@ -680,24 +682,27 @@ mod tests {
             template_contract,
             [
                 (
-                    "Anarlog meeting".to_string(),
+                    "Session Echo meeting".to_string(),
                     "anarlog://meetings/{meeting_id}".to_string(),
                     None,
                 ),
                 (
-                    "Anarlog meeting transcript".to_string(),
+                    "Session Echo meeting transcript".to_string(),
                     "anarlog://meetings/{meeting_id}/transcript{?offset,limit}".to_string(),
                     None,
                 ),
                 (
-                    "Anarlog meeting series".to_string(),
+                    "Session Echo meeting series".to_string(),
                     "anarlog://series/{series_id}".to_string(),
                     None,
                 ),
             ]
         );
         for (_, uri, _) in &template_contract {
-            assert!(mcp_skill.contains(uri), "Anarlog skill is missing `{uri}`");
+            assert!(
+                mcp_skill.contains(uri),
+                "Session Echo skill is missing `{uri}`"
+            );
         }
         assert_eq!(resources.len(), 1);
         assert_eq!(resources[0].raw.name, "Planning");

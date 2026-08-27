@@ -424,7 +424,7 @@ mod tests {
     #[test]
     fn defaults_anarlog_cloud_en_ko_capture_to_live_mode() {
         let params = capture_params_with_languages(
-            "https://api.anarlog.so/stt",
+            "https://api.sessionecho.flagbit.de/stt",
             "cloud",
             vec![ISO639::En.into(), ISO639::Ko.into()],
         );

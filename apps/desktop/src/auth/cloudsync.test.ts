@@ -611,7 +611,7 @@ describe("CloudSync auth lifecycle", () => {
         method: "POST",
         headers: {
           Authorization: "Bearer supabase-token",
-          "X-Anarlog-E2EE-Key-Id": E2EE_KEY_ID,
+          "X-Session Echo-E2EE-Key-Id": E2EE_KEY_ID,
           "x-anarlog-e2ee-member-public-key": E2EE_MEMBER_PUBLIC_KEY,
         },
       }),
@@ -980,7 +980,7 @@ describe("CloudSync auth lifecycle", () => {
           JSON.stringify({
             error: {
               code: "subscription_required",
-              message: "Anarlog Pro is required for CloudSync",
+              message: "Session Echo Pro is required for CloudSync",
             },
           }),
           { status: 403, headers: { "Content-Type": "application/json" } },
@@ -997,7 +997,7 @@ describe("CloudSync auth lifecycle", () => {
     expect(configureCloudsyncToken).not.toHaveBeenCalled();
     expect(suspendCloudsync).toHaveBeenCalledTimes(1);
     expect(warn).toHaveBeenCalledWith(
-      "[cloudsync] Anarlog Pro is required; sync remains disabled",
+      "[cloudsync] Session Echo Pro is required; sync remains disabled",
     );
     expect(getCloudsyncCredentialBlock()).toBe("not_entitled");
   });

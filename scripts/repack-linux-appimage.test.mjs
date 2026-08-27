@@ -21,10 +21,10 @@ async function createFixture(t, { withWaylandLibraries = true } = {}) {
   );
   t.after(() => rm(directory, { force: true, recursive: true }));
 
-  const appDirectory = path.join(directory, "Anarlog.AppDir");
+  const appDirectory = path.join(directory, "Session Echo.AppDir");
   const libraryDirectory = path.join(appDirectory, "usr", "lib");
   const nestedLibraryDirectory = path.join(libraryDirectory, "gtk-3.0");
-  const appImage = path.join(directory, "Anarlog_1.4.5_amd64.AppImage");
+  const appImage = path.join(directory, "Session Echo_1.4.5_amd64.AppImage");
   const plugin = path.join(
     directory,
     "tools",
@@ -165,7 +165,7 @@ test("fails before mutation when the AppImage output plugin is unavailable", asy
 test("refuses an ambiguous AppImage bundle before mutation", async (t) => {
   const fixture = await createFixture(t);
   await writeFile(
-    path.join(fixture.directory, "Anarlog_1.4.5_arm64.AppImage"),
+    path.join(fixture.directory, "Session Echo_1.4.5_arm64.AppImage"),
     "other-appimage",
   );
 

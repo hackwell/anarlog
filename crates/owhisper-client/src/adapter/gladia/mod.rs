@@ -122,8 +122,8 @@ mod tests {
                 vec![],
             ),
             (
-                "https://api.anarlog.so?provider=gladia",
-                "wss://api.anarlog.so/listen",
+                "https://api.sessionecho.flagbit.de?provider=gladia",
+                "wss://api.sessionecho.flagbit.de/listen",
                 vec![("provider", "gladia")],
             ),
             (

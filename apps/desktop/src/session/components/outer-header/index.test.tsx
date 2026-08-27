@@ -781,7 +781,7 @@ describe("OuterHeader", () => {
     mocks.sessionEvents = {
       "session-1": {
         tracking_id: "anarlog-onboarding-demo-v1",
-        meeting_link: "https://anarlog.so/onboarding-demo/",
+        meeting_link: "https://sessionecho.flagbit.de/onboarding-demo/",
       },
     };
 
@@ -811,7 +811,7 @@ describe("OuterHeader", () => {
 
     const openedUrl = new URL(mocks.openUrl.mock.calls[0][0]);
     expect(openedUrl.origin + openedUrl.pathname).toBe(
-      "https://anarlog.so/onboarding-demo/",
+      "https://sessionecho.flagbit.de/onboarding-demo/",
     );
     expect(openedUrl.searchParams.get("autojoin")).toBe("1");
     expect(openedUrl.searchParams.get("completion_url")).toBe(
@@ -827,7 +827,7 @@ describe("OuterHeader", () => {
     mocks.sessionEvents = {
       "session-1": {
         tracking_id: "anarlog-onboarding-demo-v1",
-        meeting_link: "https://anarlog.so/onboarding-demo/",
+        meeting_link: "https://sessionecho.flagbit.de/onboarding-demo/",
       },
     };
 
@@ -847,7 +847,7 @@ describe("OuterHeader", () => {
 
       const openedUrl = new URL(mocks.openUrl.mock.calls[0][0]);
       expect(openedUrl.origin + openedUrl.pathname).toBe(
-        "https://anarlog.so/onboarding-demo/",
+        "https://sessionecho.flagbit.de/onboarding-demo/",
       );
       expect(openedUrl.searchParams.get("autojoin")).toBe("1");
       expect(openedUrl.searchParams.get("completion_url")).toBeNull();
@@ -861,7 +861,7 @@ describe("OuterHeader", () => {
     mocks.sessionEvents = {
       "session-1": {
         tracking_id: "anarlog-onboarding-demo-v1",
-        meeting_link: "https://anarlog.so/onboarding-demo/",
+        meeting_link: "https://sessionecho.flagbit.de/onboarding-demo/",
       },
     };
 
@@ -881,7 +881,7 @@ describe("OuterHeader", () => {
       "This is a prerecorded demo, so your camera stays off.",
     );
     expect(prompt?.textContent).toContain(
-      "Click Join & record to see Anarlog in action.",
+      "Click Join & record to see Session Echo in action.",
     );
     expect(
       prompt?.querySelector("[data-welcome-demo-prompt-tail]"),
@@ -894,7 +894,7 @@ describe("OuterHeader", () => {
     mocks.sessionEvents = {
       "session-1": {
         tracking_id: "anarlog-onboarding-demo-v1",
-        meeting_link: "https://anarlog.so/onboarding-demo/",
+        meeting_link: "https://sessionecho.flagbit.de/onboarding-demo/",
       },
     };
 
@@ -921,7 +921,7 @@ describe("OuterHeader", () => {
     mocks.sessionEvents = {
       "session-1": {
         tracking_id: "anarlog-onboarding-demo-v1",
-        meeting_link: "https://anarlog.so/onboarding-demo/",
+        meeting_link: "https://sessionecho.flagbit.de/onboarding-demo/",
       },
     };
 

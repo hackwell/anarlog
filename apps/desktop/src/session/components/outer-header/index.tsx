@@ -399,7 +399,7 @@ function HeaderMeetingActionPill({
             />
             <span className="relative block font-medium">{t`Try the demo`}</span>
             <span className="text-muted-foreground relative mt-0.5 block leading-snug">
-              {t`This is a prerecorded demo, so your camera stays off. Click Join & record to see Anarlog in action.`}
+              {t`This is a prerecorded demo, so your camera stays off. Click Join & record to see Session Echo in action.`}
             </span>
           </PopoverContent>
         ) : showCountdown ? (

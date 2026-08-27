@@ -150,7 +150,7 @@ describe("sanitizeErrorEvent", () => {
       },
       request: {
         method: "POST",
-        url: "https://anarlog.so/note/123?token=secret#selection",
+        url: "https://sessionecho.flagbit.de/note/123?token=secret#selection",
         headers: { authorization: "Bearer secret" },
         data: { note: "private note" },
       },
@@ -181,8 +181,8 @@ describe("sanitizeErrorEvent", () => {
         {
           category: "navigation",
           data: {
-            from: "https://anarlog.so/?token=secret",
-            to: "https://anarlog.so/app/?share=secret",
+            from: "https://sessionecho.flagbit.de/?token=secret",
+            to: "https://sessionecho.flagbit.de/app/?share=secret",
           },
         },
       ],
@@ -191,7 +191,7 @@ describe("sanitizeErrorEvent", () => {
     expect(event?.user).toEqual({ id: "user-1" });
     expect(event?.request).toEqual({
       method: "POST",
-      url: "https://anarlog.so/note/123",
+      url: "https://sessionecho.flagbit.de/note/123",
     });
     expect(event?.extra).toBeUndefined();
     expect(event?.message).toBeUndefined();
@@ -219,8 +219,8 @@ describe("sanitizeErrorEvent", () => {
         timestamp: undefined,
         type: undefined,
         data: {
-          from: "https://anarlog.so/",
-          to: "https://anarlog.so/app/",
+          from: "https://sessionecho.flagbit.de/",
+          to: "https://sessionecho.flagbit.de/app/",
         },
       },
     ]);

@@ -371,7 +371,7 @@ export function ConnectSubscriptionDialog({
               ? t`Sign in with Claude Pro or Max. After you authorize, we'll pick up the code and finish connecting.`
               : providerId === "chatgpt"
                 ? listeningForCallback
-                  ? t`Sign in with ChatGPT Plus or Pro. We'll open Anarlog and finish connecting.`
+                  ? t`Sign in with ChatGPT Plus or Pro. We'll open Session Echo and finish connecting.`
                   : t`Sign in with ChatGPT Plus or Pro, then paste the redirect URL from your browser.`
                 : providerId === "github_copilot"
                   ? t`Sign in with GitHub Copilot and enter the code below.`

@@ -47,9 +47,9 @@ pub fn check<R: tauri::Runtime, T: tauri::Manager<R>>(manager: &T) -> EmbeddedCl
         // Windows resolves the install path from local app data, not the home
         // directory, so the two platforms cannot share one message.
         #[cfg(target_os = "windows")]
-        let missing_dir = "Anarlog could not find your local application data directory.";
+        let missing_dir = "Session Echo could not find your local application data directory.";
         #[cfg(not(target_os = "windows"))]
-        let missing_dir = "Anarlog could not find your home directory.";
+        let missing_dir = "Session Echo could not find your home directory.";
 
         return unavailable_status(command_name, missing_dir);
     };
@@ -76,7 +76,7 @@ pub fn check<R: tauri::Runtime, T: tauri::Manager<R>>(manager: &T) -> EmbeddedCl
                 command_name: command_name.to_string(),
                 install_path: install_path.display().to_string(),
                 state: EmbeddedCliState::ResourceMissing,
-                details: Some("The CLI is not included in this build of Anarlog.".to_string()),
+                details: Some("The CLI is not included in this build of Session Echo.".to_string()),
             };
         };
 
@@ -91,7 +91,7 @@ pub fn check<R: tauri::Runtime, T: tauri::Manager<R>>(manager: &T) -> EmbeddedCl
                 command_name: command_name.to_string(),
                 install_path: install_path.display().to_string(),
                 state: EmbeddedCliState::ResourceMissing,
-                details: Some("The CLI is not included in this build of Anarlog.".to_string()),
+                details: Some("The CLI is not included in this build of Session Echo.".to_string()),
             };
         };
         let app_version = manager.package_info().version.to_string();
@@ -164,7 +164,7 @@ pub fn install<R: tauri::Runtime, T: tauri::Manager<R>>(
             }
             EmbeddedCliState::Conflict => {
                 return Err(format!(
-                    "Another file already exists at {}. Move it before installing the Anarlog CLI.",
+                    "Another file already exists at {}. Move it before installing the Session Echo CLI.",
                     status.install_path
                 ));
             }
@@ -187,7 +187,7 @@ pub fn install<R: tauri::Runtime, T: tauri::Manager<R>>(
             }
             EmbeddedCliState::Conflict => {
                 return Err(format!(
-                    "Another file already exists at {}. Move it before installing the Anarlog CLI.",
+                    "Another file already exists at {}. Move it before installing the Session Echo CLI.",
                     status.install_path
                 ));
             }
@@ -233,7 +233,7 @@ fn install_path_for_command(command_name: &str) -> Option<PathBuf> {
     {
         return dirs::data_local_dir().map(|data_dir| {
             data_dir
-                .join("Anarlog")
+                .join("Session Echo")
                 .join("bin")
                 .join(format!("{command_name}.exe"))
         });
@@ -671,7 +671,7 @@ fn is_legacy_app_cli_target(target: &Path) -> bool {
 
     matches!(
         app_name,
-        "Anarlog.app" | "Anarlog Staging.app" | "Anarlog Dev.app"
+        "Session Echo.app" | "Session Echo Staging.app" | "Session Echo Dev.app"
     )
 }
 
@@ -679,7 +679,7 @@ fn is_legacy_app_cli_target(target: &Path) -> bool {
 fn details_for_state(state: EmbeddedCliState, install_path: &Path) -> Option<String> {
     match state {
         EmbeddedCliState::Installed => Some(format!(
-            "Installed at {} and managed by Anarlog.",
+            "Installed at {} and managed by Session Echo.",
             install_path.display()
         )),
         EmbeddedCliState::Missing => Some(format!(

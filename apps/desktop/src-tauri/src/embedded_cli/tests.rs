@@ -35,7 +35,7 @@ fn resolves_linux_arm64_bundled_binary() {
 
 #[test]
 fn finds_windows_path_entries_case_insensitively() {
-    let expected = Path::new(r"C:\Users\Test\AppData\Local\Anarlog\bin");
+    let expected = Path::new(r"C:\Users\Test\AppData\Local\Session Echo\bin");
 
     assert!(path_list_contains(
         r"C:\Windows;C:\USERS\TEST\APPDATA\LOCAL\ANARLOG\BIN\;C:\Tools",
@@ -118,7 +118,7 @@ fn classifies_legacy_app_resource_symlink_as_missing() {
     let managed_path = dir.path().join("managed-anarlog-cli");
     let app_resource_path = dir
         .path()
-        .join("Anarlog.app/Contents/Resources/anarlog-cli");
+        .join("Session Echo.app/Contents/Resources/anarlog-cli");
     let install_path = dir.path().join("anarlog");
     std::fs::create_dir_all(app_resource_path.parent().unwrap()).unwrap();
     std::fs::write(&app_resource_path, "cli").unwrap();
@@ -135,7 +135,9 @@ fn classifies_legacy_app_resource_symlink_as_missing() {
 fn classifies_legacy_app_executable_symlink_as_missing() {
     let dir = tempfile::tempdir().unwrap();
     let managed_path = dir.path().join(".anarlog-cli/anarlog/1.2.0");
-    let app_executable_path = dir.path().join("Anarlog.app/Contents/MacOS/anarlog-cli");
+    let app_executable_path = dir
+        .path()
+        .join("Session Echo.app/Contents/MacOS/anarlog-cli");
     let install_path = dir.path().join("anarlog");
     std::fs::create_dir_all(app_executable_path.parent().unwrap()).unwrap();
     std::fs::write(&app_executable_path, "cli").unwrap();
@@ -153,7 +155,9 @@ fn installer_replaces_legacy_app_executable_symlink() {
     let dir = tempfile::tempdir().unwrap();
     let resource_path = dir.path().join("bundled-anarlog-cli");
     let managed_path = dir.path().join(".anarlog-cli/anarlog/1.2.0");
-    let app_executable_path = dir.path().join("Anarlog.app/Contents/MacOS/anarlog-cli");
+    let app_executable_path = dir
+        .path()
+        .join("Session Echo.app/Contents/MacOS/anarlog-cli");
     let install_path = dir.path().join("anarlog");
     std::fs::write(&resource_path, "new cli").unwrap();
     std::fs::create_dir_all(app_executable_path.parent().unwrap()).unwrap();
@@ -199,7 +203,9 @@ fn installer_refuses_to_replace_foreign_symlink() {
 #[test]
 fn installed_cli_survives_bundled_resource_move() {
     let dir = tempfile::tempdir().unwrap();
-    let resource_path = dir.path().join("Anarlog.app/Contents/MacOS/anarlog-cli");
+    let resource_path = dir
+        .path()
+        .join("Session Echo.app/Contents/MacOS/anarlog-cli");
     let install_path = dir.path().join("home/.local/bin/anarlog");
     let managed_path = managed_binary_path(&install_path, "anarlog", "1.2.0").unwrap();
     std::fs::create_dir_all(resource_path.parent().unwrap()).unwrap();
@@ -207,7 +213,7 @@ fn installed_cli_survives_bundled_resource_move() {
     std::fs::set_permissions(&resource_path, std::fs::Permissions::from_mode(0o644)).unwrap();
 
     install_managed_cli(&resource_path, &managed_path, &install_path).unwrap();
-    std::fs::remove_dir_all(dir.path().join("Anarlog.app")).unwrap();
+    std::fs::remove_dir_all(dir.path().join("Session Echo.app")).unwrap();
 
     assert_eq!(std::fs::read_to_string(&install_path).unwrap(), "cli");
     assert_ne!(

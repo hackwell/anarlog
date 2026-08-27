@@ -33,6 +33,9 @@ const SELF_BUNDLE_IDS: &[&str] = &[
 ];
 
 const SELF_APP_NAMES: &[&str] = &[
+    "session echo",
+    "session echo staging",
+    "session echo nightly",
     "anarlog",
     "anarlog staging",
     "anarlog nightly",
@@ -45,6 +48,9 @@ const SELF_APP_NAMES: &[&str] = &[
 ];
 
 const SELF_APP_PATH_SEGMENTS: &[&str] = &[
+    "/session echo.app/",
+    "/session echo staging.app/",
+    "/session echo nightly.app/",
     "/anarlog.app/",
     "/anarlog staging.app/",
     "/anarlog nightly.app/",
@@ -112,6 +118,7 @@ mod tests {
 
     #[test]
     fn test_is_self_app_matches_renamed_app_names() {
+        assert!(is_self_app(&app("pid:41", "Session Echo")));
         assert!(is_self_app(&app("pid:42", "Anarlog")));
         assert!(is_self_app(&app("pid:43", "Char Nightly")));
         assert!(is_self_app(&app("pid:44", "Hyprnote Staging")));
@@ -119,6 +126,10 @@ mod tests {
 
     #[test]
     fn test_is_self_app_matches_path_fallbacks() {
+        assert!(is_self_app(&app(
+            "/Applications/Session Echo.app/Contents/MacOS/session-echo",
+            "Unknown",
+        )));
         assert!(is_self_app(&app(
             "/Applications/Anarlog.app/Contents/MacOS/anarlog",
             "Unknown",

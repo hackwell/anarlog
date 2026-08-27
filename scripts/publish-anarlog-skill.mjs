@@ -2,38 +2,44 @@ import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
 
-// skills/anarlog/SKILL.md is the sole authored workflow. This script
+// skills/session-echo/SKILL.md is the sole authored workflow. This script
 // deterministically publishes docs/skill.md from it, rewriting only the
-// package-relative reference links to their public documentation URLs, so any
+// package-relative reference links to their public GitHub URLs, so any
 // other drift between the two files fails CI (--check).
-export const CANONICAL_SKILL_PATH = "skills/anarlog/SKILL.md";
+export const CANONICAL_SKILL_PATH = "skills/session-echo/SKILL.md";
 export const PUBLISHED_SKILL_PATH = "docs/skill.md";
 export const PLUGIN_PACKAGE_MIRRORS = [
-  ["skills/anarlog/SKILL.md", "agent-plugins/anarlog/skills/anarlog/SKILL.md"],
   [
-    "skills/anarlog/references/cli.md",
-    "agent-plugins/anarlog/skills/anarlog/references/cli.md",
+    "skills/session-echo/SKILL.md",
+    "agent-plugins/session-echo/skills/session-echo/SKILL.md",
   ],
   [
-    "skills/anarlog/references/errors.md",
-    "agent-plugins/anarlog/skills/anarlog/references/errors.md",
+    "skills/session-echo/references/cli.md",
+    "agent-plugins/session-echo/skills/session-echo/references/cli.md",
   ],
   [
-    "skills/anarlog/references/mcp.md",
-    "agent-plugins/anarlog/skills/anarlog/references/mcp.md",
+    "skills/session-echo/references/errors.md",
+    "agent-plugins/session-echo/skills/session-echo/references/errors.md",
   ],
   [
-    "skills/anarlog/references/setup.md",
-    "agent-plugins/anarlog/skills/anarlog/references/setup.md",
+    "skills/session-echo/references/mcp.md",
+    "agent-plugins/session-echo/skills/session-echo/references/mcp.md",
   ],
-  ["LICENSE", "agent-plugins/anarlog/LICENSE"],
+  [
+    "skills/session-echo/references/setup.md",
+    "agent-plugins/session-echo/skills/session-echo/references/setup.md",
+  ],
+  ["LICENSE", "agent-plugins/session-echo/LICENSE"],
 ];
 
+const SKILL_REPO_BASE =
+  "https://github.com/fastrepl/anarlog/blob/main/skills/session-echo";
+
 export const REFERENCE_LINK_REWRITES = {
-  "references/cli.md": "https://docs.anarlog.so/reference/cli",
-  "references/mcp.md": "https://docs.anarlog.so/reference/mcp",
-  "references/errors.md": "https://docs.anarlog.so/reference/errors",
-  "references/setup.md": "https://docs.anarlog.so/agents/overview",
+  "references/cli.md": `${SKILL_REPO_BASE}/references/cli.md`,
+  "references/mcp.md": `${SKILL_REPO_BASE}/references/mcp.md`,
+  "references/errors.md": `${SKILL_REPO_BASE}/references/errors.md`,
+  "references/setup.md": `${SKILL_REPO_BASE}/references/setup.md`,
 };
 
 export function publishSkill(canonical) {
@@ -69,12 +75,12 @@ function main() {
 
     if (drifted.length > 0) {
       console.error(
-        `${drifted.join(", ")} drifted from the Anarlog skill package; run: node scripts/publish-anarlog-skill.mjs`,
+        `${drifted.join(", ")} drifted from the Session Echo skill package; run: node scripts/publish-anarlog-skill.mjs`,
       );
       process.exitCode = 1;
       return;
     }
-    console.log("Published Anarlog skill files are current");
+    console.log("Published Session Echo skill files are current");
     return;
   }
 
@@ -83,7 +89,7 @@ function main() {
     mkdirSync(path.dirname(target), { recursive: true });
     writeFileSync(target, readFileSync(source, "utf8"));
   }
-  console.log("Published Anarlog skill files");
+  console.log("Published Session Echo skill files");
 }
 
 function readFileIfPresent(filePath) {

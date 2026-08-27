@@ -1,6 +1,6 @@
 ---
 name: qa-critical-ux
-description: QA Anarlog's critical Pro user journey when explicitly asked — onboarding, responsive launch, microphone and system-audio capture, and automated summaries.
+description: QA Session Echo's critical Pro user journey when explicitly asked — onboarding, responsive launch, microphone and system-audio capture, and automated summaries.
 ---
 
 # QA: Critical User Experience
@@ -99,11 +99,11 @@ before the run:
    For the installed staging app:
 
    ```bash
-   open -a "Anarlog Staging" --args --onboarding 1
+   open -a "Session Echo Staging" --args --onboarding 1
    ```
 
 3. Complete onboarding for real: grant each permission when prompted, sign in
-   with the **Pro (or trialing)** test account, and select Anarlog cloud
+   with the **Pro (or trialing)** test account, and select Session Echo cloud
    (`anarlog` provider) in Settings → AI.
 
 The installed **stable** app is not reset. Run the stable pass against its

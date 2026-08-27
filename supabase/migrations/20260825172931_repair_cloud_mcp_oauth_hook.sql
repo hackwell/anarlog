@@ -25,7 +25,7 @@ BEGIN
     claims := jsonb_set(
       claims,
       '{aud}',
-      '["authenticated", "https://api.anarlog.so/mcp"]'::jsonb
+      '["authenticated", "https://api.sessionecho.flagbit.de/mcp"]'::jsonb
     );
     event := jsonb_set(event, '{claims}', claims);
   END IF;

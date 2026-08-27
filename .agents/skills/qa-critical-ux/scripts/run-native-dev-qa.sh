@@ -6,8 +6,8 @@ umask 077
 qa_repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../../.." && pwd)"
 qa_target_dir="${ANARLOG_QA_TARGET_DIR:-$HOME/Library/Caches/anarlog/native-dev-qa-target-v2}"
 qa_target_parent="$(dirname "$qa_target_dir")"
-qa_bundle_dir="$qa_target_dir/debug/bundle/macos/Anarlog Dev.app"
-qa_bundle_executable="$qa_target_dir/debug/bundle/macos/Anarlog Dev.app/Contents/MacOS/anarlog-dev"
+qa_bundle_dir="$qa_target_dir/debug/bundle/macos/Session Echo Dev.app"
+qa_bundle_executable="$qa_target_dir/debug/bundle/macos/Session Echo Dev.app/Contents/MacOS/anarlog-dev"
 qa_manifest="$qa_target_dir/.anarlog-native-dev-qa-manifest"
 qa_cache_marker="$qa_target_dir/.anarlog-native-dev-qa-cache-v2"
 qa_lock_dir="$qa_target_dir/.anarlog-native-dev-qa-lock"
@@ -536,7 +536,7 @@ fi
 chmod 700 "$qa_target_dir"
 
 if pgrep -x anarlog-dev >/dev/null 2>&1; then
-  echo "Anarlog Dev is already running. Quit it before building or launching QA:" >&2
+  echo "Session Echo Dev is already running. Quit it before building or launching QA:" >&2
   pgrep -x anarlog-dev | while IFS= read -r qa_pid; do
     ps -p "$qa_pid" -o pid=,command= >&2
   done

@@ -152,7 +152,7 @@ pub fn main() {
     startup::apply_linux_webkit_workarounds();
     // Sentry minidump reporting re-execs this binary with --crash-reporter-server.
     // That helper must reach minidump::init instead of the launch lock, or it
-    // shows "Anarlog is already starting" on every launch and never serves dumps.
+    // shows "Session Echo is already starting" on every launch and never serves dumps.
     if startup::is_crash_reporter_process() {
         run_crash_reporter_process();
     }
@@ -601,7 +601,7 @@ pub fn main() {
 }
 
 fn startup_failure_message(error: &impl std::fmt::Display) -> String {
-    format!("Anarlog failed to start: {error}")
+    format!("Session Echo failed to start: {error}")
 }
 
 fn exit_after_startup_failure(identifier: &str, error: &impl std::fmt::Display) -> ! {
@@ -616,11 +616,11 @@ fn exit_after_startup_failure(identifier: &str, error: &impl std::fmt::Display) 
         // Startup can fail before the database is reachable, so the alert text
         // is fixed per failure class instead of embedding the error.
         let alert = if db::is_transient_lock_error(error) {
-            "display alert \"Anarlog is not ready yet\" message \"Another Anarlog process is still using your data, possibly finishing an update. Your existing data was left unchanged. Please wait a moment and open Anarlog again.\" as critical buttons {\"OK\"} default button \"OK\""
+            "display alert \"Session Echo is not ready yet\" message \"Another Session Echo process is still using your data, possibly finishing an update. Your existing data was left unchanged. Please wait a moment and open Session Echo again.\" as critical buttons {\"OK\"} default button \"OK\""
         } else if db::is_newer_schema_error(error) {
-            "display alert \"Anarlog needs an update\" message \"Your data was created by a newer version of Anarlog, and this older version cannot open it. Your existing data was left unchanged. Please install the latest version of Anarlog.\" as critical buttons {\"OK\"} default button \"OK\""
+            "display alert \"Session Echo needs an update\" message \"Your data was created by a newer version of Session Echo, and this older version cannot open it. Your existing data was left unchanged. Please install the latest version of Session Echo.\" as critical buttons {\"OK\"} default button \"OK\""
         } else {
-            "display alert \"Anarlog could not start\" message \"Your existing data was left unchanged. Please restart the app. If the problem continues, contact support.\" as critical buttons {\"OK\"} default button \"OK\""
+            "display alert \"Session Echo could not start\" message \"Your existing data was left unchanged. Please restart the app. If the problem continues, contact support.\" as critical buttons {\"OK\"} default button \"OK\""
         };
         let _ = std::process::Command::new("/usr/bin/osascript")
             .args(["-e", alert])
@@ -788,7 +788,7 @@ mod test {
 
         assert_eq!(
             message,
-            "Anarlog failed to start: legacy import did not pass parity verification"
+            "Session Echo failed to start: legacy import did not pass parity verification"
         );
     }
 

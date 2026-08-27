@@ -374,7 +374,7 @@ describe("session share management client", () => {
 
     await expect(
       sendSessionAccessInvitationEmail({
-        apiBaseUrl: "https://api.anarlog.so",
+        apiBaseUrl: "https://api.sessionecho.flagbit.de",
         session: session(),
         shareId,
         invitationId,
@@ -387,7 +387,7 @@ describe("session share management client", () => {
 
     const [url, init] = fetcher.mock.calls[0];
     expect(url.toString()).toBe(
-      `https://api.anarlog.so/shared-notes/invitations/${invitationId}/email`,
+      `https://api.sessionecho.flagbit.de/shared-notes/invitations/${invitationId}/email`,
     );
     expect(init.method).toBe("POST");
     expect(init.headers.Authorization).toBe(

@@ -164,13 +164,13 @@ mod tests {
                 vec![],
             ),
             (
-                "https://api.anarlog.so?provider=soniox",
-                "wss://api.anarlog.so/listen",
+                "https://api.sessionecho.flagbit.de?provider=soniox",
+                "wss://api.sessionecho.flagbit.de/listen",
                 vec![("provider", "soniox")],
             ),
             (
-                "https://api.anarlog.so/listen?provider=soniox",
-                "wss://api.anarlog.so/listen",
+                "https://api.sessionecho.flagbit.de/listen?provider=soniox",
+                "wss://api.sessionecho.flagbit.de/listen",
                 vec![("provider", "soniox")],
             ),
             (

@@ -186,42 +186,6 @@ describe("SettingsDevelopers", () => {
     cleanup();
   });
 
-  it("shows one guide button in the page header", () => {
-    mocks.checkEmbeddedCli.mockResolvedValue({
-      status: "ok",
-      data: {
-        supported: true,
-        commandName: "anarlog",
-        installPath: "/Users/test/.local/bin/anarlog",
-        state: "installed",
-        details: "Installed.",
-      },
-    });
-
-    const queryClient = new QueryClient({
-      defaultOptions: { queries: { retry: false } },
-    });
-    render(
-      <QueryClientProvider client={queryClient}>
-        <SettingsDevelopers />
-      </QueryClientProvider>,
-    );
-
-    const heading = screen.getByRole("heading", { name: "Developers" });
-    const guideButton = within(heading.parentElement as HTMLElement).getByRole(
-      "button",
-      { name: "Guide" },
-    );
-    expect(screen.getAllByRole("button", { name: "Guide" })).toHaveLength(1);
-
-    fireEvent.click(guideButton);
-
-    expect(mocks.openUrl).toHaveBeenCalledWith(
-      "https://docs.anarlog.so/agents/overview",
-      null,
-    );
-  });
-
   it("uses the installed CLI path when copying the MCP configuration", async () => {
     const writeText = vi.fn().mockResolvedValue(undefined);
     Object.defineProperty(navigator, "clipboard", {
@@ -236,7 +200,7 @@ describe("SettingsDevelopers", () => {
         installPath: "/Users/test/.local/bin/anarlog",
         state: "installed",
         details:
-          "Installed at /Users/test/.local/bin/anarlog and managed by Anarlog.",
+          "Installed at /Users/test/.local/bin/anarlog and managed by Session Echo.",
       },
     });
 
@@ -528,7 +492,7 @@ describe("SettingsDevelopers", () => {
     expect(mocks.installAgentSkill).not.toHaveBeenCalledWith("cursor");
     await waitFor(() =>
       expect(mocks.toastSuccess).toHaveBeenCalledWith(
-        "Anarlog skill added to 3 agents",
+        "Session Echo skill added to 3 agents",
       ),
     );
   });
@@ -583,7 +547,7 @@ describe("SettingsDevelopers", () => {
     );
     await waitFor(() =>
       expect(mocks.toastSuccess).toHaveBeenCalledWith(
-        "Anarlog skill added to Codex",
+        "Session Echo skill added to Codex",
       ),
     );
   });

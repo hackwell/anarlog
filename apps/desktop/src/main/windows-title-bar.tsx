@@ -184,22 +184,20 @@ export function WindowsTitleBar() {
           <TitleBarMenu label={t`Help`} onPointerDown={rememberEditTarget}>
             <DropdownMenuItem
               onSelect={() =>
-                void openerCommands.openUrl("https://docs.anarlog.so", null)
-              }
-            >
-              {t`Documentation`}
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem
-              onSelect={() =>
-                void openerCommands.openUrl("https://anarlog.so/discord", null)
+                void openerCommands.openUrl(
+                  "https://sessionecho.flagbit.de/discord",
+                  null,
+                )
               }
             >
               {t`Report a Bug`}
             </DropdownMenuItem>
             <DropdownMenuItem
               onSelect={() =>
-                void openerCommands.openUrl("https://anarlog.so/discord", null)
+                void openerCommands.openUrl(
+                  "https://sessionecho.flagbit.de/discord",
+                  null,
+                )
               }
             >
               {t`Suggest a Feature`}

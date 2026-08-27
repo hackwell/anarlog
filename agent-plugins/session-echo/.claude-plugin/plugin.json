@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-plugin.json",
+  "name": "session-echo",
+  "displayName": "Session Echo",
+  "version": "1.0.0",
+  "description": "Query Session Echo meeting notes, summaries, transcripts, participants, action items, and recurring history.",
+  "author": {
+    "name": "Fastrepl",
+    "email": "founders@sessionecho.flagbit.de",
+    "url": "https://sessionecho.flagbit.de"
+  },
+  "repository": "https://github.com/fastrepl/anarlog/tree/main/agent-plugins/session-echo",
+  "license": "MIT",
+  "keywords": ["meetings", "notes", "transcripts", "productivity", "mcp"],
+  "skills": "./skills/",
+  "mcpServers": "./.mcp.json"
+}

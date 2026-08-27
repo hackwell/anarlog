@@ -103,11 +103,11 @@ async fn verifies_and_sends_a_resend_shared_note_invitation_email() {
         .and(header("authorization", "Bearer resend-key"))
         .and(header("idempotency-key", INVITATION_ID))
         .and(body_partial_json(json!({
-            "from": "Owner via Anarlog <notes@send.anarlog.so>",
+            "from": "Owner via Session Echo <notes@send.sessionecho.flagbit.de>",
             "to": "invitee@example.com",
             "reply_to": "owner@example.com",
             "subject": "Owner invited you to Planning",
-            "text": "Owner invited you to view \"Planning\" in Anarlog.\n\nOpen the meeting notes:\nhttps://fastrepl.anarlog.so/share/invite/66666666-6666-4666-8666-666666666666/#token=AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\n\nReply to this email to contact Owner."
+            "text": "Owner invited you to view \"Planning\" in Session Echo.\n\nOpen the meeting notes:\nhttps://fastrepl.sessionecho.flagbit.de/share/invite/66666666-6666-4666-8666-666666666666/#token=AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\n\nReply to this email to contact Owner."
         })))
         .respond_with(ResponseTemplate::new(200).set_body_json(json!({ "id": "email-id" })))
         .expect(1)
@@ -115,7 +115,7 @@ async fn verifies_and_sends_a_resend_shared_note_invitation_email() {
         .await;
     let config = SharedNotesConfig::new(server.uri(), "service-role-key")
         .unwrap()
-        .with_resend_email("resend-key", "notes@send.anarlog.so")
+        .with_resend_email("resend-key", "notes@send.sessionecho.flagbit.de")
         .unwrap()
         .with_resend_api_base(reqwest::Url::parse(&format!("{}/", server.uri())).unwrap());
     let app = authenticated_router(SharedNotesState::new(config)).layer(Extension(AuthContext {
@@ -174,11 +174,11 @@ async fn verifies_and_sends_a_workspace_invitation_email() {
         .and(header("authorization", "Bearer resend-key"))
         .and(header("idempotency-key", INVITATION_ID))
         .and(body_partial_json(json!({
-            "from": "Owner via Anarlog <notes@send.anarlog.so>",
+            "from": "Owner via Session Echo <notes@send.sessionecho.flagbit.de>",
             "to": "invitee@example.com",
             "reply_to": "owner@example.com",
             "subject": "Owner invited you to Fastrepl",
-            "text": "Owner invited you to join \"Fastrepl\" in Anarlog.\n\nAccept the invitation:\nhttps://anarlog.so/team/invite/66666666-6666-4666-8666-666666666666/#token=AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\n\nReply to this email to contact Owner."
+            "text": "Owner invited you to join \"Fastrepl\" in Session Echo.\n\nAccept the invitation:\nhttps://sessionecho.flagbit.de/team/invite/66666666-6666-4666-8666-666666666666/#token=AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\n\nReply to this email to contact Owner."
         })))
         .respond_with(ResponseTemplate::new(200).set_body_json(json!({ "id": "email-id" })))
         .expect(1)
@@ -186,7 +186,7 @@ async fn verifies_and_sends_a_workspace_invitation_email() {
         .await;
     let config = SharedNotesConfig::new(server.uri(), "service-role-key")
         .unwrap()
-        .with_resend_email("resend-key", "notes@send.anarlog.so")
+        .with_resend_email("resend-key", "notes@send.sessionecho.flagbit.de")
         .unwrap()
         .with_resend_api_base(reqwest::Url::parse(&format!("{}/", server.uri())).unwrap());
     let app = authenticated_router(SharedNotesState::new(config)).layer(Extension(AuthContext {
@@ -240,18 +240,18 @@ async fn authorizes_and_sends_a_meeting_recap_to_each_recipient() {
         .and(header("idempotency-key", INVITATION_ID))
         .and(body_json(json!([
             {
-                "from": "Owner via Anarlog <notes@send.anarlog.so>",
+                "from": "Owner via Session Echo <notes@send.sessionecho.flagbit.de>",
                 "to": "one@example.com",
                 "reply_to": "owner@example.com",
                 "subject": "Meeting notes: Planning",
-                "text": "Planning\n\n## Decisions\n\nShip it.\n\nSent by Owner via Anarlog. Reply to this email to contact them."
+                "text": "Planning\n\n## Decisions\n\nShip it.\n\nSent by Owner via Session Echo. Reply to this email to contact them."
             },
             {
-                "from": "Owner via Anarlog <notes@send.anarlog.so>",
+                "from": "Owner via Session Echo <notes@send.sessionecho.flagbit.de>",
                 "to": "two@example.com",
                 "reply_to": "owner@example.com",
                 "subject": "Meeting notes: Planning",
-                "text": "Planning\n\n## Decisions\n\nShip it.\n\nSent by Owner via Anarlog. Reply to this email to contact them."
+                "text": "Planning\n\n## Decisions\n\nShip it.\n\nSent by Owner via Session Echo. Reply to this email to contact them."
             }
         ])))
         .respond_with(ResponseTemplate::new(200).set_body_json(json!({ "data": [] })))
@@ -260,7 +260,7 @@ async fn authorizes_and_sends_a_meeting_recap_to_each_recipient() {
         .await;
     let config = SharedNotesConfig::new(server.uri(), "service-role-key")
         .unwrap()
-        .with_resend_email("resend-key", "notes@send.anarlog.so")
+        .with_resend_email("resend-key", "notes@send.sessionecho.flagbit.de")
         .unwrap()
         .with_resend_api_base(reqwest::Url::parse(&format!("{}/", server.uri())).unwrap());
     let app = authenticated_router(SharedNotesState::new(config)).layer(Extension(AuthContext {

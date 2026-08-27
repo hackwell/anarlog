@@ -72,7 +72,7 @@ describe("workspace reads", () => {
       {
         workspace_id: WORKSPACE_ID,
         workspace_share_slug: "fastrepl",
-        share_base_url: "https://fastrepl.anarlog.so",
+        share_base_url: "https://fastrepl.sessionecho.flagbit.de",
       },
     ]);
 
@@ -80,7 +80,7 @@ describe("workspace reads", () => {
       setWorkspaceShareSlug(ctx, WORKSPACE_ID, "Fastrepl"),
     ).resolves.toEqual({
       shareSlug: "fastrepl",
-      shareBaseUrl: "https://fastrepl.anarlog.so",
+      shareBaseUrl: "https://fastrepl.sessionecho.flagbit.de",
     });
     expect(rpc).toHaveBeenCalledWith("set_workspace_share_slug", {
       p_workspace_id: WORKSPACE_ID,
@@ -231,7 +231,7 @@ describe("invitations", () => {
 
     await expect(
       sendWorkspaceInvitationEmail({
-        apiBaseUrl: "https://api.anarlog.so",
+        apiBaseUrl: "https://api.sessionecho.flagbit.de",
         accessToken: "token",
         workspaceId: WORKSPACE_ID,
         invitationId: USER_ID,
@@ -244,7 +244,7 @@ describe("invitations", () => {
 
     const [url, init] = fetcher.mock.calls[0]!;
     expect(url.toString()).toBe(
-      `https://api.anarlog.so/workspaces/invitations/${USER_ID}/email`,
+      `https://api.sessionecho.flagbit.de/workspaces/invitations/${USER_ID}/email`,
     );
     expect(init.method).toBe("POST");
     expect(init.headers.Authorization).toBe("Bearer token");

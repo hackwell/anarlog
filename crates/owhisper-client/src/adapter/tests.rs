@@ -82,8 +82,8 @@ fn test_documented_language_codes_are_menu_safe() {
 
 #[test]
 fn test_is_anarlog_proxy() {
-    assert!(is_anarlog_proxy("https://api.anarlog.so/stt"));
-    assert!(is_anarlog_proxy("https://api.anarlog.so"));
+    assert!(is_anarlog_proxy("https://api.sessionecho.flagbit.de/stt"));
+    assert!(is_anarlog_proxy("https://api.sessionecho.flagbit.de"));
     assert!(is_anarlog_proxy("http://localhost:3001/stt"));
     assert!(is_anarlog_proxy("http://127.0.0.1:3001/stt"));
 
@@ -99,7 +99,7 @@ fn test_is_local_argmax() {
     assert!(is_local_argmax("http://localhost:50060/v1"));
     assert!(is_local_argmax("http://127.0.0.1:50060/v1"));
 
-    assert!(!is_local_argmax("https://api.anarlog.so/stt"));
+    assert!(!is_local_argmax("https://api.sessionecho.flagbit.de/stt"));
     assert!(!is_local_argmax("http://localhost:3001/stt"));
     assert!(!is_local_argmax("https://api.deepgram.com"));
 }
@@ -111,68 +111,68 @@ fn test_adapter_kind_from_url_and_languages() {
     let cases: &[(&str, &[anlg_language::ISO639], Option<&str>, AdapterKind)] = &[
         // AnarlogCloud - always routes to Anarlog adapter (proxy owns provider selection)
         (
-            "https://api.anarlog.so/stt",
+            "https://api.sessionecho.flagbit.de/stt",
             &[En],
             None,
             AdapterKind::Anarlog,
         ),
         (
-            "https://api.anarlog.so/stt",
+            "https://api.sessionecho.flagbit.de/stt",
             &[En],
             Some("cloud"),
             AdapterKind::Anarlog,
         ),
         (
-            "https://api.anarlog.so/stt",
+            "https://api.sessionecho.flagbit.de/stt",
             &[En, Ko],
             Some("cloud"),
             AdapterKind::Anarlog,
         ),
         (
-            "https://api.anarlog.so/stt",
+            "https://api.sessionecho.flagbit.de/stt",
             &[Zh],
             None,
             AdapterKind::Anarlog,
         ),
         (
-            "https://api.anarlog.so/stt",
+            "https://api.sessionecho.flagbit.de/stt",
             &[Ja],
             None,
             AdapterKind::Anarlog,
         ),
         (
-            "https://api.anarlog.so/stt",
+            "https://api.sessionecho.flagbit.de/stt",
             &[Ar],
             None,
             AdapterKind::Anarlog,
         ),
         (
-            "https://api.anarlog.so/stt",
+            "https://api.sessionecho.flagbit.de/stt",
             &[De],
             None,
             AdapterKind::Anarlog,
         ),
         // AnarlogCloud - multi-language
         (
-            "https://api.anarlog.so/stt",
+            "https://api.sessionecho.flagbit.de/stt",
             &[En, Es],
             None,
             AdapterKind::Anarlog,
         ),
         (
-            "https://api.anarlog.so/stt",
+            "https://api.sessionecho.flagbit.de/stt",
             &[En, Ko],
             None,
             AdapterKind::Anarlog,
         ),
         (
-            "https://api.anarlog.so/stt",
+            "https://api.sessionecho.flagbit.de/stt",
             &[Ko, En],
             None,
             AdapterKind::Anarlog,
         ),
         (
-            "https://api.anarlog.so/stt",
+            "https://api.sessionecho.flagbit.de/stt",
             &[En, De],
             None,
             AdapterKind::Anarlog,
@@ -279,37 +279,37 @@ fn test_build_proxy_ws_url() {
         ("https://api.fireworks.ai", None),
         ("https://api.assemblyai.com", None),
         (
-            "https://api.anarlog.so/stt?provider=soniox",
+            "https://api.sessionecho.flagbit.de/stt?provider=soniox",
             Some((
-                "wss://api.anarlog.so/stt/listen",
+                "wss://api.sessionecho.flagbit.de/stt/listen",
                 vec![("provider", "soniox")],
             )),
         ),
         (
-            "https://api.anarlog.so/stt?provider=deepgram",
+            "https://api.sessionecho.flagbit.de/stt?provider=deepgram",
             Some((
-                "wss://api.anarlog.so/stt/listen",
+                "wss://api.sessionecho.flagbit.de/stt/listen",
                 vec![("provider", "deepgram")],
             )),
         ),
         (
-            "https://api.anarlog.so/stt?provider=anarlog",
+            "https://api.sessionecho.flagbit.de/stt?provider=anarlog",
             Some((
-                "wss://api.anarlog.so/stt/listen",
+                "wss://api.sessionecho.flagbit.de/stt/listen",
                 vec![("provider", "anarlog")],
             )),
         ),
         (
-            "https://api.anarlog.so/stt/listen?provider=deepgram",
+            "https://api.sessionecho.flagbit.de/stt/listen?provider=deepgram",
             Some((
-                "wss://api.anarlog.so/stt/listen",
+                "wss://api.sessionecho.flagbit.de/stt/listen",
                 vec![("provider", "deepgram")],
             )),
         ),
         (
-            "https://api.anarlog.so/stt/some/path?provider=fireworks",
+            "https://api.sessionecho.flagbit.de/stt/some/path?provider=fireworks",
             Some((
-                "wss://api.anarlog.so/stt/some/path/listen",
+                "wss://api.sessionecho.flagbit.de/stt/some/path/listen",
                 vec![("provider", "fireworks")],
             )),
         ),
@@ -367,7 +367,7 @@ fn test_anarlog_proxy_always_selects_anarlog_adapter() {
     use anlg_language::ISO639::*;
 
     let proxy_urls = &[
-        "https://api.anarlog.so/stt",
+        "https://api.sessionecho.flagbit.de/stt",
         "http://localhost:3001/stt",
         "http://127.0.0.1:3001/stt",
     ];
@@ -380,7 +380,7 @@ fn test_anarlog_proxy_always_selects_anarlog_adapter() {
             assert_eq!(
                 AdapterKind::from_url_and_languages(url, &langs, Some("cloud")),
                 AdapterKind::Anarlog,
-                "proxy URL should always select Anarlog adapter regardless of languages: url={url}, langs={langs:?}"
+                "proxy URL should always select Session Echo adapter regardless of languages: url={url}, langs={langs:?}"
             );
         }
     }
@@ -396,7 +396,7 @@ fn test_anarlog_cloud_adapter_supports_all_languages() {
         let langs: Vec<anlg_language::Language> = langs.iter().map(|l| (*l).into()).collect();
         assert!(
             AdapterKind::Anarlog.is_supported_languages_live(&langs, Some("cloud")),
-            "Anarlog adapter should support all languages: {langs:?}"
+            "Session Echo adapter should support all languages: {langs:?}"
         );
     }
 }
@@ -495,7 +495,10 @@ fn test_direct_provider_urls_not_affected() {
 
 #[test]
 fn test_append_provider_param_replaces_existing() {
-    let url = append_provider_param("https://api.anarlog.so/stt?provider=deepgram", "anarlog");
+    let url = append_provider_param(
+        "https://api.sessionecho.flagbit.de/stt?provider=deepgram",
+        "anarlog",
+    );
     assert!(
         url.contains("provider=anarlog"),
         "new provider value should be present: {url}"
@@ -514,7 +517,7 @@ fn test_append_provider_param_replaces_existing() {
 #[test]
 fn test_append_provider_param_preserves_other_params() {
     let url = append_provider_param(
-        "https://api.anarlog.so/stt?model=cloud&provider=soniox&language=en",
+        "https://api.sessionecho.flagbit.de/stt?model=cloud&provider=soniox&language=en",
         "anarlog",
     );
     assert!(
@@ -531,7 +534,7 @@ fn test_append_provider_param_preserves_other_params() {
 
 #[test]
 fn test_append_provider_param_no_existing_provider() {
-    let url = append_provider_param("https://api.anarlog.so/stt", "anarlog");
+    let url = append_provider_param("https://api.sessionecho.flagbit.de/stt", "anarlog");
     assert!(url.contains("provider=anarlog"));
     assert_eq!(url.matches("provider=").count(), 1);
 }

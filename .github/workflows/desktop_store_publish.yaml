@@ -427,8 +427,8 @@ jobs:
           CI: false
           POSTHOG_API_KEY: ${{ secrets.POSTHOG_API_KEY }}
           SENTRY_DSN: ${{ secrets.SENTRY_DSN_HYPRNOTE_2 }}
-          VITE_API_URL: https://api.anarlog.so
-          VITE_APP_URL: https://anarlog.so
+          VITE_API_URL: https://api.sessionecho.flagbit.de
+          VITE_APP_URL: https://sessionecho.flagbit.de
           VITE_APP_VERSION: ${{ needs.validate.outputs.version }}
           VITE_POSTHOG_API_KEY: ${{ secrets.POSTHOG_API_KEY }}
           VITE_PRO_PRODUCT_ID: ${{ secrets.VITE_PRO_PRODUCT_ID }}
@@ -548,7 +548,7 @@ jobs:
             exit 1
           fi
 
-          pkg="$RUNNER_TEMP/Anarlog-$VERSION.pkg"
+          pkg="$RUNNER_TEMP/Session Echo-$VERSION.pkg"
           xcrun productbuild \
             --sign "$INSTALLER_CERT_ID" \
             --component "$app" /Applications \

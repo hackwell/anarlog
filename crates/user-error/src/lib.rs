@@ -1,6 +1,6 @@
 //! Classification of failures caused by the end user's own account state
 //! (exhausted credits, expired plans, bad API keys) rather than by a defect in
-//! Anarlog. These are not actionable for engineering, so they are dropped
+//! Session Echo. These are not actionable for engineering, so they are dropped
 //! before reaching Sentry.
 
 use sentry::protocol::{Context, Event, Value};

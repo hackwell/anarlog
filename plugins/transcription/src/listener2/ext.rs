@@ -762,7 +762,7 @@ mod tests {
     fn batch_idle_timeout_skips_direct_cloud_batch() {
         let params = transcription_params(
             core::BatchProvider::Anarlog,
-            "https://api.anarlog.so/stt",
+            "https://api.sessionecho.flagbit.de/stt",
             None,
         );
 
@@ -771,8 +771,11 @@ mod tests {
 
     #[test]
     fn batch_idle_timeout_skips_cloud_am_batch() {
-        let params =
-            transcription_params(core::BatchProvider::Am, "https://api.anarlog.so/stt", None);
+        let params = transcription_params(
+            core::BatchProvider::Am,
+            "https://api.sessionecho.flagbit.de/stt",
+            None,
+        );
 
         assert_eq!(batch_idle_timeout(&params), None);
     }

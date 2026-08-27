@@ -8,7 +8,7 @@ Depends: libwebkit2gtk-4.1-0, libgtk-3-0, libpipewire-0.3-0, libpulse0, libasoun
 Provides: char
 Conflicts: char
 Replaces: char
-Description: Anarlog Desktop App
+Description: Session Echo Desktop App
  (none)
 Filename: pool/desktop_v1.4.13/arm64/anarlog.deb
 Size: 299852676

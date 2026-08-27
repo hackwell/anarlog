@@ -46,7 +46,7 @@ describe("AppSettingsView", () => {
     renderAppSettings();
 
     expect(
-      screen.getByRole("switch", { name: "Start Anarlog at login" })
+      screen.getByRole("switch", { name: "Start Session Echo at login" })
         .parentElement?.className,
     ).not.toContain("w-48");
   });
@@ -58,7 +58,9 @@ describe("AppSettingsView", () => {
     expect(
       screen.queryByRole("switch", { name: "Show app in Dock" }),
     ).toBeNull();
-    expect(screen.queryByText("Open Anarlog from the menu bar.")).toBeNull();
+    expect(
+      screen.queryByText("Open Session Echo from the menu bar."),
+    ).toBeNull();
     expect(screen.getByRole("switch", { name: "Show tray icon" })).toBeTruthy();
   });
 
@@ -72,7 +74,7 @@ describe("AppSettingsView", () => {
 
     expect(automaticUpdates.onChange).toHaveBeenCalledWith(true);
     expect(
-      screen.getByText(/installed the next time Anarlog opens/),
+      screen.getByText(/installed the next time Session Echo opens/),
     ).toBeTruthy();
   });
 
@@ -80,7 +82,7 @@ describe("AppSettingsView", () => {
     renderAppSettings({ appStoreBuild: true });
 
     expect(
-      screen.queryByRole("switch", { name: "Start Anarlog at login" }),
+      screen.queryByRole("switch", { name: "Start Session Echo at login" }),
     ).toBeNull();
     expect(
       screen.queryByRole("switch", { name: "Automatically install updates" }),

@@ -276,7 +276,7 @@ Use OTEL GenAI fields where available:
 - `gen_ai.usage.input_tokens`
 - `gen_ai.usage.output_tokens`
 
-Use `anarlog.*` for Anarlog-specific request metadata:
+Use `anarlog.*` for Session Echo-specific request metadata:
 
 - `anarlog.gen_ai.request.streaming`
 - `anarlog.gen_ai.request.message_count`

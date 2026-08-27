@@ -1126,7 +1126,7 @@ async function activateCloudsync(
         return "ok";
       }
       console.warn(
-        "[cloudsync] Anarlog Pro is required; sync remains disabled",
+        "[cloudsync] Session Echo Pro is required; sync remains disabled",
       );
       return "ok";
     }

@@ -7,7 +7,7 @@ Issues, pull requests, bug reports, and documentation fixes are welcome.
 - Search existing issues and pull requests before starting a large change.
 - Keep changes focused. Add tests for behavior that can regress.
 - Never commit credentials, customer configuration, meeting content, or other private data.
-- Use [docs.anarlog.so](https://docs.anarlog.so) for product, CLI, and MCP behavior. Use this file and the repository's `AGENTS.md` files for development guidance.
+- Use this file and the repository's `AGENTS.md` files for development guidance.
 
 ## Set up the repository
 
@@ -51,7 +51,7 @@ Turbo builds shared UI packages before starting the app.
 | `packages/*` | Shared TypeScript packages |
 | `crates/db-app` | SQLite schema and migrations |
 | `supabase` | Hosted database schema, functions, and tests |
-| `skills/anarlog` | Published CLI and MCP agent skill |
+| `skills/session-echo` | Published CLI and MCP agent skill |
 | `docs/superpowers` | Implementation plans and design specifications |
 
 Sessions are the core data entity. Notes, transcripts, and summaries are all backed by sessions. ProseMirror documents use the TipTap JSON dialect.

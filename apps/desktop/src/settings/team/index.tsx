@@ -133,7 +133,7 @@ export function SettingsTeam() {
             </div>
             <div>
               <h3 className="text-sm font-medium">
-                <Trans>Anarlog Pro required</Trans>
+                <Trans>Session Echo Pro required</Trans>
               </h3>
               <p className="text-muted-foreground mt-1 text-xs leading-5">
                 <Trans>
@@ -1076,7 +1076,7 @@ function WorkspaceShareDomainForm({
           className="bg-background h-9 min-w-0 rounded-r-none shadow-none"
         />
         <span className="border-input bg-muted text-muted-foreground flex h-9 shrink-0 items-center rounded-r-md border border-l-0 px-3 text-xs">
-          .anarlog.so
+          .sessionecho.flagbit.de
         </span>
       </div>
       <Button

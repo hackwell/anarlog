@@ -78,9 +78,10 @@ mod tests {
 
     #[test]
     fn test_build_ws_url_from_base_proxy() {
-        let (url, params) =
-            DashScopeAdapter::build_ws_url_from_base("https://api.anarlog.so?provider=dashscope");
-        assert_eq!(url.as_str(), "wss://api.anarlog.so/listen");
+        let (url, params) = DashScopeAdapter::build_ws_url_from_base(
+            "https://api.sessionecho.flagbit.de?provider=dashscope",
+        );
+        assert_eq!(url.as_str(), "wss://api.sessionecho.flagbit.de/listen");
         assert_eq!(
             params,
             vec![("provider".to_string(), "dashscope".to_string())]

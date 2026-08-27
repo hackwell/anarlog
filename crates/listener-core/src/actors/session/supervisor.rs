@@ -794,7 +794,7 @@ mod tests {
     #[test]
     fn anarlog_proxy_soniox_listener_failure_enters_batch_fallback() {
         let mut ctx = test_ctx();
-        ctx.params.base_url = "https://api.anarlog.so/stt?provider=soniox".to_string();
+        ctx.params.base_url = "https://api.sessionecho.flagbit.de/stt?provider=soniox".to_string();
         ctx.params.model = "cloud".to_string();
         let state = test_state(ctx);
 

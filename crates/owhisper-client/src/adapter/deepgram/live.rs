@@ -255,7 +255,11 @@ mod tests {
             ..Default::default()
         };
 
-        let url = adapter.build_ws_url("https://api.anarlog.so/stt?provider=deepgram", &params, 1);
+        let url = adapter.build_ws_url(
+            "https://api.sessionecho.flagbit.de/stt?provider=deepgram",
+            &params,
+            1,
+        );
 
         assert!(url.as_str().contains("provider=deepgram"));
     }
@@ -299,7 +303,7 @@ mod tests {
         owhisper_interface::ListenParams {
             model: Some("nova-3".to_string()),
             languages: vec![ISO639::En.into()],
-            keywords: vec!["Anarlog".to_string(), "transcription".to_string()],
+            keywords: vec!["Session Echo".to_string(), "transcription".to_string()],
             ..Default::default()
         }
     );

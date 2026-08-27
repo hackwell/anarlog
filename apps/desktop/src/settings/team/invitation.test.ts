@@ -8,8 +8,8 @@ const mocks = vi.hoisted(() => ({
   writeClipboardText: vi.fn(),
   isTauri: vi.fn(() => false),
   env: {
-    VITE_API_URL: "https://api.anarlog.so",
-    VITE_APP_URL: "https://anarlog.so",
+    VITE_API_URL: "https://api.sessionecho.flagbit.de",
+    VITE_APP_URL: "https://sessionecho.flagbit.de",
   },
 }));
 
@@ -190,7 +190,7 @@ describe("deliverWorkspaceInvitation", () => {
     ).resolves.toEqual({ deliveredBy: "clipboard" });
 
     expect(writeText).toHaveBeenCalledWith(
-      `https://anarlog.so/team/invite/${INVITATION_ID}/#token=${TOKEN}`,
+      `https://sessionecho.flagbit.de/team/invite/${INVITATION_ID}/#token=${TOKEN}`,
     );
   });
 });

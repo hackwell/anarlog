@@ -55,8 +55,8 @@ export function AudioSettingsView({
         title={<Trans>Speakers</Trans>}
         description={
           <Trans>
-            Choose the speakers that play other participants so Anarlog records
-            them.
+            Choose the speakers that play other participants so Session Echo
+            records them.
           </Trans>
         }
         value={speakerDevice.value}

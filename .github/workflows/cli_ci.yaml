@@ -141,16 +141,16 @@ jobs:
           headless_fallback="$headless_auth_root/de.flagbit.sessionecho/auth.cli.json"
           test ! -e "$headless_fallback"
       - run: |
-          test -s skills/anarlog/SKILL.md
-          test "$(sed -n '1p' skills/anarlog/SKILL.md)" = "---"
-          grep -Eq '^name:[[:space:]]+anarlog[[:space:]]*$' skills/anarlog/SKILL.md
-          grep -Eq '^description:[[:space:]]*(>|\||[^[:space:]])' skills/anarlog/SKILL.md
-          awk 'NR > 1 && $0 == "---" { found = 1; exit } END { if (!found) exit 1 }' skills/anarlog/SKILL.md
+          test -s skills/session-echo/SKILL.md
+          test "$(sed -n '1p' skills/session-echo/SKILL.md)" = "---"
+          grep -Eq '^name:[[:space:]]+session-echo[[:space:]]*$' skills/session-echo/SKILL.md
+          grep -Eq '^description:[[:space:]]*(>|\||[^[:space:]])' skills/session-echo/SKILL.md
+          awk 'NR > 1 && $0 == "---" { found = 1; exit } END { if (!found) exit 1 }' skills/session-echo/SKILL.md
           node scripts/publish-anarlog-skill.mjs --check
           node --test scripts/publish-anarlog-skill.test.mjs
           skill_list="$(npx --yes skills@1.5.16 add . --list)"
           echo "$skill_list"
-          grep -q 'anarlog' <<<"$skill_list"
+          grep -q 'session-echo' <<<"$skill_list"
           ! grep -q 'add-plugin' <<<"$skill_list"
       - run: |
           npx --yes mint@4.2.687 validate

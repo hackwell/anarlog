@@ -104,7 +104,7 @@ mod tests {
     use crate::adapter::RealtimeSttAdapter;
     use crate::test_utils::{UrlTestCase, run_url_test_cases};
 
-    const API_BASE: &str = "https://api.anarlog.so/stt";
+    const API_BASE: &str = "https://api.sessionecho.flagbit.de/stt";
 
     #[test]
     fn test_proxy_provider_name() {
@@ -124,7 +124,12 @@ mod tests {
                     name: "single_language",
                     model: Some("nova-3"),
                     languages: &[ISO639::En],
-                    contains: &["anarlog.so", "listen", "model=nova-3", "language=en"],
+                    contains: &[
+                        "sessionecho.flagbit.de",
+                        "listen",
+                        "model=nova-3",
+                        "language=en",
+                    ],
                     not_contains: &[],
                 },
                 UrlTestCase {
@@ -144,14 +149,14 @@ mod tests {
         let params = owhisper_interface::ListenParams {
             model: Some("nova-3".to_string()),
             languages: vec![ISO639::En.into()],
-            keywords: vec!["Anarlog".to_string(), "transcription".to_string()],
+            keywords: vec!["Session Echo".to_string(), "transcription".to_string()],
             ..Default::default()
         };
 
         let url = adapter.build_ws_url(API_BASE, &params, 1);
         let url_str = url.as_str();
 
-        assert!(url_str.contains("keyword=Anarlog"));
+        assert!(url_str.contains("keyword=Session Echo"));
         assert!(url_str.contains("keyword=transcription"));
     }
 
@@ -213,7 +218,7 @@ mod tests {
         let url = adapter.build_ws_url("http://localhost:8787/stt", &params, 1);
         assert!(url.scheme() == "ws");
 
-        let url = adapter.build_ws_url("https://api.anarlog.so/stt", &params, 1);
+        let url = adapter.build_ws_url("https://api.sessionecho.flagbit.de/stt", &params, 1);
         assert!(url.scheme() == "wss");
     }
 
@@ -240,7 +245,7 @@ mod tests {
     #[test]
     fn test_provider_param_preserved_in_url() {
         let adapter = AnarlogAdapter::default();
-        let base_with_provider = "https://api.anarlog.so/stt?provider=anarlog";
+        let base_with_provider = "https://api.sessionecho.flagbit.de/stt?provider=anarlog";
         let params = owhisper_interface::ListenParams {
             model: Some("cloud".to_string()),
             languages: vec![ISO639::En.into()],

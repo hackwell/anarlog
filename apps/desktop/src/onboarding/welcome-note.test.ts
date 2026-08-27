@@ -68,8 +68,10 @@ it("creates a prerecorded demo note with normal meeting metadata", async () => {
 
   const [title, , initial] = mocks.createSession.mock.calls[0];
   const event = JSON.parse(initial.event_json);
-  expect(title).toBe("Welcome to Anarlog");
-  expect(event.meeting_link).toBe("https://anarlog.so/onboarding-demo/");
+  expect(title).toBe("Welcome to Session Echo");
+  expect(event.meeting_link).toBe(
+    "https://sessionecho.flagbit.de/onboarding-demo/",
+  );
   expect(event.tracking_id).toBe("anarlog-onboarding-demo-v1");
   expect(initial.raw_md).toContain("prerecorded demo meeting");
   expect(initial.raw_md).toContain("Join & record");
@@ -77,7 +79,7 @@ it("creates a prerecorded demo note with normal meeting metadata", async () => {
   expect(initial.raw_md).toContain(
     "If transcription and intelligence are configured",
   );
-  expect(initial.raw_md).not.toContain("Anarlog will listen, transcribe");
+  expect(initial.raw_md).not.toContain("Session Echo will listen, transcribe");
 
   const note = JSON.parse(initial.raw_md);
   expect(note.content).toHaveLength(7);
@@ -174,12 +176,15 @@ it("ignores a demo callback when listening already stopped", async () => {
 });
 
 it("auto-joins the hosted demo and optionally attaches a completion callback", () => {
-  expect(buildWelcomeNoteDemoUrl("https://anarlog.so/onboarding-demo/")).toBe(
-    "https://anarlog.so/onboarding-demo/?autojoin=1",
-  );
   expect(
-    buildWelcomeNoteDemoUrl("https://anarlog.so/onboarding-demo/", 43210),
+    buildWelcomeNoteDemoUrl("https://sessionecho.flagbit.de/onboarding-demo/"),
+  ).toBe("https://sessionecho.flagbit.de/onboarding-demo/?autojoin=1");
+  expect(
+    buildWelcomeNoteDemoUrl(
+      "https://sessionecho.flagbit.de/onboarding-demo/",
+      43210,
+    ),
   ).toBe(
-    "https://anarlog.so/onboarding-demo/?autojoin=1&completion_url=http%3A%2F%2F127.0.0.1%3A43210%2Fonboarding-demo%2Fcomplete",
+    "https://sessionecho.flagbit.de/onboarding-demo/?autojoin=1&completion_url=http%3A%2F%2F127.0.0.1%3A43210%2Fonboarding-demo%2Fcomplete",
   );
 });

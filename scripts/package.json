@@ -1,7 +1,7 @@
 {
   "name": "anarlog-changelog-generator",
   "version": "1.0.0",
-  "description": "Local AI changelog generator for Anarlog",
+  "description": "Local AI changelog generator for Session Echo",
   "keywords": [
     "ai",
     "automation",

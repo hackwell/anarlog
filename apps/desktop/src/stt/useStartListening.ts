@@ -97,7 +97,7 @@ export function useStartListening(sessionId: string) {
         );
       }
       sonnerToast.error(
-        "Anarlog could not safely start recording. Please try again.",
+        "Session Echo could not safely start recording. Please try again.",
         { id: "capture-state-persist-failed" },
       );
       return;
@@ -130,7 +130,7 @@ export function useStartListening(sessionId: string) {
         );
       }
       sonnerToast.error(
-        "Anarlog could not safely start recording. Please try again.",
+        "Session Echo could not safely start recording. Please try again.",
         { id: "capture-state-persist-failed" },
       );
       return;
@@ -174,7 +174,7 @@ export function useStartListening(sessionId: string) {
         await lifecycle.releaseCloudsyncLease();
       }
       sonnerToast.error(
-        "Anarlog could not safely start recording. Please try again.",
+        "Session Echo could not safely start recording. Please try again.",
         { id: "capture-state-persist-failed" },
       );
       return;
@@ -190,7 +190,7 @@ export function useStartListening(sessionId: string) {
       } catch (error) {
         console.error("[listener] failed to clean up capture state", error);
         sonnerToast.error(
-          "Anarlog could not safely start recording. Please try again.",
+          "Session Echo could not safely start recording. Please try again.",
           { id: "capture-state-persist-failed" },
         );
       } finally {
@@ -225,7 +225,7 @@ export function useStartListening(sessionId: string) {
         excludedTexts: [MEETING_DISCLOSURE_MESSAGE],
         onParticipantDeclined: () => {
           sonnerToast.warning(
-            "A participant declined recording. Anarlog stopped listening.",
+            "A participant declined recording. Session Echo stopped listening.",
             { id: "meeting-consent-declined", duration: Infinity },
           );
           stop();

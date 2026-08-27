@@ -1,0 +1,20 @@
+{
+  "name": "session-echo",
+  "version": "1.0.0",
+  "description": "Query Session Echo meeting notes, summaries, transcripts, participants, action items, and recurring history.",
+  "author": {
+    "name": "Fastrepl",
+    "email": "founders@sessionecho.flagbit.de"
+  },
+  "repository": "https://github.com/fastrepl/anarlog/tree/main/agent-plugins/session-echo",
+  "license": "MIT",
+  "keywords": ["meetings", "notes", "transcripts", "productivity", "mcp"],
+  "logo": "assets/icon.png",
+  "skills": "./skills/",
+  "mcpServers": {
+    "anarlog": {
+      "command": "anarlog",
+      "args": ["mcp"]
+    }
+  }
+}

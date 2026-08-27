@@ -200,20 +200,24 @@ mod tests {
         let params = ListenParams {
             sample_rate: 16_000,
             languages: vec![anlg_language::ISO639::En.into()],
-            keywords: vec!["Anarlog".to_string()],
+            keywords: vec!["Session Echo".to_string()],
             ..Default::default()
         };
 
         let adapter = XaiAdapter::default();
         let direct = adapter.build_ws_url("https://api.x.ai/v1", &params, 2);
-        let proxy = adapter.build_ws_url("https://api.anarlog.so/stt?provider=xai", &params, 1);
+        let proxy = adapter.build_ws_url(
+            "https://api.sessionecho.flagbit.de/stt?provider=xai",
+            &params,
+            1,
+        );
 
         assert_eq!(direct.scheme(), "wss");
         assert_eq!(direct.path(), "/v1/stt");
         assert!(direct.query().unwrap().contains("multichannel=true"));
         assert_eq!(
             proxy.as_str().split('?').next().unwrap(),
-            "wss://api.anarlog.so/stt/listen"
+            "wss://api.sessionecho.flagbit.de/stt/listen"
         );
         assert!(proxy.query().unwrap().contains("provider=xai"));
     }

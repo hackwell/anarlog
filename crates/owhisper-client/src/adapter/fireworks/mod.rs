@@ -91,9 +91,9 @@ mod tests {
     #[test]
     fn test_build_ws_url_from_base_proxy() {
         let (url, params) = FireworksAdapter::build_ws_url_from_base(
-            "https://api.anarlog.so/listen?provider=fireworks",
+            "https://api.sessionecho.flagbit.de/listen?provider=fireworks",
         );
-        assert_eq!(url.as_str(), "wss://api.anarlog.so/listen");
+        assert_eq!(url.as_str(), "wss://api.sessionecho.flagbit.de/listen");
         assert_eq!(params, vec![("provider".into(), "fireworks".into())]);
     }
 

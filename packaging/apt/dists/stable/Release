@@ -1,12 +1,12 @@
-Origin: Anarlog
-Label: Anarlog
+Origin: Session Echo
+Label: Session Echo
 Suite: stable
 Codename: stable
 Version: 1.4.13
 Date: Mon, 24 Aug 2026 16:02:09 GMT
 Architectures: amd64 arm64
 Components: main
-Description: Anarlog stable desktop releases
+Description: Session Echo stable desktop releases
 MD5Sum:
  c15cea2b49a7ff4ffc17bf16acdc7281 638 main/binary-amd64/Packages
  c6eba4044f690ae4f10e78e2194c172f 433 main/binary-amd64/Packages.gz

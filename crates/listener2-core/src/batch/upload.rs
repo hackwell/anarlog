@@ -47,7 +47,7 @@ pub(super) async fn split_batch_upload(
 
     let temp_dir = tempfile::tempdir().map_err(|error| {
         tracing::error!(%error, "batch_audio_segment_temp_dir_failed");
-        failure("Anarlog couldn't prepare this recording for transcription.")
+        failure("Session Echo couldn't prepare this recording for transcription.")
     })?;
 
     let source = PathBuf::from(file_path);
@@ -58,11 +58,11 @@ pub(super) async fn split_batch_upload(
     .await
     .map_err(|error| {
         tracing::error!(%error, "batch_audio_segment_task_failed");
-        failure("Anarlog couldn't prepare this recording for transcription.")
+        failure("Session Echo couldn't prepare this recording for transcription.")
     })?
     .map_err(|error| {
         tracing::error!(%error, "batch_audio_segment_failed");
-        failure("Anarlog couldn't split this recording for transcription.")
+        failure("Session Echo couldn't split this recording for transcription.")
     })?;
 
     if paths.is_empty() {

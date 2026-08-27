@@ -14,8 +14,8 @@ impl TrayVersion {
             "de.flagbit.sessionecho.staging" => "staging",
             "de.flagbit.sessionecho.dev" => "dev",
             _ => match app_name {
-                "Anarlog" | "Char" | "Hyprnote" => "stable",
-                "Anarlog Staging" | "Char Staging" | "Hyprnote Staging" => "staging",
+                "Session Echo" | "Char" | "Session Echo" => "stable",
+                "Session Echo Staging" | "Char Staging" | "Session Echo Staging" => "staging",
                 _ => "dev",
             },
         }
@@ -46,26 +46,32 @@ mod tests {
     #[test]
     fn gets_channel_from_identifier() {
         assert_eq!(
-            TrayVersion::get_channel("de.flagbit.sessionecho", "Anarlog"),
+            TrayVersion::get_channel("de.flagbit.sessionecho", "Session Echo"),
             "stable"
         );
         assert_eq!(
-            TrayVersion::get_channel("de.flagbit.sessionecho.staging", "Anarlog Staging"),
+            TrayVersion::get_channel("de.flagbit.sessionecho.staging", "Session Echo Staging"),
             "staging"
         );
         assert_eq!(
-            TrayVersion::get_channel("de.flagbit.sessionecho.dev", "Anarlog Dev"),
+            TrayVersion::get_channel("de.flagbit.sessionecho.dev", "Session Echo Dev"),
             "dev"
         );
     }
 
     #[test]
     fn falls_back_to_product_name_for_unknown_identifier() {
-        assert_eq!(TrayVersion::get_channel("unknown", "Anarlog"), "stable");
         assert_eq!(
-            TrayVersion::get_channel("unknown", "Anarlog Staging"),
+            TrayVersion::get_channel("unknown", "Session Echo"),
+            "stable"
+        );
+        assert_eq!(
+            TrayVersion::get_channel("unknown", "Session Echo Staging"),
             "staging"
         );
-        assert_eq!(TrayVersion::get_channel("unknown", "Anarlog Dev"), "dev");
+        assert_eq!(
+            TrayVersion::get_channel("unknown", "Session Echo Dev"),
+            "dev"
+        );
     }
 }

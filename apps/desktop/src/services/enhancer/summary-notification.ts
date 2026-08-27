@@ -37,7 +37,7 @@ export async function showSummaryReadyNotification(
       start_time: null,
       participants: null,
       event_details: null,
-      action_label: t`Open Anarlog`,
+      action_label: t`Open Session Echo`,
       action_variant: null,
       options: null,
       footer: null,

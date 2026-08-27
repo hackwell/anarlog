@@ -736,7 +736,7 @@ mod tests {
         test_single_with_keywords,
         owhisper_interface::ListenParams {
             languages: vec![anlg_language::ISO639::En.into()],
-            keywords: vec!["Anarlog".to_string(), "transcription".to_string()],
+            keywords: vec!["Session Echo".to_string(), "transcription".to_string()],
             ..Default::default()
         }
     );

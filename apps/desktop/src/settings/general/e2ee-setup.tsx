@@ -157,7 +157,7 @@ export function E2eeSetupDialog({
           <DialogDescription className="text-foreground max-w-[260px] text-center text-[13px] leading-[1.36]">
             <Trans>
               Your recovery key encrypts synced notes before they leave this
-              device. Anarlog cannot read or recover it.
+              device. Session Echo cannot read or recover it.
             </Trans>
           </DialogDescription>
         </DialogHeader>

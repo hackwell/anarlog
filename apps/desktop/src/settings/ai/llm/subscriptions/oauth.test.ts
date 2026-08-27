@@ -125,7 +125,7 @@ describe("subscription OAuth helpers", () => {
     expect(authorizationInputFromParsed({ code: "ac_nf5hq" })).toBe("ac_nf5hq");
   });
 
-  test("ignores Anarlog login callbacks when extracting subscription codes", () => {
+  test("ignores Session Echo login callbacks when extracting subscription codes", () => {
     expect(
       subscriptionAuthFromCallback({
         access_token: "access",

@@ -6,7 +6,7 @@ describe("addNangoSessionHandoff", () => {
   it("keeps the desktop flow parameters and puts the scoped token in the fragment", () => {
     const result = new URL(
       addNangoSessionHandoff(
-        "https://anarlog.so/app/integration?flow=desktop&action=connect&integration_id=google-calendar",
+        "https://sessionecho.flagbit.de/app/integration?flow=desktop&action=connect&integration_id=google-calendar",
         "nango.token+value",
       ),
     );

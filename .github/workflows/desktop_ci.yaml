@@ -202,8 +202,8 @@ jobs:
           CI: false
           POSTHOG_API_KEY: phc_app_store_ci
           VITE_POSTHOG_API_KEY: phc_app_store_ci
-          VITE_APP_URL: https://anarlog.so
-          VITE_API_URL: https://api.anarlog.so
+          VITE_APP_URL: https://sessionecho.flagbit.de
+          VITE_API_URL: https://api.sessionecho.flagbit.de
       - if: github.event_name == 'workflow_dispatch'
         name: Verify Mac App Store candidate
         run: |
@@ -312,8 +312,8 @@ jobs:
           SENTRY_DSN: ${{ secrets.SENTRY_DSN_HYPRNOTE_2 }}
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
-          VITE_APP_URL: https://anarlog.so
-          VITE_API_URL: https://api.anarlog.so
+          VITE_APP_URL: https://sessionecho.flagbit.de
+          VITE_API_URL: https://api.sessionecho.flagbit.de
           VITE_PRO_PRODUCT_ID: ${{ secrets.VITE_PRO_PRODUCT_ID }}
       - if: github.event_name == 'workflow_dispatch'
         shell: pwsh
@@ -339,8 +339,8 @@ jobs:
           }
 
           $installer = $installers[0]
-          $uninstallKey = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall\Anarlog Staging"
-          $expectedInstallDir = Join-Path $env:LOCALAPPDATA "Anarlog Staging"
+          $uninstallKey = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall\Session Echo Staging"
+          $expectedInstallDir = Join-Path $env:LOCALAPPDATA "Session Echo Staging"
           $installDir = $null
           $binary = $null
           $uninstaller = $null
@@ -377,7 +377,7 @@ jobs:
           }
 
           if ((Test-Path $uninstallKey) -or (Test-Path $expectedInstallDir)) {
-            throw "Refusing to smoke-test over an existing Anarlog Staging installation"
+            throw "Refusing to smoke-test over an existing Session Echo Staging installation"
           }
 
           try {
@@ -415,9 +415,9 @@ jobs:
               -RedirectStandardError $stderrLog
             if ($appProcess.WaitForExit(20000)) {
               $appProcess.WaitForExit()
-              throw "Installed Anarlog exited before the 20-second smoke window with status $($appProcess.ExitCode)"
+              throw "Installed Session Echo exited before the 20-second smoke window with status $($appProcess.ExitCode)"
             }
-            Write-Host "Installed Anarlog remained running for the 20-second smoke window"
+            Write-Host "Installed Session Echo remained running for the 20-second smoke window"
             Stop-ProcessTree $appProcess
 
             $uninstallProcess = Start-Process $uninstaller `
@@ -523,8 +523,8 @@ jobs:
           SENTRY_DSN: ${{ secrets.SENTRY_DSN_HYPRNOTE_2 }}
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
-          VITE_APP_URL: https://anarlog.so
-          VITE_API_URL: https://api.anarlog.so
+          VITE_APP_URL: https://sessionecho.flagbit.de
+          VITE_API_URL: https://api.sessionecho.flagbit.de
           VITE_PRO_PRODUCT_ID: ${{ secrets.VITE_PRO_PRODUCT_ID }}
           TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
           TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
@@ -660,7 +660,7 @@ jobs:
               set -e
               cat /tmp/anarlog.log
               if [[ $status -ne 124 ]]; then
-                echo "Anarlog exited before the smoke timeout with status $status"
+                echo "Session Echo exited before the smoke timeout with status $status"
                 exit 1
               fi
             '

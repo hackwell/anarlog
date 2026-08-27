@@ -33,7 +33,7 @@ export async function requestCloudsyncCredentials({
     }
     const headers: Record<string, string> = {
       Authorization: `Bearer ${accessToken}`,
-      "X-Anarlog-E2EE-Key-Id": encryptionKeyId,
+      "X-Session Echo-E2EE-Key-Id": encryptionKeyId,
       [E2EE_MEMBER_PUBLIC_KEY_HEADER]: memberPublicKey,
     };
     if (device.fingerprint) {

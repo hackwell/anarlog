@@ -34,7 +34,7 @@ describe("shared attachment client", () => {
   it("requests a short-lived download grant with the current session", async () => {
     const fetcher = vi.fn().mockResolvedValue(response());
     const client = createSharedAttachmentClient({
-      apiBaseUrl: "https://api.anarlog.so",
+      apiBaseUrl: "https://api.sessionecho.flagbit.de",
       session,
       fetcher,
     });
@@ -47,7 +47,7 @@ describe("shared attachment client", () => {
     );
     expect(fetcher).toHaveBeenCalledWith(
       new URL(
-        `https://api.anarlog.so/shared-notes/access/${shareId}/attachments/${attachmentId}/download`,
+        `https://api.sessionecho.flagbit.de/shared-notes/access/${shareId}/attachments/${attachmentId}/download`,
       ),
       expect.objectContaining({
         method: "POST",
@@ -67,7 +67,7 @@ describe("shared attachment client", () => {
       "https://project.supabase.co/storage/file#fragment",
     ]) {
       const client = createSharedAttachmentClient({
-        apiBaseUrl: "https://api.anarlog.so",
+        apiBaseUrl: "https://api.sessionecho.flagbit.de",
         session,
         fetcher: vi.fn().mockResolvedValue(response({ signedUrl })),
       });
@@ -79,7 +79,7 @@ describe("shared attachment client", () => {
 
   it("preserves gateway status for revocation handling", async () => {
     const client = createSharedAttachmentClient({
-      apiBaseUrl: "https://api.anarlog.so",
+      apiBaseUrl: "https://api.sessionecho.flagbit.de",
       session,
       fetcher: vi.fn().mockResolvedValue(new Response(null, { status: 404 })),
     });

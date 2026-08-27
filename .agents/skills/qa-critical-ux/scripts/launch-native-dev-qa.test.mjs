@@ -12,7 +12,7 @@ const launcher = fileURLToPath(
 
 async function fixture() {
   const directory = await mkdtemp(path.join(tmpdir(), "anarlog-native-qa-"));
-  const appBundle = path.join(directory, "Anarlog Dev.app");
+  const appBundle = path.join(directory, "Session Echo Dev.app");
   const fakeOpen = path.join(directory, "open");
 
   await mkdir(appBundle);

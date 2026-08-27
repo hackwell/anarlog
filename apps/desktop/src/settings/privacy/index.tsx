@@ -47,8 +47,8 @@ export function SettingsPrivacy() {
   const lockAppDescription = !authAvailable
     ? t`Device authentication is not available on this computer.`
     : platform() === "windows"
-      ? t`Require Windows Hello face, PIN, or password when opening Anarlog.`
-      : t`Require Touch ID or your password when opening Anarlog.`;
+      ? t`Require Windows Hello face, PIN, or password when opening Session Echo.`
+      : t`Require Touch ID or your password when opening Session Echo.`;
 
   return (
     <div className="flex flex-col gap-8">
@@ -83,7 +83,7 @@ export function SettingsPrivacy() {
         />
         <SettingSwitchRow
           title={t`Sentry`}
-          description={t`Send sanitized crash and error reports to help improve Anarlog.`}
+          description={t`Send sanitized crash and error reports to help improve Session Echo.`}
           checked={sentryEnabled}
           onChange={(crashReportingConsent) => {
             setSettingValues({

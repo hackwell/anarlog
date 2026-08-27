@@ -28,7 +28,6 @@ import {
   syncCloudsyncNow,
 } from "@anlg/plugin-db";
 import type { CloudsyncActivityEntry } from "@anlg/plugin-db";
-import { commands as openerCommands } from "@anlg/plugin-opener2";
 import { commands as settingsCommands } from "@anlg/plugin-settings";
 import { Badge } from "@anlg/ui/components/ui/badge";
 import { Button } from "@anlg/ui/components/ui/button";
@@ -76,7 +75,6 @@ import { isKeychainAccessError, repairKeychainAccess } from "~/shared/keychain";
 import { useTabs } from "~/store/zustand/tabs";
 
 const STATUS_POLL_INTERVAL_MS = 10_000;
-const SYNC_GUIDE_URL = "https://docs.anarlog.so/sync";
 
 async function readE2eeIdentityStatus(accountUserId: string) {
   try {
@@ -325,8 +323,8 @@ function SyncLogEntry({ entry }: { entry: CloudsyncActivityEntry }) {
         {entry.error && (
           <p className="mt-1 text-xs break-words text-red-500">
             <Trans>
-              Anarlog couldn't complete this sync. Your notes are safe on this
-              device.
+              Session Echo couldn't complete this sync. Your notes are safe on
+              this device.
             </Trans>
           </p>
         )}
@@ -682,7 +680,7 @@ export function SettingsSync() {
             <div>
               <h3 className="text-sm font-medium">
                 {session ? (
-                  <Trans>Cloud sync is available with Anarlog Pro</Trans>
+                  <Trans>Cloud sync is available with Session Echo Pro</Trans>
                 ) : (
                   <Trans>Sign in to use cloud sync</Trans>
                 )}
@@ -715,7 +713,7 @@ export function SettingsSync() {
         return {
           kind: "local" as const,
           label: t`Waiting for device approval`,
-          description: t`Open Anarlog on a device that already has access, then approve this device.`,
+          description: t`Open Session Echo on a device that already has access, then approve this device.`,
         };
       }
       if (credentialBlock === "device_limit") {
@@ -731,7 +729,7 @@ export function SettingsSync() {
         description:
           credentialBlock === "setup_required"
             ? t`Set up your recovery key to start encrypted cloud sync.`
-            : t`Anarlog could not start cloud sync on this device.`,
+            : t`Session Echo could not start cloud sync on this device.`,
       };
     }
     if (statusQuery.isError) {
@@ -754,8 +752,8 @@ export function SettingsSync() {
           status.last_error_kind === "auth"
             ? t`Sign out and sign in again to resume cloud sync.`
             : status.last_error_kind === "transient"
-              ? t`Anarlog will retry automatically.`
-              : t`Anarlog will keep retrying.`,
+              ? t`Session Echo will retry automatically.`
+              : t`Session Echo will keep retrying.`,
       };
     }
     if (status?.activity_paused) {
@@ -960,20 +958,10 @@ export function SettingsSync() {
                 <Trans>
                   Cloud sync and {cloudStorageService} can both change the same
                   files, which can create conflicted copies and incomplete
-                  recordings. Move your Anarlog storage location to a folder
-                  that {cloudStorageService} does not sync.
+                  recordings. Move your Session Echo storage location to a
+                  folder that {cloudStorageService} does not sync.
                 </Trans>
               </p>
-              <Button
-                variant="outline"
-                size="sm"
-                className="mt-3"
-                onClick={() =>
-                  void openerCommands.openUrl(SYNC_GUIDE_URL, null)
-                }
-              >
-                <Trans>Learn more</Trans>
-              </Button>
             </div>
           </div>
         </section>
@@ -1267,8 +1255,8 @@ export function SettingsSync() {
             </DialogTitle>
             <DialogDescription>
               <Trans>
-                Install Anarlog and sign in with this account on the new device.
-                It will appear here automatically so you can approve it.
+                Install Session Echo and sign in with this account on the new
+                device. It will appear here automatically so you can approve it.
               </Trans>
             </DialogDescription>
           </DialogHeader>

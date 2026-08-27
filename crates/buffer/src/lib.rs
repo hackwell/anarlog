@@ -320,8 +320,8 @@ mod tests {
 - Offers powerful extensions—like real-time transcripts and CRM uploads (e.g. Twenty).
 
 ## Stay Connected
-- Follow updates on [X](https://anarlog.so/x).
-- Join the community and chat on [Discord](https://anarlog.so/discord). 
+- Follow updates on [X](https://sessionecho.flagbit.de/x).
+- Join the community and chat on [Discord](https://sessionecho.flagbit.de/discord). 
 
 # Participants:
 
@@ -359,8 +359,8 @@ mod tests {
 
         # Stay Connected
 
-        - Follow updates on [X](https://anarlog.so/x).
-        - Join the community and chat on [Discord](https://anarlog.so/discord).
+        - Follow updates on [X](https://sessionecho.flagbit.de/x).
+        - Join the community and chat on [Discord](https://sessionecho.flagbit.de/discord).
 
          
 
@@ -396,10 +396,10 @@ mod tests {
 
 # Benefits: Streamlines meetings, improves productivity, and enhances data capture.
 
-# Further Information: Follow updates on [X](https://anarlog.so/x) and [Discord](https://anarlog.so/discord).
+# Further Information: Follow updates on [X](https://sessionecho.flagbit.de/x) and [Discord](https://sessionecho.flagbit.de/discord).
         "#;
 
-        insta::assert_snapshot!(md_to_md(input).unwrap().to_string(), @"# Further Information: Follow updates on [X](https://anarlog.so/x) and [Discord](https://anarlog.so/discord).");
+        insta::assert_snapshot!(md_to_md(input).unwrap().to_string(), @"# Further Information: Follow updates on [X](https://sessionecho.flagbit.de/x) and [Discord](https://sessionecho.flagbit.de/discord).");
     }
 
     #[test]
@@ -422,8 +422,8 @@ mod tests {
 - Offers powerful extensions—like real-time transcripts and CRM uploads (e.g. Twenty).
 
 ## Stay Connected
-- Follow updates on [X](https://anarlog.so/x).
-- Join the community and chat on [Discord](https://anarlog.so/discord).
+- Follow updates on [X](https://sessionecho.flagbit.de/x).
+- Join the community and chat on [Discord](https://sessionecho.flagbit.de/discord).
 "#;
 
         insta::assert_snapshot!(opinionated_md_to_html(input).unwrap().to_string(), @r#"
@@ -450,8 +450,8 @@ mod tests {
         <p> </p>
         <h1>Stay Connected</h1>
         <ul>
-        <li>Follow updates on <a href="https://anarlog.so/x">X</a>.</li>
-        <li>Join the community and chat on <a href="https://anarlog.so/discord">Discord</a>.</li>
+        <li>Follow updates on <a href="https://sessionecho.flagbit.de/x">X</a>.</li>
+        <li>Join the community and chat on <a href="https://sessionecho.flagbit.de/discord">Discord</a>.</li>
         </ul>
         "#);
     }

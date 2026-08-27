@@ -10,7 +10,7 @@ import {
   REFERENCE_LINK_REWRITES,
 } from "./publish-anarlog-skill.mjs";
 
-const PLUGIN_ROOT = "agent-plugins/anarlog";
+const PLUGIN_ROOT = "agent-plugins/session-echo";
 const PLUGIN_MANIFESTS = [
   `${PLUGIN_ROOT}/plugin.json`,
   `${PLUGIN_ROOT}/.claude-plugin/plugin.json`,
@@ -41,7 +41,7 @@ test("plugin package mirrors the canonical skill and license", async () => {
 test("plugin manifests use one stable identity and version", async () => {
   for (const manifestPath of PLUGIN_MANIFESTS) {
     const manifest = await readJson(manifestPath);
-    assert.equal(manifest.name, "anarlog");
+    assert.equal(manifest.name, "session-echo");
     assert.equal(manifest.version, "1.0.0");
     assert.equal(manifest.license, "MIT");
   }
@@ -53,7 +53,7 @@ test("plugin manifests use one stable identity and version", async () => {
   );
 });
 
-test("repository marketplaces resolve the Anarlog plugin package", async () => {
+test("repository marketplaces resolve the Session Echo plugin package", async () => {
   const marketplacePaths = [
     ".claude-plugin/marketplace.json",
     ".cursor-plugin/marketplace.json",
@@ -63,7 +63,7 @@ test("repository marketplaces resolve the Anarlog plugin package", async () => {
     const marketplace = await readJson(marketplacePath);
     assert.equal(marketplace.name, "fastrepl");
     assert.equal(marketplace.plugins.length, 1);
-    assert.equal(marketplace.plugins[0].name, "anarlog");
+    assert.equal(marketplace.plugins[0].name, "session-echo");
     assert.equal(marketplace.plugins[0].source, `./${PLUGIN_ROOT}`);
   }
 
@@ -72,7 +72,7 @@ test("repository marketplaces resolve the Anarlog plugin package", async () => {
   assert.equal(codexMarketplace.plugins[0].source.path, `./${PLUGIN_ROOT}`);
 });
 
-test("every MCP configuration starts the Anarlog stdio server", async () => {
+test("every MCP configuration starts the Session Echo stdio server", async () => {
   const portable = await readJson(`${PLUGIN_ROOT}/mcp.json`);
   const native = await readJson(`${PLUGIN_ROOT}/.mcp.json`);
   const cursor = await readJson(`${PLUGIN_ROOT}/.cursor-plugin/plugin.json`);

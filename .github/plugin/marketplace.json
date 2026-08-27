@@ -2,7 +2,7 @@
   "name": "fastrepl",
   "owner": {
     "name": "Fastrepl",
-    "email": "founders@anarlog.so"
+    "email": "founders@sessionecho.flagbit.de"
   },
   "metadata": {
     "description": "Official plugins from Fastrepl",
@@ -10,17 +10,16 @@
   },
   "plugins": [
     {
-      "name": "anarlog",
-      "source": "./agent-plugins/anarlog",
-      "description": "Query Anarlog meeting notes, summaries, transcripts, participants, action items, and recurring history.",
+      "name": "session-echo",
+      "source": "./agent-plugins/session-echo",
+      "description": "Query Session Echo meeting notes, summaries, transcripts, participants, action items, and recurring history.",
       "version": "1.0.0",
       "author": {
         "name": "Fastrepl",
-        "email": "founders@anarlog.so",
-        "url": "https://anarlog.so"
+        "email": "founders@sessionecho.flagbit.de",
+        "url": "https://sessionecho.flagbit.de"
       },
-      "homepage": "https://docs.anarlog.so/agents/overview",
-      "repository": "https://github.com/fastrepl/anarlog/tree/main/agent-plugins/anarlog",
+      "repository": "https://github.com/fastrepl/anarlog/tree/main/agent-plugins/session-echo",
       "license": "MIT",
       "keywords": ["meetings", "notes", "transcripts", "productivity", "mcp"]
     }

@@ -10,7 +10,6 @@ export type CalendarProvider = {
   icon: ReactNode;
   badge?: string | null;
   platform?: "macos" | "all";
-  docsPath: string;
   nangoIntegrationId?: string;
 };
 
@@ -28,7 +27,6 @@ const _PROVIDERS = [
       />
     ),
     platform: "macos",
-    docsPath: "https://docs.anarlog.so/calendar#apple-calendar",
     nangoIntegrationId: undefined,
   },
   {
@@ -38,7 +36,6 @@ const _PROVIDERS = [
     badge: "",
     icon: <Icon icon="logos:google-calendar" width={16} height={16} />,
     platform: "all",
-    docsPath: "https://docs.anarlog.so/calendar#google-calendar",
     nangoIntegrationId: "google-calendar",
   },
   {
@@ -48,7 +45,6 @@ const _PROVIDERS = [
     badge: "",
     icon: <OutlookIcon size={16} />,
     platform: "all",
-    docsPath: "https://docs.anarlog.so/calendar#outlook-calendar",
     nangoIntegrationId: "outlook",
   },
 ] as const satisfies readonly CalendarProvider[];

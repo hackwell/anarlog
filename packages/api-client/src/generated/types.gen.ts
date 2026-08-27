@@ -3778,7 +3778,7 @@ export type DeleteAttachmentBackupErrors = {
      */
     401: unknown;
     /**
-     * Anarlog Pro subscription or backup access required
+     * Session Echo Pro subscription or backup access required
      */
     403: unknown;
     /**
@@ -3821,7 +3821,7 @@ export type CancelAttachmentBackupDeletionErrors = {
      */
     401: unknown;
     /**
-     * Anarlog Pro subscription or backup access required
+     * Session Echo Pro subscription or backup access required
      */
     403: unknown;
     /**
@@ -3860,7 +3860,7 @@ export type DownloadAttachmentBackupErrors = {
      */
     401: unknown;
     /**
-     * Anarlog Pro subscription or backup access required
+     * Session Echo Pro subscription or backup access required
      */
     403: unknown;
     /**
@@ -3903,7 +3903,7 @@ export type FinalizeAttachmentBackupErrors = {
      */
     401: unknown;
     /**
-     * Anarlog Pro subscription or backup access required
+     * Session Echo Pro subscription or backup access required
      */
     403: unknown;
     /**
@@ -3950,7 +3950,7 @@ export type PromoteAttachmentBackupErrors = {
      */
     401: unknown;
     /**
-     * Anarlog Pro subscription or backup access required
+     * Session Echo Pro subscription or backup access required
      */
     403: unknown;
     /**
@@ -3998,7 +3998,7 @@ export type ReadCurrentAttachmentBackupErrors = {
      */
     401: unknown;
     /**
-     * Anarlog Pro subscription or backup access required
+     * Session Echo Pro subscription or backup access required
      */
     403: unknown;
     /**
@@ -4037,7 +4037,7 @@ export type ReserveAttachmentBackupErrors = {
      */
     401: unknown;
     /**
-     * Anarlog Pro subscription or backup access required
+     * Session Echo Pro subscription or backup access required
      */
     403: unknown;
     /**
@@ -4080,7 +4080,7 @@ export type GrantAttachmentBackupUploadErrors = {
      */
     401: unknown;
     /**
-     * Anarlog Pro subscription or backup access required
+     * Session Echo Pro subscription or backup access required
      */
     403: unknown;
     /**
@@ -4119,7 +4119,7 @@ export type GetDevicesErrors = {
      */
     401: unknown;
     /**
-     * Anarlog Pro subscription required
+     * Session Echo Pro subscription required
      */
     403: unknown;
     /**
@@ -4159,7 +4159,7 @@ export type DeleteDeviceErrors = {
      */
     401: unknown;
     /**
-     * Anarlog Pro subscription required
+     * Session Echo Pro subscription required
      */
     403: unknown;
     /**
@@ -4204,7 +4204,7 @@ export type RegisterE2EeDeviceEnrollmentErrors = {
      */
     401: unknown;
     /**
-     * Anarlog Pro or a free device slot is required
+     * Session Echo Pro or a free device slot is required
      */
     403: unknown;
     /**
@@ -4254,7 +4254,7 @@ export type ConsumeE2EeDeviceEnrollmentErrors = {
      */
     401: unknown;
     /**
-     * Anarlog Pro subscription required
+     * Session Echo Pro subscription required
      */
     403: unknown;
     /**
@@ -4298,7 +4298,7 @@ export type SealE2EeDeviceEnrollmentErrors = {
      */
     401: unknown;
     /**
-     * Anarlog Pro subscription required
+     * Session Echo Pro subscription required
      */
     403: unknown;
     /**
@@ -4341,7 +4341,7 @@ export type ClaimE2EeIdentityErrors = {
      */
     401: unknown;
     /**
-     * Anarlog Pro subscription required
+     * Session Echo Pro subscription required
      */
     403: unknown;
     /**
@@ -4608,7 +4608,7 @@ export type CreateReplicaCredentialsErrors = {
      */
     401: unknown;
     /**
-     * Anarlog Pro subscription required
+     * Session Echo Pro subscription required
      */
     403: unknown;
     /**
@@ -4800,7 +4800,7 @@ export type PublishSessionShareSnapshotErrors = {
      */
     401: unknown;
     /**
-     * Anarlog Pro or share-manager access required
+     * Session Echo Pro or share-manager access required
      */
     403: unknown;
     /**
@@ -4897,7 +4897,7 @@ export type CreateCredentialsErrors = {
      */
     401: unknown;
     /**
-     * Anarlog Pro subscription required
+     * Session Echo Pro subscription required
      */
     403: unknown;
     /**
@@ -5281,7 +5281,7 @@ export type DeleteSnapshotData = {
     body?: never;
     path: {
         /**
-         * Anarlog meeting id
+         * Session Echo meeting id
          */
         session_id: string;
     };
@@ -5299,7 +5299,7 @@ export type PublishSnapshotData = {
     body: MeetingExport;
     path: {
         /**
-         * Anarlog meeting id
+         * Session Echo meeting id
          */
         session_id: string;
     };

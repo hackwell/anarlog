@@ -168,10 +168,11 @@ mod tests {
 
     #[test]
     fn build_ws_url_preserves_proxy_provider() {
-        let (url, params) =
-            OpenAIAdapter::build_ws_url_from_base("https://api.anarlog.so?provider=openai");
+        let (url, params) = OpenAIAdapter::build_ws_url_from_base(
+            "https://api.sessionecho.flagbit.de?provider=openai",
+        );
 
-        assert_eq!(url.as_str(), "wss://api.anarlog.so/listen");
+        assert_eq!(url.as_str(), "wss://api.sessionecho.flagbit.de/listen");
         assert_eq!(params, vec![("provider".to_string(), "openai".to_string())]);
     }
 

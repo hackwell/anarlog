@@ -127,9 +127,10 @@ mod tests {
 
     #[test]
     fn test_streaming_ws_url_proxy() {
-        let (url, params) =
-            AssemblyAIAdapter::streaming_ws_url("https://api.anarlog.so?provider=assemblyai");
-        assert_eq!(url.as_str(), "wss://api.anarlog.so/listen");
+        let (url, params) = AssemblyAIAdapter::streaming_ws_url(
+            "https://api.sessionecho.flagbit.de?provider=assemblyai",
+        );
+        assert_eq!(url.as_str(), "wss://api.sessionecho.flagbit.de/listen");
         assert_eq!(params, vec![("provider".into(), "assemblyai".into())]);
     }
 

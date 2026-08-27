@@ -23,8 +23,8 @@ function packageFixture(architecture, marker) {
     control: `Package: anarlog
 Version: 1.4.9
 Architecture: ${architecture}
-Maintainer: Fastrepl <support@anarlog.so>
-Description: Anarlog Desktop App
+Maintainer: Fastrepl <support@sessionecho.flagbit.de>
+Description: Session Echo Desktop App
 `,
     hashes: {
       md5: marker.repeat(32),

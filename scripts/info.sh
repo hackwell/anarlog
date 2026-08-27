@@ -9,12 +9,12 @@ if [ -d "$HOME/Library/Application Support/hyprnote" ]; then
     fi
 fi
 
-if [ -d "/Applications/Anarlog.app" ]; then
-    stable_version=$(defaults read /Applications/Anarlog.app/Contents/Info.plist CFBundleShortVersionString 2>/dev/null || echo "")
+if [ -d "/Applications/Session Echo.app" ]; then
+    stable_version=$(defaults read /Applications/Session Echo.app/Contents/Info.plist CFBundleShortVersionString 2>/dev/null || echo "")
 elif [ -d "/Applications/Char.app" ]; then
     stable_version=$(defaults read /Applications/Char.app/Contents/Info.plist CFBundleShortVersionString 2>/dev/null || echo "")
-elif [ -d "/Applications/Hyprnote.app" ]; then
-    stable_version=$(defaults read /Applications/Hyprnote.app/Contents/Info.plist CFBundleShortVersionString 2>/dev/null || echo "")
+elif [ -d "/Applications/Session Echo.app" ]; then
+    stable_version=$(defaults read /Applications/Session Echo.app/Contents/Info.plist CFBundleShortVersionString 2>/dev/null || echo "")
 fi
 
 cat << EOF

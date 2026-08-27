@@ -728,7 +728,7 @@ mod tests {
 
     #[test]
     fn build_listen_params_limits_each_channel_to_remote_participants() {
-        let mut args = listener_args("https://api.anarlog.so/stt", "cloud");
+        let mut args = listener_args("https://api.sessionecho.flagbit.de/stt", "cloud");
         args.participant_human_ids = vec![
             "self".to_string(),
             "remote-a".to_string(),
@@ -805,7 +805,10 @@ mod tests {
             retry_after_secs: Some(7),
         };
 
-        let error = ws_connect_error(&listener_args("https://api.anarlog.so/stt", "cloud"), error);
+        let error = ws_connect_error(
+            &listener_args("https://api.sessionecho.flagbit.de/stt", "cloud"),
+            error,
+        );
         let error = error
             .downcast_ref::<super::super::ListenerInitError>()
             .expect("listener init error");

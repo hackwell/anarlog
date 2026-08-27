@@ -301,7 +301,7 @@ const _PROVIDERS = [
   {
     disabled: false,
     id: "anarlog",
-    displayName: "Anarlog",
+    displayName: "Session Echo",
     badge: "Recommended",
     builtIn: true,
     icon: <AnarlogProviderIcon />,

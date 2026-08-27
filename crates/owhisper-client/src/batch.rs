@@ -138,7 +138,7 @@ mod tests {
     #[test]
     fn injects_provider_for_anarlog_proxy() {
         let client = BatchClient::<AnarlogAdapter>::builder()
-            .api_base("https://api.anarlog.so/stt")
+            .api_base("https://api.sessionecho.flagbit.de/stt")
             .api_key("test")
             .build();
 
@@ -158,7 +158,7 @@ mod tests {
     #[test]
     fn injects_provider_for_direct_provider_adapter_on_anarlog_proxy() {
         let client = BatchClient::<DeepgramAdapter>::builder()
-            .api_base("https://api.anarlog.so/stt")
+            .api_base("https://api.sessionecho.flagbit.de/stt")
             .api_key("test")
             .build();
 
@@ -168,7 +168,7 @@ mod tests {
     #[test]
     fn rewrites_existing_provider_for_direct_provider_adapter() {
         let client = BatchClient::<OpenAIAdapter>::builder()
-            .api_base("https://api.anarlog.so/stt?provider=anarlog&model=whisper-1")
+            .api_base("https://api.sessionecho.flagbit.de/stt?provider=anarlog&model=whisper-1")
             .api_key("test")
             .build();
 

@@ -59,7 +59,7 @@ select results_eq(
       'fastrepl'
     )
   $$,
-  $$values ('fastrepl'::text, 'https://fastrepl.anarlog.so'::text)$$,
+  $$values ('fastrepl'::text, 'https://fastrepl.sessionecho.flagbit.de'::text)$$,
   'The setter returns the canonical enterprise sharing origin'
 );
 

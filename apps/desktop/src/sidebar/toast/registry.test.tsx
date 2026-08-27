@@ -92,7 +92,9 @@ describe("sidebar toast registry", () => {
     );
 
     expect(toast?.id).toBe("sign-in-benefits");
-    expect(toast?.description).toBe("Sign in to get the most out of Anarlog");
+    expect(toast?.description).toBe(
+      "Sign in to get the most out of Session Echo",
+    );
     expect(toast?.primaryAction?.label).toBe("Sign in");
   });
 
@@ -214,7 +216,7 @@ describe("sidebar toast registry", () => {
 
     expect(toast).toMatchObject({
       id: "desktop-update:1.0.34:available",
-      description: "Anarlog 1.0.34 is available",
+      description: "Session Echo 1.0.34 is available",
       lifecycle: { type: "persistent", dismissal: "day" },
       primaryAction: { label: "Download" },
     });
@@ -277,7 +279,7 @@ describe("sidebar toast registry", () => {
 
     expect(toast).toMatchObject({
       id: "desktop-update:1.0.34:downloading",
-      description: "Downloading Anarlog 1.0.34 (58%)",
+      description: "Downloading Session Echo 1.0.34 (58%)",
       lifecycle: { type: "persistent", dismissal: "session" },
       loading: true,
     });
@@ -299,7 +301,7 @@ describe("sidebar toast registry", () => {
 
     expect(toast).toMatchObject({
       id: "desktop-update:1.0.34:ready",
-      description: "Anarlog 1.0.34 is ready to install",
+      description: "Session Echo 1.0.34 is ready to install",
       lifecycle: { type: "persistent", dismissal: "session" },
       primaryAction: { label: "Restart" },
     });

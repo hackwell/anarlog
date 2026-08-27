@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 import { normalizeLLMProviderId } from "./useLLMConnection";
 
 describe("normalizeLLMProviderId", () => {
-  it("maps the legacy hosted provider id to Anarlog", () => {
+  it("maps the legacy hosted provider id to Session Echo", () => {
     expect(normalizeLLMProviderId("hyprnote")).toBe("anarlog");
   });
 

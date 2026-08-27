@@ -157,9 +157,10 @@ function appUrl(
     }
     if (
       workspaceShareSlug &&
-      (base.hostname === "anarlog.so" || base.hostname === "www.anarlog.so")
+      (base.hostname === "sessionecho.flagbit.de" ||
+        base.hostname === "www.sessionecho.flagbit.de")
     ) {
-      base.hostname = `${workspaceShareSlug}.anarlog.so`;
+      base.hostname = `${workspaceShareSlug}.sessionecho.flagbit.de`;
     }
     return new URL(path, base.origin);
   } catch {

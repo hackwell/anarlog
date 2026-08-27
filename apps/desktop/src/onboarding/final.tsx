@@ -26,7 +26,7 @@ const SOCIALS = [
   {
     label: "Discord",
     icon: DiscordLogo,
-    url: "https://anarlog.so/discord",
+    url: "https://sessionecho.flagbit.de/discord",
   },
   {
     label: "GitHub",
@@ -107,17 +107,17 @@ export function FinalSection({
         {status === "loading" ? (
           <span className="flex items-center gap-2">
             <CircleNotch className="size-4 animate-spin" />
-            <Trans>Open Anarlog</Trans>
+            <Trans>Open Session Echo</Trans>
           </span>
         ) : (
-          <Trans>Open Anarlog</Trans>
+          <Trans>Open Session Echo</Trans>
         )}
       </OnboardingButton>
       {status === "error" && (
         <p className="text-sm text-red-500" role="alert">
           {translate({
             id: "onboarding.finish-error",
-            message: "Couldn't open Anarlog. Please try again.",
+            message: "Couldn't open Session Echo. Please try again.",
           })}
         </p>
       )}

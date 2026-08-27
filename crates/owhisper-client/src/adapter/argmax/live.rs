@@ -215,7 +215,7 @@ mod tests {
         owhisper_interface::ListenParams {
             model: Some("large-v3-v20240930_626MB".to_string()),
             languages: vec![anlg_language::ISO639::En.into()],
-            keywords: vec!["Anarlog".to_string(), "transcription".to_string()],
+            keywords: vec!["Session Echo".to_string(), "transcription".to_string()],
             ..Default::default()
         }
     );
