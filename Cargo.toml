@@ -116,7 +116,6 @@ anlg-mac = { path = "crates/mac", package = "mac" }
 anlg-mcp = { path = "crates/mcp", package = "mcp" }
 anlg-meeting-capture = { path = "crates/meeting-capture", package = "meeting-capture" }
 anlg-meeting-import = { path = "crates/meeting-import", package = "meeting-import" }
-anlg-mobile-bridge = { path = "crates/mobile-bridge", package = "mobile-bridge" }
 anlg-model-downloader = { path = "crates/model-downloader", package = "model-downloader" }
 anlg-model-manager = { path = "crates/model-manager", package = "model-manager" }
 anlg-mp3 = { path = "crates/mp3", package = "mp3" }

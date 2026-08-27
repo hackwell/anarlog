@@ -137,7 +137,6 @@ jobs:
             --exclude transcribe-whisper-local \
             --exclude device-monitor \
             --exclude local-llm-core \
-            --exclude mobile-bridge \
             --exclude tauri-plugin-analytics\
             --exclude tauri-plugin-apple-calendar \
             --exclude tauri-plugin-audio-priority \
