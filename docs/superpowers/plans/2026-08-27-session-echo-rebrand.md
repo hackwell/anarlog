@@ -4,7 +4,7 @@
 
 **Goal:** Turn the anarlog monorepo into Session Echo — a local-only, MIT-licensed meeting recorder for macOS, with no cloud dependency and a signed, notarized release under the Flagbit Developer ID.
 
-**Architecture:** Subtractive refactor in dependency order. First delete what nothing depends on (the commercially licensed `enterprise/` tree, the standalone cloud apps, the vendor docs). Then remove cloud *usage* from the desktop app, which turns its cloud crates into orphans that can be deleted mechanically. Only then rename, because renaming a smaller tree is cheaper and the deletions remove most brand strings for free. Identity, infrastructure, signing, and license hygiene follow as independent phases.
+**Architecture:** Subtractive refactor in dependency order. First delete what nothing depends on (the commercially licensed `enterprise/` tree, the standalone cloud apps, the vendor docs). Then remove cloud _usage_ from the desktop app, which turns its cloud crates into orphans that can be deleted mechanically. Only then rename, because renaming a smaller tree is cheaper and the deletions remove most brand strings for free. Identity, infrastructure, signing, and license hygiene follow as independent phases.
 
 **Tech Stack:** Rust (Tauri 2, axum-free after Phase 1), TypeScript/React, pnpm workspaces, turbo, Lingui i18n, SQLite, whisper.cpp, Pyannote, dprint, oxlint.
 
@@ -37,23 +37,23 @@ deletions with zero reverse dependencies.
 
 ## File Structure
 
-Phase 1 and 2 are almost entirely deletions. These files are *modified* rather
+Phase 1 and 2 are almost entirely deletions. These files are _modified_ rather
 than deleted and carry the real risk:
 
-| File | Responsibility | Touched in |
-|---|---|---|
-| `Cargo.toml` | workspace members + 147 `anlg-*` path aliases | 1, 2 |
-| `pnpm-workspace.yaml` | package globs | 1 |
-| `package.json` (root) | `dev:web` and sibling scripts | 1 |
-| `apps/desktop/src-tauri/Cargo.toml` | plugin and crate wiring | 2 |
-| `apps/desktop/src-tauri/tauri.conf.json` | identifier, productName, deeplink, updater | 3, 4 |
-| `crates/storage/src/global.rs` | app data folder resolution + legacy migration | 3 |
-| `crates/detect/src/list/competitors.rs` | foreign-app detection list — must NOT be sed'ed | 3 |
-| `apps/desktop/lingui.config.ts` | locale list | 3 |
-| `crates/whisper-local-model/src/lib.rs`, `crates/am/src/model.rs`, `crates/local-model/src/lib.rs` | model download URLs | 4 |
-| `plugins/notification/src/{commands,handler}.rs`, `plugins/windows/src/ext.rs` | analytics call sites in kept plugins | 4 |
-| `.github/workflows/desktop_cd.yaml`, `desktop_publish.yaml` | signing and release | 5 |
-| `LICENSE`, `NOTICE`, `README.md` | license hygiene | 6 |
+| File                                                                                               | Responsibility                                  | Touched in |
+| -------------------------------------------------------------------------------------------------- | ----------------------------------------------- | ---------- |
+| `Cargo.toml`                                                                                       | workspace members + 147 `anlg-*` path aliases   | 1, 2       |
+| `pnpm-workspace.yaml`                                                                              | package globs                                   | 1          |
+| `package.json` (root)                                                                              | `dev:web` and sibling scripts                   | 1          |
+| `apps/desktop/src-tauri/Cargo.toml`                                                                | plugin and crate wiring                         | 2          |
+| `apps/desktop/src-tauri/tauri.conf.json`                                                           | identifier, productName, deeplink, updater      | 3, 4       |
+| `crates/storage/src/global.rs`                                                                     | app data folder resolution + legacy migration   | 3          |
+| `crates/detect/src/list/competitors.rs`                                                            | foreign-app detection list — must NOT be sed'ed | 3          |
+| `apps/desktop/lingui.config.ts`                                                                    | locale list                                     | 3          |
+| `crates/whisper-local-model/src/lib.rs`, `crates/am/src/model.rs`, `crates/local-model/src/lib.rs` | model download URLs                             | 4          |
+| `plugins/notification/src/{commands,handler}.rs`, `plugins/windows/src/ext.rs`                     | analytics call sites in kept plugins            | 4          |
+| `.github/workflows/desktop_cd.yaml`, `desktop_publish.yaml`                                        | signing and release                             | 5          |
+| `LICENSE`, `NOTICE`, `README.md`                                                                   | license hygiene                                 | 6          |
 
 ---
 
@@ -62,12 +62,14 @@ than deleted and carry the real risk:
 ### Task 1: Remove the commercially licensed enterprise tree
 
 **Files:**
+
 - Delete: `enterprise/` (entire directory)
 - Delete: `LICENSE.enterprise`, `LICENSING.md`
 - Delete: `.github/workflows/enterprise_ci.yaml`
 - Modify: `README.md` — remove the enterprise licensing lines
 
 **Interfaces:**
+
 - Consumes: nothing
 - Produces: a tree containing no commercially licensed code. Later tasks may assume `enterprise/` does not exist.
 
@@ -113,6 +115,7 @@ local-only and does not use server-side meeting capture."
 ### Task 2: Remove the standalone cloud apps
 
 **Files:**
+
 - Delete: `apps/api`, `apps/web`, `apps/mobile`, `apps/watch`, `apps/stripe`
 - Delete: `.github/workflows/{api_cd,api_ci,web_cd,web_ci,mobile_ci,stripe_cd,bot_cd,bot_ci,chrome_cd,chrome_ci,pro_api_e2e,openstatus,content-check,submit_flathub,download_staging,extensions_cd,slack_internal_cd,eval_run}.{yaml,yml}`
 - Modify: `Cargo.toml` — drop `"apps/api"` from `workspace.members`
@@ -120,6 +123,7 @@ local-only and does not use server-side meeting capture."
 - Modify: `pnpm-workspace.yaml` — drop `examples/plugins/*` and `e2e/*` if those directories are removed; otherwise leave untouched
 
 **Interfaces:**
+
 - Consumes: Task 1's tree
 - Produces: a workspace whose only apps are `apps/desktop` and `apps/cli`. Orphans four crates (`api-cloud`, `api-sync`, `api-subscription`, `api-pyannote`) which Task 4 collects.
 
@@ -182,10 +186,12 @@ desktop dependency."
 ### Task 3: Remove the vendor documentation site
 
 **Files:**
+
 - Delete: everything under `docs/` except `docs/superpowers/`
 - Delete: `docs/LICENSE` (Mintlify template license, no longer applicable)
 
 **Interfaces:**
+
 - Consumes: Task 2's tree
 - Produces: `docs/` containing only `docs/superpowers/{specs,plans}`.
 
@@ -229,9 +235,11 @@ Task 4 exists to convert that guess into a list before any code is touched.
 ### Task 4: Inventory the cloud surface
 
 **Files:**
+
 - Create: `docs/superpowers/plans/phase2-inventory.md`
 
 **Interfaces:**
+
 - Consumes: Task 3's tree
 - Produces: `phase2-inventory.md`, a categorised list that Tasks 5 through 8 work from. Categories are exactly: `import-only`, `ui-gate`, `logic-branch`, `crate-boundary`.
 
@@ -262,9 +270,9 @@ Create `docs/superpowers/plans/phase2-inventory.md` with one table per category:
 ```markdown
 ## ui-gate
 
-| File | Symbol | Gated feature | Decision |
-|---|---|---|---|
-| apps/desktop/src/... | isPro | ... | ships unconditionally / removed |
+| File                 | Symbol | Gated feature | Decision                        |
+| -------------------- | ------ | ------------- | ------------------------------- |
+| apps/desktop/src/... | isPro  | ...           | ships unconditionally / removed |
 ```
 
 Every file from Step 1 must appear in exactly one table. A file left out is a file that breaks the build later.
@@ -286,9 +294,11 @@ git commit -m "docs(plan): inventory the desktop cloud surface"
 ### Task 5: Remove import-only cloud references
 
 **Files:**
+
 - Modify: every file in the inventory's `import-only` table
 
 **Interfaces:**
+
 - Consumes: `phase2-inventory.md`
 - Produces: a tree where no file imports a cloud symbol without using it.
 
@@ -323,11 +333,13 @@ git add -A && git commit -m "refactor(desktop): drop unused cloud imports"
 ### Task 6: Remove Pro gates and billing UI
 
 **Files:**
+
 - Modify: every file in the inventory's `ui-gate` table
 - Delete: `packages/pricing`
 - Modify: `apps/desktop/package.json` — drop `@anlg/pricing`
 
 **Interfaces:**
+
 - Consumes: Task 5's tree, the per-file decisions recorded in the inventory
 - Produces: a UI with no paywall, upsell or subscription surface. No component references `isPro` or `useSubscription`.
 
@@ -374,11 +386,13 @@ unconditionally."
 ### Task 7: Remove Supabase auth and cloud sync logic
 
 **Files:**
+
 - Modify: every file in the inventory's `logic-branch` table
 - Delete: `packages/supabase`
 - Modify: `apps/desktop/package.json` — drop `@anlg/supabase`
 
 **Interfaces:**
+
 - Consumes: Task 6's tree
 - Produces: a desktop app with no account concept and no remote sync. Local STT and local LLM are the only providers reachable from the UI.
 
@@ -424,6 +438,7 @@ on-device credential storage."
 ### Task 8: Delete the orphaned cloud crates and plugins
 
 **Files:**
+
 - Modify: `apps/desktop/src-tauri/Cargo.toml` — drop `tauri-plugin-auth`, `tauri-plugin-relay`, `tauri-plugin-attachment-sync`, `tauri-plugin-fs-sync`, `anlg-db-sync`
 - Delete: `plugins/auth`, `plugins/relay`, `plugins/attachment-sync`, `plugins/fs-sync`
 - Delete: `crates/api-cloud`, `crates/api-sync`, `crates/api-subscription`, `crates/api-pyannote`, `crates/pyannote-cloud`, `crates/transcribe-proxy`, `crates/transcribe-soniqo`, `crates/openai-transcription`, `crates/llm-proxy`, `crates/db-sync`
@@ -431,6 +446,7 @@ on-device credential storage."
 - Modify: `apps/desktop/package.json` — drop the matching `@anlg/plugin-*` entries
 
 **Interfaces:**
+
 - Consumes: Task 7's tree, where nothing calls into these crates any more
 - Produces: a workspace with no cloud crate. `api-auth`, `api-error`, `api-env` and `api-client` may survive if they still have consumers — Step 2 decides that mechanically, not by guess.
 
@@ -537,10 +553,12 @@ git commit -m "docs: record outbound-traffic evidence for the local-only claim"
 ### Task 9: Rename the app data folder and simplify the legacy chain
 
 **Files:**
+
 - Modify: `crates/storage/src/global.rs:4-6` (constants), `:18-36` (resolution + helper), test module
 - Test: `crates/storage/src/global.rs` test module (in-file, matches existing style)
 
 **Interfaces:**
+
 - Consumes: Task 8's tree
 - Produces: `compute_default_base(bundle_id) -> Option<PathBuf>` resolving to `<data_dir>/sessionecho` for stable builds, and to `<data_dir>/<bundle_id>` for debug and staging builds. `resolve_app_folder` keeps its signature `fn resolve_app_folder<'a>(data_dir: &Path, bundle_id: &'a str, is_debug: bool) -> &'a str` so callers are unaffected.
 
@@ -663,11 +681,13 @@ directory no user has."
 ### Task 10: Set product name, bundle identifier and deeplink scheme
 
 **Files:**
+
 - Modify: `apps/desktop/src-tauri/tauri.conf.json:3` (`productName`), `:5` (`identifier`), `:105-109` (deeplink schemes)
 - Modify: every non-test file listed by Step 1 that carries the app's own bundle ID
 - Leave untouched: `crates/detect/src/list/competitors.rs`
 
 **Interfaces:**
+
 - Consumes: Task 9's tree
 - Produces: an app whose identifier is `de.flagbit.sessionecho.dev` in the dev profile and whose deeplink scheme is `sessionecho`.
 
@@ -681,7 +701,7 @@ grep -rIn "com\.hyprnote\|com\.anarlog" --include="*.json" --include="*.toml" \
 ```
 
 `crates/detect/src/list/competitors.rs` lists `com.anarlog.stable` and
-`com.hyprnote.stable` as *foreign apps to detect*, alongside `com.openai.chat`
+`com.hyprnote.stable` as _foreign apps to detect_, alongside `com.openai.chat`
 and `com.apple.FaceTime`. Those two entries stay exactly as they are — they
 describe other people's software. Every other hit is the app's own identity and
 changes.
@@ -707,13 +727,13 @@ and replace the deeplink schemes block:
 
 Apply the mapping to every file from Step 1 except `competitors.rs`:
 
-| Old | New |
-|---|---|
-| `com.hyprnote.dev`, `com.anarlog.dev` | `de.flagbit.sessionecho.dev` |
-| `com.hyprnote.stable` | `de.flagbit.sessionecho` |
-| `com.hyprnote.staging` | `de.flagbit.sessionecho.staging` |
-| `com.hyprnote.nightly` | `de.flagbit.sessionecho.nightly` |
-| `com.hyprnote.desktop`, `com.hyprnote.store` | `de.flagbit.sessionecho` |
+| Old                                          | New                              |
+| -------------------------------------------- | -------------------------------- |
+| `com.hyprnote.dev`, `com.anarlog.dev`        | `de.flagbit.sessionecho.dev`     |
+| `com.hyprnote.stable`                        | `de.flagbit.sessionecho`         |
+| `com.hyprnote.staging`                       | `de.flagbit.sessionecho.staging` |
+| `com.hyprnote.nightly`                       | `de.flagbit.sessionecho.nightly` |
+| `com.hyprnote.desktop`, `com.hyprnote.store` | `de.flagbit.sessionecho`         |
 
 - [ ] **Step 4: Verify only the competitor list still mentions the old IDs**
 
@@ -752,11 +772,13 @@ left unchanged — they identify other vendors' apps."
 ### Task 11: Reduce locales to German and English
 
 **Files:**
+
 - Modify: `apps/desktop/lingui.config.ts` — `locales` array
 - Delete: `apps/desktop/src/i18n/locales/<locale>/` for all locales except `de` and `en`
 - Modify: regenerated catalogs under `apps/desktop/src/i18n/locales/{de,en}/`
 
 **Interfaces:**
+
 - Consumes: Task 10's tree
 - Produces: two locale catalogs. Removes 107 directories and roughly 18,900 brand-name occurrences without a single manual edit.
 
@@ -765,7 +787,7 @@ left unchanged — they identify other vendors' apps."
 In `apps/desktop/lingui.config.ts`, replace the entire `locales` array with:
 
 ```ts
-  locales: ["de", "en"],
+locales: ["de", "en"],
 ```
 
 - [ ] **Step 2: Delete the abandoned catalogs**
@@ -813,10 +835,12 @@ git add -A && git commit -m "feat(i18n): reduce catalogs to de and en"
 ### Task 12: Sweep the remaining brand strings
 
 **Files:**
+
 - Modify: every file reported by Step 1
 - Modify: `apps/desktop/src-tauri/icons/` — replace with the Session Echo icon set
 
 **Interfaces:**
+
 - Consumes: Task 11's tree
 - Produces: a tree where `anarlog`, `hyprnote` and `fastrepl` appear only in `LICENSE`, `NOTICE`, `README.md` (as attribution) and `crates/detect/src/list/competitors.rs`.
 
@@ -877,10 +901,12 @@ git add -A && git commit -m "feat: complete brand string sweep and swap app icon
 ### Task 13: Repoint model downloads to HuggingFace
 
 **Files:**
+
 - Modify: `crates/whisper-local-model/src/lib.rs`, `crates/am/src/model.rs`, `crates/local-model/src/lib.rs`
 - Delete: `scripts/s3/upload.sh`
 
 **Interfaces:**
+
 - Consumes: Task 12's tree
 - Produces: model URLs pointing at `huggingface.co` only. No reference to `hyprnote.s3.us-east-1.amazonaws.com` remains anywhere.
 
@@ -898,9 +924,9 @@ grep -rn "hyprnote.s3" crates/ scripts/
 
 - [ ] **Step 2: Apply the mapping**
 
-| Old | New |
-|---|---|
-| `https://hyprnote.s3.us-east-1.amazonaws.com/v0/ggerganov/whisper.cpp/main/<file>` | `https://huggingface.co/ggerganov/whisper.cpp/resolve/main/<file>` |
+| Old                                                                                                        | New                                                                                        |
+| ---------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| `https://hyprnote.s3.us-east-1.amazonaws.com/v0/ggerganov/whisper.cpp/main/<file>`                         | `https://huggingface.co/ggerganov/whisper.cpp/resolve/main/<file>`                         |
 | `https://hyprnote.s3.us-east-1.amazonaws.com/v0/lmstudio-community/Llama-3.2-3B-Instruct-GGUF/main/<file>` | `https://huggingface.co/lmstudio-community/Llama-3.2-3B-Instruct-GGUF/resolve/main/<file>` |
 
 - [ ] **Step 3: Remove the Parakeet models**
@@ -956,12 +982,14 @@ are dropped — they were custom tarballs with no public equivalent."
 ### Task 14: Remove analytics and crash telemetry
 
 **Files:**
+
 - Delete: `crates/analytics`, `plugins/analytics`
 - Modify: `plugins/notification/src/commands.rs`, `plugins/notification/src/handler.rs`, `plugins/windows/src/ext.rs`
 - Modify: `plugins/notification/Cargo.toml`, `plugins/windows/Cargo.toml`, `apps/desktop/src-tauri/Cargo.toml`, `apps/desktop/package.json`, root `Cargo.toml`
 - Modify: `.github/workflows/desktop_cd.yaml` — drop `POSTHOG_API_KEY`, `VITE_POSTHOG_API_KEY`, `SENTRY_DSN`
 
 **Interfaces:**
+
 - Consumes: Task 13's tree
 - Produces: a binary containing no telemetry client. `plugins/notification` and `plugins/windows` keep their behaviour minus the event calls.
 
@@ -1029,10 +1057,12 @@ audit finds no telemetry client present."
 ### Task 15: Configure the updater with an own signing key
 
 **Files:**
+
 - Modify: `apps/desktop/src-tauri/tauri.conf.json` — `updater.active`, `updater.pubkey`, `bundle.createUpdaterArtifacts`
 - Create: the minisign keypair (private key never committed)
 
 **Interfaces:**
+
 - Consumes: Task 14's tree
 - Produces: an app that verifies updates against a Flagbit-held key and a build that emits updater artifacts.
 
@@ -1099,6 +1129,7 @@ git add -A && git commit -m "feat(updater): sign updates with an own key and pub
 **Files:** none — this is infrastructure.
 
 **Interfaces:**
+
 - Consumes: nothing in the repository
 - Produces: `sessionecho.flagbit.de` resolving to the site host.
 
@@ -1129,10 +1160,12 @@ Expected: the target address.
 ### Task 17: Simplify the release pipeline to GitHub Releases
 
 **Files:**
+
 - Delete: `.github/workflows/desktop_publish.yaml`, `.github/workflows/desktop_store_publish.yaml`, `.github/workflows/handle_release.yaml`, `.github/workflows/handle_staging.yaml`, `.github/workflows/handle_update.yaml`, `.github/workflows/download_staging.yaml`
 - Modify: `.github/workflows/desktop_cd.yaml` — drop the CloudSync signing step and CrabNebula usage
 
 **Interfaces:**
+
 - Consumes: Task 16's tree
 - Produces: exactly one release workflow, `desktop_cd.yaml`, that builds, signs, notarizes and uploads to GitHub Releases.
 
@@ -1190,6 +1223,7 @@ step, which had no remaining artifact to sign."
 **Files:** none — this is repository configuration.
 
 **Interfaces:**
+
 - Consumes: Task 17's tree
 - Produces: `flagbit/session-echo` holding the branch, with every secret `desktop_cd.yaml` reads.
 
@@ -1199,14 +1233,14 @@ step, which had no remaining artifact to sign."
 names. Setting the secrets under the names the workflow already uses is cheaper
 and less error-prone than editing the workflow.
 
-| Secret the workflow reads | Value source in `flagbit/SessionEcho` |
-|---|---|
-| `APPLE_CERTIFICATE` | `MACOS_CERTIFICATE` |
-| `APPLE_CERTIFICATE_PASSWORD` | `MACOS_CERTIFICATE_PASSWORD` |
-| `APPLE_PASSWORD` | `APPLE_APP_PASSWORD` |
-| `APPLE_ID` | `APPLE_ID` |
-| `APPLE_TEAM_ID` | `APPLE_TEAM_ID` |
-| `KEYCHAIN_PASSWORD` | `KEYCHAIN_PASSWORD` |
+| Secret the workflow reads    | Value source in `flagbit/SessionEcho` |
+| ---------------------------- | ------------------------------------- |
+| `APPLE_CERTIFICATE`          | `MACOS_CERTIFICATE`                   |
+| `APPLE_CERTIFICATE_PASSWORD` | `MACOS_CERTIFICATE_PASSWORD`          |
+| `APPLE_PASSWORD`             | `APPLE_APP_PASSWORD`                  |
+| `APPLE_ID`                   | `APPLE_ID`                            |
+| `APPLE_TEAM_ID`              | `APPLE_TEAM_ID`                       |
+| `KEYCHAIN_PASSWORD`          | `KEYCHAIN_PASSWORD`                   |
 
 - [ ] **Step 1: Create the repository**
 
@@ -1249,9 +1283,11 @@ Expected: the six Apple secrets plus the two Tauri signing secrets.
 ### Task 19: Produce a notarized build and verify it on a second machine
 
 **Files:**
+
 - Modify: `apps/desktop/src-tauri/tauri.conf.json` if the build reveals a config problem
 
 **Interfaces:**
+
 - Consumes: Task 18's repository and secrets
 - Produces: a notarized DMG that launches on a machine that never saw the source.
 
@@ -1312,12 +1348,14 @@ git commit -m "docs: record notarized build verification"
 ### Task 20: Correct the license files and publish
 
 **Files:**
+
 - Modify: `LICENSE`
 - Create: `NOTICE`
 - Modify: `README.md`
 - Delete: `agent-plugins/anarlog/LICENSE` if `agent-plugins/` is removed, otherwise update its copyright the same way
 
 **Interfaces:**
+
 - Consumes: Task 19's verified build
 - Produces: a tree that may lawfully be published, with attribution intact.
 
@@ -1394,10 +1432,12 @@ gh repo edit flagbit/session-echo --visibility public --accept-visibility-change
 ### Task 21: Rename the predecessor to Session Echo Classic
 
 **Files:** in `/Users/weller/Development/sessionecho`, not in this repository.
+
 - Modify: `desktop/src-tauri/tauri.conf.json` — `productName`
 - Modify: `README.md`
 
 **Interfaces:**
+
 - Consumes: a published `flagbit/session-echo`
 - Produces: two apps that coexist without colliding. The predecessor keeps `cc.weller.sessionecho`, so existing installations are untouched.
 

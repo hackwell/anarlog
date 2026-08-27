@@ -19,27 +19,27 @@ es belegen können.
 
 ## 2. Entscheidungen
 
-| Frage | Entscheidung |
-|---|---|
-| Umfang | Local-only. Web, Mobile, Watch, API, Stripe und Cloud entfallen |
-| Upstream | Harter Fork. Keine laufenden Merges vom Original |
-| Produktname | Session Echo |
-| Domain | `sessionecho.flagbit.de` (Subdomain, DNS-Record genügt) |
-| Bundle-ID | `de.flagbit.sessionecho`, plus `.dev` und `.staging` |
-| Deeplink | `sessionecho` |
-| Repo-Topologie | Neues Repo. `flagbit/SessionEcho` bleibt für die Electron-v1.x-Nutzer bestehen |
-| Koexistenz | Neue App erbt den Namen. Alte wird zu „Session Echo Classic" unter `cc.weller.sessionecho` |
-| Lizenz | MIT, Upstream-Copyright bleibt, eigenes ergänzt |
+| Frage          | Entscheidung                                                                               |
+| -------------- | ------------------------------------------------------------------------------------------ |
+| Umfang         | Local-only. Web, Mobile, Watch, API, Stripe und Cloud entfallen                            |
+| Upstream       | Harter Fork. Keine laufenden Merges vom Original                                           |
+| Produktname    | Session Echo                                                                               |
+| Domain         | `sessionecho.flagbit.de` (Subdomain, DNS-Record genügt)                                    |
+| Bundle-ID      | `de.flagbit.sessionecho`, plus `.dev` und `.staging`                                       |
+| Deeplink       | `sessionecho`                                                                              |
+| Repo-Topologie | Neues Repo. `flagbit/SessionEcho` bleibt für die Electron-v1.x-Nutzer bestehen             |
+| Koexistenz     | Neue App erbt den Namen. Alte wird zu „Session Echo Classic" unter `cc.weller.sessionecho` |
+| Lizenz         | MIT, Upstream-Copyright bleibt, eigenes ergänzt                                            |
 
 ## 3. Ausgangslage (verifiziert am 2026-08-27)
 
 ### Lizenz
 
-| Pfad | Lizenz | Rechteinhaber |
-|---|---|---|
-| alles außer `enterprise/` | MIT | Fastrepl, Inc. (2023–present) |
-| `enterprise/` | kommerziell, alle Rechte vorbehalten | Fastrepl, Inc. |
-| `docs/` | MIT | Mintlify (Template) |
+| Pfad                      | Lizenz                               | Rechteinhaber                 |
+| ------------------------- | ------------------------------------ | ----------------------------- |
+| alles außer `enterprise/` | MIT                                  | Fastrepl, Inc. (2023–present) |
+| `enterprise/`             | kommerziell, alle Rechte vorbehalten | Fastrepl, Inc.                |
+| `docs/`                   | MIT                                  | Mintlify (Template)           |
 
 MIT erlaubt Fork, Umbenennung, kommerzielle Nutzung und Closed-Source-Ableitung.
 Einzige Pflicht ist der Erhalt des Copyright-Hinweises. Marken sind davon nicht
@@ -53,12 +53,12 @@ vollständig entfernt.
 
 Serverseitige Meeting-Bot-Infrastruktur, rund 20.000 Zeilen Rust. Nicht die App.
 
-| Komponente | LOC | Funktion |
-|---|---|---|
-| `control-plane` | 8.608 | Axum + Postgres, Job-Orchestrierung, Auth, Lizenz-Enforcement |
-| `google-meet-worker` | 9.257 + 686 JS | Headless-Chromium-Bot, tritt Meet bei, Audio via CDP |
-| `zoom-rtms-worker` | 1.102 | Zoom Realtime Media Streams, kein Browser-Bot |
-| `meeting-sdk-bridge-worker` | 568 | Bridge zu einem MS-Graph-Media-Bot (Windows-Sidecar fehlt) |
+| Komponente                  | LOC            | Funktion                                                      |
+| --------------------------- | -------------- | ------------------------------------------------------------- |
+| `control-plane`             | 8.608          | Axum + Postgres, Job-Orchestrierung, Auth, Lizenz-Enforcement |
+| `google-meet-worker`        | 9.257 + 686 JS | Headless-Chromium-Bot, tritt Meet bei, Audio via CDP          |
+| `zoom-rtms-worker`          | 1.102          | Zoom Realtime Media Streams, kein Browser-Bot                 |
+| `meeting-sdk-bridge-worker` | 568            | Bridge zu einem MS-Graph-Media-Bot (Windows-Sidecar fehlt)    |
 
 Entfällt damit: serverbasiertes Auto-Join geplanter Termine, Aufnahme ohne
 laufenden Client, Multi-Tenant-Workspaces, kundengehostetes Deployment.
@@ -78,22 +78,22 @@ Provenance-Hinweis: der Meet-Worker basiert auf Vexa (Apache-2.0), Fixtures unte
 
 24.732 Treffer für „anarlog" klingen nach viel und sind es nicht:
 
-| Kategorie | Treffer | Behandlung |
-|---|---|---|
-| i18n-Kataloge, 109 Locales, generiert | 18.908 | `lingui extract` neu ausführen |
-| Verzeichnisse, die entfallen | 2.012 | entfällt |
-| echte Handarbeit | ~4.866 | sed-Sweep plus manuelle Prüfung |
+| Kategorie                             | Treffer | Behandlung                      |
+| ------------------------------------- | ------- | ------------------------------- |
+| i18n-Kataloge, 109 Locales, generiert | 18.908  | `lingui extract` neu ausführen  |
+| Verzeichnisse, die entfallen          | 2.012   | entfällt                        |
+| echte Handarbeit                      | ~4.866  | sed-Sweep plus manuelle Prüfung |
 
 Zusätzlich entscheidend: der größte Teil der Handarbeit ist nicht
 launch-relevant.
 
-| Namensraum | Vorkommen | Nach außen sichtbar |
-|---|---|---|
-| Produktname, Fenstertitel, Icons | wenige | ja |
-| Bundle-ID, Deeplink | ~150 | ja |
-| Domains, Endpoints, Modell-URLs | ~500 | ja |
-| `@anlg/*` JS-Scope | 1.503 | nein, private Workspace-Pakete |
-| `anlg-*` Rust-Prefix | 147 | nein, reine Workspace-Aliase |
+| Namensraum                       | Vorkommen | Nach außen sichtbar            |
+| -------------------------------- | --------- | ------------------------------ |
+| Produktname, Fenstertitel, Icons | wenige    | ja                             |
+| Bundle-ID, Deeplink              | ~150      | ja                             |
+| Domains, Endpoints, Modell-URLs  | ~500      | ja                             |
+| `@anlg/*` JS-Scope               | 1.503     | nein, private Workspace-Pakete |
+| `anlg-*` Rust-Prefix             | 147       | nein, reine Workspace-Aliase   |
 
 Die internen Prefixes sind ein Aufräum-Commit und blockieren kein Release.
 
@@ -109,13 +109,13 @@ Auth-Bezug.
 
 ### Fremdinfrastruktur
 
-| Abhängigkeit | Status | Ablösung |
-|---|---|---|
+| Abhängigkeit                                      | Status                                | Ablösung                                                                                                                         |
+| ------------------------------------------------- | ------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
 | Modelle auf `hyprnote.s3.us-east-1.amazonaws.com` | fremder Bucket, jederzeit abschaltbar | Whisper und Llama direkt auf HuggingFace. Die S3-Pfade sind reine Mirrors, Org und Repo sind im Pfad kodiert. Getestet, HTTP 200 |
-| Parakeet-Tarballs (v2, v3) | eigene Pakete, kein HF-Äquivalent | Für den Launch streichen. Whisper deckt den Fall ab |
-| Updater-Pubkey | fremder Minisign-Key | Eigenes Keypair, GitHub Releases als Feed |
-| PostHog-Analytics | eingebaut in `crates/analytics` | Vollständig entfernen |
-| Deeplink-Schemes `anarlog-dev`, `hypr`, `char` | fremd | Ersetzen durch `sessionecho` |
+| Parakeet-Tarballs (v2, v3)                        | eigene Pakete, kein HF-Äquivalent     | Für den Launch streichen. Whisper deckt den Fall ab                                                                              |
+| Updater-Pubkey                                    | fremder Minisign-Key                  | Eigenes Keypair, GitHub Releases als Feed                                                                                        |
+| PostHog-Analytics                                 | eingebaut in `crates/analytics`       | Vollständig entfernen                                                                                                            |
+| Deeplink-Schemes `anarlog-dev`, `hypr`, `char`    | fremd                                 | Ersetzen durch `sessionecho`                                                                                                     |
 
 PostHog wird entfernt und nicht nur deaktiviert. Bei einem Produkt, dessen
 Verkaufsargument „nichts verlässt das Gerät" ist, ist vorhandener
