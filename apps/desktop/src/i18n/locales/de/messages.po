@@ -15,246 +15,246 @@ msgstr ""
 
 #: src/services/enhancer/summary-notification.ts
 msgid "\"{title}\" is ready to read."
-msgstr ""
+msgstr "\"{title}\" ist bereit zum Lesen."
 
 #: src/settings/general/notification.tsx
 msgid "(default)"
-msgstr ""
+msgstr "(Standard)"
 
 #: src/settings/general/audio-settings.tsx
 msgid "(Unavailable — using current default)"
-msgstr ""
+msgstr "(Nicht verfügbar — aktueller Standardwert wird verwendet)"
 
 #. placeholder {0}: group.sessionIds.length
 #: src/sidebar/toast/undo-delete-toast.tsx
 msgid "{0} {noteLabel} deleted"
-msgstr ""
+msgstr "{0} {noteLabel} gelöscht"
 
 #. placeholder {0}: status.commandName
 #: src/settings/developers/cli.tsx
 msgid "{0} could not be installed"
-msgstr ""
+msgstr "{0} konnte nicht installiert werden"
 
 #. placeholder {0}: status.commandName
 #: src/settings/developers/cli.tsx
 msgid "{0} is ready to use"
-msgstr ""
+msgstr "{0} ist einsatzbereit"
 
 #. placeholder {0}: issue.user?.login
 #: src/task/resource-view.tsx
 msgid "{0} opened on"
-msgstr ""
+msgstr "{0} eröffnet am"
 
 #. placeholder {0}: proposals.length
 #: src/session/components/pending-proposals-banner.tsx
 msgid "{0} pending edits"
-msgstr ""
+msgstr "{0} ausstehende Änderungen"
 
 #. placeholder {0}: Math.round((percentage ?? 0) * 100)
 #: src/session/components/note-input/transcript/screens/empty.tsx
 msgid "{0}% complete"
-msgstr ""
+msgstr "{0} % abgeschlossen"
 
 #: src/sidebar/timeline/utils/index.ts
 msgid "{absDays} days ago"
-msgstr ""
+msgstr "vor {absDays} Tagen"
 
 #: src/session/components/note-input/transcript/renderer/selection-menu.tsx
 msgid "{entryCount} selected"
-msgstr ""
+msgstr "{entryCount} ausgewählt"
 
 #. placeholder {0}: formatLanguageList(unsupportedLanguages)
 #: src/settings/ai/stt/select.tsx
 msgid "{model} can't transcribe {0}. Try another model or change your spoken languages."
-msgstr ""
+msgstr "{model} kann {0} nicht transkribieren. Probieren Sie ein anderes Modell oder ändern Sie Ihre gesprochenen Sprachen."
 
 #: src/settings/ai/stt/select.tsx
 msgid "{model} can't transcribe all selected languages together. Try another model or use fewer spoken languages."
-msgstr ""
+msgstr "{model} kann nicht alle ausgewählten Sprachen gleichzeitig transkribieren. Probieren Sie ein anderes Modell oder verwenden Sie weniger gesprochene Sprachen."
 
 #: src/sidebar/timeline/utils/index.ts
 msgid "{months} months ago"
-msgstr ""
+msgstr "vor {months} Monaten"
 
 #: src/composer/index.tsx
 msgid "{primaryModifier} ↩ to send"
-msgstr ""
+msgstr "{primaryModifier} ↩ zum Senden"
 
 #: src/sidebar/toast/undo-delete-toast.tsx
 msgid "{title} deleted"
-msgstr ""
+msgstr "{title} gelöscht"
 
 #: src/settings/general/account.tsx
 msgid "{trialDaysRemaining} day left"
-msgstr ""
+msgstr "noch {trialDaysRemaining} Tag"
 
 #: src/settings/general/account.tsx
 msgid "{trialDaysRemaining} days left"
-msgstr ""
+msgstr "noch {trialDaysRemaining} Tage"
 
 #: src/sidebar/timeline/utils/index.ts
 msgid "{weeks} weeks ago"
-msgstr ""
+msgstr "vor {weeks} Wochen"
 
 #: src/settings/general/audio-settings.tsx
 msgid "1 day"
-msgstr ""
+msgstr "1 Tag"
 
 #: src/settings/general/audio-settings.tsx
 msgid "1 month"
-msgstr ""
+msgstr "1 Monat"
 
 #: src/session/components/pending-proposals-banner.tsx
 msgid "1 pending edit"
-msgstr ""
+msgstr "1 ausstehende Änderung"
 
 #: src/settings/general/audio-settings.tsx
 msgid "1 week"
-msgstr ""
+msgstr "1 Woche"
 
 #: src/settings/general/audio-settings.tsx
 msgid "3 days"
-msgstr ""
+msgstr "3 Tage"
 
 #: src/automations/starters.tsx
 msgid "A dated Notion update with the meeting summary."
-msgstr ""
+msgstr "Ein datiertes Notion-Update mit der Meeting-Zusammenfassung."
 
 #: src/automations/starters.tsx
 msgid "A Markdown file with the note, summary, and transcript."
-msgstr ""
+msgstr "Eine Markdown-Datei mit Notiz, Zusammenfassung und Transkript."
 
 #: src/sidebar/timeline/utils/index.ts
 msgid "a month ago"
-msgstr ""
+msgstr "vor einem Monat"
 
 #: src/automations/starters.tsx
 msgid "A Slack message with the meeting title and recap."
-msgstr ""
+msgstr "Eine Slack-Nachricht mit Meeting-Titel und Zusammenfassung."
 
 #: src/templates/template-sidebar.tsx
 msgid "A to Z"
-msgstr ""
+msgstr "A bis Z"
 
 #: src/sidebar/timeline/utils/index.ts
 msgid "a week ago"
-msgstr ""
+msgstr "vor einer Woche"
 
 #: src/settings/developers/cloud-api.tsx
 msgid "Access meetings remotely through the REST API and MCP connectors with Session Echo Pro."
-msgstr ""
+msgstr "Remote-Zugriff auf Meetings über die REST-API und MCP-Connectors mit Session Echo Pro."
 
 #: src/shared-notes/index.tsx
 msgid "Access no longer available"
-msgstr ""
+msgstr "Zugriff nicht mehr verfügbar"
 
 #: src/session-sharing/management-panel.tsx
 msgid "Access settings could not be loaded."
-msgstr ""
+msgstr "Zugriffseinstellungen konnten nicht geladen werden."
 
 #: src/session-sharing/access-management.tsx
 #: src/session-sharing/index.tsx
 #: src/session-sharing/management-panel.tsx
 msgid "Access updated."
-msgstr ""
+msgstr "Zugriff aktualisiert."
 
 #: src/onboarding/permissions.tsx
 #: src/settings/general/permissions.tsx
 msgid "Accessibility"
-msgstr ""
+msgstr "Bedienungshilfen"
 
 #: src/onboarding/index.tsx
 #: src/settings/general/account.tsx
 #: src/sidebar/settings.tsx
 msgid "Account"
-msgstr ""
+msgstr "Konto"
 
 #: src/settings/team/index.tsx
 msgid "Acme"
-msgstr ""
+msgstr "Acme"
 
 #: src/settings/automations/index.tsx
 #: src/settings/automations/workflow-builder.tsx
 msgid "Action"
-msgstr ""
+msgstr "Aktion"
 
 #: src/templates/template-icon-picker.tsx
 msgid "Activity"
-msgstr ""
+msgstr "Aktivität"
 
 #: src/contacts/shared.tsx
 #: src/settings/dictionary/index.tsx
 #: src/settings/todo/github.tsx
 #: src/sidebar/toast/registry.tsx
 msgid "Add"
-msgstr ""
+msgstr "Hinzufügen"
 
 #. placeholder {0}: option.name
 #: src/session/components/note-input/transcript/renderer/speaker-assign.tsx
 msgid "Add \"{0}\""
-msgstr ""
+msgstr "\"{0}\" hinzufügen"
 
 #. placeholder {0}: provider.displayName
 #: src/calendar/components/sidebar.tsx
 msgid "Add {0} account"
-msgstr ""
+msgstr "{0}-Konto hinzufügen"
 
 #. placeholder {0}: formatLanguageList(needsSystemSettings)
 #: src/settings/ai/stt/select.tsx
 msgid "Add {0} in System Settings > General > Language & Region to transcribe with {model}, or choose another model."
-msgstr ""
+msgstr "{0} unter Systemeinstellungen > Allgemein > Sprache & Region hinzufügen, um mit {model} zu transkribieren, oder ein anderes Modell wählen."
 
 #: src/automations/starters.tsx
 msgid "Add a dated update to the selected Notion page."
-msgstr ""
+msgstr "Ein datiertes Update zur ausgewählten Notion-Seite hinzufügen."
 
 #: src/billing/trial-payment-reminder-dialog.tsx
 msgid "Add a payment method before it ends to keep using Pro without an interruption."
-msgstr ""
+msgstr "Fügen Sie vor Ablauf der Testphase eine Zahlungsmethode hinzu, um Pro ohne Unterbrechung weiter zu nutzen."
 
 #: src/settings/automations/index.tsx
 msgid "Add a trigger and actions. Chat on the right can help you refine the workflow."
-msgstr ""
+msgstr "Trigger und Aktionen hinzufügen. Der Chat rechts hilft Ihnen, den Workflow zu verfeinern."
 
 #: src/settings/automations/workflow-builder.tsx
 msgid "Add a trigger, then stack actions like Zapier."
-msgstr ""
+msgstr "Trigger hinzufügen, dann Aktionen stapeln – wie bei Zapier."
 
 #: src/settings/automations/workflow-builder.tsx
 msgid "Add an action"
-msgstr ""
+msgstr "Aktion hinzufügen"
 
 #: src/settings/automations/index.tsx
 msgid "Add and configure at least one action first."
-msgstr ""
+msgstr "Zuerst mindestens eine Aktion hinzufügen und konfigurieren."
 
 #: src/onboarding/calendar.tsx
 msgid "Add another account"
-msgstr ""
+msgstr "Weiteres Konto hinzufügen"
 
 #: src/settings/sync/index.tsx
 msgid "Add another device"
-msgstr ""
+msgstr "Weiteres Gerät hinzufügen"
 
 #: src/session/components/note-input/enhanced/config-error.tsx
 msgid "Add API key"
-msgstr ""
+msgstr "API-Schlüssel hinzufügen"
 
 #: src/settings/automations/workflow-builder.tsx
 msgid "Add at least one configured action before enabling."
-msgstr ""
+msgstr "Vor dem Aktivieren mindestens eine konfigurierte Aktion hinzufügen."
 
 #: src/templates/auto-format-examples-dialog.tsx
 msgid "Add at least one example summary."
-msgstr ""
+msgstr "Mindestens eine Beispielzusammenfassung hinzufügen."
 
 #: src/settings/sync/index.tsx
 msgid "Add device"
-msgstr ""
+msgstr "Gerät hinzufügen"
 
 #: src/templates/auto-format-examples-dialog.tsx
 msgid "Add example"
-msgstr ""
+msgstr "Beispiel hinzufügen"
 
 #: src/settings/general/spoken-languages.tsx
 msgid "Add language"
@@ -262,36 +262,36 @@ msgstr "Sprache hinzufügen"
 
 #: src/automations/starters.tsx
 msgid "Add meeting decisions and follow-ups to a Notion project."
-msgstr ""
+msgstr "Meeting-Entscheidungen und Folgeaufgaben zu einem Notion-Projekt hinzufügen."
 
 #: src/settings/dictionary/index.tsx
 msgid "Add names, jargon, or product terms to prefer"
-msgstr ""
+msgstr "Bevorzugte Namen, Fachbegriffe oder Produktbezeichnungen hinzufügen"
 
 #: src/contacts/details.tsx
 msgid "Add notes about this contact..."
-msgstr ""
+msgstr "Notizen zu diesem Kontakt hinzufügen …"
 
 #: src/contacts/details.tsx
 msgid "Add organization"
-msgstr ""
+msgstr "Organisation hinzufügen"
 
 #: src/billing/trial-payment-reminder-dialog.tsx
 #: src/settings/general/account.tsx
 msgid "Add payment method"
-msgstr ""
+msgstr "Zahlungsmethode hinzufügen"
 
 #: src/contacts/new-person-form.tsx
 msgid "Add person"
-msgstr ""
+msgstr "Person hinzufügen"
 
 #: src/settings/todo/github.tsx
 msgid "Add repository"
-msgstr ""
+msgstr "Repository hinzufügen"
 
 #: src/settings/developers/skills.tsx
 msgid "Add skill to…"
-msgstr ""
+msgstr "Skill hinzufügen zu …"
 
 #: src/settings/general/spoken-languages.tsx
 msgid "Add spoken language"
@@ -299,11 +299,11 @@ msgstr "Gesprochene Sprache hinzufügen"
 
 #: src/settings/automations/workflow-builder.tsx
 msgid "Add step"
-msgstr ""
+msgstr "Schritt hinzufügen"
 
 #: src/settings/developers/webhooks.tsx
 msgid "Add webhook"
-msgstr ""
+msgstr "Webhook hinzufügen"
 
 #: src/settings/general/spoken-languages.tsx
 msgid "Additional spoken languages"
@@ -311,86 +311,86 @@ msgstr "Weitere gesprochene Sprachen"
 
 #: src/settings/team/index.tsx
 msgid "Admin"
-msgstr ""
+msgstr "Admin"
 
 #: src/settings/ai/shared/index.tsx
 #: src/sidebar/settings.tsx
 msgid "Advanced"
-msgstr ""
+msgstr "Erweitert"
 
 #: src/settings/ai/stt/local-file-model.tsx
 #: src/settings/ai/stt/select.tsx
 msgid "After recording"
-msgstr ""
+msgstr "Nach der Aufnahme"
 
 #: src/settings/automations/workflow-builder.tsx
 msgid "After the meeting ends"
-msgstr ""
+msgstr "Nach Ende des Meetings"
 
 #: src/settings/automations/workflow-builder.tsx
 msgid "After the meeting summary is ready"
-msgstr ""
+msgstr "Nach Fertigstellung der Meeting-Zusammenfassung"
 
 #: src/settings/developers/skills.tsx
 msgid "Agent skills"
-msgstr ""
+msgstr "Agent-Skills"
 
 #: src/settings/automations/index.tsx
 msgid "AI step"
-msgstr ""
+msgstr "KI-Schritt"
 
 #: src/contacts/details.tsx
 msgid "AI-generated summary of all interactions and notes with this contact will appear here. This will synthesize key discussion points, action items, and relationship context across all meetings and notes."
-msgstr ""
+msgstr "Hier erscheint eine KI-generierte Zusammenfassung aller Interaktionen und Notizen zu diesem Kontakt. Sie fasst zentrale Gesprächspunkte, Aufgaben und den Beziehungskontext aus allen Meetings und Notizen zusammen."
 
 #: src/settings/developers/webhooks.tsx
 msgid "All events"
-msgstr ""
+msgstr "Alle Ereignisse"
 
 #: src/shared/open-note-dialog.tsx
 msgid "All Notes"
-msgstr ""
+msgstr "Alle Notizen"
 
 #: src/settings/team/index.tsx
 msgid "Allow anyone-with-the-link sharing"
-msgstr ""
+msgstr "Freigabe für alle mit Link zulassen"
 
 #: src/settings/team/index.tsx
 msgid "Allow public indexing"
-msgstr ""
+msgstr "Öffentliche Indexierung zulassen"
 
 #: src/shared/control.tsx
 msgid "An unexpected error occurred."
-msgstr ""
+msgstr "Ein unerwarteter Fehler ist aufgetreten."
 
 #: src/settings/appearance/app-icon.tsx
 msgid "Anagram"
-msgstr ""
+msgstr "Anagram"
 
 #: src/session/components/note-input/enhanced/streaming.tsx
 msgid "Analyzing structure..."
-msgstr ""
+msgstr "Struktur wird analysiert …"
 
 #: src/templates/template-icon-picker.tsx
 msgid "Animals & Nature"
-msgstr ""
+msgstr "Tiere & Natur"
 
 #: src/session-sharing/general-access.tsx
 msgid "Anyone with the link"
-msgstr ""
+msgstr "Jeder mit dem Link"
 
 #: src/session-sharing/index.tsx
 #: src/session-sharing/management-panel.tsx
 msgid "Anyone with the link can view. Link copied."
-msgstr ""
+msgstr "Jeder mit dem Link kann ansehen. Link kopiert."
 
 #: src/settings/ai/shared/index.tsx
 msgid "API Key"
-msgstr ""
+msgstr "API-Schlüssel"
 
 #: src/settings/ai/shared/provider-selection-prompt.ts
 msgid "API key saved"
-msgstr ""
+msgstr "API-Schlüssel gespeichert"
 
 #: src/sidebar/settings.tsx
 msgid "App"
@@ -398,156 +398,156 @@ msgstr "App"
 
 #: src/settings/appearance/app-icon.tsx
 msgid "App icon"
-msgstr ""
+msgstr "App-Symbol"
 
 #: src/settings/appearance/index.tsx
 #: src/sidebar/settings.tsx
 msgid "Appearance"
-msgstr ""
+msgstr "Erscheinungsbild"
 
 #: src/settings/automations/workflow-builder.tsx
 msgid "Append an update to Notion"
-msgstr ""
+msgstr "Update an Notion anhängen"
 
 #: src/automations/starters.tsx
 msgid "Append the meeting update"
-msgstr ""
+msgstr "Meeting-Update anhängen"
 
 #: src/calendar/components/apple/permission.tsx
 msgid "Apple Calendar access is off"
-msgstr ""
+msgstr "Der Zugriff auf Apple Kalender ist deaktiviert."
 
 #: src/main/windows-title-bar.tsx
 msgid "Application menu"
-msgstr ""
+msgstr "Anwendungsmenü"
 
 #: src/session/components/note-input/transcript/renderer/speaker-assign.tsx
 msgid "Apply to all"
-msgstr ""
+msgstr "Auf alle anwenden"
 
 #: src/edit/tab-content.tsx
 msgid "Apply to memo"
-msgstr ""
+msgstr "Auf Memo anwenden"
 
 #: src/edit/tab-content.tsx
 msgid "Apply to summary"
-msgstr ""
+msgstr "Auf Zusammenfassung anwenden"
 
 #: src/settings/sync/index.tsx
 msgid "Approval requested"
-msgstr ""
+msgstr "Genehmigung angefragt"
 
 #: src/session-sharing/access-management.tsx
 #: src/settings/sync/index.tsx
 msgid "Approve"
-msgstr ""
+msgstr "Genehmigen"
 
 #: src/settings/sync/index.tsx
 msgid "Approved"
-msgstr ""
+msgstr "Genehmigt"
 
 #: src/settings/sync/index.tsx
 msgid "Approved — waiting for this device to finish"
-msgstr ""
+msgstr "Genehmigt — warten, bis dieses Gerät fertig ist"
 
 #: src/chat/components/input/index.tsx
 #: src/shared/chat-cta.tsx
 msgid "Ask anything"
-msgstr ""
+msgstr "Frage stellen …"
 
 #: src/composer/index.tsx
 msgid "Ask Session Echo AI anything"
-msgstr ""
+msgstr "Session Echo AI etwas fragen"
 
 #: src/shared/chat-cta.tsx
 msgid "Ask Session Echo anything"
-msgstr ""
+msgstr "Session Echo etwas fragen"
 
 #: src/task/resource-view.tsx
 msgid "Assignees:"
-msgstr ""
+msgstr "Zugewiesen an:"
 
 #: src/templates/auto-format-examples-dialog.tsx
 msgid "Attach Markdown or text"
-msgstr ""
+msgstr "Markdown oder Text anhängen"
 
 #: src/templates/auto-format-examples-dialog.tsx
 msgid "Attach up to three past summaries you like. Session Echo will learn how you prefer meeting notes to be structured and written."
-msgstr ""
+msgstr "Bis zu drei bevorzugte frühere Zusammenfassungen anhängen. Session Echo lernt daraus, wie Sie Meeting-Notizen strukturiert und geschrieben haben möchten."
 
 #: src/session-sharing/attachment-management.ts
 msgid "Attachment settings updated."
-msgstr ""
+msgstr "Anhang-Einstellungen aktualisiert."
 
 #: src/settings/general/index.tsx
 #: src/settings/general/permissions.tsx
 msgid "Audio"
-msgstr ""
+msgstr "Audio"
 
 #: src/session/components/note-input/transcript/screens/empty.tsx
 msgid "Audio available"
-msgstr ""
+msgstr "Audio verfügbar"
 
 #: src/settings/general/audio-settings.tsx
 msgid "Audio file retention"
-msgstr ""
+msgstr "Aufbewahrung von Audiodateien"
 
 #: src/session-sharing/attachment-controls.tsx
 msgid "Audio is not available on this device."
-msgstr ""
+msgstr "Audio ist auf diesem Gerät nicht verfügbar."
 
 #: src/lock/screen.tsx
 msgid "Authenticate to continue."
-msgstr ""
+msgstr "Zum Fortfahren authentifizieren."
 
 #: src/lock/screen.tsx
 msgid "Authenticating…"
-msgstr ""
+msgstr "Authentifizierung läuft …"
 
 #: src/instruction/index.tsx
 msgid "Authorize access in your browser, then return to Session Echo."
-msgstr ""
+msgstr "Zugriff im Browser autorisieren und dann zu Session Echo zurückkehren."
 
 #: src/templates/auto-form.tsx
 msgid "Auto summary format"
-msgstr ""
+msgstr "Automatisches Zusammenfassungsformat"
 
 #: src/settings/automations/index.tsx
 msgid "Automate what happens before, during, or after meetings based on the conditions you choose."
-msgstr ""
+msgstr "Automatisieren, was vor, während oder nach Meetings passiert – basierend auf den von Ihnen gewählten Bedingungen."
 
 #: src/settings/general/app-settings.tsx
 msgid "Automatically install updates"
-msgstr ""
+msgstr "Updates automatisch installieren"
 
 #: src/settings/automations/index.tsx
 msgid "Automation actions"
-msgstr ""
+msgstr "Automatisierungsaktionen"
 
 #: src/automations/actions.ts
 msgid "Automation deleted"
-msgstr ""
+msgstr "Automatisierung gelöscht"
 
 #: src/settings/automations/index.tsx
 msgid "Automation disabled"
-msgstr ""
+msgstr "Automatisierung deaktiviert"
 
 #: src/settings/automations/index.tsx
 msgid "Automation draft saved"
-msgstr ""
+msgstr "Entwurf der Automatisierung gespeichert"
 
 #: src/settings/automations/index.tsx
 msgid "Automation enabled"
-msgstr ""
+msgstr "Automatisierung aktiviert"
 
 #: src/automations/actions.ts
 msgid "Automation removed"
-msgstr ""
+msgstr "Automatisierung entfernt"
 
 #: src/settings/automations/index.tsx
 #: src/sidebar/settings.tsx
 msgid "Automations"
-msgstr ""
+msgstr "Automatisierungen"
 
 #: src/calendar/components/apple/permission.tsx
 #: src/instruction/index.tsx
@@ -555,90 +555,90 @@ msgstr ""
 #: src/settings/general/e2ee-setup.tsx
 #: src/sidebar/custom-sidebar-header.tsx
 msgid "Back"
-msgstr ""
+msgstr "Zurück"
 
 #: src/settings/sync/index.tsx
 msgid "Background sync"
-msgstr ""
+msgstr "Hintergrundsynchronisierung"
 
 #: src/settings/general/summary-length.tsx
 msgid "Balanced"
-msgstr ""
+msgstr "Ausgewogen"
 
 #: src/settings/ai/shared/index.tsx
 msgid "Base URL"
-msgstr ""
+msgstr "Basis-URL"
 
 #: src/settings/ai/stt/select.tsx
 msgid "Best for this Mac"
-msgstr ""
+msgstr "Am besten für diesen Mac"
 
 #: src/chat/components/body/empty.tsx
 msgid "Beta"
-msgstr ""
+msgstr "Beta"
 
 #: src/settings/appearance/app-icon.tsx
 msgid "Blueprint"
-msgstr ""
+msgstr "Blueprint"
 
 #: src/settings/general/notification.tsx
 msgid "Bounce app icon"
-msgstr ""
+msgstr "App-Symbol springen lassen"
 
 #: src/settings/appearance/theme.tsx
 msgid "Bright canvas"
-msgstr ""
+msgstr "Helle Oberfläche"
 
 #: src/onboarding/index.tsx
 msgid "Bring your meeting history"
-msgstr ""
+msgstr "Meeting-Historie mitbringen"
 
 #. placeholder {0}: latestResult.imported
 #. placeholder {1}: latestResult.matched
 #: src/imports/screen.tsx
 msgid "Brought in {0} new meetings. {1} were already here."
-msgstr ""
+msgstr "{0} neue Meetings importiert. {1} waren bereits vorhanden."
 
 #: src/instruction/index.tsx
 msgid "Browser handoff not working? Paste the callback link instead"
-msgstr ""
+msgstr "Übergabe über den Browser funktioniert nicht? Stattdessen den Callback-Link einfügen"
 
 #: src/settings/dictionary/index.tsx
 msgid "Build a custom dictionary with Session Echo Pro"
-msgstr ""
+msgstr "Eigenes Wörterbuch mit Session Echo Pro erstellen"
 
 #: src/settings/general/audio-settings.tsx
 msgid "Build voiceprints from meeting audio so speakers you name in a transcript are recognized in later meetings. Voiceprints never leave this device, and unnamed ones are deleted after 45 days."
-msgstr ""
+msgstr "Erstellt Stimmprofile aus Meeting-Audio, damit von Ihnen benannte Sprecher in einem Transkript auch in späteren Meetings erkannt werden. Stimmprofile verlassen dieses Gerät nie, unbenannte werden nach 45 Tagen gelöscht."
 
 #: src/settings/general/permissions.tsx
 #: src/sidebar/settings.tsx
 msgid "Calendar"
-msgstr ""
+msgstr "Kalender"
 
 #: src/onboarding/index.tsx
 msgid "Calendar connected"
-msgstr ""
+msgstr "Kalender verbunden"
 
 #: src/settings/team/index.tsx
 msgid "Calendar-scheduled capture jobs. Canceling stops the bot from joining."
-msgstr ""
+msgstr "Kalendergesteuerte Aufnahmeaufträge. Abbrechen verhindert, dass der Bot beitritt."
 
 #: src/session-sharing/access-management.tsx
 msgid "Can comment"
-msgstr ""
+msgstr "Kann kommentieren"
 
 #: src/session-sharing/access-management.tsx
 msgid "Can edit"
-msgstr ""
+msgstr "Kann bearbeiten"
 
 #: src/settings/ai/stt/select.tsx
 msgid "Can transcribe while the meeting is happening."
-msgstr ""
+msgstr "Kann transkribieren, während das Meeting läuft."
 
 #: src/session-sharing/access-management.tsx
 msgid "Can view"
-msgstr ""
+msgstr "Kann ansehen"
 
 #: src/calendar/components/apple/permission.tsx
 #: src/imports/screen.tsx
@@ -651,222 +651,222 @@ msgstr ""
 #: src/shared/ui/destructive-confirmation-dialog.tsx
 #: src/templates/auto-format-examples-dialog.tsx
 msgid "Cancel"
-msgstr ""
+msgstr "Abbrechen"
 
 #: src/settings/team/index.tsx
 msgid "Cancel bot"
-msgstr ""
+msgstr "Bot abbrechen"
 
 #: src/session/components/outer-header/metadata/date.tsx
 msgid "Cancel date edit"
-msgstr ""
+msgstr "Datumsbearbeitung abbrechen"
 
 #: src/settings/team/index.tsx
 msgid "Cancel invitation"
-msgstr ""
+msgstr "Einladung zurückziehen"
 
 #: src/settings/general/meeting-settings.tsx
 msgid "Capture meeting chat in Memos"
-msgstr ""
+msgstr "Meeting-Chat in Memos erfassen"
 
 #: src/onboarding/folder-location.tsx
 msgid "Change"
-msgstr ""
+msgstr "Ändern"
 
 #: src/contacts/details.tsx
 #: src/contacts/organization-details.tsx
 msgid "Change photo"
-msgstr ""
+msgstr "Foto ändern"
 
 #: src/session/components/note-input/transcript/renderer/selection-menu.tsx
 msgid "Change speaker"
-msgstr ""
+msgstr "Sprecher ändern"
 
 #: src/main/sync-status.tsx
 msgid "Changes stay on this device until you resume sync"
-msgstr ""
+msgstr "Änderungen bleiben auf diesem Gerät, bis die Synchronisierung fortgesetzt wird"
 
 #: src/settings/sync/index.tsx
 msgid "Changes stay on this device until you resume sync."
-msgstr ""
+msgstr "Änderungen bleiben auf diesem Gerät, bis die Synchronisierung fortgesetzt wird."
 
 #: src/chat/components/toolbar-controls.tsx
 msgid "Chat history"
-msgstr ""
+msgstr "Chatverlauf"
 
 #: src/chat/components/input/use-dictation.ts
 msgid "Check microphone permission and the selected input device, then try again."
-msgstr ""
+msgstr "Mikrofonberechtigung und ausgewähltes Eingabegerät prüfen, dann erneut versuchen."
 
 #: src/imports/screen.tsx
 msgid "Checking connection"
-msgstr ""
+msgstr "Verbindung wird geprüft"
 
 #: src/settings/automations/starter-config.tsx
 msgid "Checking connection…"
-msgstr ""
+msgstr "Verbindung wird geprüft …"
 
 #: src/settings/sync/index.tsx
 msgid "Checking for changes"
-msgstr ""
+msgstr "Änderungen werden geprüft"
 
 #: src/imports/screen.tsx
 msgid "Checking installed meeting assistants…"
-msgstr ""
+msgstr "Installierte Meeting-Assistenten werden geprüft …"
 
 #: src/settings/general/storage/legacy-cleanup.tsx
 msgid "Checking migration..."
-msgstr ""
+msgstr "Migration wird geprüft …"
 
 #: src/onboarding/account/after-login.tsx
 msgid "Checking trial eligibility..."
-msgstr ""
+msgstr "Testphasen-Berechtigung wird geprüft …"
 
 #: src/settings/developers/cli.tsx
 msgid "Checking…"
-msgstr ""
+msgstr "Wird geprüft …"
 
 #. placeholder {0}: provider.name
 #: src/imports/screen.tsx
 msgid "Choose {0} export files"
-msgstr ""
+msgstr "{0}-Exportdateien auswählen"
 
 #: src/session-sharing/delivery-panel.tsx
 #: src/settings/automations/starter-config.tsx
 msgid "Choose a channel"
-msgstr ""
+msgstr "Kanal auswählen"
 
 #: src/settings/sync/index.tsx
 msgid "Choose a device below to replace, then this device will continue automatically."
-msgstr ""
+msgstr "Unten ein Gerät zum Ersetzen auswählen, dieses Gerät wird dann automatisch fortgesetzt."
 
 #: src/session/components/outer-header/overflow/export-modal.tsx
 msgid "Choose a file format and what to include."
-msgstr ""
+msgstr "Dateiformat und Inhalt auswählen."
 
 #: src/settings/ai/llm/select.tsx
 msgid "Choose a language model for summaries and chat."
-msgstr ""
+msgstr "Sprachmodell für Zusammenfassungen und Chat auswählen."
 
 #: src/settings/automations/index.tsx
 msgid "Choose a Linear team first."
-msgstr ""
+msgstr "Zuerst ein Linear-Team auswählen."
 
 #: src/settings/automations/index.tsx
 msgid "Choose a Notion page first."
-msgstr ""
+msgstr "Zuerst eine Notion-Seite auswählen."
 
 #: src/settings/automations/index.tsx
 msgid "Choose a Slack channel first."
-msgstr ""
+msgstr "Zuerst einen Slack-Kanal auswählen."
 
 #: src/settings/automations/index.tsx
 msgid "Choose a starter from the sidebar, or create a workflow and add steps like Zapier."
-msgstr ""
+msgstr "Einen Starter aus der Seitenleiste wählen oder einen Workflow erstellen und Schritte hinzufügen – wie bei Zapier."
 
 #: src/settings/automations/starter-config.tsx
 msgid "Choose a team"
-msgstr ""
+msgstr "Team auswählen"
 
 #: src/settings/ai/stt/local-file-model.tsx
 msgid "Choose a transcription model"
-msgstr ""
+msgstr "Transkriptionsmodell auswählen"
 
 #: src/settings/ai/stt/select.tsx
 msgid "Choose a transcription model to start listening."
-msgstr ""
+msgstr "Transkriptionsmodell auswählen, um mit dem Zuhören zu beginnen."
 
 #: src/templates/auto-format-examples-dialog.tsx
 msgid "Choose an AI model before generating a format."
-msgstr ""
+msgstr "Vor dem Erstellen eines Formats ein KI-Modell auswählen."
 
 #: src/settings/automations/index.tsx
 msgid "Choose an export folder first."
-msgstr ""
+msgstr "Zuerst einen Exportordner auswählen."
 
 #: src/templates/template-icon-picker.tsx
 msgid "Choose custom color"
-msgstr ""
+msgstr "Eigene Farbe auswählen"
 
 #: src/settings/automations/starter-config.tsx
 msgid "Choose export folder"
-msgstr ""
+msgstr "Exportordner auswählen"
 
 #: src/imports/screen.tsx
 msgid "Choose files"
-msgstr ""
+msgstr "Dateien auswählen"
 
 #: src/imports/screen.tsx
 msgid "Choose files exported from this app."
-msgstr ""
+msgstr "Aus dieser App exportierte Dateien auswählen."
 
 #: src/settings/automations/starter-config.tsx
 msgid "Choose folder"
-msgstr ""
+msgstr "Ordner auswählen"
 
 #: src/templates/auto-form.tsx
 msgid "Choose how Auto structures and styles your summaries."
-msgstr ""
+msgstr "Festlegen, wie Auto Ihre Zusammenfassungen strukturiert und gestaltet."
 
 #: src/settings/general/audio-settings.tsx
 msgid "Choose how long recordings stay on this device."
-msgstr ""
+msgstr "Festlegen, wie lange Aufnahmen auf diesem Gerät bleiben."
 
 #: src/settings/general/summary-length.tsx
 msgid "Choose how much detail generated meeting summaries include."
-msgstr ""
+msgstr "Festlegen, wie detailliert generierte Meeting-Zusammenfassungen sind."
 
 #: src/settings/appearance/app-icon.tsx
 msgid "Choose how Session Echo appears in the Dock."
-msgstr ""
+msgstr "Festlegen, wie Session Echo im Dock erscheint."
 
 #: src/settings/appearance/theme.tsx
 msgid "Choose how Session Echo looks on this device."
-msgstr ""
+msgstr "Festlegen, wie Session Echo auf diesem Gerät aussieht."
 
 #: src/settings/ai/stt/local-file-model.tsx
 msgid "Choose model file"
-msgstr ""
+msgstr "Modelldatei auswählen"
 
 #: src/onboarding/folder-location.tsx
 msgid "Choose storage location"
-msgstr ""
+msgstr "Speicherort auswählen"
 
 #: src/templates/template-icon-picker.tsx
 msgid "Choose template icon"
-msgstr ""
+msgstr "Vorlagensymbol auswählen"
 
 #: src/settings/general/audio-settings.tsx
 msgid "Choose the microphone that captures your voice."
-msgstr ""
+msgstr "Mikrofon auswählen, das Ihre Stimme aufnimmt."
 
 #: src/settings/general/audio-settings.tsx
 msgid "Choose the speakers that play other participants so Session Echo records them."
-msgstr ""
+msgstr "Lautsprecher auswählen, über die andere Teilnehmer zu hören sind, damit Session Echo sie aufzeichnet."
 
 #: src/settings/general/week-start.tsx
 msgid "Choose which day begins your calendar week."
-msgstr ""
+msgstr "Festlegen, mit welchem Tag Ihre Kalenderwoche beginnt."
 
 #: src/settings/general/default-share-access.tsx
 msgid "Choose who can access notes from new meetings."
-msgstr ""
+msgstr "Festlegen, wer auf Notizen neuer Meetings zugreifen kann."
 
 #: src/settings/team/index.tsx
 msgid "Claim email domain"
-msgstr ""
+msgstr "E-Mail-Domain beanspruchen"
 
 #: src/settings/general/storage/legacy-cleanup.tsx
 msgid "Clean Up"
-msgstr ""
+msgstr "Aufräumen"
 
 #: src/settings/general/storage/legacy-cleanup.tsx
 msgid "Clean up legacy files?"
-msgstr ""
+msgstr "Alte Dateien aufräumen?"
 
 #: src/settings/general/storage/legacy-cleanup.tsx
 msgid "Cleaning up..."
-msgstr ""
+msgstr "Wird aufgeräumt …"
 
 #: src/contacts/related-notes.tsx
 #: src/contacts/shared.tsx
@@ -876,226 +876,226 @@ msgstr ""
 #: src/templates/template-icon-picker.tsx
 #: src/templates/template-sidebar.tsx
 msgid "Clear search"
-msgstr ""
+msgstr "Suche zurücksetzen"
 
 #: src/settings/ai/stt/local-file-model.tsx
 msgid "Clear selected model"
-msgstr ""
+msgstr "Ausgewähltes Modell entfernen"
 
 #: src/session/components/note-input/transcript/renderer/selection-menu.tsx
 msgid "Clear selection"
-msgstr ""
+msgstr "Auswahl aufheben"
 
 #: src/settings/developers/cli.tsx
 msgid "CLI & MCP"
-msgstr ""
+msgstr "CLI & MCP"
 
 #: src/shared/ui/resource-list/preview-header.tsx
 msgid "Clone"
-msgstr ""
+msgstr "Klonen"
 
 #: src/changelog/index.tsx
 #: src/main/windows-title-bar.tsx
 #: src/session/components/note-input/search/bar.tsx
 #: src/shared/open-note-dialog.tsx
 msgid "Close"
-msgstr ""
+msgstr "Schließen"
 
 #: src/changelog/index.tsx
 msgid "Close changelog"
-msgstr ""
+msgstr "Änderungsprotokoll schließen"
 
 #: src/chat/components/toolbar-controls.tsx
 msgid "Close chat"
-msgstr ""
+msgstr "Chat schließen"
 
 #: src/task/resource-view.tsx
 msgid "Closed"
-msgstr ""
+msgstr "Geschlossen"
 
 #: src/settings/developers/cloud-api.tsx
 msgid "Cloud API & Connectors"
-msgstr ""
+msgstr "Cloud-API & Connectors"
 
 #: src/settings/developers/cloud-api.tsx
 msgid "Cloud API disabled and readable copies deleted"
-msgstr ""
+msgstr "Cloud-API deaktiviert und lesbare Kopien gelöscht"
 
 #: src/settings/developers/cloud-api.tsx
 msgid "Cloud API enabled — {uploaded} meetings uploaded"
-msgstr ""
+msgstr "Cloud-API aktiviert — {uploaded} Meetings hochgeladen"
 
 #: src/settings/developers/cloud-api.tsx
 msgid "Cloud API enabled — 1 meeting uploaded"
-msgstr ""
+msgstr "Cloud-API aktiviert — 1 Meeting hochgeladen"
 
 #: src/settings/developers/cloud-api.tsx
 msgid "Cloud API enabled, but existing meetings could not be uploaded. Session Echo will retry."
-msgstr ""
+msgstr "Cloud-API aktiviert, aber bestehende Meetings konnten nicht hochgeladen werden. Session Echo versucht es erneut."
 
 #: src/settings/developers/cloud-api.tsx
 msgid "Cloud API key copied"
-msgstr ""
+msgstr "Cloud-API-Schlüssel kopiert"
 
 #: src/settings/developers/cloud-api.tsx
 msgid "Cloud API keys"
-msgstr ""
+msgstr "Cloud-API-Schlüssel"
 
 #: src/settings/developers/cloud-api.tsx
 msgid "Cloud API URL copied"
-msgstr ""
+msgstr "Cloud-API-URL kopiert"
 
 #: src/settings/sync/index.tsx
 msgid "Cloud sync"
-msgstr ""
+msgstr "Cloud-Synchronisierung"
 
 #: src/settings/sync/index.tsx
 msgid "Cloud sync and {cloudStorageService} can both change the same files, which can create conflicted copies and incomplete recordings. Move your Session Echo storage location to a folder that {cloudStorageService} does not sync."
-msgstr ""
+msgstr "Cloud-Synchronisierung und {cloudStorageService} können beide dieselben Dateien ändern, was zu Konfliktkopien und unvollständigen Aufnahmen führen kann. Verschieben Sie den Speicherort von Session Echo in einen Ordner, den {cloudStorageService} nicht synchronisiert."
 
 #: src/main/sync-status.tsx
 msgid "Cloud sync could not start on this device. Open Sync settings to try again."
-msgstr ""
+msgstr "Cloud-Synchronisierung konnte auf diesem Gerät nicht gestartet werden. Öffnen Sie die Synchronisierungseinstellungen, um es erneut zu versuchen."
 
 #: src/main/sync-status.tsx
 #: src/settings/sync/index.tsx
 msgid "Cloud sync delayed"
-msgstr ""
+msgstr "Cloud-Synchronisierung verzögert"
 
 #: src/main/sync-status.tsx
 msgid "Cloud sync identity mismatch"
-msgstr ""
+msgstr "Cloud-Synchronisierung: Identität stimmt nicht überein"
 
 #: src/settings/sync/index.tsx
 msgid "Cloud sync is available with Session Echo Pro"
-msgstr ""
+msgstr "Cloud-Synchronisierung ist mit Session Echo Pro verfügbar"
 
 #: src/auth/cloudsync.ts
 msgid "Cloud sync is limited to 5 devices. Remove another device to sync here."
-msgstr ""
+msgstr "Cloud-Synchronisierung ist auf 5 Geräte begrenzt. Entfernen Sie ein anderes Gerät, um hier zu synchronisieren."
 
 #: src/auth/cloudsync.ts
 msgid "Cloud sync is limited to 5 devices. Replace or remove another device to sync here."
-msgstr ""
+msgstr "Cloud-Synchronisierung ist auf 5 Geräte begrenzt. Ersetzen oder entfernen Sie ein anderes Gerät, um hier zu synchronisieren."
 
 #: src/main/sync-status.tsx
 msgid "Cloud sync resumes after this meeting finishes processing"
-msgstr ""
+msgstr "Cloud-Synchronisierung wird fortgesetzt, sobald dieses Meeting fertig verarbeitet ist"
 
 #: src/settings/sync/index.tsx
 msgid "Cloud sync resumes after this meeting finishes processing."
-msgstr ""
+msgstr "Cloud-Synchronisierung wird fortgesetzt, sobald dieses Meeting fertig verarbeitet ist."
 
 #: src/main/sync-status.tsx
 msgid "Cloud sync resumes when the current activity finishes"
-msgstr ""
+msgstr "Cloud-Synchronisierung wird fortgesetzt, sobald der aktuelle Vorgang abgeschlossen ist"
 
 #: src/settings/sync/index.tsx
 msgid "Cloud sync resumes when the current activity finishes."
-msgstr ""
+msgstr "Cloud-Synchronisierung wird fortgesetzt, sobald der aktuelle Vorgang abgeschlossen ist."
 
 #: src/main/sync-status.tsx
 msgid "Cloud sync setup required"
-msgstr ""
+msgstr "Einrichtung der Cloud-Synchronisierung erforderlich"
 
 #. placeholder {0}: view.label
 #: src/main/sync-status.tsx
 msgid "Cloud sync status: {0}"
-msgstr ""
+msgstr "Status der Cloud-Synchronisierung: {0}"
 
 #: src/main/sync-status.tsx
 msgid "Cloud sync unavailable"
-msgstr ""
+msgstr "Cloud-Synchronisierung nicht verfügbar"
 
 #: src/session-sharing/comments.tsx
 msgid "Collaborator"
-msgstr ""
+msgstr "Mitwirkender"
 
 #: src/automations/starters.tsx
 msgid "Collect action items"
-msgstr ""
+msgstr "Aufgaben sammeln"
 
 #: src/settings/appearance/theme.tsx
 msgid "Color theme"
-msgstr ""
+msgstr "Farbschema"
 
 #: src/automations/starters.tsx
 msgid "Combine metadata, summary, notes, and transcript."
-msgstr ""
+msgstr "Metadaten, Zusammenfassung, Notizen und Transkript kombinieren."
 
 #: src/task/resource-view.tsx
 msgid "comment"
-msgstr ""
+msgstr "Kommentar"
 
 #: src/session-sharing/comments.tsx
 msgid "Comment"
-msgstr ""
+msgstr "Kommentar"
 
 #: src/session-sharing/comments.tsx
 msgid "Comment is too long."
-msgstr ""
+msgstr "Kommentar ist zu lang."
 
 #: src/session-sharing/comments.tsx
 msgid "Comment on selected text"
-msgstr ""
+msgstr "Ausgewählten Text kommentieren"
 
 #: src/session-sharing/comments.tsx
 msgid "Comment on the selected text…"
-msgstr ""
+msgstr "Ausgewählten Text kommentieren …"
 
 #: src/task/resource-view.tsx
 msgid "commented on"
-msgstr ""
+msgstr "kommentierte am"
 
 #: src/task/resource-view.tsx
 msgid "comments"
-msgstr ""
+msgstr "Kommentare"
 
 #: src/contacts/details.tsx
 msgid "Company"
-msgstr ""
+msgstr "Unternehmen"
 
 #: src/settings/general/account.tsx
 msgid "Compare Free and Pro before you sign in."
-msgstr ""
+msgstr "Free und Pro vergleichen, bevor Sie sich anmelden."
 
 #: src/instruction/index.tsx
 msgid "Complete sign-in in your browser, then return to Session Echo."
-msgstr ""
+msgstr "Anmeldung im Browser abschließen und dann zu Session Echo zurückkehren."
 
 #: src/instruction/index.tsx
 msgid "Complete your purchase"
-msgstr ""
+msgstr "Kauf abschließen"
 
 #: src/composer/index.tsx
 msgid "Composer"
-msgstr ""
+msgstr "Composer"
 
 #: src/session/components/floating/options-menu.tsx
 msgid "Configure"
-msgstr ""
+msgstr "Konfigurieren"
 
 #: src/composer/index.tsx
 msgid "Configure a chat model in Settings"
-msgstr ""
+msgstr "Chat-Modell in den Einstellungen konfigurieren"
 
 #: src/composer/index.tsx
 msgid "Configure a chat model to use the quick composer."
-msgstr ""
+msgstr "Chat-Modell konfigurieren, um den Composer zu nutzen."
 
 #: src/settings/ai/llm/configure.tsx
 #: src/settings/ai/stt/configure.tsx
 msgid "Configure Providers"
-msgstr ""
+msgstr "Anbieter konfigurieren"
 
 #: src/onboarding/folder-location.tsx
 #: src/session/components/note-input/transcript/renderer/speaker-assign.tsx
 msgid "Confirm"
-msgstr ""
+msgstr "Bestätigen"
 
 #: src/settings/ai/llm/subscriptions/connect.tsx
 msgid "Connect"
-msgstr ""
+msgstr "Verbinden"
 
 #. placeholder {0}: config.displayName
 #. placeholder {0}: integration.displayName
@@ -1106,102 +1106,102 @@ msgstr ""
 #: src/settings/ai/shared/index.tsx
 #: src/settings/todo/provider-content.tsx
 msgid "Connect {0}"
-msgstr ""
+msgstr "{0} verbinden"
 
 #. placeholder {0}: config.displayName
 #: src/calendar/components/oauth/provider-content.tsx
 msgid "Connect {0} Calendar"
-msgstr ""
+msgstr "{0}-Kalender verbinden"
 
 #: src/imports/screen.tsx
 msgid "Connect & import"
-msgstr ""
+msgstr "Verbinden & importieren"
 
 #: src/onboarding/calendar.tsx
 #: src/onboarding/index.tsx
 msgid "Connect calendar"
-msgstr ""
+msgstr "Kalender verbinden"
 
 #: src/settings/todo/github.tsx
 msgid "Connect GitHub for private repos."
-msgstr ""
+msgstr "GitHub für private Repositories verbinden."
 
 #: src/onboarding/calendar.tsx
 msgid "Connect Google Calendar"
-msgstr ""
+msgstr "Google Kalender verbinden"
 
 #: src/settings/automations/starter-config.tsx
 msgid "Connect Linear"
-msgstr ""
+msgstr "Linear verbinden"
 
 #: src/settings/automations/starter-config.tsx
 msgid "Connect Notion"
-msgstr ""
+msgstr "Notion verbinden"
 
 #. placeholder {0}: provider.name
 #: src/imports/screen.tsx
 msgid "Connect once to bring over your {0} history and keep new meetings coming in while you switch."
-msgstr ""
+msgstr "Einmal verbinden, um Ihren {0}-Verlauf zu übernehmen und während des Wechsels weiter neue Meetings zu erhalten."
 
 #: src/onboarding/calendar.tsx
 msgid "Connect Outlook"
-msgstr ""
+msgstr "Outlook verbinden"
 
 #: src/session-sharing/delivery-panel.tsx
 #: src/settings/automations/starter-config.tsx
 msgid "Connect Slack"
-msgstr ""
+msgstr "Slack verbinden"
 
 #: src/session-sharing/delivery-panel.tsx
 msgid "Connect Slack to choose a channel for this recap."
-msgstr ""
+msgstr "Slack verbinden, um einen Kanal für diese Zusammenfassung auszuwählen."
 
 #: src/instruction/index.tsx
 msgid "Connect your integration"
-msgstr ""
+msgstr "Integration verbinden"
 
 #: src/imports/screen.tsx
 msgid "Connected · New meetings are imported automatically while Session Echo is running."
-msgstr ""
+msgstr "Verbunden · Neue Meetings werden automatisch importiert, solange Session Echo läuft."
 
 #. placeholder {0}: subscriptionProvider.displayName
 #: src/settings/ai/shared/index.tsx
 msgid "Connected with your {0} subscription."
-msgstr ""
+msgstr "Verbunden mit Ihrem {0}-Abonnement."
 
 #: src/settings/ai/shared/index.tsx
 msgid "Connected with your existing subscription."
-msgstr ""
+msgstr "Verbunden mit Ihrem bestehenden Abonnement."
 
 #: src/main/sync-status.tsx
 #: src/settings/sync/index.tsx
 msgid "Connecting..."
-msgstr ""
+msgstr "Verbindung wird hergestellt …"
 
 #: src/settings/developers/cloud-api.tsx
 msgid "Connector"
-msgstr ""
+msgstr "Connector"
 
 #: src/contacts/contact-page-header.tsx
 msgid "Contact options"
-msgstr ""
+msgstr "Kontaktoptionen"
 
 #: src/sidebar/settings.tsx
 msgid "Contacts"
-msgstr ""
+msgstr "Kontakte"
 
 #: src/imports/screen.tsx
 #: src/onboarding/calendar.tsx
 msgid "Continue"
-msgstr ""
+msgstr "Weiter"
 
 #: src/onboarding/account/after-login.tsx
 msgid "Continuing without trial"
-msgstr ""
+msgstr "Weiter ohne Testphase"
 
 #: src/settings/general/meeting-settings.tsx
 msgid "Control listening without reopening Session Echo."
-msgstr ""
+msgstr "Das Zuhören steuern, ohne Session Echo erneut zu öffnen."
 
 #: src/main/windows-title-bar.tsx
 #: src/session/components/note-input/transcript/renderer/selection-menu.tsx
@@ -1209,284 +1209,284 @@ msgstr ""
 #: src/settings/developers/cloud-api.tsx
 #: src/settings/developers/webhooks.tsx
 msgid "Copy"
-msgstr ""
+msgstr "Kopieren"
 
 #: src/settings/developers/cloud-api.tsx
 msgid "Copy {label} URL"
-msgstr ""
+msgstr "{label}-URL kopieren"
 
 #: src/settings/developers/cli.tsx
 msgid "Copy config"
-msgstr ""
+msgstr "Konfiguration kopieren"
 
 #: src/session-sharing/draft-panel.tsx
 #: src/session-sharing/management-panel.tsx
 msgid "Copy link"
-msgstr ""
+msgstr "Link kopieren"
 
 #: src/chat/components/message/normal.tsx
 msgid "Copy message"
-msgstr ""
+msgstr "Nachricht kopieren"
 
 #: src/settings/general/e2ee-setup.tsx
 msgid "Copy recovery key"
-msgstr ""
+msgstr "Wiederherstellungsschlüssel kopieren"
 
 #: src/settings/developers/cloud-api.tsx
 msgid "Copy this key now — it is only shown once."
-msgstr ""
+msgstr "Diesen Schlüssel jetzt kopieren — er wird nur einmal angezeigt."
 
 #: src/settings/developers/webhooks.tsx
 msgid "Copy this signing secret now — it is only shown once."
-msgstr ""
+msgstr "Dieses Signing-Secret jetzt kopieren — es wird nur einmal angezeigt."
 
 #. placeholder {0}: error.message
 #: src/settings/developers/cli.tsx
 msgid "Could not check the CLI: {0}"
-msgstr ""
+msgstr "CLI konnte nicht geprüft werden: {0}"
 
 #: src/settings/ai/stt/local-file-model.tsx
 msgid "Could not clear the selected model"
-msgstr ""
+msgstr "Ausgewähltes Modell konnte nicht entfernt werden"
 
 #: src/settings/developers/cli.tsx
 msgid "Could not copy the MCP configuration"
-msgstr ""
+msgstr "MCP-Konfiguration konnte nicht kopiert werden"
 
 #: src/session-sharing/management-panel.tsx
 msgid "Could not copy the share link."
-msgstr ""
+msgstr "Freigabelink konnte nicht kopiert werden."
 
 #: src/settings/developers/clipboard.ts
 msgid "Could not copy to clipboard"
-msgstr ""
+msgstr "In die Zwischenablage konnte nicht kopiert werden"
 
 #: src/session/hooks/useCreatePreMeetingBrief.ts
 msgid "Could not create the pre-meeting brief. Try again."
-msgstr ""
+msgstr "Briefing konnte nicht erstellt werden. Erneut versuchen."
 
 #: src/session-sharing/invitation-management.ts
 msgid "Could not create these invitations."
-msgstr ""
+msgstr "Diese Einladungen konnten nicht erstellt werden."
 
 #: src/session-sharing/invitation-management.ts
 msgid "Could not create this invitation."
-msgstr ""
+msgstr "Diese Einladung konnte nicht erstellt werden."
 
 #: src/automations/actions.ts
 msgid "Could not delete the automation"
-msgstr ""
+msgstr "Automatisierung konnte nicht gelöscht werden"
 
 #: src/session/hooks/useDeleteSession.ts
 msgid "Could not delete this note. Please try again."
-msgstr ""
+msgstr "Diese Notiz konnte nicht gelöscht werden. Bitte erneut versuchen."
 
 #: src/session-sharing/delivery-management.ts
 msgid "Could not email the meeting notes."
-msgstr ""
+msgstr "Meeting-Notizen konnten nicht per E-Mail versendet werden."
 
 #: src/session/insights/past-notes.ts
 msgid "Could not generate meeting insights. Try again."
-msgstr ""
+msgstr "Meeting-Insights konnten nicht generiert werden. Erneut versuchen."
 
 #: src/settings/sync/index.tsx
 msgid "Could not identify this device. Try again."
-msgstr ""
+msgstr "Dieses Gerät konnte nicht identifiziert werden. Erneut versuchen."
 
 #: src/session-sharing/delivery-panel.tsx
 msgid "Could not load Slack channels. Reconnect Slack and try again."
-msgstr ""
+msgstr "Slack-Kanäle konnten nicht geladen werden. Slack erneut verbinden und noch einmal versuchen."
 
 #: src/settings/sync/index.tsx
 msgid "Could not load your devices."
-msgstr ""
+msgstr "Ihre Geräte konnten nicht geladen werden."
 
 #: src/session-sharing/management-panel.tsx
 msgid "Could not open the web copy."
-msgstr ""
+msgstr "Web-Kopie konnte nicht geöffnet werden."
 
 #: src/shared/useNewNote.ts
 msgid "Could not prepare this upload. Please try again."
-msgstr ""
+msgstr "Dieser Upload konnte nicht vorbereitet werden. Bitte erneut versuchen."
 
 #: src/session-sharing/management-panel.tsx
 msgid "Could not publish the desktop edits. Check the latest web copy and try again."
-msgstr ""
+msgstr "Desktop-Änderungen konnten nicht veröffentlicht werden. Aktuelle Web-Kopie prüfen und erneut versuchen."
 
 #: src/automations/actions.ts
 msgid "Could not remove the automation"
-msgstr ""
+msgstr "Automatisierung konnte nicht entfernt werden"
 
 #: src/sidebar/toast/undo-delete-toast.tsx
 msgid "Could not restore deleted note"
-msgstr ""
+msgstr "Gelöschte Notiz konnte nicht wiederhergestellt werden"
 
 #: src/settings/automations/index.tsx
 msgid "Could not save the automation draft"
-msgstr ""
+msgstr "Entwurf der Automatisierung konnte nicht gespeichert werden"
 
 #: src/settings/automations/starter-config.tsx
 msgid "Could not save the automation setting"
-msgstr ""
+msgstr "Automatisierungseinstellung konnte nicht gespeichert werden"
 
 #: src/session-sharing/delivery-management.ts
 msgid "Could not send the meeting notes to Slack."
-msgstr ""
+msgstr "Meeting-Notizen konnten nicht an Slack gesendet werden."
 
 #: src/session-sharing/index.tsx
 msgid "Could not start sign-in."
-msgstr ""
+msgstr "Anmeldung konnte nicht gestartet werden."
 
 #: src/shared/integration.ts
 msgid "Could not start the integration setup. Try again."
-msgstr ""
+msgstr "Einrichtung der Integration konnte nicht gestartet werden. Erneut versuchen."
 
 #: src/onboarding/account/after-login.tsx
 msgid "Could not start trial"
-msgstr ""
+msgstr "Testphase konnte nicht gestartet werden"
 
 #: src/chat/components/input/use-dictation.ts
 msgid "Could not start voice input"
-msgstr ""
+msgstr "Spracheingabe konnte nicht gestartet werden"
 
 #: src/chat/components/input/use-dictation.ts
 msgid "Could not transcribe voice input"
-msgstr ""
+msgstr "Spracheingabe konnte nicht transkribiert werden"
 
 #: src/session-sharing/attachment-management.ts
 msgid "Could not update attachment sharing."
-msgstr ""
+msgstr "Freigabe von Anhängen konnte nicht aktualisiert werden."
 
 #: src/session-sharing/management-panel.tsx
 msgid "Could not update general access."
-msgstr ""
+msgstr "Allgemeiner Zugriff konnte nicht aktualisiert werden."
 
 #: src/settings/automations/index.tsx
 #: src/settings/automations/workflow-builder.tsx
 msgid "Could not update the automation"
-msgstr ""
+msgstr "Automatisierung konnte nicht aktualisiert werden"
 
 #: src/settings/automations/starter-config.tsx
 msgid "Could not update the export folder"
-msgstr ""
+msgstr "Exportordner konnte nicht aktualisiert werden"
 
 #: src/session/components/outer-header/metadata/date.tsx
 msgid "Could not update the note date."
-msgstr ""
+msgstr "Datum der Notiz konnte nicht aktualisiert werden."
 
 #: src/session-sharing/access-management.tsx
 msgid "Could not update this person's access."
-msgstr ""
+msgstr "Zugriff dieser Person konnte nicht aktualisiert werden."
 
 #: src/settings/ai/stt/local-file-model.tsx
 msgid "Could not use the selected model"
-msgstr ""
+msgstr "Ausgewähltes Modell konnte nicht verwendet werden"
 
 #: src/settings/team/index.tsx
 msgid "Create"
-msgstr ""
+msgstr "Erstellen"
 
 #: src/session/components/folder-picker.tsx
 msgid "Create \"{folderName}\""
-msgstr ""
+msgstr "\"{folderName}\" erstellen"
 
 #: src/session/components/note-input/create-brief-suggestion.tsx
 msgid "Create a brief to prepare this meeting"
-msgstr ""
+msgstr "Briefing erstellen, um dieses Meeting vorzubereiten"
 
 #: src/settings/general/e2ee-setup.tsx
 msgid "Create a recovery key"
-msgstr ""
+msgstr "Wiederherstellungsschlüssel erstellen"
 
 #: src/settings/team/index.tsx
 msgid "Create a shared workspace"
-msgstr ""
+msgstr "Gemeinsamen Workspace erstellen"
 
 #: src/onboarding/index.tsx
 msgid "Create account"
-msgstr ""
+msgstr "Konto erstellen"
 
 #: src/settings/developers/cloud-api.tsx
 msgid "Create key"
-msgstr ""
+msgstr "Schlüssel erstellen"
 
 #: src/automations/starters.tsx
 msgid "Create Linear issues"
-msgstr ""
+msgstr "Linear-Issues erstellen"
 
 #: src/settings/automations/workflow-builder.tsx
 msgid "Create Linear issues from action items"
-msgstr ""
+msgstr "Linear-Issues aus Aufgaben erstellen"
 
 #: src/session/components/note-input/transcript/renderer/speaker-assign.tsx
 msgid "Create new speaker"
-msgstr ""
+msgstr "Neuen Sprecher erstellen"
 
 #: src/main/sync-status.tsx
 msgid "Create or enter your recovery key in Sync settings to start syncing."
-msgstr ""
+msgstr "Wiederherstellungsschlüssel in den Synchronisierungseinstellungen erstellen oder eingeben, um die Synchronisierung zu starten."
 
 #: src/templates/details.tsx
 msgid "Create template"
-msgstr ""
+msgstr "Vorlage erstellen"
 
 #: src/session/components/outer-header/overflow/export-modal.tsx
 msgid "Created"
-msgstr ""
+msgstr "Erstellt"
 
 #. placeholder {0}: apiKey.created_at.slice(0, 10)
 #: src/settings/developers/api-key-row.tsx
 msgid "Created {0}"
-msgstr ""
+msgstr "Erstellt {0}"
 
 #: src/settings/automations/index.tsx
 msgid "Created {createdAt}"
-msgstr ""
+msgstr "Erstellt {createdAt}"
 
 #: src/session/components/note-input/raw.tsx
 msgid "Creating brief..."
-msgstr ""
+msgstr "Briefing wird erstellt …"
 
 #: src/settings/general/summary-length.tsx
 msgid "Crisp"
-msgstr ""
+msgstr "Knapp"
 
 #: src/settings/general/audio-settings.tsx
 #: src/templates/auto-form.tsx
 msgid "Current default"
-msgstr ""
+msgstr "Aktueller Standard"
 
 #: src/templates/template-sidebar.tsx
 msgid "Customized"
-msgstr ""
+msgstr "Angepasst"
 
 #: src/main/windows-title-bar.tsx
 msgid "Cut"
-msgstr ""
+msgstr "Ausschneiden"
 
 #: src/settings/appearance/theme.tsx
 msgid "Dark"
-msgstr ""
+msgstr "Dunkel"
 
 #: src/sidebar/settings.tsx
 msgid "Data"
-msgstr ""
+msgstr "Daten"
 
 #: src/session/components/outer-header/metadata/date.tsx
 msgid "Date and time are required"
-msgstr ""
+msgstr "Datum und Uhrzeit sind erforderlich"
 
 #: src/edit/tab-content.tsx
 msgid "Decline"
-msgstr ""
+msgstr "Ablehnen"
 
 #: src/settings/appearance/app-icon.tsx
 msgid "Default"
-msgstr ""
+msgstr "Standard"
 
 #: src/settings/general/default-share-access.tsx
 msgid "Default sharing"
-msgstr ""
+msgstr "Standardfreigabe"
 
 #: src/contacts/contact-page-header.tsx
 #: src/session/components/outer-header/overflow/delete.tsx
@@ -1495,135 +1495,135 @@ msgstr ""
 #: src/templates/sections-editor.tsx
 #: src/templates/template-form.tsx
 msgid "Delete"
-msgstr ""
+msgstr "Löschen"
 
 #: src/sidebar/timeline/index.tsx
 msgid "Delete {pendingDeleteCount} selected notes?"
-msgstr ""
+msgstr "{pendingDeleteCount} ausgewählte Notizen löschen?"
 
 #: src/settings/team/index.tsx
 msgid "Delete {workspaceName} for everyone?"
-msgstr ""
+msgstr "{workspaceName} für alle löschen?"
 
 #: src/sidebar/timeline/index.tsx
 msgid "Delete 1 selected note?"
-msgstr ""
+msgstr "1 ausgewählte Notiz löschen?"
 
 #: src/sidebar/timeline/item.tsx
 msgid "Delete All Recurring Events"
-msgstr ""
+msgstr "Alle wiederkehrenden Termine löschen"
 
 #: src/settings/automations/index.tsx
 msgid "Delete automation"
-msgstr ""
+msgstr "Automatisierung löschen"
 
 #: src/session-sharing/comments.tsx
 msgid "Delete comment"
-msgstr ""
+msgstr "Kommentar löschen"
 
 #: src/sidebar/timeline/item.tsx
 msgid "Delete Event"
-msgstr ""
+msgstr "Termin löschen"
 
 #: src/settings/ai/stt/select.tsx
 msgid "Delete model"
-msgstr ""
+msgstr "Modell löschen"
 
 #: src/sidebar/timeline/item.tsx
 msgid "Delete Note"
-msgstr ""
+msgstr "Notiz löschen"
 
 #: src/session/components/outer-header/overflow/delete.tsx
 msgid "Delete recording"
-msgstr ""
+msgstr "Aufnahme löschen"
 
 #: src/sidebar/timeline/index.tsx
 msgid "Delete Selected ({sessionCount})"
-msgstr ""
+msgstr "Auswahl löschen ({sessionCount})"
 
 #: src/sidebar/timeline/item.tsx
 msgid "Delete This Event"
-msgstr ""
+msgstr "Diesen Termin löschen"
 
 #: src/settings/team/index.tsx
 msgid "Delete workspace"
-msgstr ""
+msgstr "Workspace löschen"
 
 #: src/settings/team/index.tsx
 msgid "Deleting removes the workspace for everyone. Transfer ownership first if you only want to leave."
-msgstr ""
+msgstr "Löschen entfernt den Workspace für alle. Übertragen Sie zuerst die Inhaberschaft, wenn Sie nur austreten möchten."
 
 #: src/session/components/outer-header/overflow/delete.tsx
 msgid "Deleting..."
-msgstr ""
+msgstr "Wird gelöscht …"
 
 #: src/session-sharing/access-management.tsx
 msgid "Deny"
-msgstr ""
+msgstr "Ablehnen"
 
 #: src/templates/template-form.tsx
 msgid "Describe the template purpose..."
-msgstr ""
+msgstr "Zweck der Vorlage beschreiben …"
 
 #: src/session-sharing/management-panel.tsx
 msgid "Desktop edits published. Sharing resumed."
-msgstr ""
+msgstr "Desktop-Änderungen veröffentlicht. Freigabe fortgesetzt."
 
 #: src/settings/general/summary-length.tsx
 msgid "Detailed"
-msgstr ""
+msgstr "Ausführlich"
 
 #: src/settings/general/notification.tsx
 msgid "Detect meetings from microphone activity."
-msgstr ""
+msgstr "Meetings anhand der Mikrofonaktivität erkennen."
 
 #: src/settings/general/notification.tsx
 msgid "Detection delay"
-msgstr ""
+msgstr "Erkennungsverzögerung"
 
 #: src/settings/developers/index.tsx
 #: src/sidebar/settings.tsx
 msgid "Developers"
-msgstr ""
+msgstr "Entwickler"
 
 #: src/settings/privacy/index.tsx
 msgid "Device authentication is not available on this computer."
-msgstr ""
+msgstr "Geräteauthentifizierung ist auf diesem Computer nicht verfügbar."
 
 #: src/main/sync-status.tsx
 #: src/settings/sync/index.tsx
 msgid "Device limit reached"
-msgstr ""
+msgstr "Gerätelimit erreicht"
 
 #: src/settings/sync/index.tsx
 msgid "Device name"
-msgstr ""
+msgstr "Gerätename"
 
 #: src/settings/sync/index.tsx
 #: src/settings/team/index.tsx
 msgid "Devices"
-msgstr ""
+msgstr "Geräte"
 
 #: src/settings/developers/devtools.tsx
 msgid "Devtools"
-msgstr ""
+msgstr "Devtools"
 
 #: src/settings/developers/devtools.tsx
 msgid "Devtools panel"
-msgstr ""
+msgstr "Devtools-Panel"
 
 #: src/settings/dictionary/index.tsx
 #: src/sidebar/settings.tsx
 msgid "Dictionary"
-msgstr ""
+msgstr "Wörterbuch"
 
 #: src/imports/screen.tsx
 msgid "Direct connection is not available yet. You can still bring your history over with files."
-msgstr ""
+msgstr "Direkte Verbindung ist noch nicht verfügbar. Sie können Ihren Verlauf trotzdem per Datei mitbringen."
 
 #: src/settings/automations/index.tsx
 msgid "Disable"
-msgstr ""
+msgstr "Deaktivieren"
 
 #: src/calendar/components/oauth/provider-content.tsx
 #: src/calendar/components/sidebar.tsx
@@ -1631,666 +1631,666 @@ msgstr ""
 #: src/settings/sync/index.tsx
 #: src/settings/todo/provider-content.tsx
 msgid "Disconnect"
-msgstr ""
+msgstr "Trennen"
 
 #: src/settings/todo/github.tsx
 msgid "Disconnect private repo access."
-msgstr ""
+msgstr "Zugriff auf private Repositories trennen."
 
 #: src/settings/general/audio-settings.tsx
 msgid "Don't save"
-msgstr ""
+msgstr "Nicht speichern"
 
 #: src/session/components/note-input/transcript/index.tsx
 #: src/settings/sync/index.tsx
 msgid "Done"
-msgstr ""
+msgstr "Fertig"
 
 #: src/settings/ai/stt/select.tsx
 #: src/sidebar/toast/registry.tsx
 msgid "Download"
-msgstr ""
+msgstr "Herunterladen"
 
 #: src/settings/general/e2ee-setup.tsx
 msgid "Download recovery key (.txt)"
-msgstr ""
+msgstr "Wiederherstellungsschlüssel herunterladen (.txt)"
 
 #. placeholder {0}: activeDownloads.length
 #: src/sidebar/toast/registry.tsx
 msgid "Downloading {0} models"
-msgstr ""
+msgstr "{0} Modelle werden heruntergeladen"
 
 #: src/sidebar/toast/registry.tsx
 msgid "Downloading {downloadingModel}"
-msgstr ""
+msgstr "{downloadingModel} wird heruntergeladen"
 
 #: src/sidebar/toast/registry.tsx
 msgid "Downloading model"
-msgstr ""
+msgstr "Modell wird heruntergeladen"
 
 #. placeholder {0}: update.version
 #: src/sidebar/toast/registry.tsx
 msgid "Downloading Session Echo {0}{progress}"
-msgstr ""
+msgstr "Session Echo {0}{progress} wird heruntergeladen"
 
 #: src/settings/automations/index.tsx
 #: src/settings/automations/workflow-builder.tsx
 #: src/sidebar/automations.tsx
 msgid "Draft"
-msgstr ""
+msgstr "Entwurf"
 
 #: src/chat/components/body/empty.tsx
 msgid "Draft a follow-up email to the participants"
-msgstr ""
+msgstr "Follow-up-E-Mail an die Teilnehmer entwerfen"
 
 #: src/chat/components/body/empty.tsx
 msgid "Draft follow-up email."
-msgstr ""
+msgstr "Follow-up-E-Mail entwerfen."
 
 #: src/templates/details.tsx
 #: src/templates/template-form.tsx
 msgid "Duplicate"
-msgstr ""
+msgstr "Duplizieren"
 
 #: src/session/components/outer-header/overflow/export-modal.tsx
 msgid "Duration"
-msgstr ""
+msgstr "Dauer"
 
 #: src/templates/auto-format-examples-dialog.tsx
 msgid "Each example must be 12,000 characters or fewer."
-msgstr ""
+msgstr "Jedes Beispiel darf höchstens 12.000 Zeichen umfassen."
 
 #: src/main/windows-title-bar.tsx
 #: src/session/components/note-input/transcript/index.tsx
 #: src/sidebar/automations.tsx
 msgid "Edit"
-msgstr ""
+msgstr "Bearbeiten"
 
 #: src/session/components/outer-header/metadata/date.tsx
 msgid "Edit date"
-msgstr ""
+msgstr "Datum bearbeiten"
 
 #: src/onboarding/account/after-login.tsx
 msgid "Eligible for free trial"
-msgstr ""
+msgstr "Berechtigt für kostenlose Testphase"
 
 #: src/contacts/details.tsx
 #: src/session-sharing/delivery-panel.tsx
 msgid "Email"
-msgstr ""
+msgstr "E-Mail"
 
 #: src/session-sharing/delivery-panel.tsx
 msgid "Email meeting notes"
-msgstr ""
+msgstr "Meeting-Notizen per E-Mail senden"
 
 #: src/session-sharing/delivery-panel.tsx
 msgid "Email or name"
-msgstr ""
+msgstr "E-Mail oder Name"
 
 #: src/session-sharing/access-management.tsx
 #: src/session-sharing/invitation-management.ts
 #: src/settings/team/invitation.ts
 msgid "Email unavailable. Invite link copied instead."
-msgstr ""
+msgstr "E-Mail nicht verfügbar. Einladungslink stattdessen kopiert."
 
 #: src/templates/template-icon-picker.tsx
 msgid "Emojis"
-msgstr ""
+msgstr "Emojis"
 
 #: src/settings/developers/webhooks.tsx
 msgid "Enable"
-msgstr ""
+msgstr "Aktivieren"
 
 #. placeholder {0}: permissionName.toLowerCase()
 #: src/onboarding/permissions.tsx
 msgid "Enable {0}"
-msgstr ""
+msgstr "{0} aktivieren"
 
 #: src/settings/developers/cloud-api.tsx
 msgid "Enable Cloud API & Connectors"
-msgstr ""
+msgstr "Cloud-API & Connectors aktivieren"
 
 #: src/settings/automations/index.tsx
 #: src/settings/automations/workflow-builder.tsx
 #: src/sidebar/automations.tsx
 msgid "Enabled"
-msgstr ""
+msgstr "Aktiviert"
 
 #: src/settings/sync/index.tsx
 msgid "End-to-end encryption"
-msgstr ""
+msgstr "Ende-zu-Ende-Verschlüsselung"
 
 #: src/session/components/outer-header/metadata/participants/chip.tsx
 msgid "Enhance contact"
-msgstr ""
+msgstr "Kontakt anreichern"
 
 #: src/session/components/outer-header/metadata/participants/chip.tsx
 msgid "Enhance contact {label}"
-msgstr ""
+msgstr "Kontakt {label} anreichern"
 
 #: src/settings/ai/stt/select.tsx
 msgid "Enter a model identifier"
-msgstr ""
+msgstr "Modellkennung eingeben"
 
 #: src/session/components/outer-header/metadata/date.tsx
 msgid "Enter a valid date and time"
-msgstr ""
+msgstr "Gültiges Datum und Uhrzeit eingeben"
 
 #: src/session/components/folder-picker.tsx
 msgid "Enter a valid folder name."
-msgstr ""
+msgstr "Gültigen Ordnernamen eingeben."
 
 #: src/templates/template-form.tsx
 msgid "Enter template title"
-msgstr ""
+msgstr "Vorlagentitel eingeben"
 
 #: src/settings/ai/shared/index.tsx
 msgid "Enter your API key"
-msgstr ""
+msgstr "API-Schlüssel eingeben"
 
 #: src/settings/ai/shared/index.tsx
 msgid "Enter your API key (optional)"
-msgstr ""
+msgstr "API-Schlüssel eingeben (optional)"
 
 #: src/settings/general/e2ee-setup.tsx
 msgid "Enter your saved recovery key when another approved device is unavailable."
-msgstr ""
+msgstr "Gespeicherten Wiederherstellungsschlüssel eingeben, wenn kein anderes genehmigtes Gerät verfügbar ist."
 
 #: src/composer/index.tsx
 msgid "Esc to dismiss"
-msgstr ""
+msgstr "Esc zum Schließen"
 
 #: src/settings/general/notification.tsx
 msgid "Event notifications"
-msgstr ""
+msgstr "Termin-Benachrichtigungen"
 
 #. placeholder {0}: workspace.name
 #: src/session-sharing/general-access.tsx
 msgid "Everyone in {0}"
-msgstr ""
+msgstr "Alle in {0}"
 
 #: src/settings/general/default-share-access.tsx
 msgid "Everyone in {workspaceLabel}"
-msgstr ""
+msgstr "Alle in {workspaceLabel}"
 
 #: src/settings/general/default-share-access.tsx
 msgid "Everyone in the workspace"
-msgstr ""
+msgstr "Alle im Workspace"
 
 #: src/imports/screen.tsx
 msgid "Everything is already here."
-msgstr ""
+msgstr "Alles ist bereits vorhanden."
 
 #: src/templates/auto-format-examples-dialog.tsx
 msgid "Example summary"
-msgstr ""
+msgstr "Beispielzusammenfassung"
 
 #: src/templates/auto-format-examples-dialog.tsx
 msgid "Examples are used only to improve this format. They are not saved or reused for future meetings."
-msgstr ""
+msgstr "Beispiele werden nur zur Verbesserung dieses Formats verwendet. Sie werden nicht gespeichert oder für künftige Meetings wiederverwendet."
 
 #: src/templates/auto-format-examples-dialog.tsx
 msgid "Examples must be Markdown or plain text files."
-msgstr ""
+msgstr "Beispiele müssen Markdown- oder reine Textdateien sein."
 
 #: src/settings/general/notification.tsx
 msgid "Exclude apps from detection"
-msgstr ""
+msgstr "Apps von der Erkennung ausschließen"
 
 #: src/settings/automations/index.tsx
 msgid "Expected output"
-msgstr ""
+msgstr "Erwartete Ausgabe"
 
 #: src/session/components/outer-header/overflow/export-modal.tsx
 #: src/session/components/outer-header/overflow/index.tsx
 msgid "Export"
-msgstr ""
+msgstr "Exportieren"
 
 #: src/automations/starters.tsx
 msgid "Export every meeting as Markdown"
-msgstr ""
+msgstr "Jedes Meeting als Markdown exportieren"
 
 #: src/settings/automations/starter-config.tsx
 msgid "Export folder"
-msgstr ""
+msgstr "Exportordner"
 
 #: src/settings/automations/workflow-builder.tsx
 msgid "Export the meeting as Markdown"
-msgstr ""
+msgstr "Das Meeting als Markdown exportieren"
 
 #: src/session/components/outer-header/overflow/export-modal.tsx
 msgid "Exporting..."
-msgstr ""
+msgstr "Wird exportiert …"
 
 #: src/onboarding/calendar.tsx
 msgid "Failed to load Google Calendar"
-msgstr ""
+msgstr "Google Kalender konnte nicht geladen werden"
 
 #: src/calendar/components/oauth/provider-content.tsx
 #: src/settings/todo/provider-content.tsx
 msgid "Failed to load integration status"
-msgstr ""
+msgstr "Integrationsstatus konnte nicht geladen werden"
 
 #: src/task/resource-view.tsx
 msgid "Failed to load issue"
-msgstr ""
+msgstr "Issue konnte nicht geladen werden"
 
 #: src/onboarding/calendar.tsx
 msgid "Failed to load Outlook Calendar"
-msgstr ""
+msgstr "Outlook-Kalender konnte nicht geladen werden"
 
 #: src/task/resource-view.tsx
 msgid "Failed to load pull request"
-msgstr ""
+msgstr "Pull Request konnte nicht geladen werden"
 
 #: src/templates/details.tsx
 msgid "Favorite template"
-msgstr ""
+msgstr "Vorlage favorisieren"
 
 #: src/settings/appearance/app-icon.tsx
 msgid "Field Journal"
-msgstr ""
+msgstr "Field Journal"
 
 #: src/main/windows-title-bar.tsx
 msgid "File"
-msgstr ""
+msgstr "Datei"
 
 #: src/automations/starters.tsx
 msgid "File each action item as an issue in the selected team."
-msgstr ""
+msgstr "Jede Aufgabe als Issue im ausgewählten Team anlegen."
 
 #: src/session/components/outer-header/overflow/export-modal.tsx
 msgid "File format"
-msgstr ""
+msgstr "Dateiformat"
 
 #: src/sidebar/note-filter-menu.tsx
 msgid "Filter notes"
-msgstr ""
+msgstr "Notizen filtern"
 
 #: src/shared/open-note-dialog.tsx
 msgid "Find a note..."
-msgstr ""
+msgstr "Notiz suchen …"
 
 #: src/chat/components/body/empty.tsx
 msgid "Find key decisions."
-msgstr ""
+msgstr "Wichtige Entscheidungen finden."
 
 #: src/instruction/index.tsx
 msgid "Finish checkout in your browser, then return to Session Echo."
-msgstr ""
+msgstr "Bezahlvorgang im Browser abschließen und dann zu Session Echo zurückkehren."
 
 #: src/settings/general/account.tsx
 msgid "Finish in your browser, then return to Session Echo."
-msgstr ""
+msgstr "Im Browser abschließen und dann zu Session Echo zurückkehren."
 
 #: src/settings/general/account.tsx
 msgid "Finish sign-in"
-msgstr ""
+msgstr "Anmeldung abschließen"
 
 #: src/settings/ai/llm/subscriptions/connect.tsx
 msgid "Finishing connection…"
-msgstr ""
+msgstr "Verbindung wird abgeschlossen …"
 
 #: src/templates/template-icon-picker.tsx
 msgid "Flags"
-msgstr ""
+msgstr "Flaggen"
 
 #: src/chat/components/toolbar-controls.tsx
 msgid "Float chat"
-msgstr ""
+msgstr "Chat schweben lassen"
 
 #: src/session/components/folder-picker.tsx
 msgid "Folder: {currentPath}"
-msgstr ""
+msgstr "Ordner: {currentPath}"
 
 #: src/templates/template-icon-picker.tsx
 msgid "Food & Drink"
-msgstr ""
+msgstr "Essen & Trinken"
 
 #: src/settings/general/notification.tsx
 msgid "For enabled notifications"
-msgstr ""
+msgstr "Für aktivierte Benachrichtigungen"
 
 #: src/settings/general/audio-settings.tsx
 msgid "Forever"
-msgstr ""
+msgstr "Für immer"
 
 #: src/settings/general/account.tsx
 msgid "Free"
-msgstr ""
+msgstr "Free"
 
 #: src/templates/template-icon-picker.tsx
 msgid "Frequently used"
-msgstr ""
+msgstr "Häufig verwendet"
 
 #: src/session-sharing/draft-panel.tsx
 #: src/session-sharing/management-panel.tsx
 msgid "Full access"
-msgstr ""
+msgstr "Voller Zugriff"
 
 #: src/main/windows-title-bar.tsx
 msgid "Full Screen"
-msgstr ""
+msgstr "Vollbild"
 
 #: src/settings/general/index.tsx
 #: src/sidebar/settings.tsx
 msgid "General"
-msgstr ""
+msgstr "Allgemein"
 
 #: src/session-sharing/general-access.tsx
 msgid "General access"
-msgstr ""
+msgstr "Allgemeiner Zugriff"
 
 #: src/session/components/note-input/enhanced/streaming.tsx
 #: src/session/components/title-input.tsx
 msgid "Generating title..."
-msgstr ""
+msgstr "Titel wird generiert …"
 
 #: src/session/components/note-input/transcript/screens/empty.tsx
 msgid "Generating transcript..."
-msgstr ""
+msgstr "Transkript wird generiert …"
 
 #: src/session/components/note-input/enhanced/config-error.tsx
 msgid "Get Pro"
-msgstr ""
+msgstr "Pro holen"
 
 #: src/templates/auto-form.tsx
 msgid "Get Pro to customize"
-msgstr ""
+msgstr "Pro holen, um anzupassen"
 
 #: src/onboarding/account/before-login.tsx
 #: src/settings/general/account.tsx
 #: src/sidebar/automations.tsx
 msgid "Get started"
-msgstr ""
+msgstr "Loslegen"
 
 #: src/settings/general/notification.tsx
 msgid "Get your attention when Session Echo finishes work in the background."
-msgstr ""
+msgstr "Benachrichtigt Sie, wenn Session Echo die Arbeit im Hintergrund abgeschlossen hat."
 
 #: src/sidebar/timeline/index.tsx
 msgid "Go back to now"
-msgstr ""
+msgstr "Zurück zu jetzt"
 
 #: src/sidebar/custom-sidebar-header.tsx
 msgid "Go home"
-msgstr ""
+msgstr "Zur Startseite"
 
 #: src/shared/control.tsx
 msgid "Go to Home"
-msgstr ""
+msgstr "Zur Startseite"
 
 #: src/onboarding/shared.tsx
 msgid "Go to next section"
-msgstr ""
+msgstr "Zum nächsten Abschnitt"
 
 #: src/onboarding/shared.tsx
 msgid "Go to previous section"
-msgstr ""
+msgstr "Zum vorherigen Abschnitt"
 
 #: src/chat/components/body/index.tsx
 msgid "Go to recent"
-msgstr ""
+msgstr "Zu den letzten"
 
 #: src/billing/trial-started-dialog.tsx
 #: src/settings/ai/stt/select.tsx
 msgid "Got it"
-msgstr ""
+msgstr "Verstanden"
 
 #: src/settings/general/app-settings.tsx
 msgid "Have Session Echo ready when you sign in."
-msgstr ""
+msgstr "Session Echo bereithalten, wenn Sie sich anmelden."
 
 #: src/calendar/components/apple/permission.tsx
 msgid "Having trouble?"
-msgstr ""
+msgstr "Probleme?"
 
 #: src/settings/ai/llm/subscriptions/connect.tsx
 msgid "Having trouble? Paste the redirect URL"
-msgstr ""
+msgstr "Probleme? Redirect-URL einfügen"
 
 #: src/main/windows-title-bar.tsx
 msgid "Help"
-msgstr ""
+msgstr "Hilfe"
 
 #: src/settings/general/app-settings.tsx
 msgid "Help improve Session Echo with anonymous usage data."
-msgstr ""
+msgstr "Helfen Sie mit, Session Echo durch anonyme Nutzungsdaten zu verbessern."
 
 #: src/onboarding/permissions.tsx
 msgid "Help Session Echo listen to others"
-msgstr ""
+msgstr "Session Echo helfen, andere zu hören"
 
 #: src/onboarding/permissions.tsx
 msgid "Help Session Echo listen to you"
-msgstr ""
+msgstr "Session Echo helfen, Sie zu hören"
 
 #: src/onboarding/permissions.tsx
 msgid "Help Session Echo read meeting activity"
-msgstr ""
+msgstr "Session Echo helfen, Meeting-Aktivitäten zu lesen"
 
 #: src/settings/dictionary/index.tsx
 msgid "Help transcription recognize names, jargon, and product terms."
-msgstr ""
+msgstr "Der Transkription helfen, Namen, Fachbegriffe und Produktbezeichnungen zu erkennen."
 
 #: src/chat/components/body/empty.tsx
 msgid "Hi, I'm Session Echo AI. Set up a language model and I'll be ready to help."
-msgstr ""
+msgstr "Hallo, ich bin Session Echo AI. Richten Sie ein Sprachmodell ein, dann kann ich helfen."
 
 #: src/sidebar/timeline/index.tsx
 msgid "Hide Deleted Events"
-msgstr ""
+msgstr "Gelöschte Termine ausblenden"
 
 #: src/settings/automations/index.tsx
 msgid "Hide preview"
-msgstr ""
+msgstr "Vorschau ausblenden"
 
 #: src/main/windows-title-bar.tsx
 msgid "Hide sidebar"
-msgstr ""
+msgstr "Seitenleiste ausblenden"
 
 #: src/main/windows-title-bar.tsx
 msgid "Hide Sidebar"
-msgstr ""
+msgstr "Seitenleiste ausblenden"
 
 #: src/settings/sync/index.tsx
 msgid "Hide sync log"
-msgstr ""
+msgstr "Synchronisierungsprotokoll ausblenden"
 
 #. placeholder {0}: history.position
 #. placeholder {1}: history.total
 #: src/chat/components/input/index.tsx
 msgid "History {0}/{1}"
-msgstr ""
+msgstr "Verlauf {0}/{1}"
 
 #: src/settings/ai/llm/subscriptions/connect.tsx
 msgid "How to get a Kimi Code key"
-msgstr ""
+msgstr "Kimi-Code-Schlüssel erhalten"
 
 #: src/contacts/humans.tsx
 msgid "Human"
-msgstr ""
+msgstr "Person"
 
 #: src/settings/general/e2ee-setup.tsx
 msgid "I saved it"
-msgstr ""
+msgstr "Ich habe ihn gespeichert"
 
 #: src/templates/template-icon-picker.tsx
 msgid "Icons"
-msgstr ""
+msgstr "Symbole"
 
 #: src/settings/general/account.tsx
 msgid "If Session Echo stays closed, paste the link in the sign-in window."
-msgstr ""
+msgstr "Falls Session Echo geschlossen bleibt, den Link im Anmeldefenster einfügen."
 
 #: src/onboarding/index.tsx
 msgid "Import notes and transcripts from the meeting apps you already use."
-msgstr ""
+msgstr "Notizen und Transkripte aus bereits genutzten Meeting-Apps importieren."
 
 #: src/session/components/note-input/transcript/screens/empty.tsx
 msgid "Importing audio..."
-msgstr ""
+msgstr "Audio wird importiert …"
 
 #: src/settings/imports/index.tsx
 #: src/sidebar/settings.tsx
 msgid "Imports"
-msgstr ""
+msgstr "Importe"
 
 #: src/templates/auto-format-examples-dialog.tsx
 msgid "Improve format"
-msgstr ""
+msgstr "Format verbessern"
 
 #: src/templates/auto-format-examples-dialog.tsx
 msgid "Improve summary format"
-msgstr ""
+msgstr "Zusammenfassungsformat verbessern"
 
 #: src/templates/auto-form.tsx
 msgid "Improve with examples"
-msgstr ""
+msgstr "Mit Beispielen verbessern"
 
 #: src/sidebar/timeline/utils/index.ts
 msgid "in {absDays} days"
-msgstr ""
+msgstr "in {absDays} Tagen"
 
 #: src/sidebar/timeline/upcoming-meeting.ts
 msgid "In {minutes}m {seconds}s"
-msgstr ""
+msgstr "In {minutes} Min {seconds} Sek"
 
 #: src/sidebar/timeline/utils/index.ts
 msgid "in {months} months"
-msgstr ""
+msgstr "in {months} Monaten"
 
 #: src/sidebar/timeline/upcoming-meeting.ts
 msgid "In {totalSeconds}s"
-msgstr ""
+msgstr "In {totalSeconds} Sek"
 
 #: src/sidebar/timeline/utils/index.ts
 msgid "in {weeks} weeks"
-msgstr ""
+msgstr "in {weeks} Wochen"
 
 #: src/session/components/outer-header/overflow/export-modal.tsx
 msgid "Include"
-msgstr ""
+msgstr "Einschließen"
 
 #: src/templates/sections-editor.tsx
 msgid "Insert above"
-msgstr ""
+msgstr "Oberhalb einfügen"
 
 #: src/templates/sections-editor.tsx
 msgid "Insert below"
-msgstr ""
+msgstr "Unterhalb einfügen"
 
 #: src/settings/developers/cli.tsx
 msgid "Install"
-msgstr ""
+msgstr "Installieren"
 
 #: src/settings/sync/index.tsx
 msgid "Install Session Echo and sign in with this account on the new device. It will appear here automatically so you can approve it."
-msgstr ""
+msgstr "Session Echo auf dem neuen Gerät installieren und mit diesem Konto anmelden. Es erscheint dann automatisch hier, sodass Sie es genehmigen können."
 
 #: src/settings/developers/skills.tsx
 msgid "Install to all agents"
-msgstr ""
+msgstr "Für alle Agenten installieren"
 
 #: src/settings/developers/cli.tsx
 msgid "Installed"
-msgstr ""
+msgstr "Installiert"
 
 #: src/settings/ai/llm/index.tsx
 #: src/sidebar/settings.tsx
 msgid "Intelligence"
-msgstr ""
+msgstr "Intelligenz"
 
 #: src/session-sharing/access-management.tsx
 #: src/settings/team/index.tsx
 msgid "Invitation pending"
-msgstr ""
+msgstr "Einladung ausstehend"
 
 #: src/session-sharing/access-management.tsx
 #: src/session-sharing/invitation-management.ts
 #: src/settings/team/invitation.ts
 msgid "Invitation sent."
-msgstr ""
+msgstr "Einladung gesendet."
 
 #: src/session-sharing/invitation-management.ts
 msgid "Invitations sent."
-msgstr ""
+msgstr "Einladungen gesendet."
 
 #: src/session-sharing/invite-recipients.tsx
 #: src/settings/team/index.tsx
 msgid "Invite"
-msgstr ""
+msgstr "Einladen"
 
 #: src/session-sharing/draft-panel.tsx
 #: src/session-sharing/management-panel.tsx
 msgid "Invite people"
-msgstr ""
+msgstr "Personen einladen"
 
 #: src/session-sharing/draft-panel.tsx
 #: src/session-sharing/management-panel.tsx
 msgid "Invite people to this note."
-msgstr ""
+msgstr "Personen zu dieser Notiz einladen."
 
 #: src/settings/team/index.tsx
 msgid "Invite teammates, share notes across the workspace, and manage who has access. Your personal notes stay private."
-msgstr ""
+msgstr "Teammitglieder einladen, Notizen im Workspace teilen und verwalten, wer Zugriff hat. Ihre persönlichen Notizen bleiben privat."
 
 #. placeholder {0}: sent.length
 #: src/session-sharing/invitation-management.ts
 msgid "Invited {0}. Could not invite {failed}. Try again."
-msgstr ""
+msgstr "{0} eingeladen. {failed} konnte nicht eingeladen werden. Erneut versuchen."
 
 #: src/contacts/details.tsx
 msgid "Job Title"
-msgstr ""
+msgstr "Position"
 
 #: src/session/components/outer-header/index.tsx
 msgid "Join & record"
-msgstr ""
+msgstr "Beitreten & aufnehmen"
 
 #: src/session/components/outer-header/index.tsx
 msgid "Join meeting and record"
-msgstr ""
+msgstr "Meeting beitreten und aufnehmen"
 
 #: src/onboarding/final.tsx
 msgid "Join our community and stay updated:"
-msgstr ""
+msgstr "Treten Sie unserer Community bei und bleiben Sie auf dem Laufenden:"
 
 #: src/settings/general/meeting-settings.tsx
 msgid "Join scheduled meetings"
-msgstr ""
+msgstr "Geplanten Meetings beitreten"
 
 #: src/session-sharing/management-panel.tsx
 msgid "Keep desktop edits"
-msgstr ""
+msgstr "Desktop-Änderungen behalten"
 
 #: src/settings/team/index.tsx
 msgid "Keep forever"
-msgstr ""
+msgstr "Für immer behalten"
 
 #: src/settings/sync/index.tsx
 msgid "Keep notes current automatically."
-msgstr ""
+msgstr "Notizen automatisch aktuell halten."
 
 #: src/settings/sync/index.tsx
 msgid "Keep notes encrypted and synced across your devices."
-msgstr ""
+msgstr "Notizen verschlüsselt und über Ihre Geräte hinweg synchronisiert halten."
 
 #: src/settings/sync/index.tsx
 msgid "Keep synced notes readable only on your devices."
-msgstr ""
+msgstr "Synchronisierte Notizen nur auf Ihren Geräten lesbar halten."
 
 #: src/settings/sync/index.tsx
 msgid "Keep your recovery key saved somewhere safe. You can still use it if another approved device is unavailable."
-msgstr ""
+msgstr "Bewahren Sie Ihren Wiederherstellungsschlüssel sicher auf. Sie können ihn weiterhin verwenden, falls kein anderes genehmigtes Gerät verfügbar ist."
 
 #: src/settings/developers/cloud-api.tsx
 msgid "Key name (e.g. Claude Code)"
-msgstr ""
+msgstr "Schlüsselname (z. B. Claude Code)"
 
 #: src/settings/ai/llm/subscriptions/connect.tsx
 msgid "Kimi Code API key"
-msgstr ""
+msgstr "Kimi-Code-API-Schlüssel"
 
 #: src/settings/general/index.tsx
 msgid "Language & Region"
@@ -2298,179 +2298,179 @@ msgstr "Sprache & Region"
 
 #: src/sidebar/toast/registry.tsx
 msgid "Language model needed"
-msgstr ""
+msgstr "Sprachmodell erforderlich"
 
 #. placeholder {0}: webhook.last_delivery_status
 #: src/settings/developers/webhooks.tsx
 msgid "Last delivery {0}"
-msgstr ""
+msgstr "Letzte Zustellung {0}"
 
 #. placeholder {0}: lastRun.imported
 #. placeholder {1}: lastRun.matched
 #: src/imports/screen.tsx
 msgid "Last import: {0} added, {1} unchanged"
-msgstr ""
+msgstr "Letzter Import: {0} hinzugefügt, {1} unverändert"
 
 #. placeholder {0}: lastRun.detail
 #: src/settings/automations/starter-config.tsx
 msgid "Last run {relative}: {0}"
-msgstr ""
+msgstr "Zuletzt ausgeführt {relative}: {0}"
 
 #. placeholder {0}: lastRun.detail
 #: src/settings/automations/starter-config.tsx
 msgid "Last run failed {relative}: {0}"
-msgstr ""
+msgstr "Letzte Ausführung fehlgeschlagen {relative}: {0}"
 
 #. placeholder {0}: formatDistanceToNow(new Date(device.lastSeenAt))
 #: src/settings/sync/index.tsx
 msgid "Last seen {0}"
-msgstr ""
+msgstr "Zuletzt gesehen {0}"
 
 #. placeholder {0}: formatDistanceToNow( new Date(status.last_sync_at_ms), { addSuffix: true }, )
 #: src/main/sync-status.tsx
 #: src/settings/sync/index.tsx
 msgid "Last synced {0}"
-msgstr ""
+msgstr "Zuletzt synchronisiert {0}"
 
 #. placeholder {0}: apiKey.last_used_at.slice(0, 10)
 #: src/settings/developers/api-key-row.tsx
 msgid "Last used {0}"
-msgstr ""
+msgstr "Zuletzt verwendet {0}"
 
 #: src/chat/components/message/error.tsx
 msgid "Learn how to fix this"
-msgstr ""
+msgstr "Erfahren, wie sich das beheben lässt"
 
 #: src/settings/team/index.tsx
 msgid "Leave {workspaceName}?"
-msgstr ""
+msgstr "{workspaceName} verlassen?"
 
 #: src/settings/team/index.tsx
 msgid "Leave workspace"
-msgstr ""
+msgstr "Workspace verlassen"
 
 #: src/settings/team/index.tsx
 msgid "Leaving gives up your access to shared notes here."
-msgstr ""
+msgstr "Beim Verlassen verlieren Sie den Zugriff auf hier geteilte Notizen."
 
 #: src/session-sharing/attachment-controls.tsx
 msgid "Let people with access play the recording."
-msgstr ""
+msgstr "Personen mit Zugriff erlauben, die Aufnahme abzuspielen."
 
 #: src/settings/appearance/theme.tsx
 msgid "Light"
-msgstr ""
+msgstr "Hell"
 
 #: src/settings/automations/workflow-builder.tsx
 msgid "Linear issues"
-msgstr ""
+msgstr "Linear-Issues"
 
 #: src/automations/starters.tsx
 msgid "Linear issues created from meeting follow-ups."
-msgstr ""
+msgstr "Linear-Issues aus Meeting-Folgeaufgaben erstellt."
 
 #: src/settings/automations/starter-config.tsx
 msgid "Linear team"
-msgstr ""
+msgstr "Linear-Team"
 
 #: src/contacts/details.tsx
 msgid "LinkedIn"
-msgstr ""
+msgstr "LinkedIn"
 
 #: src/chat/components/body/empty.tsx
 msgid "List action items."
-msgstr ""
+msgstr "Aufgaben auflisten."
 
 #: src/settings/ai/stt/select.tsx
 msgid "Live"
-msgstr ""
+msgstr "Live"
 
 #: src/templates/auto-form.tsx
 msgid "Loading Auto format..."
-msgstr ""
+msgstr "Auto-Format wird geladen …"
 
 #: src/calendar/components/calendar-selection.tsx
 msgid "Loading calendars..."
-msgstr ""
+msgstr "Kalender werden geladen …"
 
 #: src/session-sharing/delivery-panel.tsx
 #: src/settings/automations/starter-config.tsx
 msgid "Loading channels…"
-msgstr ""
+msgstr "Kanäle werden geladen …"
 
 #: src/settings/developers/cloud-api.tsx
 msgid "Loading Cloud API access"
-msgstr ""
+msgstr "Cloud-API-Zugriff wird geladen"
 
 #: src/settings/sync/index.tsx
 msgid "Loading devices"
-msgstr ""
+msgstr "Geräte werden geladen"
 
 #: src/edit/tab-content.tsx
 msgid "Loading edit…"
-msgstr ""
+msgstr "Bearbeitung wird geladen …"
 
 #: src/settings/ai/shared/model-combobox.tsx
 msgid "Loading models..."
-msgstr ""
+msgstr "Modelle werden geladen …"
 
 #: src/settings/team/index.tsx
 msgid "Loading scheduled captures…"
-msgstr ""
+msgstr "Geplante Aufnahmen werden geladen …"
 
 #: src/settings/general/index.tsx
 #: src/settings/hydration-boundary.tsx
 msgid "Loading settings"
-msgstr ""
+msgstr "Einstellungen werden geladen"
 
 #: src/settings/sync/index.tsx
 msgid "Loading sync settings"
-msgstr ""
+msgstr "Synchronisierungseinstellungen werden geladen"
 
 #: src/settings/automations/starter-config.tsx
 msgid "Loading teams…"
-msgstr ""
+msgstr "Teams werden geladen …"
 
 #: src/changelog/index.tsx
 #: src/contacts/details.tsx
 #: src/task/resource-view.tsx
 msgid "Loading..."
-msgstr ""
+msgstr "Wird geladen …"
 
 #: src/settings/ai/stt/local-file-model.tsx
 msgid "Local transcription models"
-msgstr ""
+msgstr "Lokale Transkriptionsmodelle"
 
 #: src/settings/privacy/index.tsx
 msgid "Lock app"
-msgstr ""
+msgstr "App sperren"
 
 #: src/session/components/outer-header/overflow/lock-note.tsx
 #: src/sidebar/timeline/item.tsx
 msgid "Lock Note"
-msgstr ""
+msgstr "Notiz sperren"
 
 #: src/sidebar/timeline/item.tsx
 msgid "Locked note"
-msgstr ""
+msgstr "Gesperrte Notiz"
 
 #: src/onboarding/account/before-login.tsx
 msgid "Login"
-msgstr ""
+msgstr "Anmelden"
 
 #: src/settings/appearance/theme.tsx
 msgid "Low-light canvas"
-msgstr ""
+msgstr "Dunkle Oberfläche"
 
 #: src/settings/ai/shared/index.tsx
 msgid "macOS cannot access your login Keychain. Repairing briefly locks it and asks for your Mac password before Session Echo retries this API key."
-msgstr ""
+msgstr "macOS kann nicht auf Ihren Anmelde-Schlüsselbund zugreifen. Die Reparatur sperrt ihn kurzzeitig und fragt nach Ihrem Mac-Passwort, bevor Session Echo diesen API-Schlüssel erneut versucht."
 
 #: src/auth/cloudsync-keychain-repair.tsx
 #: src/main/sync-status.tsx
 #: src/settings/sync/index.tsx
 msgid "macOS could not access your recovery key. Repair Keychain access, then resume sync."
-msgstr ""
+msgstr "macOS konnte nicht auf Ihren Wiederherstellungsschlüssel zugreifen. Schlüsselbund-Zugriff reparieren und dann die Synchronisierung fortsetzen."
 
 #: src/settings/general/main-language.tsx
 msgid "Main language"
@@ -2478,88 +2478,88 @@ msgstr "Hauptsprache"
 
 #: src/settings/team/index.tsx
 msgid "Make owner"
-msgstr ""
+msgstr "Zum Inhaber machen"
 
 #: src/settings/general/account.tsx
 msgid "Manage billing"
-msgstr ""
+msgstr "Abrechnung verwalten"
 
 #: src/settings/sync/index.tsx
 msgid "Manual sync"
-msgstr ""
+msgstr "Manuelle Synchronisierung"
 
 #: src/settings/automations/workflow-builder.tsx
 msgid "Markdown export"
-msgstr ""
+msgstr "Markdown-Export"
 
 #: src/session/components/note-input/search/bar.tsx
 msgid "Match case"
-msgstr ""
+msgstr "Groß-/Kleinschreibung beachten"
 
 #: src/session/components/note-input/search/bar.tsx
 msgid "Match whole word"
-msgstr ""
+msgstr "Ganzes Wort"
 
 #: src/settings/appearance/theme.tsx
 msgid "Match your device"
-msgstr ""
+msgstr "Geräteeinstellung übernehmen"
 
 #: src/main/windows-title-bar.tsx
 msgid "Maximize"
-msgstr ""
+msgstr "Maximieren"
 
 #: src/billing/trial-ended-dialog.tsx
 msgid "Maybe later"
-msgstr ""
+msgstr "Vielleicht später"
 
 #: src/settings/developers/cli.tsx
 msgid "MCP configuration copied"
-msgstr ""
+msgstr "MCP-Konfiguration kopiert"
 
 #: src/settings/developers/cli.tsx
 msgid "MCP server"
-msgstr ""
+msgstr "MCP-Server"
 
 #: src/sidebar/timeline/index.tsx
 msgid "Meeting"
-msgstr ""
+msgstr "Meeting"
 
 #: src/session/components/note-input/meeting-chat-highlights.tsx
 msgid "Meeting chat"
-msgstr ""
+msgstr "Meeting-Chat"
 
 #: src/onboarding/permissions.tsx
 msgid "Meeting details access turned on"
-msgstr ""
+msgstr "Zugriff auf Meeting-Details aktiviert"
 
 #: src/automations/starters.tsx
 msgid "Meeting ends"
-msgstr ""
+msgstr "Meeting endet"
 
 #: src/imports/screen.tsx
 msgid "Meeting exports"
-msgstr ""
+msgstr "Meeting-Exporte"
 
 #: src/onboarding/index.tsx
 msgid "Meeting history imported"
-msgstr ""
+msgstr "Meeting-Historie importiert"
 
 #: src/session-sharing/delivery-management.ts
 #: src/session-sharing/index.tsx
 msgid "Meeting note sent."
-msgstr ""
+msgstr "Meeting-Notiz gesendet."
 
 #. placeholder {0}: actionResult.channelName
 #. placeholder {0}: channel.name
 #: src/session-sharing/delivery-management.ts
 #: src/session-sharing/index.tsx
 msgid "Meeting notes sent to #{0}."
-msgstr ""
+msgstr "Meeting-Notizen an #{0} gesendet."
 
 #: src/session-sharing/delivery-management.ts
 #: src/session-sharing/index.tsx
 msgid "Meeting notes sent."
-msgstr ""
+msgstr "Meeting-Notizen gesendet."
 
 #: src/settings/general/index.tsx
 #: src/sidebar/settings.tsx
@@ -2568,240 +2568,240 @@ msgstr "Treffen"
 
 #: src/contacts/organization-details.tsx
 msgid "member"
-msgstr ""
+msgstr "Mitglied"
 
 #: src/settings/team/index.tsx
 msgid "Member"
-msgstr ""
+msgstr "Mitglied"
 
 #: src/contacts/organization-details.tsx
 msgid "members"
-msgstr ""
+msgstr "Mitglieder"
 
 #: src/settings/team/index.tsx
 msgid "Members"
-msgstr ""
+msgstr "Mitglieder"
 
 #: src/settings/team/index.tsx
 msgid "Members on a claimed email domain must sign in with SSO instead of Google, GitHub, or email."
-msgstr ""
+msgstr "Mitglieder mit einer beanspruchten E-Mail-Domain müssen sich per SSO anmelden statt über Google, GitHub oder E-Mail."
 
 #: src/edit/tab-content.tsx
 #: src/session/components/outer-header/overflow/export-modal.tsx
 msgid "Memo"
-msgstr ""
+msgstr "Memo"
 
 #: src/session/components/note-input/header-raw.tsx
 msgid "Memos"
-msgstr ""
+msgstr "Memos"
 
 #: src/session/components/note-input/transcript/renderer/selection-menu.tsx
 msgid "Merge"
-msgstr ""
+msgstr "Zusammenführen"
 
 #: src/task/resource-view.tsx
 msgid "Merged"
-msgstr ""
+msgstr "Zusammengeführt"
 
 #: src/composer/index.tsx
 msgid "Message Session Echo AI"
-msgstr ""
+msgstr "Nachricht an Session Echo AI"
 
 #: src/session/components/outer-header/overflow/export-modal.tsx
 msgid "Metadata"
-msgstr ""
+msgstr "Metadaten"
 
 #: src/onboarding/permissions.tsx
 #: src/settings/general/audio-settings.tsx
 #: src/settings/general/permissions.tsx
 msgid "Microphone"
-msgstr ""
+msgstr "Mikrofon"
 
 #: src/onboarding/permissions.tsx
 msgid "Microphone access turned on"
-msgstr ""
+msgstr "Mikrofonzugriff aktiviert"
 
 #: src/settings/general/notification.tsx
 msgid "Microphone detection"
-msgstr ""
+msgstr "Mikrofonerkennung"
 
 #: src/settings/general/storage/legacy-cleanup.tsx
 msgid "Migration complete"
-msgstr ""
+msgstr "Migration abgeschlossen"
 
 #: src/settings/general/storage/legacy-cleanup.tsx
 msgid "Migration needs attention"
-msgstr ""
+msgstr "Migration erfordert Aufmerksamkeit"
 
 #: src/settings/general/storage/legacy-cleanup.tsx
 msgid "Migration status unavailable"
-msgstr ""
+msgstr "Migrationsstatus nicht verfügbar"
 
 #: src/main/windows-title-bar.tsx
 msgid "Minimize"
-msgstr ""
+msgstr "Minimieren"
 
 #: src/settings/ai/llm/select.tsx
 #: src/settings/ai/stt/select.tsx
 msgid "Model being used"
-msgstr ""
+msgstr "Verwendetes Modell"
 
 #: src/settings/ai/stt/context.tsx
 msgid "Model download couldn’t start"
-msgstr ""
+msgstr "Modell-Download konnte nicht gestartet werden"
 
 #: src/session/components/note-input/enhanced/streaming.tsx
 msgid "Model is thinking..."
-msgstr ""
+msgstr "Modell denkt nach …"
 
 #: src/settings/general/week-start.tsx
 msgid "Monday"
-msgstr ""
+msgstr "Montag"
 
 #: src/session-sharing/delivery-panel.tsx
 #: src/session/components/floating/options-menu.tsx
 msgid "More options"
-msgstr ""
+msgstr "Weitere Optionen"
 
 #: src/templates/sections-editor.tsx
 msgid "Move down"
-msgstr ""
+msgstr "Nach unten verschieben"
 
 #: src/templates/sections-editor.tsx
 msgid "Move up"
-msgstr ""
+msgstr "Nach oben verschieben"
 
 #: src/sidebar/automations.tsx
 msgid "My automations"
-msgstr ""
+msgstr "Meine Automatisierungen"
 
 #: src/sidebar/note-filter-menu.tsx
 msgid "My notes"
-msgstr ""
+msgstr "Meine Notizen"
 
 #: src/contacts/details.tsx
 #: src/contacts/organization-details.tsx
 msgid "Name"
-msgstr ""
+msgstr "Name"
 
 #: src/settings/automations/workflow-builder.tsx
 msgid "Needs setup"
-msgstr ""
+msgstr "Einrichtung erforderlich"
 
 #: src/sidebar/automations.tsx
 msgid "New automation"
-msgstr ""
+msgstr "Neue Automatisierung"
 
 #: src/chat/components/toolbar-controls.tsx
 msgid "New chat"
-msgstr ""
+msgstr "Neuer Chat"
 
 #: src/main/empty.tsx
 #: src/main/windows-title-bar.tsx
 msgid "New Note"
-msgstr ""
+msgstr "Neue Notiz"
 
 #: src/session/components/note-input/raw.tsx
 msgid "New template"
-msgstr ""
+msgstr "Neue Vorlage"
 
 #: src/contacts/related-notes.tsx
 #: src/contacts/shared.tsx
 msgid "Newest"
-msgstr ""
+msgstr "Neueste"
 
 #: src/session/components/note-input/search/bar.tsx
 msgid "Next match"
-msgstr ""
+msgstr "Nächster Treffer"
 
 #: src/sidebar/timeline/utils/index.ts
 msgid "next month"
-msgstr ""
+msgstr "nächsten Monat"
 
 #: src/sidebar/timeline/utils/index.ts
 msgid "next week"
-msgstr ""
+msgstr "nächste Woche"
 
 #: src/imports/screen.tsx
 #: src/settings/general/notification.tsx
 msgid "No apps found."
-msgstr ""
+msgstr "Keine Apps gefunden."
 
 #: src/settings/automations/index.tsx
 msgid "No automation draft yet"
-msgstr ""
+msgstr "Noch kein Automatisierungsentwurf"
 
 #: src/sidebar/automations.tsx
 msgid "No automations found"
-msgstr ""
+msgstr "Keine Automatisierungen gefunden"
 
 #: src/sidebar/automations.tsx
 msgid "No automations yet"
-msgstr ""
+msgstr "Noch keine Automatisierungen"
 
 #: src/calendar/components/calendar-selection.tsx
 msgid "No calendars found"
-msgstr ""
+msgstr "Keine Kalender gefunden"
 
 #: src/changelog/index.tsx
 msgid "No changelog available for this version."
-msgstr ""
+msgstr "Für diese Version ist kein Änderungsprotokoll verfügbar."
 
 #: src/settings/sync/index.tsx
 msgid "No changes to sync"
-msgstr ""
+msgstr "Keine Änderungen zu synchronisieren"
 
 #: src/settings/automations/starter-config.tsx
 msgid "No channel selected yet."
-msgstr ""
+msgstr "Noch kein Kanal ausgewählt."
 
 #: src/templates/details.tsx
 msgid "No community templates available"
-msgstr ""
+msgstr "Keine Community-Vorlagen verfügbar"
 
 #: src/task/resource-view.tsx
 msgid "No content."
-msgstr ""
+msgstr "Kein Inhalt."
 
 #: src/task/resource-view.tsx
 msgid "No description provided."
-msgstr ""
+msgstr "Keine Beschreibung vorhanden."
 
 #: src/settings/sync/index.tsx
 msgid "No devices registered yet."
-msgstr ""
+msgstr "Noch keine Geräte registriert."
 
 #: src/templates/template-icon-picker.tsx
 msgid "No emoji found"
-msgstr ""
+msgstr "Kein Emoji gefunden"
 
 #: src/session/components/folder-picker.tsx
 msgid "No folder"
-msgstr ""
+msgstr "Kein Ordner"
 
 #: src/settings/automations/starter-config.tsx
 msgid "No folder selected yet."
-msgstr ""
+msgstr "Noch kein Ordner ausgewählt."
 
 #: src/session/components/folder-picker.tsx
 msgid "No folders found."
-msgstr ""
+msgstr "Keine Ordner gefunden."
 
 #: src/session/components/folder-picker.tsx
 msgid "No folders yet."
-msgstr ""
+msgstr "Noch keine Ordner."
 
 #: src/templates/template-icon-picker.tsx
 msgid "No icons found"
-msgstr ""
+msgstr "Keine Symbole gefunden"
 
 #: src/sidebar/timeline/index.tsx
 msgid "No items today"
-msgstr ""
+msgstr "Heute keine Einträge"
 
 #: src/settings/dictionary/index.tsx
 msgid "No match"
-msgstr ""
+msgstr "Keine Übereinstimmung"
 
 #: src/settings/general/main-language.tsx
 #: src/settings/general/spoken-languages.tsx
@@ -2810,125 +2810,125 @@ msgstr "Keine passenden Sprachen gefunden"
 
 #: src/session/components/note-input/transcript/renderer/speaker-assign.tsx
 msgid "No matching people"
-msgstr ""
+msgstr "Keine passenden Personen"
 
 #: src/settings/ai/shared/model-combobox.tsx
 msgid "No models available."
-msgstr ""
+msgstr "Keine Modelle verfügbar."
 
 #: src/settings/ai/shared/model-combobox.tsx
 msgid "No models ready to use."
-msgstr ""
+msgstr "Keine einsatzbereiten Modelle."
 
 #: src/shared/open-note-dialog.tsx
 msgid "No notes found."
-msgstr ""
+msgstr "Keine Notizen gefunden."
 
 #: src/settings/automations/starter-config.tsx
 msgid "No page selected yet."
-msgstr ""
+msgstr "Noch keine Seite ausgewählt."
 
 #: src/settings/automations/starter-config.tsx
 msgid "No pages found. Share the page with the Session Echo integration in Notion first."
-msgstr ""
+msgstr "Keine Seiten gefunden. Teilen Sie die Seite zuerst in Notion mit der Session-Echo-Integration."
 
 #: src/session/components/note-input/transcript/renderer/speaker-assign.tsx
 msgid "No people"
-msgstr ""
+msgstr "Keine Personen"
 
 #: src/contacts/organization-details.tsx
 msgid "No people in this organization"
-msgstr ""
+msgstr "Keine Personen in dieser Organisation"
 
 #: src/settings/ai/llm/configure.tsx
 #: src/settings/ai/stt/configure.tsx
 msgid "No providers found."
-msgstr ""
+msgstr "Keine Anbieter gefunden."
 
 #: src/chat/components/toolbar-controls.tsx
 msgid "No recent chats"
-msgstr ""
+msgstr "Keine letzten Chats"
 
 #: src/contacts/related-notes.tsx
 msgid "No related notes found"
-msgstr ""
+msgstr "Keine verwandten Notizen gefunden"
 
 #: src/contacts/related-notes.tsx
 #: src/settings/ai/shared/model-combobox.tsx
 #: src/settings/general/searchable-select.tsx
 #: src/sidebar/settings.tsx
 msgid "No results found."
-msgstr ""
+msgstr "Keine Ergebnisse gefunden."
 
 #: src/sidebar/shared-notes.tsx
 msgid "No shared notes"
-msgstr ""
+msgstr "Keine geteilten Notizen"
 
 #: src/chat/components/input/use-dictation.ts
 msgid "No speech detected"
-msgstr ""
+msgstr "Keine Sprache erkannt"
 
 #: src/settings/sync/index.tsx
 msgid "No sync activity yet."
-msgstr ""
+msgstr "Noch keine Synchronisierungsaktivität."
 
 #: src/settings/automations/starter-config.tsx
 msgid "No team selected yet."
-msgstr ""
+msgstr "Noch kein Team ausgewählt."
 
 #: src/templates/details.tsx
 msgid "No templates yet"
-msgstr ""
+msgstr "Noch keine Vorlagen"
 
 #: src/session/components/note-input/transcript/screens/empty.tsx
 msgid "No transcript available"
-msgstr ""
+msgstr "Kein Transkript verfügbar"
 
 #: src/settings/team/index.tsx
 msgid "No upcoming bots."
-msgstr ""
+msgstr "Keine bevorstehenden Bots."
 
 #: src/settings/developers/cli.tsx
 msgid "Not installed"
-msgstr ""
+msgstr "Nicht installiert"
 
 #: src/session-sharing/invite-recipients.tsx
 msgid "Not invited"
-msgstr ""
+msgstr "Nicht eingeladen"
 
 #: src/billing/trial-payment-reminder-dialog.tsx
 msgid "Not now"
-msgstr ""
+msgstr "Nicht jetzt"
 
 #: src/settings/developers/webhooks.tsx
 msgid "not receiving events"
-msgstr ""
+msgstr "empfängt keine Ereignisse"
 
 #: src/sidebar/toast/undo-delete-toast.tsx
 msgid "note"
-msgstr ""
+msgstr "Notiz"
 
 #: src/lock/screen.tsx
 msgid "Note is Locked"
-msgstr ""
+msgstr "Notiz ist gesperrt"
 
 #: src/settings/appearance/app-icon.tsx
 msgid "Notepad"
-msgstr ""
+msgstr "Notepad"
 
 #: src/sidebar/toast/undo-delete-toast.tsx
 msgid "notes"
-msgstr ""
+msgstr "Notizen"
 
 #: src/contacts/details.tsx
 msgid "Notes"
-msgstr ""
+msgstr "Notizen"
 
 #. placeholder {0}: latestResult.conflicts
 #. placeholder {1}: latestResult.errors
 #: src/imports/screen.tsx
 msgid "Nothing new was imported. {0} meetings need review and {1} could not be imported."
-msgstr ""
+msgstr "Es wurde nichts Neues importiert. {0} Meetings müssen überprüft werden, {1} konnten nicht importiert werden."
 
 #: src/settings/general/index.tsx
 #: src/sidebar/settings.tsx
@@ -2937,59 +2937,59 @@ msgstr "Benachrichtigungen"
 
 #: src/settings/automations/starter-config.tsx
 msgid "Notion page"
-msgstr ""
+msgstr "Notion-Seite"
 
 #: src/settings/automations/workflow-builder.tsx
 msgid "Notion update"
-msgstr ""
+msgstr "Notion-Update"
 
 #: src/sidebar/timeline/index.tsx
 #: src/sidebar/timeline/upcoming-meeting.ts
 msgid "Now"
-msgstr ""
+msgstr "Jetzt"
 
 #: src/templates/template-icon-picker.tsx
 msgid "Objects"
-msgstr ""
+msgstr "Objekte"
 
 #: src/settings/general/storage/legacy-cleanup.tsx
 msgid "Older files that differ from your current data were kept as recovery copies. No action is required."
-msgstr ""
+msgstr "Ältere Dateien, die von Ihren aktuellen Daten abweichen, wurden als Wiederherstellungskopien behalten. Es ist keine Aktion erforderlich."
 
 #: src/contacts/related-notes.tsx
 #: src/contacts/shared.tsx
 msgid "Oldest"
-msgstr ""
+msgstr "Älteste"
 
 #: src/session/components/note-input/enhanced/streaming.tsx
 msgid "On-device models can take a few minutes to warm up before text appears."
-msgstr ""
+msgstr "Modelle auf dem Gerät können ein paar Minuten zum Aufwärmen benötigen, bevor Text erscheint."
 
 #: src/settings/general/default-share-access.tsx
 msgid "Only me"
-msgstr ""
+msgstr "Nur ich"
 
 #: src/session-sharing/general-access.tsx
 msgid "Only people invited"
-msgstr ""
+msgstr "Nur eingeladene Personen"
 
 #: src/settings/todo/github.tsx
 msgid "Only public repositories are supported."
-msgstr ""
+msgstr "Nur öffentliche Repositories werden unterstützt."
 
 #. placeholder {0}: (config.filterLabel ?? "repository").toLowerCase()
 #: src/settings/todo/provider-content.tsx
 msgid "Only sync items from this {0}."
-msgstr ""
+msgstr "Nur Einträge aus diesem {0} synchronisieren."
 
 #: src/settings/team/index.tsx
 msgid "Only workspace admins can see who has access. You are a member of this workspace."
-msgstr ""
+msgstr "Nur Workspace-Admins können sehen, wer Zugriff hat. Sie sind Mitglied dieses Workspace."
 
 #: src/calendar/components/apple/permission.tsx
 #: src/task/resource-view.tsx
 msgid "Open"
-msgstr ""
+msgstr "Öffnen"
 
 #. placeholder {0}: permissionName.toLowerCase()
 #. placeholder {0}: title.toLowerCase()
@@ -2997,45 +2997,45 @@ msgstr ""
 #: src/onboarding/permissions.tsx
 #: src/settings/general/permissions.tsx
 msgid "Open {0} settings"
-msgstr ""
+msgstr "{0}-Einstellungen öffnen"
 
 #: src/chat/components/body/empty.tsx
 msgid "Open AI Settings"
-msgstr ""
+msgstr "KI-Einstellungen öffnen"
 
 #: src/sidebar/timeline/index.tsx
 msgid "Open calendar"
-msgstr ""
+msgstr "Kalender öffnen"
 
 #: src/calendar/components/calendar-selection.tsx
 #: src/calendar/components/sidebar.tsx
 msgid "Open calendar account actions"
-msgstr ""
+msgstr "Kalenderkonto-Aktionen öffnen"
 
 #: src/session/components/outer-header/overflow/index.tsx
 msgid "Open floating panel"
-msgstr ""
+msgstr "Schwebendes Panel öffnen"
 
 #: src/session/components/outer-header/overflow/index.tsx
 #: src/sidebar/timeline/item.tsx
 msgid "Open in New Window"
-msgstr ""
+msgstr "In neuem Fenster öffnen"
 
 #: src/chat/components/toolbar-controls.tsx
 msgid "Open in right panel"
-msgstr ""
+msgstr "Im rechten Panel öffnen"
 
 #: src/task/resource-view.tsx
 msgid "Open on GitHub"
-msgstr ""
+msgstr "Auf GitHub öffnen"
 
 #: src/settings/developers/devtools.tsx
 msgid "Open panel"
-msgstr ""
+msgstr "Panel öffnen"
 
 #: src/settings/todo/github.tsx
 msgid "Open repository on GitHub"
-msgstr ""
+msgstr "Repository auf GitHub öffnen"
 
 #: src/composer/index.tsx
 #: src/onboarding/final.tsx
@@ -3043,559 +3043,559 @@ msgstr ""
 #: src/services/event-notification/index.ts
 #: src/store/zustand/listener/general-batch.ts
 msgid "Open Session Echo"
-msgstr ""
+msgstr "Session Echo öffnen"
 
 #: src/settings/general/app-settings.tsx
 msgid "Open Session Echo from the menu bar."
-msgstr ""
+msgstr "Session Echo über die Menüleiste öffnen."
 
 #: src/main/sync-status.tsx
 #: src/settings/sync/index.tsx
 msgid "Open Session Echo on a device that already has access, then approve this device."
-msgstr ""
+msgstr "Session Echo auf einem Gerät mit bestehendem Zugriff öffnen und dann dieses Gerät genehmigen."
 
 #: src/calendar/components/apple/permission.tsx
 msgid "Open Settings"
-msgstr ""
+msgstr "Einstellungen öffnen"
 
 #: src/settings/general/meeting-settings.tsx
 msgid "Open the meeting link when listening starts."
-msgstr ""
+msgstr "Meeting-Link öffnen, wenn das Zuhören beginnt."
 
 #: src/session-sharing/management-panel.tsx
 msgid "Open web copy"
-msgstr ""
+msgstr "Web-Kopie öffnen"
 
 #: src/settings/ai/llm/subscriptions/connect.tsx
 msgid "Opening sign-in…"
-msgstr ""
+msgstr "Anmeldung wird geöffnet …"
 
 #: src/imports/screen.tsx
 #: src/session/components/note-input/enhanced/enhance-error.tsx
 #: src/shared-notes/index.tsx
 msgid "Opening…"
-msgstr ""
+msgstr "Wird geöffnet …"
 
 #. placeholder {0}: accessibilityGuidance.paneTitle ?? "Privacy"
 #: src/onboarding/permissions.tsx
 msgid "Opens System Settings and guides you to add Session Echo to the {0} list"
-msgstr ""
+msgstr "Öffnet die Systemeinstellungen und führt Sie dazu, Session Echo zur Liste {0} hinzuzufügen"
 
 #. placeholder {0}: accessibilityGuidance.paneTitle ?? "Privacy"
 #: src/settings/general/permissions.tsx
 msgid "Opens System Settings and guides you to add Session Echo to the {0} list."
-msgstr ""
+msgstr "Öffnet die Systemeinstellungen und führt Sie dazu, Session Echo zur Liste {0} hinzuzufügen."
 
 #: src/calendar/components/apple/permission.tsx
 #: src/calendar/components/oauth/provider-content.tsx
 #: src/settings/ai/shared/index.tsx
 #: src/settings/todo/provider-content.tsx
 msgid "or"
-msgstr ""
+msgstr "oder"
 
 #: src/contacts/details.tsx
 msgid "Organization"
-msgstr ""
+msgstr "Organisation"
 
 #: src/contacts/organization-details.tsx
 msgid "Organization name"
-msgstr ""
+msgstr "Name der Organisation"
 
 #: src/settings/general/permissions.tsx
 msgid "Others"
-msgstr ""
+msgstr "Andere"
 
 #: src/shared/control.tsx
 msgid "Page not found"
-msgstr ""
+msgstr "Seite nicht gefunden"
 
 #: src/session/components/note-input/transcript/renderer/speaker-assign.tsx
 #: src/session/components/outer-header/overflow/export-modal.tsx
 msgid "Participants"
-msgstr ""
+msgstr "Teilnehmer"
 
 #: src/main/windows-title-bar.tsx
 msgid "Paste"
-msgstr ""
+msgstr "Einfügen"
 
 #: src/templates/auto-format-examples-dialog.tsx
 msgid "Paste a past summary you like..."
-msgstr ""
+msgstr "Frühere Zusammenfassung einfügen, die Ihnen gefällt …"
 
 #: src/settings/ai/llm/subscriptions/connect.tsx
 msgid "Paste an API key from your Kimi Code membership."
-msgstr ""
+msgstr "API-Schlüssel Ihrer Kimi-Code-Mitgliedschaft einfügen."
 
 #: src/settings/ai/llm/subscriptions/connect.tsx
 msgid "Paste the authorization code"
-msgstr ""
+msgstr "Autorisierungscode einfügen"
 
 #: src/instruction/index.tsx
 msgid "Paste the browser URL here if the browser button did not reopen Session Echo."
-msgstr ""
+msgstr "Browser-URL hier einfügen, falls der Browser-Button Session Echo nicht wieder geöffnet hat."
 
 #: src/settings/ai/llm/subscriptions/connect.tsx
 msgid "Paste the localhost redirect URL"
-msgstr ""
+msgstr "Localhost-Redirect-URL einfügen"
 
 #: src/settings/developers/webhooks.tsx
 msgid "Pause"
-msgstr ""
+msgstr "Pausieren"
 
 #: src/settings/general/notification.tsx
 msgid "Pause alerts while Do Not Disturb is on."
-msgstr ""
+msgstr "Benachrichtigungen pausieren, solange „Nicht stören\" aktiv ist."
 
 #: src/main/sync-status.tsx
 msgid "Pause sync"
-msgstr ""
+msgstr "Synchronisierung pausieren"
 
 #: src/settings/developers/webhooks.tsx
 msgid "Paused"
-msgstr ""
+msgstr "Pausiert"
 
 #: src/contacts/organization-details.tsx
 #: src/session/components/note-input/transcript/renderer/speaker-assign.tsx
 msgid "People"
-msgstr ""
+msgstr "Personen"
 
 #: src/settings/general/default-share-access.tsx
 msgid "People in the meeting"
-msgstr ""
+msgstr "Personen im Meeting"
 
 #: src/session-sharing/draft-panel.tsx
 #: src/session-sharing/management-panel.tsx
 msgid "People with access"
-msgstr ""
+msgstr "Personen mit Zugriff"
 
 #: src/session-sharing/access-management.tsx
 msgid "Permission for {label}"
-msgstr ""
+msgstr "Berechtigung für {label}"
 
 #: src/calendar/components/apple/permission.tsx
 msgid "permission panel."
-msgstr ""
+msgstr "Berechtigungsbereich."
 
 #: src/settings/general/index.tsx
 #: src/sidebar/settings.tsx
 msgid "Permissions"
-msgstr ""
+msgstr "Berechtigungen"
 
 #: src/onboarding/index.tsx
 msgid "Permissions granted"
-msgstr ""
+msgstr "Berechtigungen erteilt"
 
 #: src/contacts/details.tsx
 msgid "Phone"
-msgstr ""
+msgstr "Telefon"
 
 #: src/contacts/contact-page-header.tsx
 msgid "Pin"
-msgstr ""
+msgstr "Anheften"
 
 #: src/settings/general/account.tsx
 msgid "Plan & Billing"
-msgstr ""
+msgstr "Plan & Abrechnung"
 
 #: src/settings/general/account.tsx
 msgid "Plans"
-msgstr ""
+msgstr "Pläne"
 
 #: src/session/components/note-input/transcript/renderer/selection-menu.tsx
 msgid "Play from here"
-msgstr ""
+msgstr "Ab hier abspielen"
 
 #: src/settings/team/index.tsx
 msgid "Policies"
-msgstr ""
+msgstr "Richtlinien"
 
 #: src/automations/starters.tsx
 msgid "Post a meeting recap to a Slack channel."
-msgstr ""
+msgstr "Meeting-Zusammenfassung in einem Slack-Kanal posten."
 
 #: src/settings/automations/workflow-builder.tsx
 msgid "Post a recap to Slack"
-msgstr ""
+msgstr "Zusammenfassung an Slack posten"
 
 #: src/settings/general/meeting-settings.tsx
 msgid "Post recording disclosure in meeting chat"
-msgstr ""
+msgstr "Aufnahmehinweis im Meeting-Chat posten"
 
 #: src/session-sharing/delivery-panel.tsx
 msgid "Post the meeting summary to a channel you can access."
-msgstr ""
+msgstr "Die Meeting-Zusammenfassung in einem Kanal posten, auf den Sie Zugriff haben."
 
 #: src/automations/starters.tsx
 msgid "Post to a channel"
-msgstr ""
+msgstr "In einem Kanal posten"
 
 #: src/settings/general/notification.tsx
 msgid "Prepare for events with a 5-minute reminder."
-msgstr ""
+msgstr "Mit einer 5-Minuten-Erinnerung auf Termine vorbereiten."
 
 #: src/session/components/outer-header/overflow/export-modal.tsx
 msgid "Preparing transcript..."
-msgstr ""
+msgstr "Transkript wird vorbereitet …"
 
 #: src/settings/general/notification.tsx
 msgid "Prevent selected apps from triggering meeting detection."
-msgstr ""
+msgstr "Verhindern, dass ausgewählte Apps die Meeting-Erkennung auslösen."
 
 #: src/settings/automations/index.tsx
 msgid "Preview"
-msgstr ""
+msgstr "Vorschau"
 
 #: src/settings/developers/devtools.tsx
 msgid "Preview notifications, toasts, updates, and billing dialogs. Only available in dev and staging builds."
-msgstr ""
+msgstr "Benachrichtigungen, Toasts, Updates und Abrechnungsdialoge in der Vorschau ansehen. Nur in Dev- und Staging-Builds verfügbar."
 
 #: src/templates/auto-form.tsx
 msgid "Preview the summary format, then upgrade to Pro to customize it."
-msgstr ""
+msgstr "Zusammenfassungsformat in der Vorschau ansehen, dann auf Pro upgraden, um es anzupassen."
 
 #: src/session/components/note-input/search/bar.tsx
 msgid "Previous match"
-msgstr ""
+msgstr "Vorheriger Treffer"
 
 #: src/settings/general/app-settings.tsx
 msgid "Privacy"
-msgstr ""
+msgstr "Datenschutz"
 
 #: src/settings/ai/stt/select.tsx
 msgid "Pro"
-msgstr ""
+msgstr "Pro"
 
 #: src/sidebar/toast/registry.tsx
 msgid "Pro features available"
-msgstr ""
+msgstr "Pro-Funktionen verfügbar"
 
 #: src/settings/general/account.tsx
 msgid "Pro trial"
-msgstr ""
+msgstr "Pro-Testphase"
 
 #: src/settings/appearance/app-icon.tsx
 msgid "Production"
-msgstr ""
+msgstr "Production"
 
 #: src/settings/general/e2ee-setup.tsx
 msgid "Protect cloud sync"
-msgstr ""
+msgstr "Cloud-Synchronisierung schützen"
 
 #: src/session-sharing/general-access.tsx
 msgid "Public on the web"
-msgstr ""
+msgstr "Öffentlich im Web"
 
 #: src/session/components/note-input/transcript/screens/empty.tsx
 msgid "Re-transcribe"
-msgstr ""
+msgstr "Neu transkribieren"
 
 #: src/session/components/note-input/transcript/screens/empty.tsx
 msgid "Re-transcribe this audio, or upload a transcript file."
-msgstr ""
+msgstr "Dieses Audio neu transkribieren oder eine Transkriptdatei hochladen."
 
 #: src/session/components/note-input/transcript/actions.ts
 msgid "Re-transcription failed"
-msgstr ""
+msgstr "Neu-Transkription fehlgeschlagen"
 
 #: src/settings/general/permissions.tsx
 msgid "Read meeting controls, chat, and participant status."
-msgstr ""
+msgstr "Meeting-Steuerelemente, Chat und Teilnehmerstatus lesen."
 
 #: src/onboarding/permissions.tsx
 msgid "Read meeting controls, visible chat, and participant status"
-msgstr ""
+msgstr "Meeting-Steuerelemente, sichtbaren Chat und Teilnehmerstatus lesen"
 
 #: src/onboarding/index.tsx
 msgid "Ready to go"
-msgstr ""
+msgstr "Startklar"
 
 #: src/session/components/note-input/enhanced/streaming.tsx
 msgid "Reasoning models think through the transcript before writing."
-msgstr ""
+msgstr "Reasoning-Modelle denken das Transkript durch, bevor sie schreiben."
 
 #: src/session/components/note-input/meeting-chat-highlights.tsx
 msgid "received"
-msgstr ""
+msgstr "empfangen"
 
 #. placeholder {0}: formatSyncBytes(entry.received_bytes)
 #: src/settings/sync/index.tsx
 msgid "Received {0}"
-msgstr ""
+msgstr "Empfangen {0}"
 
 #: src/shared/open-note-dialog.tsx
 msgid "Recent"
-msgstr ""
+msgstr "Zuletzt"
 
 #: src/settings/sync/index.tsx
 msgid "Recent activity from this app session."
-msgstr ""
+msgstr "Aktuelle Aktivität dieser App-Sitzung."
 
 #: src/session-sharing/delivery-panel.tsx
 msgid "Recipient email"
-msgstr ""
+msgstr "E-Mail des Empfängers"
 
 #: src/calendar/components/oauth/provider-content.tsx
 #: src/calendar/components/sidebar.tsx
 msgid "Reconnect"
-msgstr ""
+msgstr "Erneut verbinden"
 
 #: src/settings/automations/starter-config.tsx
 msgid "Reconnect Linear"
-msgstr ""
+msgstr "Linear erneut verbinden"
 
 #: src/settings/automations/starter-config.tsx
 msgid "Reconnect Notion"
-msgstr ""
+msgstr "Notion erneut verbinden"
 
 #: src/calendar/components/oauth/status.tsx
 #: src/settings/todo/provider-content.tsx
 msgid "Reconnect required"
-msgstr ""
+msgstr "Erneute Verbindung erforderlich"
 
 #. placeholder {0}: config.displayName
 #: src/calendar/components/oauth/provider-content.tsx
 msgid "Reconnect required for {0} Calendar"
-msgstr ""
+msgstr "Erneute Verbindung für {0}-Kalender erforderlich"
 
 #: src/session-sharing/delivery-panel.tsx
 #: src/settings/automations/starter-config.tsx
 msgid "Reconnect Slack"
-msgstr ""
+msgstr "Slack erneut verbinden"
 
 #: src/session/components/outer-header/index.tsx
 msgid "Record"
-msgstr ""
+msgstr "Aufnehmen"
 
 #: src/settings/general/permissions.tsx
 msgid "Record other participants in meetings."
-msgstr ""
+msgstr "Andere Teilnehmer in Meetings aufnehmen."
 
 #: src/settings/general/permissions.tsx
 msgid "Record your voice in meetings and calls."
-msgstr ""
+msgstr "Ihre Stimme in Meetings und Anrufen aufnehmen."
 
 #: src/session/components/note-input/transcript/actions.ts
 msgid "Recording not found. It may have been deleted."
-msgstr ""
+msgstr "Aufnahme nicht gefunden. Sie wurde möglicherweise gelöscht."
 
 #: src/main/windows-title-bar.tsx
 msgid "Redo"
-msgstr ""
+msgstr "Wiederholen"
 
 #: src/settings/general/account.tsx
 msgid "Refresh billing status"
-msgstr ""
+msgstr "Abrechnungsstatus aktualisieren"
 
 #: src/calendar/components/calendar-selection.tsx
 msgid "Refresh calendars"
-msgstr ""
+msgstr "Kalender aktualisieren"
 
 #: src/session/components/note-input/template-picker.tsx
 msgid "Regenerate"
-msgstr ""
+msgstr "Neu generieren"
 
 #: src/chat/components/message/normal.tsx
 msgid "Regenerate message"
-msgstr ""
+msgstr "Nachricht neu generieren"
 
 #: src/settings/developers/cli.tsx
 msgid "Reinstall"
-msgstr ""
+msgstr "Neu installieren"
 
 #: src/contacts/related-notes.tsx
 msgid "Related Notes"
-msgstr ""
+msgstr "Verwandte Notizen"
 
 #: src/settings/general/audio-settings.tsx
 msgid "Remember speakers"
-msgstr ""
+msgstr "Sprecher merken"
 
 #: src/settings/todo/provider-content.tsx
 msgid "Reminders"
-msgstr ""
+msgstr "Erinnerungen"
 
 #: src/settings/developers/cloud-api.tsx
 msgid "Remote MCP"
-msgstr ""
+msgstr "Remote-MCP"
 
 #: src/settings/developers/cloud-api.tsx
 msgid "Remote MCP URL copied"
-msgstr ""
+msgstr "Remote-MCP-URL kopiert"
 
 #: src/session-sharing/access-management.tsx
 #: src/sidebar/automations.tsx
 msgid "Remove"
-msgstr ""
+msgstr "Entfernen"
 
 #: src/settings/dictionary/index.tsx
 msgid "Remove {term}"
-msgstr ""
+msgstr "{term} entfernen"
 
 #: src/settings/automations/index.tsx
 msgid "Remove automation"
-msgstr ""
+msgstr "Automatisierung entfernen"
 
 #. placeholder {0}: index + 1
 #: src/templates/auto-format-examples-dialog.tsx
 msgid "Remove example {0}"
-msgstr ""
+msgstr "Beispiel {0} entfernen"
 
 #: src/contacts/contact-page-header.tsx
 msgid "Remove photo"
-msgstr ""
+msgstr "Foto entfernen"
 
 #: src/settings/todo/github.tsx
 msgid "Remove repository"
-msgstr ""
+msgstr "Repository entfernen"
 
 #: src/settings/sync/index.tsx
 msgid "Rename device"
-msgstr ""
+msgstr "Gerät umbenennen"
 
 #: src/settings/sync/index.tsx
 msgid "Rename this device"
-msgstr ""
+msgstr "Dieses Gerät umbenennen"
 
 #: src/settings/team/index.tsx
 msgid "Rename workspace"
-msgstr ""
+msgstr "Workspace umbenennen"
 
 #: src/automations/starters.tsx
 msgid "Render canonical Markdown"
-msgstr ""
+msgstr "Kanonisches Markdown rendern"
 
 #: src/instruction/index.tsx
 msgid "Reopen checkout page"
-msgstr ""
+msgstr "Bezahlseite erneut öffnen"
 
 #: src/instruction/index.tsx
 msgid "Reopen in browser"
-msgstr ""
+msgstr "Im Browser erneut öffnen"
 
 #: src/settings/general/account.tsx
 msgid "Reopen sign-in page"
-msgstr ""
+msgstr "Anmeldeseite erneut öffnen"
 
 #: src/auth/cloudsync-keychain-repair.tsx
 #: src/settings/ai/shared/index.tsx
 #: src/settings/sync/index.tsx
 msgid "Repair Keychain Access"
-msgstr ""
+msgstr "Schlüsselbund-Zugriff reparieren"
 
 #: src/session/components/note-input/search/bar.tsx
 #: src/settings/sync/index.tsx
 msgid "Replace"
-msgstr ""
+msgstr "Ersetzen"
 
 #: src/session/components/note-input/search/bar.tsx
 msgid "Replace all"
-msgstr ""
+msgstr "Alle ersetzen"
 
 #: src/settings/todo/github.tsx
 msgid "Replace repository"
-msgstr ""
+msgstr "Repository ersetzen"
 
 #: src/session/components/note-input/search/bar.tsx
 msgid "Replace with..."
-msgstr ""
+msgstr "Ersetzen durch …"
 
 #: src/main/windows-title-bar.tsx
 msgid "Report a Bug"
-msgstr ""
+msgstr "Fehler melden"
 
 #: src/calendar/components/apple/permission.tsx
 msgid "Request"
-msgstr ""
+msgstr "Anfragen"
 
 #. placeholder {0}: title.toLowerCase()
 #: src/calendar/components/apple/permission.tsx
 msgid "Request {0}"
-msgstr ""
+msgstr "{0} anfragen"
 
 #. placeholder {0}: title.toLowerCase()
 #: src/settings/general/permissions.tsx
 msgid "Request {0} permission"
-msgstr ""
+msgstr "{0}-Berechtigung anfragen"
 
 #. placeholder {0}: capabilityLabels[entry.capability].toLowerCase()
 #: src/session-sharing/access-management.tsx
 msgid "Requested {0}"
-msgstr ""
+msgstr "Angefragt {0}"
 
 #: src/settings/team/index.tsx
 msgid "Require SSO"
-msgstr ""
+msgstr "SSO erforderlich"
 
 #: src/settings/privacy/index.tsx
 msgid "Require Touch ID or your password when opening Session Echo."
-msgstr ""
+msgstr "Touch ID oder Passwort beim Öffnen von Session Echo verlangen."
 
 #: src/settings/privacy/index.tsx
 msgid "Require Windows Hello face, PIN, or password when opening Session Echo."
-msgstr ""
+msgstr "Windows Hello Gesichtserkennung, PIN oder Passwort beim Öffnen von Session Echo verlangen."
 
 #: src/settings/team/index.tsx
 msgid "Resend invitation"
-msgstr ""
+msgstr "Einladung erneut senden"
 
 #: src/session-sharing/access-management.tsx
 msgid "Resend invite"
-msgstr ""
+msgstr "Einladung erneut senden"
 
 #: src/calendar/components/apple/permission.tsx
 #: src/settings/ai/shared/index.tsx
 msgid "Reset"
-msgstr ""
+msgstr "Zurücksetzen"
 
 #: src/templates/auto-form.tsx
 msgid "Reset to default format"
-msgstr ""
+msgstr "Auf Standardformat zurücksetzen"
 
 #: src/session-sharing/management-panel.tsx
 msgid "Resolve the web and desktop edits before inviting anyone."
-msgstr ""
+msgstr "Web- und Desktop-Änderungen abgleichen, bevor Sie jemanden einladen."
 
 #: src/settings/general/notification.tsx
 msgid "Respect Do-Not-Disturb mode"
-msgstr ""
+msgstr "„Nicht stören\"-Modus berücksichtigen"
 
 #: src/settings/developers/cloud-api.tsx
 msgid "REST API"
-msgstr ""
+msgstr "REST-API"
 
 #: src/sidebar/toast/registry.tsx
 msgid "Restart"
-msgstr ""
+msgstr "Neu starten"
 
 #: src/shared/control.tsx
 msgid "Restart App"
-msgstr ""
+msgstr "App neu starten"
 
 #: src/main/windows-title-bar.tsx
 msgid "Restore"
-msgstr ""
+msgstr "Wiederherstellen"
 
 #: src/main/sync-status.tsx
 #: src/settings/sync/index.tsx
 msgid "Restoring cloud sync..."
-msgstr ""
+msgstr "Cloud-Synchronisierung wird wiederhergestellt …"
 
 #: src/session/components/outer-header/index.tsx
 #: src/settings/general/account.tsx
 msgid "Resume"
-msgstr ""
+msgstr "Fortsetzen"
 
 #: src/session/components/outer-header/index.tsx
 msgid "Resume listening"
-msgstr ""
+msgstr "Zuhören fortsetzen"
 
 #: src/main/sync-status.tsx
 msgid "Resume sync"
-msgstr ""
+msgstr "Synchronisierung fortsetzen"
 
 #: src/settings/team/index.tsx
 msgid "Retention (days)"
-msgstr ""
+msgstr "Aufbewahrung (Tage)"
 
 #: src/chat/components/message/error.tsx
 #: src/main/sync-status.tsx
@@ -3604,110 +3604,110 @@ msgstr ""
 #: src/settings/sync/index.tsx
 #: src/sidebar/toast/registry.tsx
 msgid "Retry"
-msgstr ""
+msgstr "Erneut versuchen"
 
 #: src/session/components/pending-proposals-banner.tsx
 msgid "Review memo"
-msgstr ""
+msgstr "Memo überprüfen"
 
 #: src/session/components/pending-proposals-banner.tsx
 msgid "Review summary"
-msgstr ""
+msgstr "Zusammenfassung überprüfen"
 
 #: src/settings/developers/api-key-row.tsx
 msgid "Revoke"
-msgstr ""
+msgstr "Widerrufen"
 
 #: src/settings/ai/shared/index.tsx
 #: src/settings/ai/stt/select.tsx
 msgid "Runs after the recording finishes, not during the meeting."
-msgstr ""
+msgstr "Läuft nach Abschluss der Aufnahme, nicht während des Meetings."
 
 #: src/automations/starters.tsx
 msgid "Runs once the AI summary for the meeting is ready."
-msgstr ""
+msgstr "Läuft, sobald die KI-Zusammenfassung des Meetings fertig ist."
 
 #: src/settings/sync/index.tsx
 #: src/templates/auto-form.tsx
 msgid "Save"
-msgstr ""
+msgstr "Speichern"
 
 #: src/settings/automations/index.tsx
 msgid "Save & enable"
-msgstr ""
+msgstr "Speichern & aktivieren"
 
 #: src/automations/starters.tsx
 msgid "Save completed meetings as local Markdown files."
-msgstr ""
+msgstr "Abgeschlossene Meetings als lokale Markdown-Dateien speichern."
 
 #: src/session/components/outer-header/metadata/date.tsx
 msgid "Save date"
-msgstr ""
+msgstr "Datum speichern"
 
 #: src/settings/automations/index.tsx
 msgid "Save draft"
-msgstr ""
+msgstr "Entwurf speichern"
 
 #: src/settings/team/index.tsx
 msgid "Save policies"
-msgstr ""
+msgstr "Richtlinien speichern"
 
 #: src/settings/team/index.tsx
 msgid "Save SCIM token"
-msgstr ""
+msgstr "SCIM-Token speichern"
 
 #: src/settings/team/index.tsx
 msgid "Save subdomain"
-msgstr ""
+msgstr "Subdomain speichern"
 
 #: src/settings/general/e2ee-setup.tsx
 msgid "Save this key in a password manager. New devices can usually be approved from another device; this key is your fallback and will not be shown again."
-msgstr ""
+msgstr "Diesen Schlüssel in einem Passwort-Manager speichern. Neue Geräte lassen sich meist über ein anderes Gerät genehmigen; dieser Schlüssel ist Ihre Rückfalloption und wird nicht erneut angezeigt."
 
 #: src/settings/general/meeting-settings.tsx
 msgid "Save visible chat from supported meetings using Accessibility."
-msgstr ""
+msgstr "Sichtbaren Chat unterstützter Meetings über Bedienungshilfen speichern."
 
 #: src/main/sync-status.tsx
 #: src/settings/sync/index.tsx
 msgid "Saved locally"
-msgstr ""
+msgstr "Lokal gespeichert"
 
 #: src/settings/team/index.tsx
 msgid "SCIM bearer token"
-msgstr ""
+msgstr "SCIM-Bearer-Token"
 
 #: src/session/components/note-input/transcript/renderer/index.tsx
 msgid "Scroll to bottom"
-msgstr ""
+msgstr "Nach unten scrollen"
 
 #: src/session/components/note-input/transcript/renderer/index.tsx
 msgid "Scroll to top"
-msgstr ""
+msgstr "Nach oben scrollen"
 
 #: src/settings/automations/starter-config.tsx
 msgid "Search"
-msgstr ""
+msgstr "Suche"
 
 #: src/sidebar/automations.tsx
 msgid "Search automations..."
-msgstr ""
+msgstr "Automatisierungen durchsuchen …"
 
 #: src/contacts/shared.tsx
 msgid "Search contacts..."
-msgstr ""
+msgstr "Kontakte durchsuchen …"
 
 #: src/templates/template-icon-picker.tsx
 msgid "Search emoji..."
-msgstr ""
+msgstr "Emoji durchsuchen …"
 
 #: src/templates/template-icon-picker.tsx
 msgid "Search icons..."
-msgstr ""
+msgstr "Symbole durchsuchen …"
 
 #: src/settings/general/notification.tsx
 msgid "Search installed apps..."
-msgstr ""
+msgstr "Installierte Apps durchsuchen …"
 
 #: src/settings/general/main-language.tsx
 msgid "Search language..."
@@ -3715,100 +3715,100 @@ msgstr "Sprache suchen..."
 
 #: src/contacts/details.tsx
 msgid "Search or add company"
-msgstr ""
+msgstr "Unternehmen suchen oder hinzufügen"
 
 #: src/session/components/folder-picker.tsx
 msgid "Search or create folder"
-msgstr ""
+msgstr "Ordner suchen oder erstellen"
 
 #: src/settings/ai/shared/model-combobox.tsx
 msgid "Search or create new"
-msgstr ""
+msgstr "Suchen oder neu erstellen"
 
 #: src/settings/todo/github.tsx
 msgid "Search or type owner/repo"
-msgstr ""
+msgstr "Suchen oder Owner/Repo eingeben"
 
 #: src/settings/automations/starter-config.tsx
 msgid "Search pages shared with Session Echo…"
-msgstr ""
+msgstr "Mit Session Echo geteilte Seiten durchsuchen …"
 
 #: src/settings/ai/shared/provider-search.tsx
 msgid "Search providers"
-msgstr ""
+msgstr "Anbieter durchsuchen"
 
 #: src/settings/ai/shared/provider-search.tsx
 msgid "Search providers..."
-msgstr ""
+msgstr "Anbieter durchsuchen …"
 
 #: src/sidebar/settings.tsx
 msgid "Search settings..."
-msgstr ""
+msgstr "Einstellungen durchsuchen …"
 
 #: src/session/components/note-input/template-picker.tsx
 #: src/templates/template-sidebar.tsx
 msgid "Search templates..."
-msgstr ""
+msgstr "Vorlagen durchsuchen …"
 
 #: src/settings/general/timezone.tsx
 msgid "Search timezone..."
-msgstr ""
+msgstr "Zeitzone durchsuchen …"
 
 #: src/contacts/related-notes.tsx
 #: src/session/components/note-input/search/bar.tsx
 #: src/settings/general/searchable-select.tsx
 msgid "Search..."
-msgstr ""
+msgstr "Suchen …"
 
 #: src/settings/team/index.tsx
 msgid "Seats"
-msgstr ""
+msgstr "Plätze"
 
 #: src/templates/sections-editor.tsx
 msgid "Section actions"
-msgstr ""
+msgstr "Abschnittsaktionen"
 
 #: src/settings/sync/index.tsx
 msgid "Security"
-msgstr ""
+msgstr "Sicherheit"
 
 #: src/session/components/note-input/template-picker.tsx
 msgid "See all templates"
-msgstr ""
+msgstr "Alle Vorlagen ansehen"
 
 #: src/settings/ai/shared/model-combobox.tsx
 #: src/settings/ai/stt/select.tsx
 msgid "Select a model"
-msgstr ""
+msgstr "Modell auswählen"
 
 #: src/contacts/details.tsx
 msgid "Select a person to view details"
-msgstr ""
+msgstr "Person auswählen, um Details anzuzeigen"
 
 #: src/settings/ai/llm/select.tsx
 #: src/settings/ai/stt/select.tsx
 msgid "Select a provider"
-msgstr ""
+msgstr "Anbieter auswählen"
 
 #: src/main/windows-title-bar.tsx
 msgid "Select All"
-msgstr ""
+msgstr "Alles auswählen"
 
 #: src/contacts/organization-details.tsx
 msgid "Select an organization to view details"
-msgstr ""
+msgstr "Organisation auswählen, um Details anzuzeigen"
 
 #: src/settings/general/week-start.tsx
 msgid "Select day"
-msgstr ""
+msgstr "Tag auswählen"
 
 #: src/settings/general/default-share-access.tsx
 msgid "Select default sharing"
-msgstr ""
+msgstr "Standardfreigabe auswählen"
 
 #: src/session/components/folder-picker.tsx
 msgid "Select folder"
-msgstr ""
+msgstr "Ordner auswählen"
 
 #: src/settings/general/main-language.tsx
 msgid "Select language"
@@ -3816,247 +3816,247 @@ msgstr "Sprache auswählen"
 
 #: src/session/components/note-input/transcript/renderer/speaker-assign.tsx
 msgid "Select or type to add speaker"
-msgstr ""
+msgstr "Sprecher auswählen oder eingeben, um hinzuzufügen"
 
 #: src/settings/general/summary-length.tsx
 msgid "Select summary length"
-msgstr ""
+msgstr "Zusammenfassungslänge auswählen"
 
 #: src/settings/general/timezone.tsx
 msgid "Select timezone"
-msgstr ""
+msgstr "Zeitzone auswählen"
 
 #: src/settings/general/searchable-select.tsx
 msgid "Select..."
-msgstr ""
+msgstr "Auswählen …"
 
 #: src/session-sharing/delivery-panel.tsx
 msgid "Send"
-msgstr ""
+msgstr "Senden"
 
 #: src/contacts/organization-details.tsx
 msgid "Send email"
-msgstr ""
+msgstr "E-Mail senden"
 
 #: src/chat/components/input/index.tsx
 msgid "Send message"
-msgstr ""
+msgstr "Nachricht senden"
 
 #: src/settings/privacy/index.tsx
 msgid "Send sanitized crash and error reports to help improve Session Echo."
-msgstr ""
+msgstr "Bereinigte Absturz- und Fehlerberichte senden, um Session Echo zu verbessern."
 
 #: src/automations/starters.tsx
 msgid "Send the recap to the selected Slack channel."
-msgstr ""
+msgstr "Zusammenfassung an den ausgewählten Slack-Kanal senden."
 
 #: src/session-sharing/delivery-panel.tsx
 msgid "Send the summary in the email. Replies go directly to you."
-msgstr ""
+msgstr "Die Zusammenfassung in der E-Mail versenden. Antworten gehen direkt an Sie."
 
 #: src/session-sharing/delivery-panel.tsx
 msgid "Send to Slack"
-msgstr ""
+msgstr "An Slack senden"
 
 #: src/settings/sync/index.tsx
 msgid "Sending and receiving your latest changes."
-msgstr ""
+msgstr "Ihre neuesten Änderungen werden gesendet und empfangen."
 
 #: src/session/components/note-input/meeting-chat-highlights.tsx
 msgid "sent"
-msgstr ""
+msgstr "gesendet"
 
 #. placeholder {0}: formatSyncBytes(entry.sent_bytes)
 #: src/settings/sync/index.tsx
 msgid "Sent {0}"
-msgstr ""
+msgstr "Gesendet {0}"
 
 #: src/settings/privacy/index.tsx
 msgid "Sentry"
-msgstr ""
+msgstr "Sentry"
 
 #. placeholder {0}: update.version
 #: src/sidebar/toast/registry.tsx
 msgid "Session Echo {0} is available"
-msgstr ""
+msgstr "Session Echo {0} ist verfügbar"
 
 #. placeholder {0}: update.version
 #: src/sidebar/toast/registry.tsx
 msgid "Session Echo {0} is ready to install"
-msgstr ""
+msgstr "Session Echo {0} ist bereit zur Installation"
 
 #: src/onboarding/permissions.tsx
 msgid "Session Echo can hear others"
-msgstr ""
+msgstr "Session Echo kann andere hören"
 
 #: src/onboarding/permissions.tsx
 msgid "Session Echo can hear your voice"
-msgstr ""
+msgstr "Session Echo kann Ihre Stimme hören"
 
 #: src/onboarding/permissions.tsx
 msgid "Session Echo can read meeting details"
-msgstr ""
+msgstr "Session Echo kann Meeting-Details lesen"
 
 #: src/settings/developers/cli.tsx
 msgid "Session Echo CLI"
-msgstr ""
+msgstr "Session Echo CLI"
 
 #: src/session/components/note-input/enhanced/enhance-error.tsx
 msgid "Session Echo could not generate this summary because you were not signed in. Sign in, then try again."
-msgstr ""
+msgstr "Session Echo konnte diese Zusammenfassung nicht erstellen, da Sie nicht angemeldet waren. Melden Sie sich an und versuchen Sie es erneut."
 
 #: src/shared-notes/index.tsx
 msgid "Session Echo could not read the local shared-note cache."
-msgstr ""
+msgstr "Session Echo konnte den lokalen Cache geteilter Notizen nicht lesen."
 
 #: src/settings/sync/index.tsx
 msgid "Session Echo could not start cloud sync on this device."
-msgstr ""
+msgstr "Session Echo konnte die Cloud-Synchronisierung auf diesem Gerät nicht starten."
 
 #: src/settings/sync/index.tsx
 msgid "Session Echo couldn't complete this sync. Your notes are safe on this device."
-msgstr ""
+msgstr "Session Echo konnte diese Synchronisierung nicht abschließen. Ihre Notizen sind auf diesem Gerät sicher."
 
 #: src/main/sync-status.tsx
 msgid "Session Echo couldn't read cloud sync status. Your notes are still available locally."
-msgstr ""
+msgstr "Session Echo konnte den Status der Cloud-Synchronisierung nicht lesen. Ihre Notizen sind weiterhin lokal verfügbar."
 
 #: src/settings/general/account.tsx
 msgid "Session Echo couldn't sign you out. Try again."
-msgstr ""
+msgstr "Session Echo konnte Sie nicht abmelden. Erneut versuchen."
 
 #: src/lock/gate.tsx
 msgid "Session Echo is Locked"
-msgstr ""
+msgstr "Session Echo ist gesperrt"
 
 #: src/main/sync-status.tsx
 msgid "Session Echo is repairing cloud sync in the background. Your notes remain available locally."
-msgstr ""
+msgstr "Session Echo repariert die Cloud-Synchronisierung im Hintergrund. Ihre Notizen bleiben lokal verfügbar."
 
 #: src/session-sharing/access-management.tsx
 msgid "Session Echo member"
-msgstr ""
+msgstr "Session-Echo-Mitglied"
 
 #: src/onboarding/index.tsx
 msgid "Session Echo needs access to your microphone and system audio to record and transcribe your meetings"
-msgstr ""
+msgstr "Session Echo benötigt Zugriff auf Ihr Mikrofon und die Systemaudioausgabe, um Ihre Meetings aufzunehmen und zu transkribieren"
 
 #: src/onboarding/index.tsx
 msgid "Session Echo needs microphone and system audio to transcribe your meetings, plus Accessibility to read meeting controls, visible chat, and participant status."
-msgstr ""
+msgstr "Session Echo benötigt Mikrofon und Systemaudio, um Ihre Meetings zu transkribieren, sowie Bedienungshilfen, um Meeting-Steuerelemente, sichtbaren Chat und Teilnehmerstatus zu lesen."
 
 #: src/main/sync-status.tsx
 msgid "Session Echo Pro is required to use cloud sync."
-msgstr ""
+msgstr "Session Echo Pro ist für die Cloud-Synchronisierung erforderlich."
 
 #: src/main/sync-status.tsx
 #: src/settings/team/index.tsx
 msgid "Session Echo Pro required"
-msgstr ""
+msgstr "Session Echo Pro erforderlich"
 
 #. placeholder {0}: statuses[0].displayName
 #: src/settings/developers/skills.tsx
 msgid "Session Echo skill added to {0}"
-msgstr ""
+msgstr "Session-Echo-Skill zu {0} hinzugefügt"
 
 #. placeholder {0}: statuses.length
 #: src/settings/developers/skills.tsx
 msgid "Session Echo skill added to {0} agents"
-msgstr ""
+msgstr "Session-Echo-Skill zu {0} Agenten hinzugefügt"
 
 #: src/session-sharing/access-management.tsx
 msgid "Session Echo user"
-msgstr ""
+msgstr "Session-Echo-Nutzer"
 
 #: src/main/sync-status.tsx
 msgid "Session Echo will keep retrying in the background. Your notes remain available locally."
-msgstr ""
+msgstr "Session Echo versucht es im Hintergrund weiter. Ihre Notizen bleiben lokal verfügbar."
 
 #: src/settings/sync/index.tsx
 msgid "Session Echo will keep retrying."
-msgstr ""
+msgstr "Session Echo versucht es weiter."
 
 #: src/settings/sync/index.tsx
 msgid "Session Echo will retry automatically."
-msgstr ""
+msgstr "Session Echo versucht es automatisch erneut."
 
 #: src/main/sync-status.tsx
 #: src/settings/general/storage/legacy-cleanup.tsx
 msgid "Session Echo will retry automatically. This does not affect your notes."
-msgstr ""
+msgstr "Session Echo versucht es automatisch erneut. Ihre Notizen sind davon nicht betroffen."
 
 #: src/onboarding/index.tsx
 msgid "Session Echo will sync your calendar to get meeting reminders"
-msgstr ""
+msgstr "Session Echo synchronisiert Ihren Kalender, um Meeting-Erinnerungen zu erhalten"
 
 #: src/session/components/note-input/header.tsx
 msgid "Session note views"
-msgstr ""
+msgstr "Ansichten der Session-Notiz"
 
 #: src/session/components/title-input.tsx
 msgid "Session title"
-msgstr ""
+msgstr "Session-Titel"
 
 #: src/settings/ai/shared/provider-selection-prompt.ts
 msgid "Set {providerName} as the current provider?"
-msgstr ""
+msgstr "{providerName} als aktuellen Anbieter festlegen?"
 
 #: src/settings/ai/shared/provider-selection-prompt.ts
 msgid "Set as current"
-msgstr ""
+msgstr "Als aktuell festlegen"
 
 #: src/templates/auto-form.tsx
 #: src/templates/details.tsx
 msgid "Set as default"
-msgstr ""
+msgstr "Als Standard festlegen"
 
 #: src/session/components/note-input/enhanced/config-error.tsx
 msgid "Set up AI summaries"
-msgstr ""
+msgstr "KI-Zusammenfassungen einrichten"
 
 #: src/settings/sync/index.tsx
 msgid "Set up your recovery key to start encrypted cloud sync."
-msgstr ""
+msgstr "Wiederherstellungsschlüssel einrichten, um die verschlüsselte Cloud-Synchronisierung zu starten."
 
 #: src/main/sync-status.tsx
 msgid "Setting up cloud sync"
-msgstr ""
+msgstr "Cloud-Synchronisierung wird eingerichtet"
 
 #: src/settings/sync/index.tsx
 msgid "Setting up encrypted cloud sync."
-msgstr ""
+msgstr "Verschlüsselte Cloud-Synchronisierung wird eingerichtet."
 
 #: src/main/empty.tsx
 #: src/main/windows-title-bar.tsx
 #: src/sidebar/toast/registry.tsx
 msgid "Settings"
-msgstr ""
+msgstr "Einstellungen"
 
 #: src/session-sharing/draft-panel.tsx
 #: src/session-sharing/management-panel.tsx
 msgid "Share"
-msgstr ""
+msgstr "Teilen"
 
 #: src/automations/starters.tsx
 msgid "Share a meeting recap in Slack"
-msgstr ""
+msgstr "Meeting-Zusammenfassung in Slack teilen"
 
 #: src/session-sharing/attachment-controls.tsx
 msgid "Share audio"
-msgstr ""
+msgstr "Audio teilen"
 
 #: src/session-sharing/index.tsx
 #: src/session-sharing/management-panel.tsx
 msgid "Share link copied."
-msgstr ""
+msgstr "Freigabelink kopiert."
 
 #: src/session-sharing/index.tsx
 msgid "Share note"
-msgstr ""
+msgstr "Notiz teilen"
 
 #: src/session-sharing/index.tsx
 msgid "Share notes with others"
-msgstr ""
+msgstr "Notizen mit anderen teilen"
 
 #: src/settings/general/app-settings.tsx
 msgid "Share usage data"
@@ -4064,111 +4064,111 @@ msgstr "Nutzungsdaten teilen"
 
 #: src/sidebar/note-filter-menu.tsx
 msgid "Shared"
-msgstr ""
+msgstr "Geteilt"
 
 #: src/shared-notes/index.tsx
 msgid "Shared link · View only"
-msgstr ""
+msgstr "Freigabelink · Nur Ansicht"
 
 #: src/sidebar/shared-notes.tsx
 #: src/sidebar/timeline/item.tsx
 msgid "Shared note"
-msgstr ""
+msgstr "Geteilte Notiz"
 
 #: src/shared-notes/index.tsx
 msgid "Shared note · Owner"
-msgstr ""
+msgstr "Geteilte Notiz · Inhaber"
 
 #: src/shared-notes/index.tsx
 msgid "Shared note unavailable"
-msgstr ""
+msgstr "Geteilte Notiz nicht verfügbar"
 
 #: src/shared-notes/index.tsx
 msgid "Shared notes are tied to the account they were shared with."
-msgstr ""
+msgstr "Geteilte Notizen sind an das Konto gebunden, mit dem sie geteilt wurden."
 
 #: src/shared-notes/index.tsx
 msgid "Shared with me · Can comment"
-msgstr ""
+msgstr "Mit mir geteilt · Kann kommentieren"
 
 #: src/shared-notes/index.tsx
 msgid "Shared with me · Can edit"
-msgstr ""
+msgstr "Mit mir geteilt · Kann bearbeiten"
 
 #: src/shared-notes/index.tsx
 msgid "Shared with me · View only"
-msgstr ""
+msgstr "Mit mir geteilt · Nur Ansicht"
 
 #: src/settings/team/index.tsx
 msgid "Shares (30d)"
-msgstr ""
+msgstr "Freigaben (30 T.)"
 
 #: src/settings/team/index.tsx
 msgid "Sharing domain"
-msgstr ""
+msgstr "Freigabe-Domain"
 
 #: src/session-sharing/management-panel.tsx
 msgid "Sharing paused to protect your edits"
-msgstr ""
+msgstr "Freigabe pausiert, um Ihre Änderungen zu schützen"
 
 #: src/sidebar/timeline/item.tsx
 msgid "Show All Recurring Events"
-msgstr ""
+msgstr "Alle wiederkehrenden Termine anzeigen"
 
 #: src/settings/general/app-settings.tsx
 msgid "Show app in Dock"
-msgstr ""
+msgstr "App im Dock anzeigen"
 
 #: src/settings/general/permissions.tsx
 msgid "Show Apple Calendar events in Session Echo."
-msgstr ""
+msgstr "Apple-Kalender-Termine in Session Echo anzeigen."
 
 #: src/sidebar/timeline/index.tsx
 msgid "Show Deleted Events"
-msgstr ""
+msgstr "Gelöschte Termine anzeigen"
 
 #: src/sidebar/timeline/item.tsx
 msgid "Show Event"
-msgstr ""
+msgstr "Termin anzeigen"
 
 #: src/settings/general/meeting-settings.tsx
 msgid "Show floating bar"
-msgstr ""
+msgstr "Schwebende Leiste anzeigen"
 
 #: src/calendar/components/session-chip.tsx
 #: src/settings/ai/stt/select.tsx
 #: src/sidebar/timeline/item.tsx
 msgid "Show in Finder"
-msgstr ""
+msgstr "Im Finder anzeigen"
 
 #: src/calendar/components/session-chip.tsx
 #: src/sidebar/timeline/item.tsx
 msgid "Show in folder"
-msgstr ""
+msgstr "Im Ordner anzeigen"
 
 #: src/settings/general/app-settings.tsx
 msgid "Show Session Echo in the Dock and app switcher."
-msgstr ""
+msgstr "Session Echo im Dock und im App-Umschalter anzeigen."
 
 #: src/main/windows-title-bar.tsx
 msgid "Show sidebar"
-msgstr ""
+msgstr "Seitenleiste anzeigen"
 
 #: src/main/windows-title-bar.tsx
 msgid "Show Sidebar"
-msgstr ""
+msgstr "Seitenleiste anzeigen"
 
 #: src/settings/general/timezone.tsx
 msgid "Show the timeline in your preferred timezone."
-msgstr ""
+msgstr "Zeitleiste in Ihrer bevorzugten Zeitzone anzeigen."
 
 #: src/sidebar/timeline/item.tsx
 msgid "Show This Event"
-msgstr ""
+msgstr "Diesen Termin anzeigen"
 
 #: src/settings/general/app-settings.tsx
 msgid "Show tray icon"
-msgstr ""
+msgstr "Symbol in der Taskleiste anzeigen"
 
 #: src/session/components/note-input/enhanced/enhance-error.tsx
 #: src/settings/general/account.tsx
@@ -4176,205 +4176,205 @@ msgstr ""
 #: src/shared-notes/index.tsx
 #: src/sidebar/toast/registry.tsx
 msgid "Sign in"
-msgstr ""
+msgstr "Anmelden"
 
 #: src/main/sync-status.tsx
 msgid "Sign in again"
-msgstr ""
+msgstr "Erneut anmelden"
 
 #: src/settings/sync/index.tsx
 msgid "Sign in before enabling encrypted cloud sync"
-msgstr ""
+msgstr "Vor Aktivierung der verschlüsselten Cloud-Synchronisierung anmelden"
 
 #: src/settings/general/account.tsx
 msgid "Sign in for cloud transcription, AI models, and sharing."
-msgstr ""
+msgstr "Für Cloud-Transkription, KI-Modelle und Freigabe anmelden."
 
 #: src/settings/todo/github.tsx
 msgid "Sign in for private repo access."
-msgstr ""
+msgstr "Für Zugriff auf private Repositories anmelden."
 
 #: src/settings/general/account.tsx
 msgid "Sign in for Pro"
-msgstr ""
+msgstr "Für Pro anmelden"
 
 #: src/imports/screen.tsx
 #: src/onboarding/calendar.tsx
 msgid "Sign in to connect"
-msgstr ""
+msgstr "Zum Verbinden anmelden"
 
 #. placeholder {0}: config.displayName
 #: src/settings/todo/provider-content.tsx
 msgid "Sign in to connect {0}"
-msgstr ""
+msgstr "Anmelden, um {0} zu verbinden"
 
 #: src/calendar/components/oauth/provider-content.tsx
 msgid "Sign in to connect your calendar"
-msgstr ""
+msgstr "Anmelden, um Ihren Kalender zu verbinden"
 
 #: src/settings/team/index.tsx
 msgid "Sign in to create a shared workspace for your team."
-msgstr ""
+msgstr "Anmelden, um einen gemeinsamen Workspace für Ihr Team zu erstellen."
 
 #: src/session/components/note-input/enhanced/enhance-error.tsx
 msgid "Sign in to generate this summary"
-msgstr ""
+msgstr "Anmelden, um diese Zusammenfassung zu erstellen"
 
 #: src/sidebar/toast/registry.tsx
 msgid "Sign in to get the most out of Session Echo"
-msgstr ""
+msgstr "Anmelden, um Session Echo optimal zu nutzen"
 
 #: src/settings/general/account.tsx
 msgid "Sign in to Session Echo"
-msgstr ""
+msgstr "Bei Session Echo anmelden"
 
 #: src/onboarding/index.tsx
 msgid "Sign in to unlock powerful AI models, sync across devices, and personalization."
-msgstr ""
+msgstr "Anmelden, um leistungsstarke KI-Modelle, geräteübergreifende Synchronisierung und Personalisierung freizuschalten."
 
 #: src/settings/sync/index.tsx
 msgid "Sign in to use cloud sync"
-msgstr ""
+msgstr "Anmelden, um die Cloud-Synchronisierung zu nutzen"
 
 #: src/shared-notes/index.tsx
 msgid "Sign in to view this shared note"
-msgstr ""
+msgstr "Anmelden, um diese geteilte Notiz anzuzeigen"
 
 #: src/instruction/index.tsx
 msgid "Sign in to your account"
-msgstr ""
+msgstr "Bei Ihrem Konto anmelden"
 
 #: src/settings/ai/llm/subscriptions/connect.tsx
 msgid "Sign in with ChatGPT Plus or Pro, then paste the redirect URL from your browser."
-msgstr ""
+msgstr "Mit ChatGPT Plus oder Pro anmelden, dann die Redirect-URL aus Ihrem Browser einfügen."
 
 #: src/settings/ai/llm/subscriptions/connect.tsx
 msgid "Sign in with ChatGPT Plus or Pro. We'll open Session Echo and finish connecting."
-msgstr ""
+msgstr "Mit ChatGPT Plus oder Pro anmelden. Session Echo wird geöffnet und die Verbindung abgeschlossen."
 
 #: src/settings/ai/llm/subscriptions/connect.tsx
 msgid "Sign in with Claude Pro or Max. After you authorize, we'll pick up the code and finish connecting."
-msgstr ""
+msgstr "Mit Claude Pro oder Max anmelden. Nach der Autorisierung übernehmen wir den Code und schließen die Verbindung ab."
 
 #: src/settings/ai/llm/subscriptions/connect.tsx
 msgid "Sign in with GitHub Copilot and enter the code below."
-msgstr ""
+msgstr "Mit GitHub Copilot anmelden und den Code unten eingeben."
 
 #: src/settings/ai/llm/subscriptions/connect.tsx
 msgid "Sign in with SuperGrok or X Premium+ and enter the code below."
-msgstr ""
+msgstr "Mit SuperGrok oder X Premium+ anmelden und den Code unten eingeben."
 
 #: src/settings/general/account.tsx
 msgid "Sign out"
-msgstr ""
+msgstr "Abmelden"
 
 #: src/main/sync-status.tsx
 #: src/settings/sync/index.tsx
 msgid "Sign out and sign in again to resume cloud sync."
-msgstr ""
+msgstr "Abmelden und erneut anmelden, um die Cloud-Synchronisierung fortzusetzen."
 
 #: src/settings/general/account.tsx
 msgid "Sign out of Session Echo?"
-msgstr ""
+msgstr "Von Session Echo abmelden?"
 
 #: src/onboarding/account/after-login.tsx
 #: src/onboarding/index.tsx
 #: src/settings/general/account.tsx
 msgid "Signed in"
-msgstr ""
+msgstr "Angemeldet"
 
 #: src/settings/general/account.tsx
 msgid "Signing out..."
-msgstr ""
+msgstr "Wird abgemeldet …"
 
 #: src/settings/developers/webhooks.tsx
 msgid "Signing secret copied"
-msgstr ""
+msgstr "Signing-Secret kopiert"
 
 #: src/settings/appearance/app-icon.tsx
 msgid "Sketch"
-msgstr ""
+msgstr "Sketch"
 
 #: src/settings/developers/skills.tsx
 msgid "Skill installed"
-msgstr ""
+msgstr "Skill installiert"
 
 #: src/onboarding/shared.tsx
 msgid "Skip"
-msgstr ""
+msgstr "Überspringen"
 
 #: src/onboarding/imports.tsx
 msgid "Skip for now"
-msgstr ""
+msgstr "Vorerst überspringen"
 
 #: src/onboarding/index.tsx
 msgid "Skipped"
-msgstr ""
+msgstr "Übersprungen"
 
 #: src/session-sharing/delivery-panel.tsx
 msgid "Slack"
-msgstr ""
+msgstr "Slack"
 
 #: src/settings/automations/starter-config.tsx
 msgid "Slack channel"
-msgstr ""
+msgstr "Slack-Kanal"
 
 #: src/settings/automations/workflow-builder.tsx
 msgid "Slack recap"
-msgstr ""
+msgstr "Slack-Zusammenfassung"
 
 #: src/templates/template-icon-picker.tsx
 msgid "Smileys & People"
-msgstr ""
+msgstr "Smileys & Personen"
 
 #: src/contacts/details.tsx
 msgid "Software Engineer"
-msgstr ""
+msgstr "Software-Entwickler"
 
 #: src/shared/control.tsx
 msgid "Something went wrong"
-msgstr ""
+msgstr "Etwas ist schiefgelaufen"
 
 #: src/session/components/note-input/enhanced/enhance-error.tsx
 msgid "Something went wrong while generating the summary."
-msgstr ""
+msgstr "Beim Erstellen der Zusammenfassung ist etwas schiefgelaufen."
 
 #: src/contacts/related-notes.tsx
 #: src/contacts/shared.tsx
 msgid "Sort options"
-msgstr ""
+msgstr "Sortieroptionen"
 
 #: src/settings/general/audio-settings.tsx
 msgid "Speakers"
-msgstr ""
+msgstr "Sprecher"
 
 #: src/settings/general/storage/legacy-cleanup.tsx
 msgid "SQLite migration verification is incomplete"
-msgstr ""
+msgstr "SQLite-Migrationsprüfung ist unvollständig"
 
 #: src/settings/automations/workflow-builder.tsx
 msgid "Stack another destination. Steps run top to bottom."
-msgstr ""
+msgstr "Ein weiteres Ziel hinzufügen. Schritte laufen von oben nach unten."
 
 #: src/session/components/note-input/enhanced/config-error.tsx
 msgid "Start a Pro trial or add your own LLM API key to generate a summary from this transcript."
-msgstr ""
+msgstr "Pro-Testphase starten oder eigenen LLM-API-Schlüssel hinzufügen, um eine Zusammenfassung aus diesem Transkript zu erstellen."
 
 #: src/settings/general/meeting-settings.tsx
 msgid "Start listening when a scheduled meeting begins."
-msgstr ""
+msgstr "Zuhören starten, wenn ein geplantes Meeting beginnt."
 
 #: src/main/empty.tsx
 msgid "Start Recording"
-msgstr ""
+msgstr "Aufnahme starten"
 
 #: src/settings/general/app-settings.tsx
 msgid "Start Session Echo at login"
-msgstr ""
+msgstr "Session Echo bei der Anmeldung starten"
 
 #: src/chat/components/input/index.tsx
 msgid "Start voice input"
-msgstr ""
+msgstr "Spracheingabe starten"
 
 #: src/settings/general/meeting-settings.tsx
 msgid "Start when meeting begins"
@@ -4382,82 +4382,82 @@ msgstr "Beim Beginn des Meetings starten"
 
 #: src/session/components/note-input/raw.tsx
 msgid "Start with a favorite template"
-msgstr ""
+msgstr "Mit einer favorisierten Vorlage starten"
 
 #: src/onboarding/index.tsx
 msgid "Start with permissions"
-msgstr ""
+msgstr "Mit Berechtigungen beginnen"
 
 #: src/session/components/note-input/raw.tsx
 msgid "Start writing..."
-msgstr ""
+msgstr "Schreiben beginnen …"
 
 #: src/settings/ai/stt/select.tsx
 msgid "Starting"
-msgstr ""
+msgstr "Wird gestartet"
 
 #: src/services/event-notification/index.ts
 msgid "Starting in {minutesUntil} minutes"
-msgstr ""
+msgstr "Beginnt in {minutesUntil} Minuten"
 
 #: src/services/event-notification/index.ts
 msgid "Starting in 1 minute"
-msgstr ""
+msgstr "Beginnt in 1 Minute"
 
 #: src/sidebar/toast/registry.tsx
 msgid "Starting transcription..."
-msgstr ""
+msgstr "Transkription wird gestartet …"
 
 #: src/chat/components/input/index.tsx
 msgid "Starting voice input"
-msgstr ""
+msgstr "Spracheingabe wird gestartet"
 
 #: src/onboarding/account/after-login.tsx
 msgid "Starting your trial..."
-msgstr ""
+msgstr "Ihre Testphase wird gestartet …"
 
 #: src/chat/components/input/index.tsx
 msgid "Starting…"
-msgstr ""
+msgstr "Wird gestartet …"
 
 #: src/settings/general/app-settings.tsx
 msgid "Stay current with updates installed the next time Session Echo opens."
-msgstr ""
+msgstr "Aktuell bleiben: Updates werden beim nächsten Öffnen von Session Echo installiert."
 
 #: src/settings/automations/index.tsx
 msgid "Steps run from top to bottom."
-msgstr ""
+msgstr "Schritte laufen von oben nach unten."
 
 #: src/settings/appearance/app-icon.tsx
 msgid "Stone"
-msgstr ""
+msgstr "Stone"
 
 #: src/composer/index.tsx
 #: src/session/components/outer-header/index.tsx
 msgid "Stop"
-msgstr ""
+msgstr "Stopp"
 
 #: src/session/components/outer-header/index.tsx
 #: src/sidebar/timeline/item.tsx
 msgid "Stop listening"
-msgstr ""
+msgstr "Zuhören stoppen"
 
 #: src/settings/general/meeting-settings.tsx
 msgid "Stop listening when your call ends."
-msgstr ""
+msgstr "Zuhören stoppen, wenn Ihr Anruf endet."
 
 #: src/chat/components/input/index.tsx
 msgid "Stop response"
-msgstr ""
+msgstr "Antwort stoppen"
 
 #: src/session/components/note-input/transcript/screens/empty.tsx
 #: src/session/components/outer-header/index.tsx
 msgid "Stop transcription"
-msgstr ""
+msgstr "Transkription stoppen"
 
 #: src/chat/components/input/index.tsx
 msgid "Stop voice input"
-msgstr ""
+msgstr "Spracheingabe stoppen"
 
 #: src/settings/general/meeting-settings.tsx
 msgid "Stop when meeting ends"
@@ -4466,440 +4466,440 @@ msgstr "Stoppen, wenn das Meeting endet"
 #: src/onboarding/index.tsx
 #: src/settings/general/storage/index.tsx
 msgid "Storage"
-msgstr ""
+msgstr "Speicher"
 
 #: src/onboarding/index.tsx
 msgid "Storage configured"
-msgstr ""
+msgstr "Speicher konfiguriert"
 
 #: src/onboarding/folder-location.tsx
 msgid "Storage Updated"
-msgstr ""
+msgstr "Speicher aktualisiert"
 
 #: src/instruction/index.tsx
 msgid "Submit callback URL"
-msgstr ""
+msgstr "Callback-URL übermitteln"
 
 #: src/main/windows-title-bar.tsx
 msgid "Suggest a Feature"
-msgstr ""
+msgstr "Funktion vorschlagen"
 
 #: src/session-sharing/invite-recipients.tsx
 msgid "Suggested attendees"
-msgstr ""
+msgstr "Vorgeschlagene Teilnehmer"
 
 #: src/session/components/note-input/raw.tsx
 msgid "Suggested templates"
-msgstr ""
+msgstr "Vorgeschlagene Vorlagen"
 
 #: src/settings/general/index.tsx
 msgid "Summaries"
-msgstr ""
+msgstr "Zusammenfassungen"
 
 #: src/contacts/details.tsx
 #: src/edit/tab-content.tsx
 #: src/session/components/outer-header/overflow/export-modal.tsx
 msgid "Summary"
-msgstr ""
+msgstr "Zusammenfassung"
 
 #: src/templates/auto-form.tsx
 msgid "Summary format"
-msgstr ""
+msgstr "Zusammenfassungsformat"
 
 #: src/templates/auto-form.tsx
 msgid "Summary format cannot be empty."
-msgstr ""
+msgstr "Zusammenfassungsformat darf nicht leer sein."
 
 #: src/contacts/details.tsx
 #: src/session/components/note-input/enhanced/enhance-error.tsx
 msgid "Summary generation failed"
-msgstr ""
+msgstr "Erstellung der Zusammenfassung fehlgeschlagen"
 
 #: src/settings/general/summary-length.tsx
 msgid "Summary length"
-msgstr ""
+msgstr "Zusammenfassungslänge"
 
 #: src/services/enhancer/summary-notification.ts
 msgid "Summary ready"
-msgstr ""
+msgstr "Zusammenfassung bereit"
 
 #: src/settings/general/week-start.tsx
 msgid "Sunday"
-msgstr ""
+msgstr "Sonntag"
 
 #: src/templates/template-icon-picker.tsx
 msgid "Symbols"
-msgstr ""
+msgstr "Symbole"
 
 #: src/settings/sync/index.tsx
 #: src/sidebar/settings.tsx
 msgid "Sync"
-msgstr ""
+msgstr "Synchronisierung"
 
 #: src/settings/sync/index.tsx
 msgid "Sync failed"
-msgstr ""
+msgstr "Synchronisierung fehlgeschlagen"
 
 #: src/main/sync-status.tsx
 msgid "Sync issue"
-msgstr ""
+msgstr "Synchronisierungsproblem"
 
 #: src/settings/sync/index.tsx
 msgid "Sync log"
-msgstr ""
+msgstr "Synchronisierungsprotokoll"
 
 #: src/main/sync-status.tsx
 #: src/settings/sync/index.tsx
 msgid "Sync needs attention"
-msgstr ""
+msgstr "Synchronisierung erfordert Aufmerksamkeit"
 
 #: src/imports/screen.tsx
 #: src/main/sync-status.tsx
 #: src/settings/sync/index.tsx
 msgid "Sync now"
-msgstr ""
+msgstr "Jetzt synchronisieren"
 
 #: src/main/sync-status.tsx
 #: src/settings/sync/index.tsx
 msgid "Sync paused"
-msgstr ""
+msgstr "Synchronisierung pausiert"
 
 #: src/main/sync-status.tsx
 msgid "Sync settings"
-msgstr ""
+msgstr "Synchronisierungseinstellungen"
 
 #: src/main/sync-status.tsx
 #: src/settings/sync/index.tsx
 msgid "Sync status unavailable"
-msgstr ""
+msgstr "Synchronisierungsstatus nicht verfügbar"
 
 #: src/settings/general/account.tsx
 msgid "Sync your changes before signing out."
-msgstr ""
+msgstr "Änderungen vor dem Abmelden synchronisieren."
 
 #: src/main/sync-status.tsx
 #: src/settings/sync/index.tsx
 msgid "Synced"
-msgstr ""
+msgstr "Synchronisiert"
 
 #: src/main/sync-status.tsx
 #: src/settings/sync/index.tsx
 msgid "Syncing..."
-msgstr ""
+msgstr "Wird synchronisiert …"
 
 #: src/settings/appearance/theme.tsx
 msgid "System"
-msgstr ""
+msgstr "System"
 
 #: src/onboarding/permissions.tsx
 #: src/settings/general/permissions.tsx
 msgid "System audio"
-msgstr ""
+msgstr "Systemaudio"
 
 #: src/onboarding/permissions.tsx
 msgid "System audio enabled"
-msgstr ""
+msgstr "Systemaudio aktiviert"
 
 #: src/automations/starters.tsx
 msgid "Take the enhanced note with decisions and action items."
-msgstr ""
+msgstr "Die erweiterte Notiz mit Entscheidungen und Aufgaben übernehmen."
 
 #: src/automations/starters.tsx
 msgid "Take the enhanced note with decisions and follow-ups."
-msgstr ""
+msgstr "Die erweiterte Notiz mit Entscheidungen und Folgeaufgaben übernehmen."
 
 #: src/settings/developers/skills.tsx
 msgid "Teach coding agents when and how to use the Session Echo CLI and MCP"
-msgstr ""
+msgstr "Coding-Agenten beibringen, wann und wie sie die Session Echo CLI und MCP verwenden"
 
 #: src/settings/team/index.tsx
 #: src/sidebar/settings.tsx
 msgid "Team"
-msgstr ""
+msgstr "Team"
 
 #: src/settings/team/index.tsx
 msgid "teammate@company.com"
-msgstr ""
+msgstr "teammate@company.com"
 
 #: src/settings/general/meeting-settings.tsx
 msgid "Tell participants when listening starts; this does not confirm consent."
-msgstr ""
+msgstr "Teilnehmer informieren, wenn das Zuhören beginnt; dies bestätigt keine Einwilligung."
 
 #: src/templates/auto-form.tsx
 #: src/templates/details.tsx
 #: src/templates/template-form.tsx
 msgid "Template actions"
-msgstr ""
+msgstr "Vorlagenaktionen"
 
 #: src/templates/sections-editor.tsx
 msgid "Template content with Jinja2: {{ variable }}, {% if condition %}"
-msgstr ""
+msgstr "Vorlageninhalt mit Jinja2: {{ variable }}, {% if condition %}"
 
 #: src/sidebar/settings.tsx
 msgid "Templates"
-msgstr ""
+msgstr "Vorlagen"
 
 #: src/settings/automations/index.tsx
 #: src/settings/developers/webhooks.tsx
 msgid "Test"
-msgstr ""
+msgstr "Test"
 
 #. placeholder {0}: delivery.status
 #: src/settings/developers/webhooks.tsx
 msgid "Test delivered ({0})"
-msgstr ""
+msgstr "Test zugestellt ({0})"
 
 #. placeholder {0}: delivery.status
 #: src/settings/developers/webhooks.tsx
 msgid "Test failed ({0})"
-msgstr ""
+msgstr "Test fehlgeschlagen ({0})"
 
 #: src/settings/automations/index.tsx
 msgid "Test runs are not available yet."
-msgstr ""
+msgstr "Testläufe sind noch nicht verfügbar."
 
 #: src/onboarding/folder-location.tsx
 msgid "The app will restart after onboarding to apply your storage changes"
-msgstr ""
+msgstr "Die App wird nach dem Onboarding neu gestartet, um Ihre Speicheränderungen anzuwenden."
 
 #: src/shared-notes/index.tsx
 msgid "The link may have expired or its access may have changed."
-msgstr ""
+msgstr "Der Link ist möglicherweise abgelaufen oder der Zugriff hat sich geändert."
 
 #: src/shared-notes/index.tsx
 msgid "The note may have been unshared or moved out of a workspace you can access."
-msgstr ""
+msgstr "Die Notiz wurde möglicherweise nicht mehr geteilt oder aus einem Workspace verschoben, auf den Sie Zugriff haben."
 
 #: src/auth/context.tsx
 msgid "The notes on this device are linked to another Session Echo account. Sign in with the account previously used here."
-msgstr ""
+msgstr "Die Notizen auf diesem Gerät sind mit einem anderen Session-Echo-Konto verknüpft. Melden Sie sich mit dem zuvor hier verwendeten Konto an."
 
 #: src/shared/control.tsx
 msgid "The page you're looking for doesn't exist."
-msgstr ""
+msgstr "Die gesuchte Seite existiert nicht."
 
 #: src/sidebar/toast/registry.tsx
 msgid "The update download failed"
-msgstr ""
+msgstr "Der Update-Download ist fehlgeschlagen"
 
 #: src/settings/appearance/theme.tsx
 msgid "Theme"
-msgstr ""
+msgstr "Thema"
 
 #: src/settings/automations/workflow-builder.tsx
 msgid "Then"
-msgstr ""
+msgstr "Dann"
 
 #: src/settings/team/index.tsx
 msgid "These rules apply to every member. Sharing changes fail closed on the server."
-msgstr ""
+msgstr "Diese Regeln gelten für alle Mitglieder. Freigabeänderungen werden serverseitig im Zweifel blockiert."
 
 #: src/chat/components/message/loading.tsx
 msgid "Thinking..."
-msgstr ""
+msgstr "Denkt nach …"
 
 #: src/main/sync-status.tsx
 msgid "This account already syncs on 5 devices. Remove another device to sync here."
-msgstr ""
+msgstr "Dieses Konto synchronisiert bereits auf 5 Geräten. Entfernen Sie ein anderes Gerät, um hier zu synchronisieren."
 
 #: src/settings/sync/index.tsx
 msgid "This device"
-msgstr ""
+msgstr "Dieses Gerät"
 
 #: src/settings/sync/index.tsx
 msgid "This device will start syncing after you approve it from another signed-in device."
-msgstr ""
+msgstr "Dieses Gerät beginnt mit der Synchronisierung, sobald Sie es von einem anderen angemeldeten Gerät aus genehmigen."
 
 #: src/main/sync-status.tsx
 msgid "This device's sync identity does not match your account. Sign in again or check Sync settings."
-msgstr ""
+msgstr "Die Synchronisierungsidentität dieses Geräts stimmt nicht mit Ihrem Konto überein. Erneut anmelden oder die Synchronisierungseinstellungen prüfen."
 
 #: src/edit/tab-content.tsx
 msgid "This edit is no longer pending."
-msgstr ""
+msgstr "Diese Änderung ist nicht mehr ausstehend."
 
 #: src/session/components/outer-header/index.tsx
 msgid "This is a prerecorded demo, so your camera stays off. Click Join & record to see Session Echo in action."
-msgstr ""
+msgstr "Dies ist eine vorab aufgezeichnete Demo, Ihre Kamera bleibt daher aus. Klicken Sie auf „Beitreten & aufnehmen\", um Session Echo in Aktion zu sehen."
 
 #: src/settings/sync/index.tsx
 msgid "This name is synced to your other devices signed in to this account."
-msgstr ""
+msgstr "Dieser Name wird mit Ihren anderen bei diesem Konto angemeldeten Geräten synchronisiert."
 
 #: src/chat/components/session-provider.tsx
 msgid "This recording is using batch transcription, so the transcript isn't available to chat yet. Ask again after transcription finishes, or switch to a Pro model for live transcription."
-msgstr ""
+msgstr "Diese Aufnahme nutzt Batch-Transkription, daher steht das Transkript im Chat noch nicht zur Verfügung. Fragen Sie erneut, sobald die Transkription abgeschlossen ist, oder wechseln Sie für Live-Transkription zu einem Pro-Modell."
 
 #. placeholder {0}: status.fileCount
 #. placeholder {1}: formatBytes(status.totalBytes)
 #: src/settings/general/storage/legacy-cleanup.tsx
 msgid "This will remove {0} legacy files and free {1}. Your app data will not be affected because the migration to SQLite is complete."
-msgstr ""
+msgstr "Dadurch werden {0} veraltete Dateien entfernt und {1} freigegeben. Ihre App-Daten sind davon nicht betroffen, da die Migration zu SQLite abgeschlossen ist."
 
 #: src/settings/todo/index.tsx
 msgid "Ticket"
-msgstr ""
+msgstr "Ticket"
 
 #: src/settings/general/timezone.tsx
 msgid "Timezone"
-msgstr ""
+msgstr "Zeitzone"
 
 #: src/settings/dictionary/index.tsx
 msgid "Tip: Add teammate names, acronyms, company jargon, and product terms."
-msgstr ""
+msgstr "Tipp: Namen von Teammitgliedern, Abkürzungen, Unternehmensjargon und Produktbezeichnungen hinzufügen."
 
 #: src/session/components/note-input/enhanced/streaming.tsx
 msgid "Tip: The Session Echo team loves our users!"
-msgstr ""
+msgstr "Tipp: Das Session-Echo-Team liebt seine Nutzer!"
 
 #: src/sidebar/timeline/utils/index.ts
 msgid "Today"
-msgstr ""
+msgstr "Heute"
 
 #: src/sidebar/timeline/utils/index.ts
 msgid "Tomorrow"
-msgstr ""
+msgstr "Morgen"
 
 #: src/shared/useNewNote.ts
 msgid "Too many uploads are waiting. Open an existing upload and try again."
-msgstr ""
+msgstr "Zu viele Uploads warten. Einen bestehenden Upload öffnen und erneut versuchen."
 
 #: src/settings/general/spoken-languages.tsx
 msgid "Transcribe meetings that use more than one language."
-msgstr ""
+msgstr "Meetings transkribieren, die mehr als eine Sprache verwenden."
 
 #: src/chat/components/input/index.tsx
 msgid "Transcribing voice input"
-msgstr ""
+msgstr "Spracheingabe wird transkribiert"
 
 #: src/chat/components/input/index.tsx
 msgid "Transcribing…"
-msgstr ""
+msgstr "Wird transkribiert …"
 
 #: src/session/components/note-input/header-transcript.tsx
 #: src/session/components/outer-header/overflow/export-modal.tsx
 msgid "Transcript"
-msgstr ""
+msgstr "Transkript"
 
 #: src/settings/ai/stt/index.tsx
 #: src/sidebar/settings.tsx
 msgid "Transcription"
-msgstr ""
+msgstr "Transkription"
 
 #: src/store/zustand/listener/general-batch.ts
 msgid "Transcription complete"
-msgstr ""
+msgstr "Transkription abgeschlossen"
 
 #: src/session/components/note-input/transcript/screens/empty.tsx
 msgid "Transcription failed"
-msgstr ""
+msgstr "Transkription fehlgeschlagen"
 
 #: src/sidebar/toast/registry.tsx
 msgid "Transcription provider needed"
-msgstr ""
+msgstr "Transkriptionsanbieter erforderlich"
 
 #: src/sidebar/toast/registry.tsx
 msgid "Transcription unavailable"
-msgstr ""
+msgstr "Transkription nicht verfügbar"
 
 #: src/templates/template-icon-picker.tsx
 msgid "Travel & Places"
-msgstr ""
+msgstr "Reisen & Orte"
 
 #: src/settings/general/account.tsx
 msgid "Trial"
-msgstr ""
+msgstr "Testphase"
 
 #: src/onboarding/account/after-login.tsx
 msgid "Trial activated - {trialDays} days of Pro"
-msgstr ""
+msgstr "Testphase aktiviert – {trialDays} Tage Pro"
 
 #: src/settings/automations/index.tsx
 #: src/settings/automations/workflow-builder.tsx
 msgid "Trigger"
-msgstr ""
+msgstr "Trigger"
 
 #: src/contacts/details.tsx
 #: src/onboarding/permissions.tsx
 #: src/session-sharing/management-panel.tsx
 #: src/settings/general/permissions.tsx
 msgid "Try again"
-msgstr ""
+msgstr "Erneut versuchen"
 
 #: src/chat/components/input/use-dictation.ts
 msgid "Try speaking a little closer to the microphone."
-msgstr ""
+msgstr "Etwas näher am Mikrofon sprechen."
 
 #: src/session/components/outer-header/index.tsx
 msgid "Try the demo"
-msgstr ""
+msgstr "Demo ausprobieren"
 
 #: src/automations/starters.tsx
 msgid "Turn action items into Linear issues"
-msgstr ""
+msgstr "Aufgaben in Linear-Issues umwandeln"
 
 #: src/automations/starters.tsx
 msgid "Turn assigned follow-ups into Linear issue drafts."
-msgstr ""
+msgstr "Zugewiesene Folgeaufgaben in Linear-Issue-Entwürfe umwandeln."
 
 #: src/calendar/components/apple/permission.tsx
 msgid "Turn on Session Echo in System Settings → Privacy & Security → Calendars, then return here."
-msgstr ""
+msgstr "Session Echo unter Systemeinstellungen → Datenschutz & Sicherheit → Kalender aktivieren und dann hierher zurückkehren."
 
 #: src/settings/sync/index.tsx
 msgid "Turn on sync to create or enter your recovery key."
-msgstr ""
+msgstr "Synchronisierung aktivieren, um Ihren Wiederherstellungsschlüssel zu erstellen oder einzugeben."
 
 #: src/settings/appearance/app-icon.tsx
 msgid "Typewriter Key"
-msgstr ""
+msgstr "Typewriter Key"
 
 #: src/settings/developers/cli.tsx
 msgid "Unavailable"
-msgstr ""
+msgstr "Nicht verfügbar"
 
 #: src/main/windows-title-bar.tsx
 #: src/sidebar/toast/undo-delete-toast.tsx
 msgid "Undo"
-msgstr ""
+msgstr "Rückgängig"
 
 #: src/session/components/note-input/transcript/renderer/speaker-assign.tsx
 msgid "Unknown"
-msgstr ""
+msgstr "Unbekannt"
 
 #: src/session/components/outer-header/metadata/date.tsx
 msgid "Unknown date"
-msgstr ""
+msgstr "Unbekanntes Datum"
 
 #: src/lock/screen.tsx
 msgid "Unlock"
-msgstr ""
+msgstr "Entsperren"
 
 #: src/session/components/outer-header/overflow/lock-note.tsx
 #: src/sidebar/timeline/item.tsx
 msgid "Unlock Note"
-msgstr ""
+msgstr "Notiz entsperren"
 
 #: src/settings/general/e2ee-setup.tsx
 msgid "Unlock sync"
-msgstr ""
+msgstr "Synchronisierung entsperren"
 
 #: src/settings/ai/shared/index.tsx
 msgid "Unlock your login Keychain in the macOS prompt. Session Echo will retry saving this API key automatically."
-msgstr ""
+msgstr "Entsperren Sie Ihren Anmelde-Schlüsselbund in der macOS-Abfrage. Session Echo speichert diesen API-Schlüssel dann automatisch erneut."
 
 #: src/contacts/details.tsx
 #: src/contacts/organization-details.tsx
 msgid "Unnamed"
-msgstr ""
+msgstr "Unbenannt"
 
 #: src/settings/sync/index.tsx
 msgid "Unnamed device"
-msgstr ""
+msgstr "Unbenanntes Gerät"
 
 #: src/contacts/contact-page-header.tsx
 msgid "Unpin"
-msgstr ""
+msgstr "Loslösen"
 
 #: src/session/components/note-input/raw.tsx
 #: src/session/components/outer-header/overflow/export-modal.tsx
@@ -4913,61 +4913,61 @@ msgstr ""
 #: src/templates/details.tsx
 #: src/templates/sections-editor.tsx
 msgid "Untitled"
-msgstr ""
+msgstr "Unbenannt"
 
 #: src/settings/automations/index.tsx
 #: src/sidebar/automations.tsx
 msgid "Untitled automation"
-msgstr ""
+msgstr "Unbenannte Automatisierung"
 
 #: src/contacts/related-notes.tsx
 msgid "Untitled Note"
-msgstr ""
+msgstr "Unbenannte Notiz"
 
 #: src/edit/tab-content.tsx
 msgid "Untitled session"
-msgstr ""
+msgstr "Unbenannte Session"
 
 #: src/settings/team/index.tsx
 msgid "Upcoming bot attendance"
-msgstr ""
+msgstr "Bevorstehende Bot-Teilnahme"
 
 #: src/services/event-notification/index.ts
 msgid "Upcoming Event"
-msgstr ""
+msgstr "Bevorstehender Termin"
 
 #: src/automations/starters.tsx
 msgid "Update project notes in Notion"
-msgstr ""
+msgstr "Projektnotizen in Notion aktualisieren"
 
 #: src/session-sharing/access-management.tsx
 msgid "Updating access"
-msgstr ""
+msgstr "Zugriff wird aktualisiert"
 
 #: src/session-sharing/attachment-controls.tsx
 msgid "Updating audio sharing"
-msgstr ""
+msgstr "Audiofreigabe wird aktualisiert"
 
 #: src/sidebar/toast/registry.tsx
 msgid "Upgrade"
-msgstr ""
+msgstr "Upgrade"
 
 #: src/settings/todo/github.tsx
 msgid "Upgrade for private repos."
-msgstr ""
+msgstr "Für private Repositories upgraden."
 
 #: src/calendar/components/oauth/provider-content.tsx
 #: src/settings/todo/provider-content.tsx
 msgid "Upgrade to connect"
-msgstr ""
+msgstr "Zum Verbinden upgraden"
 
 #: src/templates/auto-form.tsx
 msgid "Upgrade to customize"
-msgstr ""
+msgstr "Zum Anpassen upgraden"
 
 #: src/settings/automations/index.tsx
 msgid "Upgrade to enable"
-msgstr ""
+msgstr "Zum Aktivieren upgraden"
 
 #: src/billing/trial-ended-dialog.tsx
 #: src/calendar/components/sidebar.tsx
@@ -4977,343 +4977,343 @@ msgstr ""
 #: src/settings/team/index.tsx
 #: src/sidebar/settings.tsx
 msgid "Upgrade to Pro"
-msgstr ""
+msgstr "Auf Pro upgraden"
 
 #. placeholder {0}: item.label
 #. placeholder {0}: provider.displayName
 #: src/calendar/components/sidebar.tsx
 #: src/sidebar/settings.tsx
 msgid "Upgrade to Pro for {0}"
-msgstr ""
+msgstr "Für {0} auf Pro upgraden"
 
 #: src/templates/auto-form.tsx
 msgid "Upgrade to Pro to customize Auto format"
-msgstr ""
+msgstr "Auf Pro upgraden, um das Auto-Format anzupassen"
 
 #: src/session-sharing/index.tsx
 msgid "Upgrade to Pro to invite people and share this note with them."
-msgstr ""
+msgstr "Auf Pro upgraden, um Personen einzuladen und diese Notiz mit ihnen zu teilen."
 
 #: src/settings/ai/llm/select.tsx
 #: src/settings/ai/stt/select.tsx
 msgid "Upgrade to Pro to use this provider."
-msgstr ""
+msgstr "Auf Pro upgraden, um diesen Anbieter zu nutzen."
 
 #: src/settings/automations/index.tsx
 msgid "Upgrade to save"
-msgstr ""
+msgstr "Zum Speichern upgraden"
 
 #: src/settings/ai/stt/select.tsx
 msgid "Upgrade to use"
-msgstr ""
+msgstr "Zum Nutzen upgraden"
 
 #: src/session/components/floating/options-menu.tsx
 #: src/session/components/note-input/transcript/screens/empty.tsx
 #: src/session/components/outer-header/overflow/index.tsx
 msgid "Upload audio"
-msgstr ""
+msgstr "Audio hochladen"
 
 #: src/shared/useNewNote.ts
 msgid "Upload Audio"
-msgstr ""
+msgstr "Audio hochladen"
 
 #: src/session/components/note-input/transcript/screens/empty.tsx
 msgid "Upload audio or a transcript file to populate this note."
-msgstr ""
+msgstr "Audio oder eine Transkriptdatei hochladen, um diese Notiz zu befüllen."
 
 #: src/session/components/floating/options-menu.tsx
 #: src/session/components/note-input/transcript/screens/empty.tsx
 #: src/session/components/outer-header/overflow/index.tsx
 msgid "Upload transcript"
-msgstr ""
+msgstr "Transkript hochladen"
 
 #: src/shared/useNewNote.ts
 msgid "Upload Transcript"
-msgstr ""
+msgstr "Transkript hochladen"
 
 #: src/settings/developers/cloud-api.tsx
 msgid "Uploads meeting content for remote access while Session Echo is closed."
-msgstr ""
+msgstr "Lädt Meeting-Inhalte für den Remote-Zugriff hoch, während Session Echo geschlossen ist."
 
 #: src/settings/team/index.tsx
 msgid "Usage"
-msgstr ""
+msgstr "Nutzung"
 
 #: src/automations/starters.tsx
 msgid "Use a stable filename in the configured export directory."
-msgstr ""
+msgstr "Einen festen Dateinamen im konfigurierten Exportverzeichnis verwenden."
 
 #: src/settings/general/e2ee-setup.tsx
 msgid "Use an existing key"
-msgstr ""
+msgstr "Vorhandenen Schlüssel verwenden"
 
 #: src/imports/screen.tsx
 msgid "Use files"
-msgstr ""
+msgstr "Dateien verwenden"
 
 #: src/settings/sync/index.tsx
 msgid "Use recovery key instead"
-msgstr ""
+msgstr "Stattdessen Wiederherstellungsschlüssel verwenden"
 
 #: src/onboarding/permissions.tsx
 msgid "Use system audio to capture other speakers"
-msgstr ""
+msgstr "Systemaudio verwenden, um andere Sprecher aufzunehmen"
 
 #: src/automations/starters.tsx
 msgid "Use the AI meeting summary"
-msgstr ""
+msgstr "Die KI-Meeting-Zusammenfassung verwenden"
 
 #: src/automations/starters.tsx
 msgid "Use the meeting's action items and summary tasks."
-msgstr ""
+msgstr "Die Aufgaben und Zusammenfassungspunkte des Meetings verwenden."
 
 #: src/settings/team/index.tsx
 msgid "Use this domain for links shared from this workspace."
-msgstr ""
+msgstr "Diese Domain für Links verwenden, die aus diesem Workspace geteilt werden."
 
 #: src/settings/general/main-language.tsx
 msgid "Use this language for summaries and AI responses."
-msgstr ""
+msgstr "Diese Sprache für Zusammenfassungen und KI-Antworten verwenden."
 
 #: src/lock/screen.tsx
 msgid "Use Touch ID or enter your password to view."
-msgstr ""
+msgstr "Touch ID verwenden oder Passwort eingeben, um anzuzeigen."
 
 #: src/lock/screen.tsx
 msgid "Use Windows Hello face, PIN, or password to view."
-msgstr ""
+msgstr "Windows Hello Gesichtserkennung, PIN oder Passwort verwenden, um anzuzeigen."
 
 #: src/onboarding/permissions.tsx
 msgid "Use your microphone to capture your voice"
-msgstr ""
+msgstr "Ihr Mikrofon verwenden, um Ihre Stimme aufzunehmen"
 
 #: src/settings/team/index.tsx
 msgid "Verify domain"
-msgstr ""
+msgstr "Domain verifizieren"
 
 #: src/settings/general/storage/legacy-cleanup.tsx
 msgid "Verifying the SQLite migration status"
-msgstr ""
+msgstr "SQLite-Migrationsstatus wird geprüft"
 
 #: src/main/windows-title-bar.tsx
 msgid "View"
-msgstr ""
+msgstr "Anzeigen"
 
 #: src/contacts/organization-details.tsx
 msgid "View LinkedIn profile"
-msgstr ""
+msgstr "LinkedIn-Profil anzeigen"
 
 #: src/lock/screen.tsx
 msgid "View Note"
-msgstr ""
+msgstr "Notiz anzeigen"
 
 #: src/settings/sync/index.tsx
 msgid "View plans"
-msgstr ""
+msgstr "Pläne anzeigen"
 
 #: src/lock/gate.tsx
 msgid "View Session Echo"
-msgstr ""
+msgstr "Session Echo anzeigen"
 
 #: src/settings/sync/index.tsx
 msgid "View sync log"
-msgstr ""
+msgstr "Synchronisierungsprotokoll anzeigen"
 
 #: src/chat/components/input/use-dictation.ts
 msgid "Voice input is unavailable while Session Echo is recording a meeting."
-msgstr ""
+msgstr "Spracheingabe ist nicht verfügbar, solange Session Echo ein Meeting aufnimmt."
 
 #: src/settings/general/notification.tsx
 msgid "Wait before treating microphone activity as a meeting."
-msgstr ""
+msgstr "Warten, bevor Mikrofonaktivität als Meeting behandelt wird."
 
 #: src/automations/starters.tsx
 msgid "Wait until the transcript and note are complete."
-msgstr ""
+msgstr "Warten, bis Transkript und Notiz vollständig sind."
 
 #: src/settings/sync/index.tsx
 msgid "Waiting for approval"
-msgstr ""
+msgstr "Warten auf Genehmigung"
 
 #: src/settings/ai/llm/subscriptions/connect.tsx
 msgid "Waiting for authorization in your browser…"
-msgstr ""
+msgstr "Warten auf Autorisierung in Ihrem Browser …"
 
 #: src/main/sync-status.tsx
 #: src/settings/sync/index.tsx
 msgid "Waiting for device approval"
-msgstr ""
+msgstr "Warten auf Gerätegenehmigung"
 
 #: src/settings/appearance/app-icon.tsx
 msgid "Walnut"
-msgstr ""
+msgstr "Walnut"
 
 #: src/settings/developers/webhooks.tsx
 msgid "Webhooks"
-msgstr ""
+msgstr "Webhooks"
 
 #: src/settings/general/week-start.tsx
 msgid "Week starts on"
-msgstr ""
+msgstr "Woche beginnt am"
 
 #: src/onboarding/index.tsx
 msgid "Welcome to Session Echo"
-msgstr ""
+msgstr "Willkommen bei Session Echo"
 
 #: src/chat/components/body/empty.tsx
 msgid "What are my action items from this meeting?"
-msgstr ""
+msgstr "Was sind meine Aufgaben aus diesem Meeting?"
 
 #: src/chat/components/body/empty.tsx
 msgid "What were the key decisions that have been made?"
-msgstr ""
+msgstr "Welche wichtigen Entscheidungen wurden getroffen?"
 
 #: src/changelog/index.tsx
 msgid "What's new in {version}?"
-msgstr ""
+msgstr "Was ist neu in {version}?"
 
 #: src/settings/automations/workflow-builder.tsx
 msgid "When this happens"
-msgstr ""
+msgstr "Wenn dies eintritt"
 
 #: src/onboarding/index.tsx
 msgid "Where your notes and recordings are stored"
-msgstr ""
+msgstr "Wo Ihre Notizen und Aufnahmen gespeichert sind"
 
 #: src/task/tab-content.tsx
 msgid "Work on this task"
-msgstr ""
+msgstr "An dieser Aufgabe arbeiten"
 
 #: src/settings/automations/workflow-builder.tsx
 msgid "Workflow"
-msgstr ""
+msgstr "Workflow"
 
 #: src/sidebar/settings.tsx
 msgid "Workspace"
-msgstr ""
+msgstr "Workspace"
 
 #: src/settings/team/index.tsx
 msgid "Workspace activity from metadata only. Note content stays unreadable on the server."
-msgstr ""
+msgstr "Workspace-Aktivität nur anhand von Metadaten. Notizinhalte bleiben auf dem Server unlesbar."
 
 #: src/settings/team/index.tsx
 msgid "Workspace name"
-msgstr ""
+msgstr "Workspace-Name"
 
 #: src/settings/team/index.tsx
 msgid "Workspace subdomain"
-msgstr ""
+msgstr "Workspace-Subdomain"
 
 #: src/automations/starters.tsx
 msgid "Write to a folder"
-msgstr ""
+msgstr "In einen Ordner schreiben"
 
 #: src/sidebar/timeline/utils/index.ts
 msgid "Yesterday"
-msgstr ""
+msgstr "Gestern"
 
 #: src/session-sharing/comments.tsx
 #: src/settings/team/index.tsx
 msgid "You"
-msgstr ""
+msgstr "Sie"
 
 #: src/calendar/components/apple/permission.tsx
 msgid "You can"
-msgstr ""
+msgstr "Sie können"
 
 #: src/sidebar/timeline/index.tsx
 msgid "You can undo this action for a short time."
-msgstr ""
+msgstr "Sie können diese Aktion für kurze Zeit rückgängig machen."
 
 #: src/templates/auto-format-examples-dialog.tsx
 msgid "You can use up to three example summaries."
-msgstr ""
+msgstr "Sie können bis zu drei Beispielzusammenfassungen verwenden."
 
 #: src/onboarding/account/after-login.tsx
 msgid "You have an active plan"
-msgstr ""
+msgstr "Sie haben einen aktiven Plan"
 
 #: src/settings/general/account.tsx
 msgid "You'll need to sign in again to use cloud sync and account features."
-msgstr ""
+msgstr "Sie müssen sich erneut anmelden, um Cloud-Synchronisierung und Kontofunktionen zu nutzen."
 
 #: src/onboarding/account/after-login.tsx
 msgid "You're on a Pro trial"
-msgstr ""
+msgstr "Sie befinden sich in einer Pro-Testphase"
 
 #: src/settings/general/account.tsx
 msgid "You're on the <0>{planLabel}</0> plan"
-msgstr ""
+msgstr "Sie nutzen den Plan <0>{planLabel}</0>"
 
 #: src/billing/trial-started-dialog.tsx
 msgid "Your {days}-day Pro trial starts now. Add a payment method before it ends to keep Pro."
-msgstr ""
+msgstr "Ihre {days}-tägige Pro-Testphase beginnt jetzt. Fügen Sie vor Ablauf eine Zahlungsmethode hinzu, um Pro zu behalten."
 
 #: src/billing/trial-started-dialog.tsx
 msgid "Your {days}-day Pro trial starts now. Pro will continue automatically when it ends."
-msgstr ""
+msgstr "Ihre {days}-tägige Pro-Testphase beginnt jetzt. Pro wird nach Ablauf automatisch fortgesetzt."
 
 #: src/settings/general/account.tsx
 msgid "Your Account"
-msgstr ""
+msgstr "Ihr Konto"
 
 #: src/session-sharing/comments.tsx
 msgid "Your comment couldn’t be added. Try again."
-msgstr ""
+msgstr "Ihr Kommentar konnte nicht hinzugefügt werden. Erneut versuchen."
 
 #: src/settings/dictionary/index.tsx
 msgid "Your dictionary is empty"
-msgstr ""
+msgstr "Ihr Wörterbuch ist leer"
 
 #: src/billing/trial-ended-dialog.tsx
 msgid "Your notes and recordings are safe. Free local transcription still works. Upgrade anytime to keep Pro features."
-msgstr ""
+msgstr "Ihre Notizen und Aufnahmen sind sicher. Kostenlose lokale Transkription funktioniert weiterhin. Jederzeit upgraden, um Pro-Funktionen zu behalten."
 
 #: src/billing/trial-ended-dialog.tsx
 msgid "Your notes and recordings are safe. Upgrade anytime to keep cloud transcription and Pro features, or configure your own transcription provider."
-msgstr ""
+msgstr "Ihre Notizen und Aufnahmen sind sicher. Jederzeit upgraden, um Cloud-Transkription und Pro-Funktionen zu behalten, oder eigenen Transkriptionsanbieter konfigurieren."
 
 #: src/settings/sync/index.tsx
 msgid "Your notes remain available locally."
-msgstr ""
+msgstr "Ihre Notizen bleiben lokal verfügbar."
 
 #: src/settings/sync/index.tsx
 msgid "Your notes remain available locally. Try again in a moment."
-msgstr ""
+msgstr "Ihre Notizen bleiben lokal verfügbar. In Kürze erneut versuchen."
 
 #: src/billing/trial-payment-reminder-dialog.tsx
 msgid "Your Pro trial ends in {daysRemaining} days"
-msgstr ""
+msgstr "Ihre Pro-Testphase endet in {daysRemaining} Tagen"
 
 #: src/billing/trial-payment-reminder-dialog.tsx
 msgid "Your Pro trial ends in 1 day"
-msgstr ""
+msgstr "Ihre Pro-Testphase endet in 1 Tag"
 
 #: src/billing/trial-ended-dialog.tsx
 #: src/settings/general/account.tsx
 msgid "Your Pro trial has ended"
-msgstr ""
+msgstr "Ihre Pro-Testphase ist abgelaufen"
 
 #: src/billing/trial-started-dialog.tsx
 msgid "Your Pro trial just started"
-msgstr ""
+msgstr "Ihre Pro-Testphase hat gerade begonnen"
 
 #: src/settings/general/e2ee-setup.tsx
 msgid "Your recovery key encrypts synced notes before they leave this device. Session Echo cannot read or recover it."
-msgstr ""
+msgstr "Ihr Wiederherstellungsschlüssel verschlüsselt synchronisierte Notizen, bevor sie dieses Gerät verlassen. Session Echo kann ihn weder lesen noch wiederherstellen."
 
 #: src/settings/sync/index.tsx
 msgid "Your storage location is inside {cloudStorageService}"
-msgstr ""
+msgstr "Ihr Speicherort befindet sich innerhalb von {cloudStorageService}"
 
 #: src/services/enhancer/summary-notification.ts
 msgid "Your summary is ready."
-msgstr ""
+msgstr "Ihre Zusammenfassung ist bereit."
 
 #: src/store/zustand/listener/general-batch.ts
 msgid "Your transcript is ready."
-msgstr ""
+msgstr "Ihr Transkript ist bereit."
 
 #: src/templates/template-sidebar.tsx
 msgid "Z to A"
-msgstr ""
+msgstr "Z bis A"
