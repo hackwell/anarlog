@@ -2564,7 +2564,7 @@ msgstr "Meeting-Notizen gesendet."
 #: src/settings/general/index.tsx
 #: src/sidebar/settings.tsx
 msgid "Meetings"
-msgstr "Treffen"
+msgstr "Meetings"
 
 #: src/contacts/organization-details.tsx
 msgid "member"
