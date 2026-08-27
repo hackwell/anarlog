@@ -30,19 +30,15 @@ Then install the workspace:
 pnpm install --frozen-lockfile
 ```
 
-The desktop app and website start without secrets for local-first workflows.
+The desktop app starts without secrets for local-first workflows.
 
-## Run the apps
+## Run the app
 
 ```bash
-# Tauri desktop app
 pnpm exec turbo dev:desktop
-
-# Website
-pnpm exec turbo dev:web
 ```
 
-Turbo builds shared UI packages before starting either app.
+Turbo builds shared UI packages before starting the app.
 
 CloudSync, hosted AI, authentication, billing, and connected integrations require the optional local services:
 

@@ -80,7 +80,7 @@ The active provider and model are always visible under **Settings → Transcript
 3. Generate a note, edit it like a document, and export Markdown when you need it.
 4. Optional: connect an LLM provider or a local model in settings for summaries and chat.
 
-Product docs live at [docs.anarlog.so](https://docs.anarlog.so). To build the desktop app or website from source, follow [Local development](#local-development).
+Product docs live at [docs.anarlog.so](https://docs.anarlog.so). To build the desktop app from source, follow [Local development](#local-development).
 
 ## Repository map
 
@@ -96,7 +96,7 @@ Product docs live at [docs.anarlog.so](https://docs.anarlog.so). To build the de
 
 ## Local development
 
-The local-first desktop app and website start without secrets. Hosted AI, CloudSync, authentication, billing, and connected integrations need their optional local services and configuration.
+The local-first desktop app starts without secrets. Hosted AI, CloudSync, authentication, billing, and connected integrations need their optional local services and configuration.
 
 You need Node.js 22 or later, pnpm 11.1.1, Rust 1.94.0, and the [Tauri v2 system dependencies](https://v2.tauri.app/start/prerequisites/). On Debian or Ubuntu, the repository can install the required toolchains and system packages:
 
@@ -104,13 +104,11 @@ You need Node.js 22 or later, pnpm 11.1.1, Rust 1.94.0, and the [Tauri v2 system
 bash scripts/setup-linux.sh
 ```
 
-Install the workspace and start the app you want to work on:
+Install the workspace and start the desktop app:
 
 ```bash
 pnpm install --frozen-lockfile
 pnpm exec turbo dev:desktop
-# or
-pnpm exec turbo dev:web
 ```
 
 Read [CONTRIBUTING.md](CONTRIBUTING.md) for validation commands, code ownership, and the contribution workflow. Ask [DeepWiki](https://deepwiki.com/fastrepl/anarlog) for a code-indexed explanation of a subsystem.
