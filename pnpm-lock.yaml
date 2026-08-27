@@ -96,9 +96,6 @@ importers:
       '@anlg/plugin-analytics':
         specifier: workspace:*
         version: link:../../plugins/analytics
-      '@anlg/plugin-attachment-sync':
-        specifier: workspace:*
-        version: link:../../plugins/attachment-sync
       '@anlg/plugin-auth':
         specifier: workspace:*
         version: link:../../plugins/auth
