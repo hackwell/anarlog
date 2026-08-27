@@ -1,16 +1,8 @@
 mod commands;
 mod error;
-mod events;
-mod fetch;
 mod github_state;
-mod read_path;
 
 pub use error::Error;
-pub use events::*;
-
-pub(crate) struct PluginConfig {
-    pub api_base_url: String,
-}
 
 const PLUGIN_NAME: &str = "todo";
 
@@ -18,62 +10,23 @@ fn make_specta_builder<R: tauri::Runtime>() -> tauri_specta::Builder<R> {
     tauri_specta::Builder::<R>::new()
         .plugin_name(PLUGIN_NAME)
         .commands(tauri_specta::collect_commands![
-            commands::authorization_status,
-            commands::request_full_access,
-            commands::list_todo_lists,
-            commands::fetch_todos,
-            commands::read_path::<tauri::Wry>,
-            commands::create_todo,
-            commands::complete_todo,
-            commands::delete_todo,
-            commands::linear_list_teams::<tauri::Wry>,
-            commands::linear_list_tickets::<tauri::Wry>,
             commands::github_issue_state,
             commands::github_issue_detail,
             commands::github_issue_comments,
         ])
-        .events(tauri_specta::collect_events![TodoChangedEvent])
         .error_handling(tauri_specta::ErrorHandlingMode::Result)
 }
 
 pub fn init<R: tauri::Runtime>() -> tauri::plugin::TauriPlugin<R> {
     let specta_builder = make_specta_builder();
-    let api_base_url = get_api_base_url();
 
     tauri::plugin::Builder::new(PLUGIN_NAME)
         .invoke_handler(specta_builder.invoke_handler())
         .setup(move |app, _api| {
             specta_builder.mount_events(app);
-
-            #[cfg(target_os = "macos")]
-            {
-                use tauri_specta::Event;
-
-                let app_handle = app.app_handle().clone();
-                anlg_apple_todo::setup_change_notification(move || {
-                    let _ = TodoChangedEvent.emit(&app_handle);
-                });
-            }
-
-            use tauri::Manager;
-            app.manage(PluginConfig { api_base_url });
             Ok(())
         })
         .build()
-}
-
-fn get_api_base_url() -> String {
-    #[cfg(not(debug_assertions))]
-    {
-        env!("VITE_API_URL").to_string()
-    }
-
-    #[cfg(debug_assertions)]
-    {
-        option_env!("VITE_API_URL")
-            .unwrap_or("http://localhost:3001")
-            .to_string()
-    }
 }
 
 #[cfg(test)]

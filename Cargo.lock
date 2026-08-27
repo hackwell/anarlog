@@ -18187,8 +18187,6 @@ name = "tauri-plugin-todo"
 version = "0.1.0"
 dependencies = [
  "anlg-http-utils",
- "api-client",
- "apple-todo",
  "github-issues",
  "reqwest 0.13.2",
  "serde",
@@ -18196,11 +18194,9 @@ dependencies = [
  "specta-typescript",
  "tauri",
  "tauri-plugin",
- "tauri-plugin-auth",
  "tauri-plugin-permissions",
  "tauri-specta",
  "thiserror 2.0.18",
- "ticket-interface",
 ]
 
 [[package]]

@@ -183,7 +183,6 @@ msgstr "Aktivität"
 
 #: src/contacts/shared.tsx
 #: src/settings/dictionary/index.tsx
-#: src/settings/todo/github.tsx
 #: src/sidebar/toast/registry.tsx
 msgid "Add"
 msgstr "Hinzufügen"
@@ -283,10 +282,6 @@ msgstr "Zahlungsmethode hinzufügen"
 #: src/contacts/new-person-form.tsx
 msgid "Add person"
 msgstr "Person hinzufügen"
-
-#: src/settings/todo/github.tsx
-msgid "Add repository"
-msgstr "Repository hinzufügen"
 
 #: src/settings/developers/skills.tsx
 msgid "Add skill to…"
@@ -642,7 +637,6 @@ msgstr "Kann ansehen"
 #: src/settings/general/e2ee-setup.tsx
 #: src/settings/general/storage/legacy-cleanup.tsx
 #: src/settings/sync/index.tsx
-#: src/settings/todo/github.tsx
 #: src/shared/ui/destructive-confirmation-dialog.tsx
 #: src/templates/auto-format-examples-dialog.tsx
 msgid "Cancel"
@@ -1095,7 +1089,6 @@ msgstr "Verbinden"
 #: src/instruction/index.tsx
 #: src/settings/ai/llm/subscriptions/connect.tsx
 #: src/settings/ai/shared/index.tsx
-#: src/settings/todo/provider-content.tsx
 msgid "Connect {0}"
 msgstr "{0} verbinden"
 
@@ -1112,10 +1105,6 @@ msgstr "Verbinden & importieren"
 #: src/onboarding/index.tsx
 msgid "Connect calendar"
 msgstr "Kalender verbinden"
-
-#: src/settings/todo/github.tsx
-msgid "Connect GitHub for private repos."
-msgstr "GitHub für private Repositories verbinden."
 
 #: src/onboarding/calendar.tsx
 msgid "Connect Google Calendar"
@@ -1608,13 +1597,8 @@ msgstr "Deaktivieren"
 #: src/calendar/components/sidebar.tsx
 #: src/imports/screen.tsx
 #: src/settings/sync/index.tsx
-#: src/settings/todo/provider-content.tsx
 msgid "Disconnect"
 msgstr "Trennen"
-
-#: src/settings/todo/github.tsx
-msgid "Disconnect private repo access."
-msgstr "Zugriff auf private Repositories trennen."
 
 #: src/settings/general/audio-settings.tsx
 msgid "Don't save"
@@ -1842,7 +1826,6 @@ msgid "Failed to load Google Calendar"
 msgstr "Google Kalender konnte nicht geladen werden"
 
 #: src/calendar/components/oauth/provider-content.tsx
-#: src/settings/todo/provider-content.tsx
 msgid "Failed to load integration status"
 msgstr "Integrationsstatus konnte nicht geladen werden"
 
@@ -2935,15 +2918,6 @@ msgstr "Nur ich"
 msgid "Only people invited"
 msgstr "Nur eingeladene Personen"
 
-#: src/settings/todo/github.tsx
-msgid "Only public repositories are supported."
-msgstr "Nur öffentliche Repositories werden unterstützt."
-
-#. placeholder {0}: (config.filterLabel ?? "repository").toLowerCase()
-#: src/settings/todo/provider-content.tsx
-msgid "Only sync items from this {0}."
-msgstr "Nur Einträge aus diesem {0} synchronisieren."
-
 #: src/settings/team/index.tsx
 msgid "Only workspace admins can see who has access. You are a member of this workspace."
 msgstr "Nur Workspace-Admins können sehen, wer Zugriff hat. Sie sind Mitglied dieses Workspace."
@@ -2994,10 +2968,6 @@ msgstr "Auf GitHub öffnen"
 #: src/settings/developers/devtools.tsx
 msgid "Open panel"
 msgstr "Panel öffnen"
-
-#: src/settings/todo/github.tsx
-msgid "Open repository on GitHub"
-msgstr "Repository auf GitHub öffnen"
 
 #: src/composer/index.tsx
 #: src/onboarding/final.tsx
@@ -3051,7 +3021,6 @@ msgstr "Öffnet die Systemeinstellungen und führt Sie dazu, Session Echo zur Li
 #: src/calendar/components/apple/permission.tsx
 #: src/calendar/components/oauth/provider-content.tsx
 #: src/settings/ai/shared/index.tsx
-#: src/settings/todo/provider-content.tsx
 msgid "or"
 msgstr "oder"
 
@@ -3306,7 +3275,6 @@ msgid "Reconnect Notion"
 msgstr "Notion erneut verbinden"
 
 #: src/calendar/components/oauth/status.tsx
-#: src/settings/todo/provider-content.tsx
 msgid "Reconnect required"
 msgstr "Erneute Verbindung erforderlich"
 
@@ -3368,10 +3336,6 @@ msgstr "Verwandte Notizen"
 msgid "Remember speakers"
 msgstr "Sprecher merken"
 
-#: src/settings/todo/provider-content.tsx
-msgid "Reminders"
-msgstr "Erinnerungen"
-
 #: src/settings/developers/cloud-api.tsx
 msgid "Remote MCP"
 msgstr "Remote-MCP"
@@ -3401,10 +3365,6 @@ msgstr "Beispiel {0} entfernen"
 #: src/contacts/contact-page-header.tsx
 msgid "Remove photo"
 msgstr "Foto entfernen"
-
-#: src/settings/todo/github.tsx
-msgid "Remove repository"
-msgstr "Repository entfernen"
 
 #: src/settings/sync/index.tsx
 msgid "Rename device"
@@ -3448,10 +3408,6 @@ msgstr "Ersetzen"
 #: src/session/components/note-input/search/bar.tsx
 msgid "Replace all"
 msgstr "Alle ersetzen"
-
-#: src/settings/todo/github.tsx
-msgid "Replace repository"
-msgstr "Repository ersetzen"
 
 #: src/session/components/note-input/search/bar.tsx
 msgid "Replace with..."
@@ -3682,10 +3638,6 @@ msgstr "Ordner suchen oder erstellen"
 #: src/settings/ai/shared/model-combobox.tsx
 msgid "Search or create new"
 msgstr "Suchen oder neu erstellen"
-
-#: src/settings/todo/github.tsx
-msgid "Search or type owner/repo"
-msgstr "Suchen oder Owner/Repo eingeben"
 
 #: src/settings/automations/starter-config.tsx
 msgid "Search pages shared with Session Echo…"
@@ -4148,10 +4100,6 @@ msgstr "Vor Aktivierung der verschlüsselten Cloud-Synchronisierung anmelden"
 msgid "Sign in for cloud transcription, AI models, and sharing."
 msgstr "Für Cloud-Transkription, KI-Modelle und Freigabe anmelden."
 
-#: src/settings/todo/github.tsx
-msgid "Sign in for private repo access."
-msgstr "Für Zugriff auf private Repositories anmelden."
-
 #: src/settings/general/account.tsx
 msgid "Sign in for Pro"
 msgstr "Für Pro anmelden"
@@ -4160,11 +4108,6 @@ msgstr "Für Pro anmelden"
 #: src/onboarding/calendar.tsx
 msgid "Sign in to connect"
 msgstr "Zum Verbinden anmelden"
-
-#. placeholder {0}: config.displayName
-#: src/settings/todo/provider-content.tsx
-msgid "Sign in to connect {0}"
-msgstr "Anmelden, um {0} zu verbinden"
 
 #: src/calendar/components/oauth/provider-content.tsx
 msgid "Sign in to connect your calendar"
@@ -4680,10 +4623,6 @@ msgstr "Diese Aufnahme nutzt Batch-Transkription, daher steht das Transkript im 
 msgid "This will remove {0} legacy files and free {1}. Your app data will not be affected because the migration to SQLite is complete."
 msgstr "Dadurch werden {0} veraltete Dateien entfernt und {1} freigegeben. Ihre App-Daten sind davon nicht betroffen, da die Migration zu SQLite abgeschlossen ist."
 
-#: src/settings/todo/index.tsx
-msgid "Ticket"
-msgstr "Ticket"
-
 #: src/settings/general/timezone.tsx
 msgid "Timezone"
 msgstr "Zeitzone"
@@ -4892,12 +4831,7 @@ msgstr "Audiofreigabe wird aktualisiert"
 msgid "Upgrade"
 msgstr "Upgrade"
 
-#: src/settings/todo/github.tsx
-msgid "Upgrade for private repos."
-msgstr "Für private Repositories upgraden."
-
 #: src/calendar/components/oauth/provider-content.tsx
-#: src/settings/todo/provider-content.tsx
 msgid "Upgrade to connect"
 msgstr "Zum Verbinden upgraden"
 

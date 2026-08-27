@@ -53,8 +53,7 @@ export type SettingsTab =
   | "permissions"
   | "dictionary"
   | "transcription"
-  | "intelligence"
-  | "todo";
+  | "intelligence";
 
 export const normalizeSettingsTab = (
   tab: string | null | undefined,
@@ -73,7 +72,6 @@ export const normalizeSettingsTab = (
     case "dictionary":
     case "transcription":
     case "intelligence":
-    case "todo":
       return tab;
     case "audio":
       return "meetings";

@@ -7,7 +7,6 @@ import {
   SettingsNotifications,
   SettingsPermissions,
 } from "./general";
-import { SettingsTodo } from "./todo";
 
 import { LLM } from "~/settings/ai/llm";
 import { STT } from "~/settings/ai/stt";
@@ -77,8 +76,6 @@ function SettingsView({ tab }: { tab: Extract<Tab, { type: "settings" }> }) {
         return <STT />;
       case "intelligence":
         return <LLM />;
-      case "todo":
-        return <SettingsTodo />;
       default:
         return <SettingsApp />;
     }

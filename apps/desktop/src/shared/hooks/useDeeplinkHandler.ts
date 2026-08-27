@@ -123,11 +123,6 @@ export function useDeeplinkHandler() {
           void dismissInstruction().then(() => {
             if (return_to === "calendar" || return_to === "settings-calendar") {
               openNewRef.current({ type: "calendar" });
-            } else if (return_to === "todo") {
-              openNewRef.current({
-                type: "settings",
-                state: { tab: "todo" },
-              });
             }
           });
         }
