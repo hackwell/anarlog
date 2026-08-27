@@ -109,7 +109,7 @@ export function E2eeSetupDialog({
       const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
       const path = await join(
         downloadsPath,
-        `anarlog-recovery-key_${timestamp}.txt`,
+        `sessionecho-recovery-key_${timestamp}.txt`,
       );
       const result = await fs2Commands.writeTextFile(path, `${recoveryKey}\n`);
       if (result.status === "error") {

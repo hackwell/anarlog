@@ -194,7 +194,7 @@ describe("E2eeSetupDialog", () => {
     await waitFor(() => expect(mocks.writeTextFile).toHaveBeenCalledTimes(1));
     const [path, content] = mocks.writeTextFile.mock.calls[0];
     expect(path).toMatch(
-      /^\/Downloads\/anarlog-recovery-key_\d{4}-\d{2}-\d{2}T.*Z\.txt$/,
+      /^\/Downloads\/sessionecho-recovery-key_\d{4}-\d{2}-\d{2}T.*Z\.txt$/,
     );
     expect(content).toBe(`${recoveryKey}\n`);
     await waitFor(() =>
