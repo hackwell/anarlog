@@ -163,7 +163,6 @@ msgstr "Access updated."
 msgid "Accessibility"
 msgstr "Accessibility"
 
-#: src/onboarding/index.tsx
 #: src/settings/general/account.tsx
 #: src/sidebar/settings.tsx
 msgid "Account"
@@ -718,10 +717,6 @@ msgstr "Checking installed meeting assistants…"
 msgid "Checking migration..."
 msgstr "Checking migration..."
 
-#: src/onboarding/account/after-login.tsx
-msgid "Checking trial eligibility..."
-msgstr "Checking trial eligibility..."
-
 #: src/settings/developers/cli.tsx
 msgid "Checking…"
 msgstr "Checking…"
@@ -1195,10 +1190,6 @@ msgstr "Contacts"
 msgid "Continue"
 msgstr "Continue"
 
-#: src/onboarding/account/after-login.tsx
-msgid "Continuing without trial"
-msgstr "Continuing without trial"
-
 #: src/settings/general/meeting-settings.tsx
 msgid "Control listening without reopening Session Echo."
 msgstr "Control listening without reopening Session Echo."
@@ -1341,10 +1332,6 @@ msgstr "Could not start sign-in."
 msgid "Could not start the integration setup. Try again."
 msgstr "Could not start the integration setup. Try again."
 
-#: src/onboarding/account/after-login.tsx
-msgid "Could not start trial"
-msgstr "Could not start trial"
-
 #: src/chat/components/input/use-dictation.ts
 msgid "Could not start voice input"
 msgstr "Could not start voice input"
@@ -1401,10 +1388,6 @@ msgstr "Create a recovery key"
 #: src/settings/team/index.tsx
 msgid "Create a shared workspace"
 msgstr "Create a shared workspace"
-
-#: src/onboarding/index.tsx
-msgid "Create account"
-msgstr "Create account"
 
 #: src/settings/developers/cloud-api.tsx
 msgid "Create key"
@@ -1710,10 +1693,6 @@ msgstr "Edit"
 msgid "Edit date"
 msgstr "Edit date"
 
-#: src/onboarding/account/after-login.tsx
-msgid "Eligible for free trial"
-msgstr "Eligible for free trial"
-
 #: src/contacts/details.tsx
 #: src/session-sharing/delivery-panel.tsx
 msgid "Email"
@@ -1998,7 +1977,6 @@ msgstr "Get Pro"
 msgid "Get Pro to customize"
 msgstr "Get Pro to customize"
 
-#: src/onboarding/account/before-login.tsx
 #: src/settings/general/account.tsx
 #: src/sidebar/automations.tsx
 msgid "Get started"
@@ -2453,10 +2431,6 @@ msgstr "Lock Note"
 #: src/sidebar/timeline/item.tsx
 msgid "Locked note"
 msgstr "Locked note"
-
-#: src/onboarding/account/before-login.tsx
-msgid "Login"
-msgstr "Login"
 
 #: src/settings/appearance/theme.tsx
 msgid "Low-light canvas"
@@ -4228,10 +4202,6 @@ msgstr "Sign in to get the most out of Session Echo"
 msgid "Sign in to Session Echo"
 msgstr "Sign in to Session Echo"
 
-#: src/onboarding/index.tsx
-msgid "Sign in to unlock powerful AI models, sync across devices, and personalization."
-msgstr "Sign in to unlock powerful AI models, sync across devices, and personalization."
-
 #: src/settings/sync/index.tsx
 msgid "Sign in to use cloud sync"
 msgstr "Sign in to use cloud sync"
@@ -4277,8 +4247,6 @@ msgstr "Sign out and sign in again to resume cloud sync."
 msgid "Sign out of Session Echo?"
 msgstr "Sign out of Session Echo?"
 
-#: src/onboarding/account/after-login.tsx
-#: src/onboarding/index.tsx
 #: src/settings/general/account.tsx
 msgid "Signed in"
 msgstr "Signed in"
@@ -4306,10 +4274,6 @@ msgstr "Skip"
 #: src/onboarding/imports.tsx
 msgid "Skip for now"
 msgstr "Skip for now"
-
-#: src/onboarding/index.tsx
-msgid "Skipped"
-msgstr "Skipped"
 
 #: src/session-sharing/delivery-panel.tsx
 msgid "Slack"
@@ -4411,10 +4375,6 @@ msgstr "Starting transcription..."
 #: src/chat/components/input/index.tsx
 msgid "Starting voice input"
 msgstr "Starting voice input"
-
-#: src/onboarding/account/after-login.tsx
-msgid "Starting your trial..."
-msgstr "Starting your trial..."
 
 #: src/chat/components/input/index.tsx
 msgid "Starting…"
@@ -4809,10 +4769,6 @@ msgstr "Travel & Places"
 #: src/settings/general/account.tsx
 msgid "Trial"
 msgstr "Trial"
-
-#: src/onboarding/account/after-login.tsx
-msgid "Trial activated - {trialDays} days of Pro"
-msgstr "Trial activated - {trialDays} days of Pro"
 
 #: src/settings/automations/index.tsx
 #: src/settings/automations/workflow-builder.tsx
@@ -5229,17 +5185,9 @@ msgstr "You can undo this action for a short time."
 msgid "You can use up to three example summaries."
 msgstr "You can use up to three example summaries."
 
-#: src/onboarding/account/after-login.tsx
-msgid "You have an active plan"
-msgstr "You have an active plan"
-
 #: src/settings/general/account.tsx
 msgid "You'll need to sign in again to use cloud sync and account features."
 msgstr "You'll need to sign in again to use cloud sync and account features."
-
-#: src/onboarding/account/after-login.tsx
-msgid "You're on a Pro trial"
-msgstr "You're on a Pro trial"
 
 #: src/settings/general/account.tsx
 msgid "You're on the <0>{planLabel}</0> plan"

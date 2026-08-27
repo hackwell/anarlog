@@ -163,7 +163,6 @@ msgstr "Zugriff aktualisiert."
 msgid "Accessibility"
 msgstr "Bedienungshilfen"
 
-#: src/onboarding/index.tsx
 #: src/settings/general/account.tsx
 #: src/sidebar/settings.tsx
 msgid "Account"
@@ -718,10 +717,6 @@ msgstr "Installierte Meeting-Assistenten werden geprüft …"
 msgid "Checking migration..."
 msgstr "Migration wird geprüft …"
 
-#: src/onboarding/account/after-login.tsx
-msgid "Checking trial eligibility..."
-msgstr "Testphasen-Berechtigung wird geprüft …"
-
 #: src/settings/developers/cli.tsx
 msgid "Checking…"
 msgstr "Wird geprüft …"
@@ -1195,10 +1190,6 @@ msgstr "Kontakte"
 msgid "Continue"
 msgstr "Weiter"
 
-#: src/onboarding/account/after-login.tsx
-msgid "Continuing without trial"
-msgstr "Weiter ohne Testphase"
-
 #: src/settings/general/meeting-settings.tsx
 msgid "Control listening without reopening Session Echo."
 msgstr "Das Zuhören steuern, ohne Session Echo erneut zu öffnen."
@@ -1341,10 +1332,6 @@ msgstr "Anmeldung konnte nicht gestartet werden."
 msgid "Could not start the integration setup. Try again."
 msgstr "Einrichtung der Integration konnte nicht gestartet werden. Erneut versuchen."
 
-#: src/onboarding/account/after-login.tsx
-msgid "Could not start trial"
-msgstr "Testphase konnte nicht gestartet werden"
-
 #: src/chat/components/input/use-dictation.ts
 msgid "Could not start voice input"
 msgstr "Spracheingabe konnte nicht gestartet werden"
@@ -1401,10 +1388,6 @@ msgstr "Wiederherstellungsschlüssel erstellen"
 #: src/settings/team/index.tsx
 msgid "Create a shared workspace"
 msgstr "Gemeinsamen Workspace erstellen"
-
-#: src/onboarding/index.tsx
-msgid "Create account"
-msgstr "Konto erstellen"
 
 #: src/settings/developers/cloud-api.tsx
 msgid "Create key"
@@ -1710,10 +1693,6 @@ msgstr "Bearbeiten"
 msgid "Edit date"
 msgstr "Datum bearbeiten"
 
-#: src/onboarding/account/after-login.tsx
-msgid "Eligible for free trial"
-msgstr "Berechtigt für kostenlose Testphase"
-
 #: src/contacts/details.tsx
 #: src/session-sharing/delivery-panel.tsx
 msgid "Email"
@@ -1998,7 +1977,6 @@ msgstr "Pro holen"
 msgid "Get Pro to customize"
 msgstr "Pro holen, um anzupassen"
 
-#: src/onboarding/account/before-login.tsx
 #: src/settings/general/account.tsx
 #: src/sidebar/automations.tsx
 msgid "Get started"
@@ -2453,10 +2431,6 @@ msgstr "Notiz sperren"
 #: src/sidebar/timeline/item.tsx
 msgid "Locked note"
 msgstr "Gesperrte Notiz"
-
-#: src/onboarding/account/before-login.tsx
-msgid "Login"
-msgstr "Anmelden"
 
 #: src/settings/appearance/theme.tsx
 msgid "Low-light canvas"
@@ -4228,10 +4202,6 @@ msgstr "Anmelden, um Session Echo optimal zu nutzen"
 msgid "Sign in to Session Echo"
 msgstr "Bei Session Echo anmelden"
 
-#: src/onboarding/index.tsx
-msgid "Sign in to unlock powerful AI models, sync across devices, and personalization."
-msgstr "Anmelden, um leistungsstarke KI-Modelle, geräteübergreifende Synchronisierung und Personalisierung freizuschalten."
-
 #: src/settings/sync/index.tsx
 msgid "Sign in to use cloud sync"
 msgstr "Anmelden, um die Cloud-Synchronisierung zu nutzen"
@@ -4277,8 +4247,6 @@ msgstr "Abmelden und erneut anmelden, um die Cloud-Synchronisierung fortzusetzen
 msgid "Sign out of Session Echo?"
 msgstr "Von Session Echo abmelden?"
 
-#: src/onboarding/account/after-login.tsx
-#: src/onboarding/index.tsx
 #: src/settings/general/account.tsx
 msgid "Signed in"
 msgstr "Angemeldet"
@@ -4306,10 +4274,6 @@ msgstr "Überspringen"
 #: src/onboarding/imports.tsx
 msgid "Skip for now"
 msgstr "Vorerst überspringen"
-
-#: src/onboarding/index.tsx
-msgid "Skipped"
-msgstr "Übersprungen"
 
 #: src/session-sharing/delivery-panel.tsx
 msgid "Slack"
@@ -4411,10 +4375,6 @@ msgstr "Transkription wird gestartet …"
 #: src/chat/components/input/index.tsx
 msgid "Starting voice input"
 msgstr "Spracheingabe wird gestartet"
-
-#: src/onboarding/account/after-login.tsx
-msgid "Starting your trial..."
-msgstr "Ihre Testphase wird gestartet …"
 
 #: src/chat/components/input/index.tsx
 msgid "Starting…"
@@ -4809,10 +4769,6 @@ msgstr "Reisen & Orte"
 #: src/settings/general/account.tsx
 msgid "Trial"
 msgstr "Testphase"
-
-#: src/onboarding/account/after-login.tsx
-msgid "Trial activated - {trialDays} days of Pro"
-msgstr "Testphase aktiviert – {trialDays} Tage Pro"
 
 #: src/settings/automations/index.tsx
 #: src/settings/automations/workflow-builder.tsx
@@ -5229,17 +5185,9 @@ msgstr "Sie können diese Aktion für kurze Zeit rückgängig machen."
 msgid "You can use up to three example summaries."
 msgstr "Sie können bis zu drei Beispielzusammenfassungen verwenden."
 
-#: src/onboarding/account/after-login.tsx
-msgid "You have an active plan"
-msgstr "Sie haben einen aktiven Plan"
-
 #: src/settings/general/account.tsx
 msgid "You'll need to sign in again to use cloud sync and account features."
 msgstr "Sie müssen sich erneut anmelden, um Cloud-Synchronisierung und Kontofunktionen zu nutzen."
-
-#: src/onboarding/account/after-login.tsx
-msgid "You're on a Pro trial"
-msgstr "Sie befinden sich in einer Pro-Testphase"
 
 #: src/settings/general/account.tsx
 msgid "You're on the <0>{planLabel}</0> plan"
