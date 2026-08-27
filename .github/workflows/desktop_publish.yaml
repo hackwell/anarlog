@@ -645,7 +645,7 @@ jobs:
             exit 1
           fi
           public_fingerprint=$(gpg --batch --with-colons --show-keys \
-            apps/web/public/apt/anarlog-archive-keyring.asc \
+            packaging/apt/anarlog-archive-keyring.asc \
             | awk -F: '$1 == "fpr" { print $10; exit }')
           if [[ "$public_fingerprint" != "$APT_REPOSITORY_GPG_FINGERPRINT" ]]; then
             echo "::error::Published APT key $public_fingerprint does not match $APT_REPOSITORY_GPG_FINGERPRINT"
@@ -658,7 +658,7 @@ jobs:
             --arm64 "$RUNNER_TEMP/apt-packages/anarlog-linux-aarch64.deb" \
             --date "$PUBLISHED_AT"
 
-          release_dir="apps/web/public/apt/dists/stable"
+          release_dir="packaging/apt/dists/stable"
           gpg --batch --yes --armor \
             --local-user "$APT_REPOSITORY_GPG_FINGERPRINT" \
             --output "$release_dir/InRelease" \
@@ -674,7 +674,7 @@ jobs:
           GH_TOKEN: ${{ secrets.YUJONGLEE_GITHUB_TOKEN_REPO }}
           VERSION: ${{ needs.parse.outputs.version }}
         run: |
-          if git diff --quiet -- packaging/aur/anarlog-bin apps/web/public/apt; then
+          if git diff --quiet -- packaging/aur/anarlog-bin packaging/apt; then
             echo "Linux package metadata already tracks $VERSION"
             exit 0
           fi
@@ -683,7 +683,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git checkout -b "$BRANCH"
-          git add packaging/aur/anarlog-bin apps/web/public/apt
+          git add packaging/aur/anarlog-bin packaging/apt
           git commit -m "chore(packaging): publish Linux packages for $VERSION" \
             -m "Refresh the AUR package and signed APT repository metadata for the desktop_v$VERSION release."
           git push --force origin "$BRANCH"

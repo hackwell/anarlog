@@ -1,7 +1,6 @@
 {
   "scripts": {
     "dev:desktop": "pnpm -F @anlg/desktop tauri:dev",
-    "dev:web": "pnpm -F @anlg/web dev",
     "fmt:check": "dprint check",
     "fmt": "dprint fmt",
     "lint": "pnpm lint:oxlint && pnpm lint:eslint",
@@ -15,6 +14,7 @@
     "@tanstack/eslint-plugin-query": "^5.99.0",
     "dprint": "^0.51.1",
     "eslint": "^9.39.4",
+    "js-yaml": "^4.3.1",
     "lint-staged": "^16.4.0",
     "oxfmt": "^0.45.0",
     "oxlint": "^1.60.0",

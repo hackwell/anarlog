@@ -160,7 +160,7 @@ export async function writeRepository(outputDirectory, repository) {
 
 function defaultOutputDirectory() {
   const here = path.dirname(fileURLToPath(import.meta.url));
-  return path.join(here, "..", "apps", "web", "public", "apt");
+  return path.join(here, "..", "packaging", "apt");
 }
 
 async function main() {

@@ -79,7 +79,7 @@
         ]
       },
       {
-        "command": "node apps/web/scripts/format-mdx.js",
+        "command": "node scripts/format-mdx.js",
         "exts": [
           "mdx"
         ]
