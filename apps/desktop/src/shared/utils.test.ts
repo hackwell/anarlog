@@ -19,7 +19,6 @@ describe("getScheme", () => {
     ["de.flagbit.sessionecho", "anarlog"],
     ["de.flagbit.sessionecho.staging", "anarlog-staging"],
     ["de.flagbit.sessionecho.dev", "sessionecho"],
-    ["so.anarlog.Anarlog", "anarlog"],
     ["unknown", "anarlog"],
   ])("maps %s to %s", async (identifier, scheme) => {
     mocks.getIdentifier.mockResolvedValue(identifier);

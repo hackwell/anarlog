@@ -5,7 +5,6 @@ use std::os::unix::fs::PermissionsExt;
 #[test]
 fn maps_bundle_id_to_command_name() {
     assert_eq!(command_name_from_identifier(STABLE_BUNDLE_ID), "anarlog");
-    assert_eq!(command_name_from_identifier(FLATPAK_BUNDLE_ID), "anarlog");
     assert_eq!(
         command_name_from_identifier(STAGING_BUNDLE_ID),
         "anarlog-staging"

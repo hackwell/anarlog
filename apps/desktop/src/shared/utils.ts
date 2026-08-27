@@ -16,7 +16,6 @@ export const getScheme = async (): Promise<DesktopScheme> => {
     "de.flagbit.sessionecho": "anarlog",
     "de.flagbit.sessionecho.staging": "anarlog-staging",
     "de.flagbit.sessionecho.dev": "sessionecho",
-    "so.anarlog.Anarlog": "anarlog",
   };
   return schemes[id] ?? "anarlog";
 };
