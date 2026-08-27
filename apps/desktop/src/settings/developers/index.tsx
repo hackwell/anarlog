@@ -1,7 +1,6 @@
 import { t } from "@lingui/core/macro";
 
 import { CliSettingsSections } from "./cli";
-import { CloudApiSection } from "./cloud-api";
 import { DevtoolsSection } from "./devtools";
 import { WebhooksSection } from "./webhooks";
 
@@ -16,7 +15,6 @@ export function SettingsDevelopers() {
         <SettingsPageTitle title={t`Developers`} />
       </div>
       <CliSettingsSections />
-      <CloudApiSection />
       <WebhooksSection />
       <DevtoolsSection />
     </div>

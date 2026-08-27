@@ -28,10 +28,6 @@ vi.mock("~/session/content-queries", () => ({
   loadSessionContentSnapshot: mocks.loadSessionContentSnapshot,
 }));
 
-vi.mock("~/cloud-api/client", () => ({
-  syncCloudApiSnapshotBestEffort: vi.fn(),
-}));
-
 vi.mock("~/session/content-mutations", () => ({
   persistGeneratedEnhancedNote: mocks.persistGeneratedEnhancedNote,
 }));

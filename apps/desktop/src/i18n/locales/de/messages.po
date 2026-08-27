@@ -140,10 +140,6 @@ msgstr "A bis Z"
 msgid "a week ago"
 msgstr "vor einer Woche"
 
-#: src/settings/developers/cloud-api.tsx
-msgid "Access meetings remotely through the REST API and MCP connectors with Session Echo Pro."
-msgstr "Remote-Zugriff auf Meetings über die REST-API und MCP-Connectors mit Session Echo Pro."
-
 #: src/shared-notes/index.tsx
 msgid "Access no longer available"
 msgstr "Zugriff nicht mehr verfügbar"
@@ -230,10 +226,6 @@ msgstr "Zuerst mindestens eine Aktion hinzufügen und konfigurieren."
 msgid "Add another account"
 msgstr "Weiteres Konto hinzufügen"
 
-#: src/settings/sync/index.tsx
-msgid "Add another device"
-msgstr "Weiteres Gerät hinzufügen"
-
 #: src/session/components/note-input/enhanced/config-error.tsx
 msgid "Add API key"
 msgstr "API-Schlüssel hinzufügen"
@@ -245,10 +237,6 @@ msgstr "Vor dem Aktivieren mindestens eine konfigurierte Aktion hinzufügen."
 #: src/templates/auto-format-examples-dialog.tsx
 msgid "Add at least one example summary."
 msgstr "Mindestens eine Beispielzusammenfassung hinzufügen."
-
-#: src/settings/sync/index.tsx
-msgid "Add device"
-msgstr "Gerät hinzufügen"
 
 #: src/templates/auto-format-examples-dialog.tsx
 msgid "Add example"
@@ -427,22 +415,9 @@ msgstr "Auf Memo anwenden"
 msgid "Apply to summary"
 msgstr "Auf Zusammenfassung anwenden"
 
-#: src/settings/sync/index.tsx
-msgid "Approval requested"
-msgstr "Genehmigung angefragt"
-
 #: src/session-sharing/access-management.tsx
-#: src/settings/sync/index.tsx
 msgid "Approve"
 msgstr "Genehmigen"
-
-#: src/settings/sync/index.tsx
-msgid "Approved"
-msgstr "Genehmigt"
-
-#: src/settings/sync/index.tsx
-msgid "Approved — waiting for this device to finish"
-msgstr "Genehmigt — warten, bis dieses Gerät fertig ist"
 
 #: src/chat/components/input/index.tsx
 #: src/shared/chat-cta.tsx
@@ -551,10 +526,6 @@ msgstr "Automatisierungen"
 msgid "Back"
 msgstr "Zurück"
 
-#: src/settings/sync/index.tsx
-msgid "Background sync"
-msgstr "Hintergrundsynchronisierung"
-
 #: src/settings/general/summary-length.tsx
 msgid "Balanced"
 msgstr "Ausgewogen"
@@ -636,7 +607,6 @@ msgstr "Kann ansehen"
 #: src/settings/ai/llm/subscriptions/connect.tsx
 #: src/settings/general/e2ee-setup.tsx
 #: src/settings/general/storage/legacy-cleanup.tsx
-#: src/settings/sync/index.tsx
 #: src/shared/ui/destructive-confirmation-dialog.tsx
 #: src/templates/auto-format-examples-dialog.tsx
 msgid "Cancel"
@@ -675,10 +645,6 @@ msgstr "Sprecher ändern"
 msgid "Changes stay on this device until you resume sync"
 msgstr "Änderungen bleiben auf diesem Gerät, bis die Synchronisierung fortgesetzt wird"
 
-#: src/settings/sync/index.tsx
-msgid "Changes stay on this device until you resume sync."
-msgstr "Änderungen bleiben auf diesem Gerät, bis die Synchronisierung fortgesetzt wird."
-
 #: src/chat/components/toolbar-controls.tsx
 msgid "Chat history"
 msgstr "Chatverlauf"
@@ -694,10 +660,6 @@ msgstr "Verbindung wird geprüft"
 #: src/settings/automations/starter-config.tsx
 msgid "Checking connection…"
 msgstr "Verbindung wird geprüft …"
-
-#: src/settings/sync/index.tsx
-msgid "Checking for changes"
-msgstr "Änderungen werden geprüft"
 
 #: src/imports/screen.tsx
 msgid "Checking installed meeting assistants…"
@@ -720,10 +682,6 @@ msgstr "{0}-Exportdateien auswählen"
 #: src/settings/automations/starter-config.tsx
 msgid "Choose a channel"
 msgstr "Kanal auswählen"
-
-#: src/settings/sync/index.tsx
-msgid "Choose a device below to replace, then this device will continue automatically."
-msgstr "Unten ein Gerät zum Ersetzen auswählen, dieses Gerät wird dann automatisch fortgesetzt."
 
 #: src/session/components/outer-header/overflow/export-modal.tsx
 msgid "Choose a file format and what to include."
@@ -898,62 +856,17 @@ msgstr "Chat schließen"
 msgid "Closed"
 msgstr "Geschlossen"
 
-#: src/settings/developers/cloud-api.tsx
-msgid "Cloud API & Connectors"
-msgstr "Cloud-API & Connectors"
-
-#: src/settings/developers/cloud-api.tsx
-msgid "Cloud API disabled and readable copies deleted"
-msgstr "Cloud-API deaktiviert und lesbare Kopien gelöscht"
-
-#: src/settings/developers/cloud-api.tsx
-msgid "Cloud API enabled — {uploaded} meetings uploaded"
-msgstr "Cloud-API aktiviert — {uploaded} Meetings hochgeladen"
-
-#: src/settings/developers/cloud-api.tsx
-msgid "Cloud API enabled — 1 meeting uploaded"
-msgstr "Cloud-API aktiviert — 1 Meeting hochgeladen"
-
-#: src/settings/developers/cloud-api.tsx
-msgid "Cloud API enabled, but existing meetings could not be uploaded. Session Echo will retry."
-msgstr "Cloud-API aktiviert, aber bestehende Meetings konnten nicht hochgeladen werden. Session Echo versucht es erneut."
-
-#: src/settings/developers/cloud-api.tsx
-msgid "Cloud API key copied"
-msgstr "Cloud-API-Schlüssel kopiert"
-
-#: src/settings/developers/cloud-api.tsx
-msgid "Cloud API keys"
-msgstr "Cloud-API-Schlüssel"
-
-#: src/settings/developers/cloud-api.tsx
-msgid "Cloud API URL copied"
-msgstr "Cloud-API-URL kopiert"
-
-#: src/settings/sync/index.tsx
-msgid "Cloud sync"
-msgstr "Cloud-Synchronisierung"
-
-#: src/settings/sync/index.tsx
-msgid "Cloud sync and {cloudStorageService} can both change the same files, which can create conflicted copies and incomplete recordings. Move your Session Echo storage location to a folder that {cloudStorageService} does not sync."
-msgstr "Cloud-Synchronisierung und {cloudStorageService} können beide dieselben Dateien ändern, was zu Konfliktkopien und unvollständigen Aufnahmen führen kann. Verschieben Sie den Speicherort von Session Echo in einen Ordner, den {cloudStorageService} nicht synchronisiert."
-
 #: src/main/sync-status.tsx
 msgid "Cloud sync could not start on this device. Open Sync settings to try again."
 msgstr "Cloud-Synchronisierung konnte auf diesem Gerät nicht gestartet werden. Öffnen Sie die Synchronisierungseinstellungen, um es erneut zu versuchen."
 
 #: src/main/sync-status.tsx
-#: src/settings/sync/index.tsx
 msgid "Cloud sync delayed"
 msgstr "Cloud-Synchronisierung verzögert"
 
 #: src/main/sync-status.tsx
 msgid "Cloud sync identity mismatch"
 msgstr "Cloud-Synchronisierung: Identität stimmt nicht überein"
-
-#: src/settings/sync/index.tsx
-msgid "Cloud sync is available with Session Echo Pro"
-msgstr "Cloud-Synchronisierung ist mit Session Echo Pro verfügbar"
 
 #: src/auth/cloudsync.ts
 msgid "Cloud sync is limited to 5 devices. Remove another device to sync here."
@@ -967,17 +880,9 @@ msgstr "Cloud-Synchronisierung ist auf 5 Geräte begrenzt. Ersetzen oder entfern
 msgid "Cloud sync resumes after this meeting finishes processing"
 msgstr "Cloud-Synchronisierung wird fortgesetzt, sobald dieses Meeting fertig verarbeitet ist"
 
-#: src/settings/sync/index.tsx
-msgid "Cloud sync resumes after this meeting finishes processing."
-msgstr "Cloud-Synchronisierung wird fortgesetzt, sobald dieses Meeting fertig verarbeitet ist."
-
 #: src/main/sync-status.tsx
 msgid "Cloud sync resumes when the current activity finishes"
 msgstr "Cloud-Synchronisierung wird fortgesetzt, sobald der aktuelle Vorgang abgeschlossen ist"
-
-#: src/settings/sync/index.tsx
-msgid "Cloud sync resumes when the current activity finishes."
-msgstr "Cloud-Synchronisierung wird fortgesetzt, sobald der aktuelle Vorgang abgeschlossen ist."
 
 #: src/main/sync-status.tsx
 msgid "Cloud sync setup required"
@@ -1154,13 +1059,8 @@ msgid "Connected with your existing subscription."
 msgstr "Verbunden mit Ihrem bestehenden Abonnement."
 
 #: src/main/sync-status.tsx
-#: src/settings/sync/index.tsx
 msgid "Connecting..."
 msgstr "Verbindung wird hergestellt …"
-
-#: src/settings/developers/cloud-api.tsx
-msgid "Connector"
-msgstr "Connector"
 
 #: src/contacts/contact-page-header.tsx
 msgid "Contact options"
@@ -1182,14 +1082,9 @@ msgstr "Das Zuhören steuern, ohne Session Echo erneut zu öffnen."
 #: src/main/windows-title-bar.tsx
 #: src/session/components/note-input/transcript/renderer/selection-menu.tsx
 #: src/settings/ai/llm/subscriptions/connect.tsx
-#: src/settings/developers/cloud-api.tsx
 #: src/settings/developers/webhooks.tsx
 msgid "Copy"
 msgstr "Kopieren"
-
-#: src/settings/developers/cloud-api.tsx
-msgid "Copy {label} URL"
-msgstr "{label}-URL kopieren"
 
 #: src/settings/developers/cli.tsx
 msgid "Copy config"
@@ -1207,10 +1102,6 @@ msgstr "Nachricht kopieren"
 #: src/settings/general/e2ee-setup.tsx
 msgid "Copy recovery key"
 msgstr "Wiederherstellungsschlüssel kopieren"
-
-#: src/settings/developers/cloud-api.tsx
-msgid "Copy this key now — it is only shown once."
-msgstr "Diesen Schlüssel jetzt kopieren — er wird nur einmal angezeigt."
 
 #: src/settings/developers/webhooks.tsx
 msgid "Copy this signing secret now — it is only shown once."
@@ -1265,17 +1156,9 @@ msgstr "Meeting-Notizen konnten nicht per E-Mail versendet werden."
 msgid "Could not generate meeting insights. Try again."
 msgstr "Meeting-Insights konnten nicht generiert werden. Erneut versuchen."
 
-#: src/settings/sync/index.tsx
-msgid "Could not identify this device. Try again."
-msgstr "Dieses Gerät konnte nicht identifiziert werden. Erneut versuchen."
-
 #: src/session-sharing/delivery-panel.tsx
 msgid "Could not load Slack channels. Reconnect Slack and try again."
 msgstr "Slack-Kanäle konnten nicht geladen werden. Slack erneut verbinden und noch einmal versuchen."
-
-#: src/settings/sync/index.tsx
-msgid "Could not load your devices."
-msgstr "Ihre Geräte konnten nicht geladen werden."
 
 #: src/session-sharing/management-panel.tsx
 msgid "Could not open the web copy."
@@ -1374,10 +1257,6 @@ msgstr "Wiederherstellungsschlüssel erstellen"
 msgid "Create a shared workspace"
 msgstr "Gemeinsamen Workspace erstellen"
 
-#: src/settings/developers/cloud-api.tsx
-msgid "Create key"
-msgstr "Schlüssel erstellen"
-
 #: src/automations/starters.tsx
 msgid "Create Linear issues"
 msgstr "Linear-Issues erstellen"
@@ -1401,11 +1280,6 @@ msgstr "Vorlage erstellen"
 #: src/session/components/outer-header/overflow/export-modal.tsx
 msgid "Created"
 msgstr "Erstellt"
-
-#. placeholder {0}: apiKey.created_at.slice(0, 10)
-#: src/settings/developers/api-key-row.tsx
-msgid "Created {0}"
-msgstr "Erstellt {0}"
 
 #: src/settings/automations/index.tsx
 msgid "Created {createdAt}"
@@ -1559,15 +1433,9 @@ msgid "Device authentication is not available on this computer."
 msgstr "Geräteauthentifizierung ist auf diesem Computer nicht verfügbar."
 
 #: src/main/sync-status.tsx
-#: src/settings/sync/index.tsx
 msgid "Device limit reached"
 msgstr "Gerätelimit erreicht"
 
-#: src/settings/sync/index.tsx
-msgid "Device name"
-msgstr "Gerätename"
-
-#: src/settings/sync/index.tsx
 #: src/settings/team/index.tsx
 msgid "Devices"
 msgstr "Geräte"
@@ -1596,7 +1464,6 @@ msgstr "Deaktivieren"
 #: src/calendar/components/oauth/provider-content.tsx
 #: src/calendar/components/sidebar.tsx
 #: src/imports/screen.tsx
-#: src/settings/sync/index.tsx
 msgid "Disconnect"
 msgstr "Trennen"
 
@@ -1605,7 +1472,6 @@ msgid "Don't save"
 msgstr "Nicht speichern"
 
 #: src/session/components/note-input/transcript/index.tsx
-#: src/settings/sync/index.tsx
 msgid "Done"
 msgstr "Fertig"
 
@@ -1705,19 +1571,11 @@ msgstr "Aktivieren"
 msgid "Enable {0}"
 msgstr "{0} aktivieren"
 
-#: src/settings/developers/cloud-api.tsx
-msgid "Enable Cloud API & Connectors"
-msgstr "Cloud-API & Connectors aktivieren"
-
 #: src/settings/automations/index.tsx
 #: src/settings/automations/workflow-builder.tsx
 #: src/sidebar/automations.tsx
 msgid "Enabled"
 msgstr "Aktiviert"
-
-#: src/settings/sync/index.tsx
-msgid "End-to-end encryption"
-msgstr "Ende-zu-Ende-Verschlüsselung"
 
 #: src/session/components/outer-header/metadata/participants/chip.tsx
 msgid "Enhance contact"
@@ -2042,10 +1900,6 @@ msgstr "Seitenleiste ausblenden"
 msgid "Hide Sidebar"
 msgstr "Seitenleiste ausblenden"
 
-#: src/settings/sync/index.tsx
-msgid "Hide sync log"
-msgstr "Synchronisierungsprotokoll ausblenden"
-
 #. placeholder {0}: history.position
 #. placeholder {1}: history.total
 #: src/chat/components/input/index.tsx
@@ -2133,10 +1987,6 @@ msgstr "Unterhalb einfügen"
 msgid "Install"
 msgstr "Installieren"
 
-#: src/settings/sync/index.tsx
-msgid "Install Session Echo and sign in with this account on the new device. It will appear here automatically so you can approve it."
-msgstr "Session Echo auf dem neuen Gerät installieren und mit diesem Konto anmelden. Es erscheint dann automatisch hier, sodass Sie es genehmigen können."
-
 #: src/settings/developers/skills.tsx
 msgid "Install to all agents"
 msgstr "Für alle Agenten installieren"
@@ -2217,26 +2067,6 @@ msgstr "Desktop-Änderungen behalten"
 msgid "Keep forever"
 msgstr "Für immer behalten"
 
-#: src/settings/sync/index.tsx
-msgid "Keep notes current automatically."
-msgstr "Notizen automatisch aktuell halten."
-
-#: src/settings/sync/index.tsx
-msgid "Keep notes encrypted and synced across your devices."
-msgstr "Notizen verschlüsselt und über Ihre Geräte hinweg synchronisiert halten."
-
-#: src/settings/sync/index.tsx
-msgid "Keep synced notes readable only on your devices."
-msgstr "Synchronisierte Notizen nur auf Ihren Geräten lesbar halten."
-
-#: src/settings/sync/index.tsx
-msgid "Keep your recovery key saved somewhere safe. You can still use it if another approved device is unavailable."
-msgstr "Bewahren Sie Ihren Wiederherstellungsschlüssel sicher auf. Sie können ihn weiterhin verwenden, falls kein anderes genehmigtes Gerät verfügbar ist."
-
-#: src/settings/developers/cloud-api.tsx
-msgid "Key name (e.g. Claude Code)"
-msgstr "Schlüsselname (z. B. Claude Code)"
-
 #: src/settings/ai/llm/subscriptions/connect.tsx
 msgid "Kimi Code API key"
 msgstr "Kimi-Code-API-Schlüssel"
@@ -2270,21 +2100,10 @@ msgstr "Zuletzt ausgeführt {relative}: {0}"
 msgid "Last run failed {relative}: {0}"
 msgstr "Letzte Ausführung fehlgeschlagen {relative}: {0}"
 
-#. placeholder {0}: formatDistanceToNow(new Date(device.lastSeenAt))
-#: src/settings/sync/index.tsx
-msgid "Last seen {0}"
-msgstr "Zuletzt gesehen {0}"
-
 #. placeholder {0}: formatDistanceToNow( new Date(status.last_sync_at_ms), { addSuffix: true }, )
 #: src/main/sync-status.tsx
-#: src/settings/sync/index.tsx
 msgid "Last synced {0}"
 msgstr "Zuletzt synchronisiert {0}"
-
-#. placeholder {0}: apiKey.last_used_at.slice(0, 10)
-#: src/settings/developers/api-key-row.tsx
-msgid "Last used {0}"
-msgstr "Zuletzt verwendet {0}"
 
 #: src/chat/components/message/error.tsx
 msgid "Learn how to fix this"
@@ -2347,14 +2166,6 @@ msgstr "Kalender werden geladen …"
 msgid "Loading channels…"
 msgstr "Kanäle werden geladen …"
 
-#: src/settings/developers/cloud-api.tsx
-msgid "Loading Cloud API access"
-msgstr "Cloud-API-Zugriff wird geladen"
-
-#: src/settings/sync/index.tsx
-msgid "Loading devices"
-msgstr "Geräte werden geladen"
-
 #: src/edit/tab-content.tsx
 msgid "Loading edit…"
 msgstr "Bearbeitung wird geladen …"
@@ -2371,10 +2182,6 @@ msgstr "Geplante Aufnahmen werden geladen …"
 #: src/settings/hydration-boundary.tsx
 msgid "Loading settings"
 msgstr "Einstellungen werden geladen"
-
-#: src/settings/sync/index.tsx
-msgid "Loading sync settings"
-msgstr "Synchronisierungseinstellungen werden geladen"
 
 #: src/settings/automations/starter-config.tsx
 msgid "Loading teams…"
@@ -2413,7 +2220,6 @@ msgstr "macOS kann nicht auf Ihren Anmelde-Schlüsselbund zugreifen. Die Reparat
 
 #: src/auth/cloudsync-keychain-repair.tsx
 #: src/main/sync-status.tsx
-#: src/settings/sync/index.tsx
 msgid "macOS could not access your recovery key. Repair Keychain access, then resume sync."
 msgstr "macOS konnte nicht auf Ihren Wiederherstellungsschlüssel zugreifen. Schlüsselbund-Zugriff reparieren und dann die Synchronisierung fortsetzen."
 
@@ -2428,10 +2234,6 @@ msgstr "Zum Inhaber machen"
 #: src/settings/general/account.tsx
 msgid "Manage billing"
 msgstr "Abrechnung verwalten"
-
-#: src/settings/sync/index.tsx
-msgid "Manual sync"
-msgstr "Manuelle Synchronisierung"
 
 #: src/settings/automations/workflow-builder.tsx
 msgid "Markdown export"
@@ -2692,10 +2494,6 @@ msgstr "Keine Kalender gefunden"
 msgid "No changelog available for this version."
 msgstr "Für diese Version ist kein Änderungsprotokoll verfügbar."
 
-#: src/settings/sync/index.tsx
-msgid "No changes to sync"
-msgstr "Keine Änderungen zu synchronisieren"
-
 #: src/settings/automations/starter-config.tsx
 msgid "No channel selected yet."
 msgstr "Noch kein Kanal ausgewählt."
@@ -2711,10 +2509,6 @@ msgstr "Kein Inhalt."
 #: src/task/resource-view.tsx
 msgid "No description provided."
 msgstr "Keine Beschreibung vorhanden."
-
-#: src/settings/sync/index.tsx
-msgid "No devices registered yet."
-msgstr "Noch keine Geräte registriert."
 
 #: src/templates/template-icon-picker.tsx
 msgid "No emoji found"
@@ -2812,10 +2606,6 @@ msgstr "Keine geteilten Notizen"
 #: src/chat/components/input/use-dictation.ts
 msgid "No speech detected"
 msgstr "Keine Sprache erkannt"
-
-#: src/settings/sync/index.tsx
-msgid "No sync activity yet."
-msgstr "Noch keine Synchronisierungsaktivität."
 
 #: src/settings/automations/starter-config.tsx
 msgid "No team selected yet."
@@ -2982,7 +2772,6 @@ msgid "Open Session Echo from the menu bar."
 msgstr "Session Echo über die Menüleiste öffnen."
 
 #: src/main/sync-status.tsx
-#: src/settings/sync/index.tsx
 msgid "Open Session Echo on a device that already has access, then approve this device."
 msgstr "Session Echo auf einem Gerät mit bestehendem Zugriff öffnen und dann dieses Gerät genehmigen."
 
@@ -3244,18 +3033,9 @@ msgstr "Reasoning-Modelle denken das Transkript durch, bevor sie schreiben."
 msgid "received"
 msgstr "empfangen"
 
-#. placeholder {0}: formatSyncBytes(entry.received_bytes)
-#: src/settings/sync/index.tsx
-msgid "Received {0}"
-msgstr "Empfangen {0}"
-
 #: src/shared/open-note-dialog.tsx
 msgid "Recent"
 msgstr "Zuletzt"
-
-#: src/settings/sync/index.tsx
-msgid "Recent activity from this app session."
-msgstr "Aktuelle Aktivität dieser App-Sitzung."
 
 #: src/session-sharing/delivery-panel.tsx
 msgid "Recipient email"
@@ -3336,14 +3116,6 @@ msgstr "Verwandte Notizen"
 msgid "Remember speakers"
 msgstr "Sprecher merken"
 
-#: src/settings/developers/cloud-api.tsx
-msgid "Remote MCP"
-msgstr "Remote-MCP"
-
-#: src/settings/developers/cloud-api.tsx
-msgid "Remote MCP URL copied"
-msgstr "Remote-MCP-URL kopiert"
-
 #: src/session-sharing/access-management.tsx
 #: src/sidebar/automations.tsx
 msgid "Remove"
@@ -3365,14 +3137,6 @@ msgstr "Beispiel {0} entfernen"
 #: src/contacts/contact-page-header.tsx
 msgid "Remove photo"
 msgstr "Foto entfernen"
-
-#: src/settings/sync/index.tsx
-msgid "Rename device"
-msgstr "Gerät umbenennen"
-
-#: src/settings/sync/index.tsx
-msgid "Rename this device"
-msgstr "Dieses Gerät umbenennen"
 
 #: src/settings/team/index.tsx
 msgid "Rename workspace"
@@ -3396,12 +3160,10 @@ msgstr "Anmeldeseite erneut öffnen"
 
 #: src/auth/cloudsync-keychain-repair.tsx
 #: src/settings/ai/shared/index.tsx
-#: src/settings/sync/index.tsx
 msgid "Repair Keychain Access"
 msgstr "Schlüsselbund-Zugriff reparieren"
 
 #: src/session/components/note-input/search/bar.tsx
-#: src/settings/sync/index.tsx
 msgid "Replace"
 msgstr "Ersetzen"
 
@@ -3473,10 +3235,6 @@ msgstr "Web- und Desktop-Änderungen abgleichen, bevor Sie jemanden einladen."
 msgid "Respect Do-Not-Disturb mode"
 msgstr "„Nicht stören\"-Modus berücksichtigen"
 
-#: src/settings/developers/cloud-api.tsx
-msgid "REST API"
-msgstr "REST-API"
-
 #: src/sidebar/toast/registry.tsx
 msgid "Restart"
 msgstr "Neu starten"
@@ -3490,7 +3248,6 @@ msgid "Restore"
 msgstr "Wiederherstellen"
 
 #: src/main/sync-status.tsx
-#: src/settings/sync/index.tsx
 msgid "Restoring cloud sync..."
 msgstr "Cloud-Synchronisierung wird wiederhergestellt …"
 
@@ -3515,7 +3272,6 @@ msgstr "Aufbewahrung (Tage)"
 #: src/main/sync-status.tsx
 #: src/session/components/note-input/enhanced/enhance-error.tsx
 #: src/settings/general/storage/legacy-cleanup.tsx
-#: src/settings/sync/index.tsx
 #: src/sidebar/toast/registry.tsx
 msgid "Retry"
 msgstr "Erneut versuchen"
@@ -3528,10 +3284,6 @@ msgstr "Memo überprüfen"
 msgid "Review summary"
 msgstr "Zusammenfassung überprüfen"
 
-#: src/settings/developers/api-key-row.tsx
-msgid "Revoke"
-msgstr "Widerrufen"
-
 #: src/settings/ai/shared/index.tsx
 #: src/settings/ai/stt/select.tsx
 msgid "Runs after the recording finishes, not during the meeting."
@@ -3541,7 +3293,6 @@ msgstr "Läuft nach Abschluss der Aufnahme, nicht während des Meetings."
 msgid "Runs once the AI summary for the meeting is ready."
 msgstr "Läuft, sobald die KI-Zusammenfassung des Meetings fertig ist."
 
-#: src/settings/sync/index.tsx
 #: src/templates/auto-form.tsx
 msgid "Save"
 msgstr "Speichern"
@@ -3583,7 +3334,6 @@ msgid "Save visible chat from supported meetings using Accessibility."
 msgstr "Sichtbaren Chat unterstützter Meetings über Bedienungshilfen speichern."
 
 #: src/main/sync-status.tsx
-#: src/settings/sync/index.tsx
 msgid "Saved locally"
 msgstr "Lokal gespeichert"
 
@@ -3678,10 +3428,6 @@ msgstr "Plätze"
 msgid "Section actions"
 msgstr "Abschnittsaktionen"
 
-#: src/settings/sync/index.tsx
-msgid "Security"
-msgstr "Sicherheit"
-
 #: src/session/components/note-input/template-picker.tsx
 msgid "See all templates"
 msgstr "Alle Vorlagen ansehen"
@@ -3768,18 +3514,9 @@ msgstr "Die Zusammenfassung in der E-Mail versenden. Antworten gehen direkt an S
 msgid "Send to Slack"
 msgstr "An Slack senden"
 
-#: src/settings/sync/index.tsx
-msgid "Sending and receiving your latest changes."
-msgstr "Ihre neuesten Änderungen werden gesendet und empfangen."
-
 #: src/session/components/note-input/meeting-chat-highlights.tsx
 msgid "sent"
 msgstr "gesendet"
-
-#. placeholder {0}: formatSyncBytes(entry.sent_bytes)
-#: src/settings/sync/index.tsx
-msgid "Sent {0}"
-msgstr "Gesendet {0}"
 
 #: src/settings/privacy/index.tsx
 msgid "Sentry"
@@ -3818,14 +3555,6 @@ msgstr "Session Echo konnte diese Zusammenfassung nicht erstellen, da Sie nicht 
 #: src/shared-notes/index.tsx
 msgid "Session Echo could not read the local shared-note cache."
 msgstr "Session Echo konnte den lokalen Cache geteilter Notizen nicht lesen."
-
-#: src/settings/sync/index.tsx
-msgid "Session Echo could not start cloud sync on this device."
-msgstr "Session Echo konnte die Cloud-Synchronisierung auf diesem Gerät nicht starten."
-
-#: src/settings/sync/index.tsx
-msgid "Session Echo couldn't complete this sync. Your notes are safe on this device."
-msgstr "Session Echo konnte diese Synchronisierung nicht abschließen. Ihre Notizen sind auf diesem Gerät sicher."
 
 #: src/main/sync-status.tsx
 msgid "Session Echo couldn't read cloud sync status. Your notes are still available locally."
@@ -3882,14 +3611,6 @@ msgstr "Session-Echo-Nutzer"
 msgid "Session Echo will keep retrying in the background. Your notes remain available locally."
 msgstr "Session Echo versucht es im Hintergrund weiter. Ihre Notizen bleiben lokal verfügbar."
 
-#: src/settings/sync/index.tsx
-msgid "Session Echo will keep retrying."
-msgstr "Session Echo versucht es weiter."
-
-#: src/settings/sync/index.tsx
-msgid "Session Echo will retry automatically."
-msgstr "Session Echo versucht es automatisch erneut."
-
 #: src/main/sync-status.tsx
 #: src/settings/general/storage/legacy-cleanup.tsx
 msgid "Session Echo will retry automatically. This does not affect your notes."
@@ -3924,17 +3645,9 @@ msgstr "Als Standard festlegen"
 msgid "Set up AI summaries"
 msgstr "KI-Zusammenfassungen einrichten"
 
-#: src/settings/sync/index.tsx
-msgid "Set up your recovery key to start encrypted cloud sync."
-msgstr "Wiederherstellungsschlüssel einrichten, um die verschlüsselte Cloud-Synchronisierung zu starten."
-
 #: src/main/sync-status.tsx
 msgid "Setting up cloud sync"
 msgstr "Cloud-Synchronisierung wird eingerichtet"
-
-#: src/settings/sync/index.tsx
-msgid "Setting up encrypted cloud sync."
-msgstr "Verschlüsselte Cloud-Synchronisierung wird eingerichtet."
 
 #: src/main/empty.tsx
 #: src/main/windows-title-bar.tsx
@@ -4082,7 +3795,6 @@ msgstr "Symbol in der Taskleiste anzeigen"
 
 #: src/session/components/note-input/enhanced/enhance-error.tsx
 #: src/settings/general/account.tsx
-#: src/settings/sync/index.tsx
 #: src/shared-notes/index.tsx
 #: src/sidebar/toast/registry.tsx
 msgid "Sign in"
@@ -4091,10 +3803,6 @@ msgstr "Anmelden"
 #: src/main/sync-status.tsx
 msgid "Sign in again"
 msgstr "Erneut anmelden"
-
-#: src/settings/sync/index.tsx
-msgid "Sign in before enabling encrypted cloud sync"
-msgstr "Vor Aktivierung der verschlüsselten Cloud-Synchronisierung anmelden"
 
 #: src/settings/general/account.tsx
 msgid "Sign in for cloud transcription, AI models, and sharing."
@@ -4129,10 +3837,6 @@ msgstr "Anmelden, um Session Echo optimal zu nutzen"
 msgid "Sign in to Session Echo"
 msgstr "Bei Session Echo anmelden"
 
-#: src/settings/sync/index.tsx
-msgid "Sign in to use cloud sync"
-msgstr "Anmelden, um die Cloud-Synchronisierung zu nutzen"
-
 #: src/shared-notes/index.tsx
 msgid "Sign in to view this shared note"
 msgstr "Anmelden, um diese geteilte Notiz anzuzeigen"
@@ -4166,7 +3870,6 @@ msgid "Sign out"
 msgstr "Abmelden"
 
 #: src/main/sync-status.tsx
-#: src/settings/sync/index.tsx
 msgid "Sign out and sign in again to resume cloud sync."
 msgstr "Abmelden und erneut anmelden, um die Cloud-Synchronisierung fortzusetzen."
 
@@ -4418,36 +4121,20 @@ msgstr "Sonntag"
 msgid "Symbols"
 msgstr "Symbole"
 
-#: src/settings/sync/index.tsx
-#: src/sidebar/settings.tsx
-msgid "Sync"
-msgstr "Synchronisierung"
-
-#: src/settings/sync/index.tsx
-msgid "Sync failed"
-msgstr "Synchronisierung fehlgeschlagen"
-
 #: src/main/sync-status.tsx
 msgid "Sync issue"
 msgstr "Synchronisierungsproblem"
 
-#: src/settings/sync/index.tsx
-msgid "Sync log"
-msgstr "Synchronisierungsprotokoll"
-
 #: src/main/sync-status.tsx
-#: src/settings/sync/index.tsx
 msgid "Sync needs attention"
 msgstr "Synchronisierung erfordert Aufmerksamkeit"
 
 #: src/imports/screen.tsx
 #: src/main/sync-status.tsx
-#: src/settings/sync/index.tsx
 msgid "Sync now"
 msgstr "Jetzt synchronisieren"
 
 #: src/main/sync-status.tsx
-#: src/settings/sync/index.tsx
 msgid "Sync paused"
 msgstr "Synchronisierung pausiert"
 
@@ -4456,7 +4143,6 @@ msgid "Sync settings"
 msgstr "Synchronisierungseinstellungen"
 
 #: src/main/sync-status.tsx
-#: src/settings/sync/index.tsx
 msgid "Sync status unavailable"
 msgstr "Synchronisierungsstatus nicht verfügbar"
 
@@ -4465,12 +4151,10 @@ msgid "Sync your changes before signing out."
 msgstr "Änderungen vor dem Abmelden synchronisieren."
 
 #: src/main/sync-status.tsx
-#: src/settings/sync/index.tsx
 msgid "Synced"
 msgstr "Synchronisiert"
 
 #: src/main/sync-status.tsx
-#: src/settings/sync/index.tsx
 msgid "Syncing..."
 msgstr "Wird synchronisiert …"
 
@@ -4589,14 +4273,6 @@ msgstr "Denkt nach …"
 msgid "This account already syncs on 5 devices. Remove another device to sync here."
 msgstr "Dieses Konto synchronisiert bereits auf 5 Geräten. Entfernen Sie ein anderes Gerät, um hier zu synchronisieren."
 
-#: src/settings/sync/index.tsx
-msgid "This device"
-msgstr "Dieses Gerät"
-
-#: src/settings/sync/index.tsx
-msgid "This device will start syncing after you approve it from another signed-in device."
-msgstr "Dieses Gerät beginnt mit der Synchronisierung, sobald Sie es von einem anderen angemeldeten Gerät aus genehmigen."
-
 #: src/main/sync-status.tsx
 msgid "This device's sync identity does not match your account. Sign in again or check Sync settings."
 msgstr "Die Synchronisierungsidentität dieses Geräts stimmt nicht mit Ihrem Konto überein. Erneut anmelden oder die Synchronisierungseinstellungen prüfen."
@@ -4608,10 +4284,6 @@ msgstr "Diese Änderung ist nicht mehr ausstehend."
 #: src/session/components/outer-header/index.tsx
 msgid "This is a prerecorded demo, so your camera stays off. Click Join & record to see Session Echo in action."
 msgstr "Dies ist eine vorab aufgezeichnete Demo, Ihre Kamera bleibt daher aus. Klicken Sie auf „Beitreten & aufnehmen\", um Session Echo in Aktion zu sehen."
-
-#: src/settings/sync/index.tsx
-msgid "This name is synced to your other devices signed in to this account."
-msgstr "Dieser Name wird mit Ihren anderen bei diesem Konto angemeldeten Geräten synchronisiert."
 
 #: src/chat/components/session-provider.tsx
 msgid "This recording is using batch transcription, so the transcript isn't available to chat yet. Ask again after transcription finishes, or switch to a Pro model for live transcription."
@@ -4725,10 +4397,6 @@ msgstr "Zugewiesene Folgeaufgaben in Linear-Issue-Entwürfe umwandeln."
 msgid "Turn on Session Echo in System Settings → Privacy & Security → Calendars, then return here."
 msgstr "Session Echo unter Systemeinstellungen → Datenschutz & Sicherheit → Kalender aktivieren und dann hierher zurückkehren."
 
-#: src/settings/sync/index.tsx
-msgid "Turn on sync to create or enter your recovery key."
-msgstr "Synchronisierung aktivieren, um Ihren Wiederherstellungsschlüssel zu erstellen oder einzugeben."
-
 #: src/settings/appearance/app-icon.tsx
 msgid "Typewriter Key"
 msgstr "Typewriter Key"
@@ -4771,10 +4439,6 @@ msgstr "Entsperren Sie Ihren Anmelde-Schlüsselbund in der macOS-Abfrage. Sessio
 #: src/contacts/organization-details.tsx
 msgid "Unnamed"
 msgstr "Unbenannt"
-
-#: src/settings/sync/index.tsx
-msgid "Unnamed device"
-msgstr "Unbenanntes Gerät"
 
 #: src/contacts/contact-page-header.tsx
 msgid "Unpin"
@@ -4842,7 +4506,6 @@ msgstr "Zum Aktivieren upgraden"
 #: src/billing/trial-ended-dialog.tsx
 #: src/calendar/components/sidebar.tsx
 #: src/session-sharing/index.tsx
-#: src/settings/developers/cloud-api.tsx
 #: src/settings/team/index.tsx
 msgid "Upgrade to Pro"
 msgstr "Auf Pro upgraden"
@@ -4889,10 +4552,6 @@ msgstr "Transkript hochladen"
 msgid "Upload Transcript"
 msgstr "Transkript hochladen"
 
-#: src/settings/developers/cloud-api.tsx
-msgid "Uploads meeting content for remote access while Session Echo is closed."
-msgstr "Lädt Meeting-Inhalte für den Remote-Zugriff hoch, während Session Echo geschlossen ist."
-
 #: src/settings/team/index.tsx
 msgid "Usage"
 msgstr "Nutzung"
@@ -4908,10 +4567,6 @@ msgstr "Vorhandenen Schlüssel verwenden"
 #: src/imports/screen.tsx
 msgid "Use files"
 msgstr "Dateien verwenden"
-
-#: src/settings/sync/index.tsx
-msgid "Use recovery key instead"
-msgstr "Stattdessen Wiederherstellungsschlüssel verwenden"
 
 #: src/onboarding/permissions.tsx
 msgid "Use system audio to capture other speakers"
@@ -4965,17 +4620,9 @@ msgstr "LinkedIn-Profil anzeigen"
 msgid "View Note"
 msgstr "Notiz anzeigen"
 
-#: src/settings/sync/index.tsx
-msgid "View plans"
-msgstr "Pläne anzeigen"
-
 #: src/lock/gate.tsx
 msgid "View Session Echo"
 msgstr "Session Echo anzeigen"
-
-#: src/settings/sync/index.tsx
-msgid "View sync log"
-msgstr "Synchronisierungsprotokoll anzeigen"
 
 #: src/chat/components/input/use-dictation.ts
 msgid "Voice input is unavailable while Session Echo is recording a meeting."
@@ -4989,16 +4636,11 @@ msgstr "Warten, bevor Mikrofonaktivität als Meeting behandelt wird."
 msgid "Wait until the transcript and note are complete."
 msgstr "Warten, bis Transkript und Notiz vollständig sind."
 
-#: src/settings/sync/index.tsx
-msgid "Waiting for approval"
-msgstr "Warten auf Genehmigung"
-
 #: src/settings/ai/llm/subscriptions/connect.tsx
 msgid "Waiting for authorization in your browser…"
 msgstr "Warten auf Autorisierung in Ihrem Browser …"
 
 #: src/main/sync-status.tsx
-#: src/settings/sync/index.tsx
 msgid "Waiting for device approval"
 msgstr "Warten auf Gerätegenehmigung"
 
@@ -5119,14 +4761,6 @@ msgstr "Ihre Notizen und Aufnahmen sind sicher. Kostenlose lokale Transkription 
 msgid "Your notes and recordings are safe. Upgrade anytime to keep cloud transcription and Pro features, or configure your own transcription provider."
 msgstr "Ihre Notizen und Aufnahmen sind sicher. Jederzeit upgraden, um Cloud-Transkription und Pro-Funktionen zu behalten, oder eigenen Transkriptionsanbieter konfigurieren."
 
-#: src/settings/sync/index.tsx
-msgid "Your notes remain available locally."
-msgstr "Ihre Notizen bleiben lokal verfügbar."
-
-#: src/settings/sync/index.tsx
-msgid "Your notes remain available locally. Try again in a moment."
-msgstr "Ihre Notizen bleiben lokal verfügbar. In Kürze erneut versuchen."
-
 #: src/billing/trial-payment-reminder-dialog.tsx
 msgid "Your Pro trial ends in {daysRemaining} days"
 msgstr "Ihre Pro-Testphase endet in {daysRemaining} Tagen"
@@ -5147,10 +4781,6 @@ msgstr "Ihre Pro-Testphase hat gerade begonnen"
 #: src/settings/general/e2ee-setup.tsx
 msgid "Your recovery key encrypts synced notes before they leave this device. Session Echo cannot read or recover it."
 msgstr "Ihr Wiederherstellungsschlüssel verschlüsselt synchronisierte Notizen, bevor sie dieses Gerät verlassen. Session Echo kann ihn weder lesen noch wiederherstellen."
-
-#: src/settings/sync/index.tsx
-msgid "Your storage location is inside {cloudStorageService}"
-msgstr "Ihr Speicherort befindet sich innerhalb von {cloudStorageService}"
 
 #: src/services/enhancer/summary-notification.ts
 msgid "Your summary is ready."

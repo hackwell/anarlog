@@ -5,7 +5,6 @@ import {
   render,
   screen,
   waitFor,
-  within,
 } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -19,20 +18,6 @@ const mocks = vi.hoisted(() => ({
   toastError: vi.fn(),
   toastSuccess: vi.fn(),
   openUrl: vi.fn(),
-  getCloudApiSettings: vi.fn(),
-  setCloudApiEnabled: vi.fn(),
-  backfillCloudApiSnapshots: vi.fn(),
-  createCloudApiKey: vi.fn(),
-  billing: {
-    isPro: true,
-    isReady: true,
-    isUpgradingToPro: false,
-    upgradeToPro: vi.fn(),
-  },
-}));
-
-vi.mock("~/auth/billing-context", () => ({
-  useBillingAccess: () => mocks.billing,
 }));
 
 vi.mock("~/types/tauri.gen", () => ({
@@ -83,16 +68,6 @@ vi.mock("@anlg/plugin-local-api", () => ({
   commands: {
     listWebhooks: vi.fn().mockResolvedValue({ status: "ok", data: [] }),
   },
-}));
-
-vi.mock("~/cloud-api/client", () => ({
-  getCloudApiSettings: mocks.getCloudApiSettings,
-  setCloudApiEnabled: mocks.setCloudApiEnabled,
-  backfillCloudApiSnapshots: mocks.backfillCloudApiSnapshots,
-  scheduleCloudApiBackfillRetry: vi.fn(),
-  listCloudApiKeys: vi.fn().mockResolvedValue([]),
-  createCloudApiKey: mocks.createCloudApiKey,
-  revokeCloudApiKey: vi.fn(),
 }));
 
 vi.mock("@anlg/ui/components/ui/toast", () => ({
@@ -168,18 +143,6 @@ describe("SettingsDevelopers", () => {
     mocks.toastError.mockReset();
     mocks.toastSuccess.mockReset();
     mocks.openUrl.mockReset();
-    mocks.createCloudApiKey.mockReset();
-    mocks.getCloudApiSettings.mockReset();
-    mocks.getCloudApiSettings.mockResolvedValue({
-      enabled: false,
-      updated_at: null,
-    });
-    mocks.setCloudApiEnabled.mockReset();
-    mocks.backfillCloudApiSnapshots.mockReset();
-    mocks.billing.isPro = true;
-    mocks.billing.isReady = true;
-    mocks.billing.isUpgradingToPro = false;
-    mocks.billing.upgradeToPro.mockReset();
   });
 
   afterEach(() => {
@@ -263,147 +226,6 @@ describe("SettingsDevelopers", () => {
     expect(
       screen.queryByText(/\/Users\/test\/\.local\/bin\/anarlog-dev/),
     ).toBeNull();
-  });
-
-  it("keeps a one-time API key visible when clipboard access fails", async () => {
-    mocks.checkEmbeddedCli.mockResolvedValue({
-      status: "ok",
-      data: {
-        supported: false,
-        commandName: "anarlog",
-        installPath: "/Users/test/.local/bin/anarlog",
-        state: "unsupported",
-        details: "Unavailable.",
-      },
-    });
-    mocks.getCloudApiSettings.mockResolvedValue({
-      enabled: true,
-      updated_at: "2026-07-28T00:00:00Z",
-    });
-    mocks.createCloudApiKey.mockResolvedValue({
-      id: "key-1",
-      name: "Claude Code",
-      key_prefix: "anl_test",
-      key: "anl_test_secret",
-      created_at: "2026-07-28T00:00:00Z",
-      last_used_at: null,
-    });
-    Object.defineProperty(navigator, "clipboard", {
-      configurable: true,
-      value: {
-        writeText: vi.fn().mockRejectedValue(new Error("Clipboard denied")),
-      },
-    });
-
-    const queryClient = new QueryClient({
-      defaultOptions: { queries: { retry: false } },
-    });
-    render(
-      <QueryClientProvider client={queryClient}>
-        <SettingsDevelopers />
-      </QueryClientProvider>,
-    );
-
-    fireEvent.change(
-      await screen.findByPlaceholderText("Key name (e.g. Claude Code)"),
-      {
-        target: { value: "Claude Code" },
-      },
-    );
-    fireEvent.click(screen.getByRole("button", { name: "Create key" }));
-
-    const secret = await screen.findByText("anl_test_secret");
-    fireEvent.click(
-      within(secret.parentElement as HTMLElement).getByRole("button", {
-        name: "Copy",
-      }),
-    );
-
-    await waitFor(() =>
-      expect(mocks.toastError).toHaveBeenCalledWith("Clipboard denied"),
-    );
-    expect(screen.getByText("anl_test_secret")).toBeTruthy();
-  });
-
-  it("requires explicit cloud opt-in and backfills existing meetings", async () => {
-    mocks.checkEmbeddedCli.mockResolvedValue({
-      status: "ok",
-      data: {
-        supported: false,
-        commandName: "anarlog",
-        installPath: "/Users/test/.local/bin/anarlog",
-        state: "unsupported",
-        details: "Unavailable.",
-      },
-    });
-    mocks.setCloudApiEnabled.mockResolvedValue({
-      enabled: true,
-      updated_at: "2026-07-28T00:00:00Z",
-    });
-    mocks.backfillCloudApiSnapshots.mockResolvedValue(2);
-
-    const queryClient = new QueryClient({
-      defaultOptions: { queries: { retry: false } },
-    });
-    render(
-      <QueryClientProvider client={queryClient}>
-        <SettingsDevelopers />
-      </QueryClientProvider>,
-    );
-
-    expect(await screen.findByText(/Uploads meeting content/)).toBeTruthy();
-    const toggle = await screen.findByRole("switch", {
-      name: "Enable Cloud API & Connectors",
-    });
-    await waitFor(() => expect(toggle.hasAttribute("disabled")).toBe(false));
-    expect(toggle.getAttribute("data-state")).toBe("unchecked");
-    expect(screen.queryByText("REST API")).toBeNull();
-
-    fireEvent.click(toggle);
-
-    await waitFor(() => {
-      expect(mocks.setCloudApiEnabled).toHaveBeenCalledWith(true);
-      expect(mocks.backfillCloudApiSnapshots).toHaveBeenCalledOnce();
-      expect(mocks.toastSuccess).toHaveBeenCalledWith(
-        "Cloud API enabled — 2 meetings uploaded",
-      );
-    });
-    expect(screen.getByText("REST API")).toBeTruthy();
-    expect(screen.getByText("Remote MCP")).toBeTruthy();
-  });
-
-  it("offers an upgrade instead of Cloud API controls on the free plan", () => {
-    mocks.billing.isPro = false;
-    mocks.checkEmbeddedCli.mockResolvedValue({
-      status: "ok",
-      data: {
-        supported: false,
-        commandName: "anarlog",
-        installPath: "/Users/test/.local/bin/anarlog",
-        state: "unsupported",
-        details: "Unavailable.",
-      },
-    });
-
-    const queryClient = new QueryClient({
-      defaultOptions: { queries: { retry: false } },
-    });
-    render(
-      <QueryClientProvider client={queryClient}>
-        <SettingsDevelopers />
-      </QueryClientProvider>,
-    );
-
-    expect(
-      screen.queryByRole("switch", {
-        name: "Enable Cloud API & Connectors",
-      }),
-    ).toBeNull();
-    expect(mocks.getCloudApiSettings).not.toHaveBeenCalled();
-
-    fireEvent.click(screen.getByRole("button", { name: "Upgrade to Pro" }));
-
-    expect(mocks.billing.upgradeToPro).toHaveBeenCalledOnce();
   });
 
   it("installs the skill into every detected agent from one action", async () => {

@@ -8,7 +8,6 @@ import { CloudsyncKeychainRepairToast } from "~/auth/cloudsync-keychain-repair";
 import { searchCalendarEvents } from "~/calendar/queries";
 import { useSessionTab } from "~/chat/components/use-session-tab";
 import { buildChatTools } from "~/chat/tools";
-import { CloudApiBackfillLifecycle } from "~/cloud-api/lifecycle";
 import { searchContacts } from "~/contacts/queries";
 import { useRegisterTools } from "~/contexts/tool";
 import { takePendingWelcomeSession } from "~/onboarding/welcome-note";
@@ -51,7 +50,6 @@ export function ClassicMainServices() {
     <>
       <AttachmentTransferLifecycle />
       <CloudsyncKeychainRepairToast />
-      <CloudApiBackfillLifecycle />
       <DurableSharedNoteCacheSync />
       <SharedAttachmentCacheLifecycle />
       <OwnedSharedNotePublisher />

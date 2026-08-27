@@ -79,10 +79,6 @@ vi.mock("~/calendar/ignored-events", () => ({
   }),
 }));
 
-vi.mock("~/cloud-api/client", () => ({
-  deleteCloudApiSnapshotBestEffort: vi.fn(),
-}));
-
 vi.mock("~/session/queries", () => ({
   finalizeSessionDeletion: mocks.finalizeSessionDeletion,
   softDeleteSession: mocks.softDeleteSession,
