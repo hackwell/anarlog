@@ -3386,10 +3386,6 @@ msgid "Sync paused"
 msgstr "Synchronisierung pausiert"
 
 #: src/main/sync-status.tsx
-msgid "Sync settings"
-msgstr "Synchronisierungseinstellungen"
-
-#: src/main/sync-status.tsx
 msgid "Sync status unavailable"
 msgstr "Synchronisierungsstatus nicht verfügbar"
 

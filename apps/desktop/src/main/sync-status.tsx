@@ -5,7 +5,6 @@ import {
   CircleNotch,
   CloudSlash,
   CloudWarning,
-  Gear,
   HardDrive,
   Pause,
   Play,
@@ -36,7 +35,6 @@ import {
   useStoredSettingValues,
 } from "~/settings/queries";
 import { resolveConfigValue } from "~/shared/config";
-import { useTabs } from "~/store/zustand/tabs";
 
 const STATUS_QUERY_KEY = ["cloudsync-status-indicator"] as const;
 const STATUS_POLL_INTERVAL_MS = 10_000;
@@ -48,7 +46,6 @@ export function SyncStatusIndicator() {
   const { isPro, isReady } = useBillingAccess();
   const settingsReady = useSettingsReady();
   const storedSettings = useStoredSettingValues();
-  const openNewTab = useTabs((state) => state.openNew);
   const queryClient = useQueryClient();
 
   const session = auth.session;
@@ -72,10 +69,6 @@ export function SyncStatusIndicator() {
     refetchIntervalInBackground: true,
     enabled: Boolean(session) && isPro && syncPreferred,
   });
-
-  const openSyncSettings = () => {
-    openNewTab({ type: "settings", state: { tab: "sync" } });
-  };
 
   const setSyncEnabledMutation = useMutation({
     mutationKey: ["cloudsync-preference"],
@@ -345,11 +338,6 @@ export function SyncStatusIndicator() {
           ) : (
             <Trans>Resume sync</Trans>
           )}
-        </DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem onSelect={openSyncSettings}>
-          <Gear className="size-4" />
-          <Trans>Sync settings</Trans>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

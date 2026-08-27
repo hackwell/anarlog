@@ -18,7 +18,6 @@ const mocks = vi.hoisted(() => ({
   syncCloudsyncNow: vi.fn(),
   applyCloudsyncPreference: vi.fn(),
   setSettingValue: vi.fn(),
-  openNew: vi.fn(),
   signOut: vi.fn(),
   billing: { isPro: true, isReady: true },
   settings: { ready: true, cloudSyncEnabled: true },
@@ -62,11 +61,6 @@ vi.mock("~/shared/config", () => ({
     key: string,
     stored: { values: Record<string, unknown> },
   ) => stored.values[key],
-}));
-
-vi.mock("~/store/zustand/tabs", () => ({
-  useTabs: (selector: (state: { openNew: typeof mocks.openNew }) => unknown) =>
-    selector({ openNew: mocks.openNew }),
 }));
 
 vi.mock("@lingui/react/macro", () => ({
@@ -292,7 +286,6 @@ describe("SyncStatusIndicator", () => {
       expect(await screen.findByText(label)).toBeTruthy();
       expect(screen.getByText(description)).toBeTruthy();
       expect(screen.queryByText("Connecting...")).toBeNull();
-      expect(screen.getByText("Sync settings")).toBeTruthy();
     },
   );
 
@@ -569,7 +562,6 @@ describe("SyncStatusIndicator", () => {
       ),
     ).toBeTruthy();
     expect(screen.queryByText("Connecting...")).toBeNull();
-    expect(screen.getByText("Sync settings")).toBeTruthy();
   });
 
   it("shows a non-spinning delayed state after a recovery failure", async () => {
@@ -699,18 +691,6 @@ describe("SyncStatusIndicator", () => {
 
     await vi.waitFor(() => {
       expect(mocks.syncCloudsyncNow).toHaveBeenCalledTimes(1);
-    });
-  });
-
-  it("opens the dedicated sync settings page", async () => {
-    renderIndicator();
-    await openMenu();
-
-    fireEvent.click(await screen.findByText("Sync settings"));
-
-    expect(mocks.openNew).toHaveBeenCalledWith({
-      type: "settings",
-      state: { tab: "sync" },
     });
   });
 });
