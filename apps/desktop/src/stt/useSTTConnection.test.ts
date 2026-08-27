@@ -3,11 +3,16 @@ import { renderHook, waitFor } from "@testing-library/react";
 import { createElement, type ReactNode } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const { config, startServerForPathMock } = vi.hoisted(() => ({
+const { config, providerConfig, startServerForPathMock } = vi.hoisted(() => ({
   config: {
-    current_stt_provider: "anarlog",
-    current_stt_model: "cloud",
+    current_stt_provider: "local_file",
+    current_stt_model: "local-file",
     local_stt_model_path: "",
+  },
+  providerConfig: {
+    type: "stt",
+    base_url: "   ",
+    api_key: "",
   },
   startServerForPathMock: vi.fn(),
 }));
@@ -20,24 +25,8 @@ vi.mock("@anlg/plugin-local-stt", () => ({
   },
 }));
 
-vi.mock("~/auth", () => ({
-  useAuth: () => ({ session: { access_token: "access-token" } }),
-}));
-
-vi.mock("~/auth/billing-context", () => ({
-  useBillingAccess: () => ({ isPaid: true }),
-}));
-
-vi.mock("~/env", () => ({
-  env: { VITE_API_URL: "https://api.sessionecho.flagbit.de" },
-}));
-
 vi.mock("~/settings/providers", () => ({
-  useAiProvider: () => ({
-    type: "stt",
-    base_url: "   ",
-    api_key: "",
-  }),
+  useAiProvider: () => providerConfig,
 }));
 
 vi.mock("~/shared/config", () => ({
@@ -45,8 +34,6 @@ vi.mock("~/shared/config", () => ({
 }));
 
 vi.mock("~/stt/capabilities", () => ({
-  isAnarlogCloudSttModel: (provider: string, model: string) =>
-    provider === "anarlog" && model === "cloud",
   isLocalFileSttModel: (provider: string, model: string) =>
     provider === "local_file" && model === "local-file",
   isOnDeviceSttModel: () => false,
@@ -57,13 +44,19 @@ import { useSTTConnection } from "./useSTTConnection";
 
 describe("useSTTConnection", () => {
   beforeEach(() => {
-    config.current_stt_provider = "anarlog";
-    config.current_stt_model = "cloud";
+    config.current_stt_provider = "local_file";
+    config.current_stt_model = "local-file";
     config.local_stt_model_path = "";
+    providerConfig.base_url = "   ";
+    providerConfig.api_key = "";
     startServerForPathMock.mockReset();
   });
 
-  it("uses the hosted STT URL when the stored Session Echo URL is blank", () => {
+  it("uses the stored endpoint and key for a self-configured provider", () => {
+    config.current_stt_provider = "deepgram";
+    config.current_stt_model = "nova-3";
+    providerConfig.base_url = " https://api.deepgram.com/v1/listen ";
+    providerConfig.api_key = " user-key ";
     const queryClient = new QueryClient({
       defaultOptions: { queries: { retry: false } },
     });
@@ -73,10 +66,10 @@ describe("useSTTConnection", () => {
     const { result } = renderHook(() => useSTTConnection(), { wrapper });
 
     expect(result.current.conn).toEqual({
-      provider: "anarlog",
-      model: "cloud",
-      baseUrl: "https://api.sessionecho.flagbit.de/stt",
-      apiKey: "access-token",
+      provider: "deepgram",
+      model: "nova-3",
+      baseUrl: "https://api.deepgram.com/v1/listen",
+      apiKey: "user-key",
     });
   });
 
