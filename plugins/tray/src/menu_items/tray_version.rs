@@ -14,8 +14,8 @@ impl TrayVersion {
             "de.flagbit.sessionecho.staging" => "staging",
             "de.flagbit.sessionecho.dev" => "dev",
             _ => match app_name {
-                "Session Echo" | "Char" | "Session Echo" => "stable",
-                "Session Echo Staging" | "Char Staging" | "Session Echo Staging" => "staging",
+                "Session Echo" => "stable",
+                "Session Echo Staging" => "staging",
                 _ => "dev",
             },
         }
