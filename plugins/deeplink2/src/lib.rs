@@ -1,14 +1,13 @@
 mod commands;
 mod error;
 mod pending_deep_link;
-mod pending_share_open;
 pub mod server;
 mod types;
 
 pub use error::{Error, Result};
 pub use types::{
     AuthCallbackSearch, BillingRefreshSearch, DeepLink, DeepLinkEvent, IntegrationCallbackSearch,
-    OnboardingDemoCompleteSearch, ShareOpenPendingEvent, ShareOpenRequest,
+    OnboardingDemoCompleteSearch,
 };
 
 use std::str::FromStr;
@@ -38,13 +37,8 @@ fn make_specta_builder<R: tauri::Runtime>() -> tauri_specta::Builder<R> {
             commands::start_callback_server::<tauri::Wry>,
             commands::stop_callback_server::<tauri::Wry>,
             commands::take_pending_deep_links,
-            commands::list_pending_share_opens,
-            commands::take_pending_share_open,
         ])
-        .events(tauri_specta::collect_events![
-            types::DeepLinkEvent,
-            types::ShareOpenPendingEvent
-        ])
+        .events(tauri_specta::collect_events![types::DeepLinkEvent])
         .typ::<types::DeepLink>()
         .error_handling(tauri_specta::ErrorHandlingMode::Result)
 }
@@ -60,8 +54,8 @@ fn process_url<R: Runtime>(app_handle: &AppHandle<R>, url: &url::Url, delivery: 
     let redacted = redact_url(url_str);
     tracing::info!(url = %redacted, "deeplink_received");
 
-    match types::IncomingDeepLink::from_str(url_str) {
-        Ok(types::IncomingDeepLink::Existing(deep_link)) => {
+    match DeepLink::from_str(url_str) {
+        Ok(deep_link) => {
             tracing::info!(path = deep_link.path(), "deeplink_parsed");
             match delivery {
                 Delivery::Emit => {
@@ -80,23 +74,6 @@ fn process_url<R: Runtime>(app_handle: &AppHandle<R>, url: &url::Url, delivery: 
                 }
             }
         }
-        Ok(types::IncomingDeepLink::ShareOpen(request)) => {
-            let state = app_handle.state::<pending_share_open::PendingShareOpenState>();
-            match state.push(request) {
-                Ok(pending_id) => {
-                    tracing::info!(path = "/share/open", "deeplink_parsed");
-                    if matches!(delivery, Delivery::Emit)
-                        && let Err(error) =
-                            (types::ShareOpenPendingEvent { pending_id }).emit(app_handle)
-                    {
-                        tracing::error!(?error, "deeplink_event_emit_failed");
-                    }
-                }
-                Err(()) => {
-                    tracing::error!("pending_share_open_queue_unavailable");
-                }
-            }
-        }
         Err(error) => {
             tracing::debug!(?error, url = %redacted, "deeplink_parse_failed");
         }
@@ -112,7 +89,6 @@ pub fn init<R: tauri::Runtime>() -> tauri::plugin::TauriPlugin<R> {
             specta_builder.mount_events(app);
             app.manage(server::CallbackServerState::new());
             app.manage(pending_deep_link::PendingDeepLinkState::default());
-            app.manage(pending_share_open::PendingShareOpenState::default());
 
             let app_handle = app.clone();
             let startup_app_handle = app_handle.clone();

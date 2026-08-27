@@ -12,8 +12,6 @@ pub enum Error {
     UrlParse(#[from] url::ParseError),
     #[error("query decode error: {0}")]
     QueryDecode(#[from] serde_qs::Error),
-    #[error("invalid shared-note deep link")]
-    InvalidShareOpen,
 }
 
 impl Serialize for Error {

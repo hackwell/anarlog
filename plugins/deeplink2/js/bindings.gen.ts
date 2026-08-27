@@ -29,22 +29,6 @@ async takePendingDeepLinks() : Promise<Result<DeepLink[], string>> {
     if(e instanceof Error) throw e;
     else return { status: "error", error: e  as any };
 }
-},
-async listPendingShareOpens() : Promise<Result<string[], string>> {
-    try {
-    return { status: "ok", data: await TAURI_INVOKE("plugin:deeplink2|list_pending_share_opens") };
-} catch (e) {
-    if(e instanceof Error) throw e;
-    else return { status: "error", error: e  as any };
-}
-},
-async takePendingShareOpen(pendingId: string) : Promise<Result<ShareOpenRequest | null, string>> {
-    try {
-    return { status: "ok", data: await TAURI_INVOKE("plugin:deeplink2|take_pending_share_open", { pendingId }) };
-} catch (e) {
-    if(e instanceof Error) throw e;
-    else return { status: "error", error: e  as any };
-}
 }
 }
 
@@ -52,11 +36,9 @@ async takePendingShareOpen(pendingId: string) : Promise<Result<ShareOpenRequest 
 
 
 export const events = __makeEvents__<{
-deepLinkEvent: DeepLinkEvent,
-shareOpenPendingEvent: ShareOpenPendingEvent
+deepLinkEvent: DeepLinkEvent
 }>({
-deepLinkEvent: "plugin:deeplink2:deep-link-event",
-shareOpenPendingEvent: "plugin:deeplink2:share-open-pending-event"
+deepLinkEvent: "plugin:deeplink2:deep-link-event"
 })
 
 /** user-defined constants **/
@@ -71,8 +53,6 @@ export type DeepLink = { to: "/auth/callback"; search: AuthCallbackSearch } | { 
 export type DeepLinkEvent = DeepLink
 export type IntegrationCallbackSearch = { integration_id: string; status: string; disconnected_connection_id: string | null; return_to: string | null }
 export type OnboardingDemoCompleteSearch = Record<string, never>
-export type ShareOpenPendingEvent = { pending_id: string }
-export type ShareOpenRequest = { mode: "account"; share_id: string } | { mode: "handoff"; request_id: string }
 
 /** tauri-specta globals **/
 
