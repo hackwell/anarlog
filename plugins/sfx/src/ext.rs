@@ -16,14 +16,10 @@ static PLAYING_SOUNDS: LazyLock<Mutex<std::collections::HashMap<AppSounds, Sound
 pub enum AppSounds {
     StartRecording,
     StopRecording,
-    BGM,
 }
-
-const BGM_VOLUME: f32 = 0.2;
 
 fn initial_volume(sound: &AppSounds) -> f32 {
     match sound {
-        AppSounds::BGM => BGM_VOLUME,
         AppSounds::StartRecording | AppSounds::StopRecording => 1.0,
     }
 }
@@ -91,8 +87,7 @@ impl AppSounds {
         self.stop();
 
         let bytes = self.get_sound_bytes();
-        let looping = matches!(self, AppSounds::BGM);
-        let control_tx = to_speaker(bytes, looping, initial_volume(self));
+        let control_tx = to_speaker(bytes, false, initial_volume(self));
 
         {
             let mut sounds = PLAYING_SOUNDS.lock().unwrap();
@@ -118,7 +113,6 @@ impl AppSounds {
         match self {
             AppSounds::StartRecording => include_bytes!("../sounds/start_recording.ogg"),
             AppSounds::StopRecording => include_bytes!("../sounds/stop_recording.ogg"),
-            AppSounds::BGM => include_bytes!("../sounds/bgm.mp3"),
         }
     }
 }
@@ -168,8 +162,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn bgm_starts_quiet_and_one_shots_stay_full() {
-        assert_eq!(initial_volume(&AppSounds::BGM), 0.2);
+    fn one_shots_stay_full_volume() {
         assert_eq!(initial_volume(&AppSounds::StartRecording), 1.0);
         assert_eq!(initial_volume(&AppSounds::StopRecording), 1.0);
     }

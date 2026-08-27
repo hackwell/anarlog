@@ -58,8 +58,7 @@ mod test {
     }
 
     #[test]
-    fn bgm_starts_quietly_and_one_shots_stay_full_volume() {
-        assert_eq!(AppSounds::BGM.initial_volume(), 0.2);
+    fn one_shots_stay_full_volume() {
         assert_eq!(AppSounds::StartRecording.initial_volume(), 1.0);
         assert_eq!(AppSounds::StopRecording.initial_volume(), 1.0);
     }

@@ -1,11 +1,9 @@
 import { Trans } from "@lingui/react/macro";
-import { SpeakerHigh, SpeakerX } from "@phosphor-icons/react";
 import { useQueryClient } from "@tanstack/react-query";
 import { platform } from "@tauri-apps/plugin-os";
 import { motion } from "motion/react";
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import { commands as sfxCommands } from "@anlg/plugin-sfx";
 import { cn } from "@anlg/utils";
 
 import { CalendarSection } from "./calendar";
@@ -84,7 +82,6 @@ function OnboardingScreenContent({
 }) {
   const queryClient = useQueryClient();
   const auth = useAuth();
-  const [isMuted, setIsMuted] = useState(false);
   const [currentStep, setCurrentStep] = useState(getInitialStep);
   const onboardingVideoRef = useRef<HTMLVideoElement>(null);
   const currentPlatform = platform();
@@ -122,17 +119,6 @@ function OnboardingScreenContent({
       platform: currentPlatform,
     });
   }, [currentPlatform, currentStep]);
-
-  useEffect(() => {
-    sfxCommands.play("BGM").catch(console.error);
-    return () => {
-      sfxCommands.stop("BGM").catch(console.error);
-    };
-  }, []);
-
-  useEffect(() => {
-    sfxCommands.setVolume("BGM", isMuted ? 0 : 0.2).catch(console.error);
-  }, [isMuted]);
 
   useEffect(() => {
     if (onboardingVideoRef.current) {
@@ -184,24 +170,6 @@ function OnboardingScreenContent({
           animate={{ opacity: 0 }}
           transition={{ duration: 1.0, ease: "easeOut", delay: 0.1 }}
         />
-      </div>
-
-      <div
-        data-tauri-drag-region={headerDragRegion || undefined}
-        className="relative z-30 flex h-12 shrink-0 items-center justify-end pr-3 pl-12"
-      >
-        <button
-          onClick={() => setIsMuted((prev) => !prev)}
-          data-tauri-drag-region="false"
-          className="hover:bg-accent rounded-full p-1.5 transition-colors"
-          aria-label={isMuted ? "Unmute" : "Mute"}
-        >
-          {isMuted ? (
-            <SpeakerX size={16} className="text-muted-foreground" />
-          ) : (
-            <SpeakerHigh size={16} className="text-muted-foreground" />
-          )}
-        </button>
       </div>
 
       <div
