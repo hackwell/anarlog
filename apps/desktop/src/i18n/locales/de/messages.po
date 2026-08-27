@@ -435,7 +435,6 @@ msgstr "Automatisierungen"
 
 #: src/calendar/components/apple/permission.tsx
 #: src/instruction/index.tsx
-#: src/settings/general/e2ee-setup.tsx
 #: src/sidebar/custom-sidebar-header.tsx
 msgid "Back"
 msgstr "Zurück"
@@ -502,7 +501,6 @@ msgstr "Kann transkribieren, während das Meeting läuft."
 #: src/calendar/components/apple/permission.tsx
 #: src/imports/screen.tsx
 #: src/settings/ai/llm/subscriptions/connect.tsx
-#: src/settings/general/e2ee-setup.tsx
 #: src/settings/general/storage/legacy-cleanup.tsx
 #: src/shared/ui/destructive-confirmation-dialog.tsx
 #: src/templates/auto-format-examples-dialog.tsx
@@ -905,10 +903,6 @@ msgstr "Konfiguration kopieren"
 msgid "Copy message"
 msgstr "Nachricht kopieren"
 
-#: src/settings/general/e2ee-setup.tsx
-msgid "Copy recovery key"
-msgstr "Wiederherstellungsschlüssel kopieren"
-
 #: src/settings/developers/webhooks.tsx
 msgid "Copy this signing secret now — it is only shown once."
 msgstr "Dieses Signing-Secret jetzt kopieren — es wird nur einmal angezeigt."
@@ -998,10 +992,6 @@ msgstr "\"{folderName}\" erstellen"
 #: src/session/components/note-input/create-brief-suggestion.tsx
 msgid "Create a brief to prepare this meeting"
 msgstr "Briefing erstellen, um dieses Meeting vorzubereiten"
-
-#: src/settings/general/e2ee-setup.tsx
-msgid "Create a recovery key"
-msgstr "Wiederherstellungsschlüssel erstellen"
 
 #: src/session/components/note-input/transcript/renderer/speaker-assign.tsx
 msgid "Create new speaker"
@@ -1186,10 +1176,6 @@ msgstr "Fertig"
 msgid "Download"
 msgstr "Herunterladen"
 
-#: src/settings/general/e2ee-setup.tsx
-msgid "Download recovery key (.txt)"
-msgstr "Wiederherstellungsschlüssel herunterladen (.txt)"
-
 #. placeholder {0}: activeDownloads.length
 #: src/sidebar/toast/registry.tsx
 msgid "Downloading {0} models"
@@ -1299,10 +1285,6 @@ msgstr "API-Schlüssel eingeben"
 #: src/settings/ai/shared/index.tsx
 msgid "Enter your API key (optional)"
 msgstr "API-Schlüssel eingeben (optional)"
-
-#: src/settings/general/e2ee-setup.tsx
-msgid "Enter your saved recovery key when another approved device is unavailable."
-msgstr "Gespeicherten Wiederherstellungsschlüssel eingeben, wenn kein anderes genehmigtes Gerät verfügbar ist."
 
 #: src/composer/index.tsx
 msgid "Esc to dismiss"
@@ -1557,10 +1539,6 @@ msgstr "Kimi-Code-Schlüssel erhalten"
 #: src/contacts/humans.tsx
 msgid "Human"
 msgstr "Person"
-
-#: src/settings/general/e2ee-setup.tsx
-msgid "I saved it"
-msgstr "Ich habe ihn gespeichert"
 
 #: src/templates/template-icon-picker.tsx
 msgid "Icons"
@@ -2405,10 +2383,6 @@ msgstr "Pro-Funktionen verfügbar"
 msgid "Production"
 msgstr "Production"
 
-#: src/settings/general/e2ee-setup.tsx
-msgid "Protect cloud sync"
-msgstr "Cloud-Synchronisierung schützen"
-
 #: src/session/components/note-input/transcript/screens/empty.tsx
 msgid "Re-transcribe"
 msgstr "Neu transkribieren"
@@ -2660,10 +2634,6 @@ msgstr "Datum speichern"
 #: src/settings/automations/index.tsx
 msgid "Save draft"
 msgstr "Entwurf speichern"
-
-#: src/settings/general/e2ee-setup.tsx
-msgid "Save this key in a password manager. New devices can usually be approved from another device; this key is your fallback and will not be shown again."
-msgstr "Diesen Schlüssel in einem Passwort-Manager speichern. Neue Geräte lassen sich meist über ein anderes Gerät genehmigen; dieser Schlüssel ist Ihre Rückfalloption und wird nicht erneut angezeigt."
 
 #: src/settings/general/meeting-settings.tsx
 msgid "Save visible chat from supported meetings using Accessibility."
@@ -3527,10 +3497,6 @@ msgstr "Entsperren"
 msgid "Unlock Note"
 msgstr "Notiz entsperren"
 
-#: src/settings/general/e2ee-setup.tsx
-msgid "Unlock sync"
-msgstr "Synchronisierung entsperren"
-
 #: src/settings/ai/shared/index.tsx
 msgid "Unlock your login Keychain in the macOS prompt. Session Echo will retry saving this API key automatically."
 msgstr "Entsperren Sie Ihren Anmelde-Schlüsselbund in der macOS-Abfrage. Session Echo speichert diesen API-Schlüssel dann automatisch erneut."
@@ -3622,10 +3588,6 @@ msgstr "Transkript hochladen"
 #: src/automations/starters.tsx
 msgid "Use a stable filename in the configured export directory."
 msgstr "Einen festen Dateinamen im konfigurierten Exportverzeichnis verwenden."
-
-#: src/settings/general/e2ee-setup.tsx
-msgid "Use an existing key"
-msgstr "Vorhandenen Schlüssel verwenden"
 
 #: src/imports/screen.tsx
 msgid "Use files"
@@ -3790,10 +3752,6 @@ msgstr "Ihre Pro-Testphase ist abgelaufen"
 #: src/billing/trial-started-dialog.tsx
 msgid "Your Pro trial just started"
 msgstr "Ihre Pro-Testphase hat gerade begonnen"
-
-#: src/settings/general/e2ee-setup.tsx
-msgid "Your recovery key encrypts synced notes before they leave this device. Session Echo cannot read or recover it."
-msgstr "Ihr Wiederherstellungsschlüssel verschlüsselt synchronisierte Notizen, bevor sie dieses Gerät verlassen. Session Echo kann ihn weder lesen noch wiederherstellen."
 
 #: src/services/enhancer/summary-notification.ts
 msgid "Your summary is ready."

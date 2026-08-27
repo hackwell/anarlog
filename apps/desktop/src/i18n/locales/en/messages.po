@@ -435,7 +435,6 @@ msgstr "Automations"
 
 #: src/calendar/components/apple/permission.tsx
 #: src/instruction/index.tsx
-#: src/settings/general/e2ee-setup.tsx
 #: src/sidebar/custom-sidebar-header.tsx
 msgid "Back"
 msgstr "Back"
@@ -502,7 +501,6 @@ msgstr "Can transcribe while the meeting is happening."
 #: src/calendar/components/apple/permission.tsx
 #: src/imports/screen.tsx
 #: src/settings/ai/llm/subscriptions/connect.tsx
-#: src/settings/general/e2ee-setup.tsx
 #: src/settings/general/storage/legacy-cleanup.tsx
 #: src/shared/ui/destructive-confirmation-dialog.tsx
 #: src/templates/auto-format-examples-dialog.tsx
@@ -905,10 +903,6 @@ msgstr "Copy config"
 msgid "Copy message"
 msgstr "Copy message"
 
-#: src/settings/general/e2ee-setup.tsx
-msgid "Copy recovery key"
-msgstr "Copy recovery key"
-
 #: src/settings/developers/webhooks.tsx
 msgid "Copy this signing secret now — it is only shown once."
 msgstr "Copy this signing secret now — it is only shown once."
@@ -998,10 +992,6 @@ msgstr "Create \"{folderName}\""
 #: src/session/components/note-input/create-brief-suggestion.tsx
 msgid "Create a brief to prepare this meeting"
 msgstr "Create a brief to prepare this meeting"
-
-#: src/settings/general/e2ee-setup.tsx
-msgid "Create a recovery key"
-msgstr "Create a recovery key"
 
 #: src/session/components/note-input/transcript/renderer/speaker-assign.tsx
 msgid "Create new speaker"
@@ -1186,10 +1176,6 @@ msgstr "Done"
 msgid "Download"
 msgstr "Download"
 
-#: src/settings/general/e2ee-setup.tsx
-msgid "Download recovery key (.txt)"
-msgstr "Download recovery key (.txt)"
-
 #. placeholder {0}: activeDownloads.length
 #: src/sidebar/toast/registry.tsx
 msgid "Downloading {0} models"
@@ -1299,10 +1285,6 @@ msgstr "Enter your API key"
 #: src/settings/ai/shared/index.tsx
 msgid "Enter your API key (optional)"
 msgstr "Enter your API key (optional)"
-
-#: src/settings/general/e2ee-setup.tsx
-msgid "Enter your saved recovery key when another approved device is unavailable."
-msgstr "Enter your saved recovery key when another approved device is unavailable."
 
 #: src/composer/index.tsx
 msgid "Esc to dismiss"
@@ -1557,10 +1539,6 @@ msgstr "How to get a Kimi Code key"
 #: src/contacts/humans.tsx
 msgid "Human"
 msgstr "Human"
-
-#: src/settings/general/e2ee-setup.tsx
-msgid "I saved it"
-msgstr "I saved it"
 
 #: src/templates/template-icon-picker.tsx
 msgid "Icons"
@@ -2405,10 +2383,6 @@ msgstr "Pro features available"
 msgid "Production"
 msgstr "Production"
 
-#: src/settings/general/e2ee-setup.tsx
-msgid "Protect cloud sync"
-msgstr "Protect cloud sync"
-
 #: src/session/components/note-input/transcript/screens/empty.tsx
 msgid "Re-transcribe"
 msgstr "Re-transcribe"
@@ -2660,10 +2634,6 @@ msgstr "Save date"
 #: src/settings/automations/index.tsx
 msgid "Save draft"
 msgstr "Save draft"
-
-#: src/settings/general/e2ee-setup.tsx
-msgid "Save this key in a password manager. New devices can usually be approved from another device; this key is your fallback and will not be shown again."
-msgstr "Save this key in a password manager. New devices can usually be approved from another device; this key is your fallback and will not be shown again."
 
 #: src/settings/general/meeting-settings.tsx
 msgid "Save visible chat from supported meetings using Accessibility."
@@ -3527,10 +3497,6 @@ msgstr "Unlock"
 msgid "Unlock Note"
 msgstr "Unlock Note"
 
-#: src/settings/general/e2ee-setup.tsx
-msgid "Unlock sync"
-msgstr "Unlock sync"
-
 #: src/settings/ai/shared/index.tsx
 msgid "Unlock your login Keychain in the macOS prompt. Session Echo will retry saving this API key automatically."
 msgstr "Unlock your login Keychain in the macOS prompt. Session Echo will retry saving this API key automatically."
@@ -3622,10 +3588,6 @@ msgstr "Upload Transcript"
 #: src/automations/starters.tsx
 msgid "Use a stable filename in the configured export directory."
 msgstr "Use a stable filename in the configured export directory."
-
-#: src/settings/general/e2ee-setup.tsx
-msgid "Use an existing key"
-msgstr "Use an existing key"
 
 #: src/imports/screen.tsx
 msgid "Use files"
@@ -3790,10 +3752,6 @@ msgstr "Your Pro trial has ended"
 #: src/billing/trial-started-dialog.tsx
 msgid "Your Pro trial just started"
 msgstr "Your Pro trial just started"
-
-#: src/settings/general/e2ee-setup.tsx
-msgid "Your recovery key encrypts synced notes before they leave this device. Session Echo cannot read or recover it."
-msgstr "Your recovery key encrypts synced notes before they leave this device. Session Echo cannot read or recover it."
 
 #: src/services/enhancer/summary-notification.ts
 msgid "Your summary is ready."
