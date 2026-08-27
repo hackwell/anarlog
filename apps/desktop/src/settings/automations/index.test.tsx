@@ -6,23 +6,9 @@ import {
   screen,
   waitFor,
 } from "@testing-library/react";
-import { createElement } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-// The real iconify-icon web component renders asynchronously via timers that
-// can fire after the test environment is torn down ("document is not
-// defined" unhandled errors), so render an inert element instead.
-vi.mock("@iconify-icon/react", () => ({
-  Icon: (props: Record<string, unknown>) =>
-    createElement("iconify-icon", props),
-}));
-
 const mocks = vi.hoisted(() => ({
-  billing: {
-    isPro: true,
-    isReady: true,
-    upgradeToPro: vi.fn(),
-  },
   chatGroup: null as {
     id: string;
     ownerUserId: string;
@@ -48,10 +34,6 @@ const mocks = vi.hoisted(() => ({
   }>,
   toastError: vi.fn(),
   toastSuccess: vi.fn(),
-}));
-
-vi.mock("~/auth/billing-context", () => ({
-  useBillingAccess: () => mocks.billing,
 }));
 
 vi.mock("~/automations/actions", () => ({
@@ -95,9 +77,6 @@ vi.mock("~/settings/queries", () => ({
 vi.mock("./starter-config", () => ({
   AutomationLastRunLine: () => null,
   MarkdownExportConfig: () => <div data-testid="config-markdown" />,
-  SlackRecapConfig: () => <div data-testid="config-slack" />,
-  LinearIssuesConfig: () => <div data-testid="config-linear" />,
-  NotionUpdateConfig: () => <div data-testid="config-notion" />,
 }));
 
 vi.mock("@anlg/ui/components/ui/toast", () => ({
@@ -131,9 +110,6 @@ describe("AutomationsContent", () => {
   });
 
   beforeEach(() => {
-    mocks.billing.isPro = true;
-    mocks.billing.isReady = true;
-    mocks.billing.upgradeToPro.mockClear();
     mocks.chatGroup = null;
     mocks.deleteChatAutomation.mockClear();
     mocks.deleteWorkflow.mockClear();
@@ -187,13 +163,13 @@ describe("AutomationsContent", () => {
   });
 
   it("shows the selected starter as an inspectable deterministic draft", () => {
-    mocks.selection = { kind: "starter", starterId: "slack-recap" };
+    mocks.selection = { kind: "starter", starterId: "markdown-export" };
 
     renderAutomations();
 
-    expect(screen.getByText("Use the AI meeting summary")).toBeTruthy();
-    expect(screen.getByText("Post to a channel")).toBeTruthy();
-    expect(screen.getByTestId("config-slack")).toBeTruthy();
+    expect(screen.getByText("Render canonical Markdown")).toBeTruthy();
+    expect(screen.getByText("Write to a folder")).toBeTruthy();
+    expect(screen.getByTestId("config-markdown")).toBeTruthy();
     expect(
       screen.getByRole<HTMLButtonElement>("button", { name: "Test" }).disabled,
     ).toBe(true);
@@ -207,46 +183,48 @@ describe("AutomationsContent", () => {
 
     expect(screen.getByText("Expected output")).toBeTruthy();
     expect(
-      screen.getByText(/A Slack message with the meeting title and recap/),
+      screen.getByText(
+        /A Markdown file with the note, summary, and transcript/,
+      ),
     ).toBeTruthy();
   });
 
   it("uses product marks without icon tiles", () => {
-    mocks.selection = { kind: "starter", starterId: "slack-recap" };
+    mocks.selection = { kind: "starter", starterId: "markdown-export" };
 
     const { container } = renderAutomations();
 
     const header = screen
       .getByRole("heading", {
         level: 2,
-        name: "Share a meeting recap in Slack",
+        name: "Export every meeting as Markdown",
       })
       .closest("header");
-    const slackIcon = container.querySelector(
-      'iconify-icon[icon="logos:slack-icon"]',
+    const markdownIcon = container.querySelector(
+      'img[src="/assets/markdown-mark.svg"]',
     );
 
     expect(header).toBeTruthy();
-    expect(slackIcon).toBeTruthy();
-    expect(slackIcon?.closest("header")).toBe(header);
+    expect(markdownIcon).toBeTruthy();
+    expect(markdownIcon?.closest("header")).toBe(header);
     expect(
       screen
         .getByRole("button", { name: "Automation actions" })
         .closest("header"),
     ).toBe(header);
-    expect(slackIcon?.parentElement?.className).not.toContain("bg-muted");
-    expect(slackIcon?.parentElement?.className).not.toContain("rounded");
+    expect(markdownIcon?.parentElement?.className).not.toContain("bg-muted");
+    expect(markdownIcon?.parentElement?.className).not.toContain("rounded");
   });
 
   it("matches the templates header and body gutters", () => {
-    mocks.selection = { kind: "starter", starterId: "slack-recap" };
+    mocks.selection = { kind: "starter", starterId: "markdown-export" };
 
     renderAutomations();
 
     const header = screen
       .getByRole("heading", {
         level: 2,
-        name: "Share a meeting recap in Slack",
+        name: "Export every meeting as Markdown",
       })
       .closest("header");
     const body = header?.nextElementSibling;
@@ -258,7 +236,7 @@ describe("AutomationsContent", () => {
     expect(body?.className).toContain("pt-3");
   });
 
-  it("saves the selected draft for Pro users", async () => {
+  it("saves the selected draft", async () => {
     mocks.selection = { kind: "starter", starterId: "markdown-export" };
 
     renderAutomations();
@@ -272,18 +250,6 @@ describe("AutomationsContent", () => {
       );
     });
     expect(mocks.toastSuccess).toHaveBeenCalledWith("Automation draft saved");
-  });
-
-  it("offers the Pro upgrade instead of saving on the free plan", () => {
-    mocks.billing.isPro = false;
-    mocks.selection = { kind: "starter", starterId: "notion-project-notes" };
-
-    renderAutomations();
-
-    fireEvent.click(screen.getByRole("button", { name: "Upgrade to save" }));
-
-    expect(mocks.billing.upgradeToPro).toHaveBeenCalledOnce();
-    expect(mocks.setSettingValue).not.toHaveBeenCalled();
   });
 
   it("shows a dedicated view for a chat-created automation", () => {
@@ -309,7 +275,7 @@ describe("AutomationsContent", () => {
   });
 
   it("removes the starter automation from the actions menu", async () => {
-    mocks.selection = { kind: "starter", starterId: "slack-recap" };
+    mocks.selection = { kind: "starter", starterId: "markdown-export" };
 
     renderAutomations();
 
@@ -319,7 +285,7 @@ describe("AutomationsContent", () => {
 
     fireEvent.click(await screen.findByText("Remove automation"));
 
-    expect(mocks.removeStarterDraft).toHaveBeenCalledWith("slack-recap");
+    expect(mocks.removeStarterDraft).toHaveBeenCalledWith("markdown-export");
   });
 
   it("deletes a chat automation from the actions menu", async () => {

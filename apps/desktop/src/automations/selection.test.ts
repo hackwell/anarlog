@@ -61,53 +61,53 @@ describe("useAutomationSelection", () => {
   });
 
   it("keeps a chat thread per automation across selection switches", () => {
-    const { selectStarter } = useAutomationSelection.getState();
-
-    selectStarter("slack-recap");
-    const slackSession = automationsChat().sessionId;
-
-    // Chatting creates a group for the live automations chat.
-    useChatContext.getState().setGroupId("automations", "slack-group");
+    const { selectStarter, selectDraft } = useAutomationSelection.getState();
 
     selectStarter("markdown-export");
-    expect(automationsChat().groupId).toBeUndefined();
-    expect(automationsChat().sessionId).not.toBe(slackSession);
+    const starterSession = automationsChat().sessionId;
 
-    selectStarter("slack-recap");
+    // Chatting creates a group for the live automations chat.
+    useChatContext.getState().setGroupId("automations", "starter-group");
+
+    selectDraft("draft-1");
+    expect(automationsChat().groupId).toBeUndefined();
+    expect(automationsChat().sessionId).not.toBe(starterSession);
+
+    selectStarter("markdown-export");
     expect(automationsChat()).toEqual({
-      groupId: "slack-group",
-      sessionId: slackSession,
+      groupId: "starter-group",
+      sessionId: starterSession,
     });
   });
 
   it("clears the current selection and its stored chat thread", () => {
     const { selectStarter, clearSelection } = useAutomationSelection.getState();
 
-    selectStarter("slack-recap");
-    useChatContext.getState().setGroupId("automations", "slack-group");
-    const slackSession = automationsChat().sessionId;
+    selectStarter("markdown-export");
+    useChatContext.getState().setGroupId("automations", "starter-group");
+    const starterSession = automationsChat().sessionId;
 
-    clearSelection({ kind: "starter", starterId: "slack-recap" });
+    clearSelection({ kind: "starter", starterId: "markdown-export" });
 
     expect(useAutomationSelection.getState().selection).toBeNull();
     expect(useAutomationSelection.getState().chatBySelection).toEqual({});
     expect(automationsChat().groupId).toBeUndefined();
-    expect(automationsChat().sessionId).not.toBe(slackSession);
+    expect(automationsChat().sessionId).not.toBe(starterSession);
   });
 
   it("keeps the current selection when clearing another automation", () => {
     const { selectStarter, clearSelection } = useAutomationSelection.getState();
 
-    selectStarter("slack-recap");
-    const slackChat = automationsChat();
+    selectStarter("markdown-export");
+    const starterChat = automationsChat();
 
     clearSelection({ kind: "chat", groupId: "other-group" });
 
     expect(useAutomationSelection.getState().selection).toEqual({
       kind: "starter",
-      starterId: "slack-recap",
+      starterId: "markdown-export",
     });
-    expect(automationsChat()).toEqual(slackChat);
+    expect(automationsChat()).toEqual(starterChat);
   });
 
   it("opens a persisted workflow chat thread when selecting after reload", () => {
@@ -153,7 +153,7 @@ describe("useAutomationSelection", () => {
     const liveSession = automationsChat().sessionId;
     useChatContext.getState().setGroupId("automations", "live-group");
 
-    useAutomationSelection.getState().selectStarter("slack-recap");
+    useAutomationSelection.getState().selectStarter("markdown-export");
     useAutomationSelection.getState().selectWorkflow("wf-1", "persisted-group");
 
     expect(automationsChat()).toEqual({
@@ -211,18 +211,18 @@ describe("useEffectiveAutomationSelection", () => {
   });
 
   it("falls back to the stored draft starter", () => {
-    settingsMocks.storedDraft = "slack-recap";
+    settingsMocks.storedDraft = "markdown-export";
 
     const { result } = renderHook(() => useEffectiveAutomationSelection());
 
     expect(result.current).toEqual({
       kind: "starter",
-      starterId: "slack-recap",
+      starterId: "markdown-export",
     });
   });
 
   it("prefers the explicit selection over the stored draft", () => {
-    settingsMocks.storedDraft = "slack-recap";
+    settingsMocks.storedDraft = "markdown-export";
     useAutomationSelection.setState({
       selection: { kind: "draft", draftId: "draft-1" },
     });

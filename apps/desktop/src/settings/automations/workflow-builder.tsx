@@ -14,13 +14,7 @@ import {
 import { sonnerToast } from "@anlg/ui/components/ui/toast";
 import { cn } from "@anlg/utils";
 
-import {
-  AutomationLastRunLine,
-  LinearIssuesConfig,
-  MarkdownExportConfig,
-  NotionUpdateConfig,
-  SlackRecapConfig,
-} from "./starter-config";
+import { AutomationLastRunLine, MarkdownExportConfig } from "./starter-config";
 
 import {
   createWorkflowStep,
@@ -140,15 +134,6 @@ export function WorkflowBuilder({
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="slack_recap">
-                    <Trans>Post a recap to Slack</Trans>
-                  </SelectItem>
-                  <SelectItem value="notion_update">
-                    <Trans>Append an update to Notion</Trans>
-                  </SelectItem>
-                  <SelectItem value="linear_issues">
-                    <Trans>Create Linear issues from action items</Trans>
-                  </SelectItem>
                   <SelectItem value="markdown_export">
                     <Trans>Export the meeting as Markdown</Trans>
                   </SelectItem>
@@ -190,34 +175,10 @@ function WorkflowStepConfig({
   step: WorkflowStep;
   onChange: (step: WorkflowStep) => void;
 }) {
-  if (step.type === "markdown_export") {
-    return (
-      <MarkdownExportConfig
-        value={step.directory}
-        onChange={(directory) => onChange({ ...step, directory })}
-      />
-    );
-  }
-  if (step.type === "slack_recap") {
-    return (
-      <SlackRecapConfig
-        value={step.target}
-        onChange={(target) => onChange({ ...step, target })}
-      />
-    );
-  }
-  if (step.type === "linear_issues") {
-    return (
-      <LinearIssuesConfig
-        value={step.target}
-        onChange={(target) => onChange({ ...step, target })}
-      />
-    );
-  }
   return (
-    <NotionUpdateConfig
-      value={step.target}
-      onChange={(target) => onChange({ ...step, target })}
+    <MarkdownExportConfig
+      value={step.directory}
+      onChange={(directory) => onChange({ ...step, directory })}
     />
   );
 }
@@ -247,15 +208,6 @@ function AddWorkflowStep({
           </span>
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="slack_recap">
-            <Trans>Slack recap</Trans>
-          </SelectItem>
-          <SelectItem value="notion_update">
-            <Trans>Notion update</Trans>
-          </SelectItem>
-          <SelectItem value="linear_issues">
-            <Trans>Linear issues</Trans>
-          </SelectItem>
           <SelectItem value="markdown_export">
             <Trans>Markdown export</Trans>
           </SelectItem>

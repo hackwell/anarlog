@@ -23,22 +23,14 @@ import {
 import { sonnerToast } from "@anlg/ui/components/ui/toast";
 import { cn, formatDistanceToNow } from "@anlg/utils";
 
-import {
-  AutomationLastRunLine,
-  LinearIssuesConfig,
-  MarkdownExportConfig,
-  NotionUpdateConfig,
-  SlackRecapConfig,
-} from "./starter-config";
+import { AutomationLastRunLine, MarkdownExportConfig } from "./starter-config";
 import { useSaveWorkflow, WorkflowBuilder } from "./workflow-builder";
 
-import { useBillingAccess } from "~/auth/billing-context";
 import {
   useDeleteChatAutomation,
   useDeleteWorkflow,
   useRemoveStarterDraft,
 } from "~/automations/actions";
-import { parseAutomationTargetRef } from "~/automations/engine";
 import {
   useAutomationSelection,
   useEffectiveAutomationSelection,
@@ -298,7 +290,6 @@ function CustomWorkflowDetails({
   onDelete: () => void;
 }) {
   const { t } = useLingui();
-  const billing = useBillingAccess();
   const workflows = useAutomationWorkflows();
   const saveWorkflow = useSaveWorkflow();
 
@@ -307,10 +298,6 @@ function CustomWorkflowDetails({
   };
 
   const handleEnable = (enabled: boolean) => {
-    if (enabled && !billing.isPro) {
-      billing.upgradeToPro();
-      return;
-    }
     persist({ ...workflow, enabled });
   };
 
@@ -327,7 +314,7 @@ function CustomWorkflowDetails({
               size="sm"
               variant="outline"
               onClick={() => handleEnable(false)}
-              disabled={!billing.isReady || saveWorkflow.isPending}
+              disabled={saveWorkflow.isPending}
             >
               <Trans>Disable</Trans>
             </Button>
@@ -336,23 +323,15 @@ function CustomWorkflowDetails({
               type="button"
               size="sm"
               onClick={() => handleEnable(true)}
-              disabled={
-                !billing.isReady ||
-                saveWorkflow.isPending ||
-                (billing.isPro && !isWorkflowReady(workflow))
-              }
+              disabled={saveWorkflow.isPending || !isWorkflowReady(workflow)}
               title={
-                billing.isPro && !isWorkflowReady(workflow)
+                !isWorkflowReady(workflow)
                   ? t`Add and configure at least one action first.`
                   : undefined
               }
             >
               <Lightning size={14} weight="fill" />
-              {billing.isPro ? (
-                <Trans>Save &amp; enable</Trans>
-              ) : (
-                <Trans>Upgrade to enable</Trans>
-              )}
+              <Trans>Save &amp; enable</Trans>
             </Button>
           )}
           <AutomationActionsMenu
@@ -420,7 +399,6 @@ function useEnsuredWorkflow({
 
 function StarterAutomationDetails({ starterId }: { starterId: StarterId }) {
   const { t } = useLingui();
-  const billing = useBillingAccess();
   const starter = useStarterAutomations().find((item) => item.id === starterId);
   const [showPreview, setShowPreview] = useState(false);
   const { values: settingValues } = useStoredSettingValues();
@@ -454,40 +432,10 @@ function StarterAutomationDetails({ starterId }: { starterId: StarterId }) {
   const isEnabled = Boolean(
     settingValues[STARTER_AUTOMATIONS[starterId].enabledKey],
   );
-  const targetRaw =
-    settingValues[STARTER_AUTOMATIONS[starterId].targetKey] ?? "";
   const isReady =
-    starterId === "markdown-export"
-      ? targetRaw.trim().length > 0
-      : parseAutomationTargetRef(targetRaw) !== null;
-  const readinessHint = (() => {
-    switch (starterId) {
-      case "markdown-export":
-        return t`Choose an export folder first.`;
-      case "slack-recap":
-        return t`Choose a Slack channel first.`;
-      case "linear-action-items":
-        return t`Choose a Linear team first.`;
-      case "notion-project-notes":
-        return t`Choose a Notion page first.`;
-    }
-  })();
-
-  const handleSaveDraft = () => {
-    if (!billing.isPro) {
-      billing.upgradeToPro();
-      return;
-    }
-    saveDraftMutation.mutate();
-  };
-
-  const handleEnable = () => {
-    if (!billing.isPro) {
-      billing.upgradeToPro();
-      return;
-    }
-    setEnabledMutation.mutate({ enabled: true });
-  };
+    (settingValues[STARTER_AUTOMATIONS[starterId].targetKey] ?? "").trim()
+      .length > 0;
+  const readinessHint = t`Choose an export folder first.`;
 
   return (
     <AutomationDetailsLayout
@@ -556,15 +504,11 @@ function StarterAutomationDetails({ starterId }: { starterId: StarterId }) {
             <Button
               type="button"
               size="sm"
-              onClick={handleSaveDraft}
-              disabled={!billing.isReady || saveDraftMutation.isPending}
+              onClick={() => saveDraftMutation.mutate()}
+              disabled={saveDraftMutation.isPending}
             >
               <FloppyDisk size={14} />
-              {billing.isPro ? (
-                <Trans>Save draft</Trans>
-              ) : (
-                <Trans>Upgrade to save</Trans>
-              )}
+              <Trans>Save draft</Trans>
             </Button>
             {isEnabled ? (
               <Button
@@ -572,7 +516,7 @@ function StarterAutomationDetails({ starterId }: { starterId: StarterId }) {
                 size="sm"
                 variant="outline"
                 onClick={() => setEnabledMutation.mutate({ enabled: false })}
-                disabled={!billing.isReady || setEnabledMutation.isPending}
+                disabled={setEnabledMutation.isPending}
               >
                 <Trans>Disable</Trans>
               </Button>
@@ -580,20 +524,12 @@ function StarterAutomationDetails({ starterId }: { starterId: StarterId }) {
               <Button
                 type="button"
                 size="sm"
-                onClick={handleEnable}
-                disabled={
-                  !billing.isReady ||
-                  setEnabledMutation.isPending ||
-                  (billing.isPro && !isReady)
-                }
-                title={billing.isPro && !isReady ? readinessHint : undefined}
+                onClick={() => setEnabledMutation.mutate({ enabled: true })}
+                disabled={setEnabledMutation.isPending || !isReady}
+                title={!isReady ? readinessHint : undefined}
               >
                 <Lightning size={14} weight="fill" />
-                {billing.isPro ? (
-                  <Trans>Save &amp; enable</Trans>
-                ) : (
-                  <Trans>Upgrade to enable</Trans>
-                )}
+                <Trans>Save &amp; enable</Trans>
               </Button>
             )}
           </div>
@@ -643,15 +579,7 @@ function StarterAutomationDetails({ starterId }: { starterId: StarterId }) {
         </div>
 
         <div className="border-border border-t px-5 py-4">
-          {starterId === "markdown-export" ? (
-            <MarkdownExportConfig />
-          ) : starterId === "slack-recap" ? (
-            <SlackRecapConfig />
-          ) : starterId === "linear-action-items" ? (
-            <LinearIssuesConfig />
-          ) : (
-            <NotionUpdateConfig />
-          )}
+          <MarkdownExportConfig />
           <AutomationLastRunLine
             settingKey={STARTER_AUTOMATIONS[starterId].lastRunKey}
           />

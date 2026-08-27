@@ -117,20 +117,12 @@ msgid "3 days"
 msgstr "3 Tage"
 
 #: src/automations/starters.tsx
-msgid "A dated Notion update with the meeting summary."
-msgstr "Ein datiertes Notion-Update mit der Meeting-Zusammenfassung."
-
-#: src/automations/starters.tsx
 msgid "A Markdown file with the note, summary, and transcript."
 msgstr "Eine Markdown-Datei mit Notiz, Zusammenfassung und Transkript."
 
 #: src/sidebar/timeline/utils/index.ts
 msgid "a month ago"
 msgstr "vor einem Monat"
-
-#: src/automations/starters.tsx
-msgid "A Slack message with the meeting title and recap."
-msgstr "Eine Slack-Nachricht mit Meeting-Titel und Zusammenfassung."
 
 #: src/templates/template-sidebar.tsx
 msgid "A to Z"
@@ -198,10 +190,6 @@ msgstr "{0}-Konto hinzufügen"
 msgid "Add {0} in System Settings > General > Language & Region to transcribe with {model}, or choose another model."
 msgstr "{0} unter Systemeinstellungen > Allgemein > Sprache & Region hinzufügen, um mit {model} zu transkribieren, oder ein anderes Modell wählen."
 
-#: src/automations/starters.tsx
-msgid "Add a dated update to the selected Notion page."
-msgstr "Ein datiertes Update zur ausgewählten Notion-Seite hinzufügen."
-
 #: src/billing/trial-payment-reminder-dialog.tsx
 msgid "Add a payment method before it ends to keep using Pro without an interruption."
 msgstr "Fügen Sie vor Ablauf der Testphase eine Zahlungsmethode hinzu, um Pro ohne Unterbrechung weiter zu nutzen."
@@ -245,10 +233,6 @@ msgstr "Beispiel hinzufügen"
 #: src/settings/general/spoken-languages.tsx
 msgid "Add language"
 msgstr "Sprache hinzufügen"
-
-#: src/automations/starters.tsx
-msgid "Add meeting decisions and follow-ups to a Notion project."
-msgstr "Meeting-Entscheidungen und Folgeaufgaben zu einem Notion-Projekt hinzufügen."
 
 #: src/settings/dictionary/index.tsx
 msgid "Add names, jargon, or product terms to prefer"
@@ -386,14 +370,6 @@ msgstr "App-Symbol"
 #: src/sidebar/settings.tsx
 msgid "Appearance"
 msgstr "Erscheinungsbild"
-
-#: src/settings/automations/workflow-builder.tsx
-msgid "Append an update to Notion"
-msgstr "Update an Notion anhängen"
-
-#: src/automations/starters.tsx
-msgid "Append the meeting update"
-msgstr "Meeting-Update anhängen"
 
 #: src/calendar/components/apple/permission.tsx
 msgid "Apple Calendar access is off"
@@ -657,10 +633,6 @@ msgstr "Mikrofonberechtigung und ausgewähltes Eingabegerät prüfen, dann erneu
 msgid "Checking connection"
 msgstr "Verbindung wird geprüft"
 
-#: src/settings/automations/starter-config.tsx
-msgid "Checking connection…"
-msgstr "Verbindung wird geprüft …"
-
 #: src/imports/screen.tsx
 msgid "Checking installed meeting assistants…"
 msgstr "Installierte Meeting-Assistenten werden geprüft …"
@@ -679,7 +651,6 @@ msgid "Choose {0} export files"
 msgstr "{0}-Exportdateien auswählen"
 
 #: src/session-sharing/delivery-panel.tsx
-#: src/settings/automations/starter-config.tsx
 msgid "Choose a channel"
 msgstr "Kanal auswählen"
 
@@ -692,24 +663,8 @@ msgid "Choose a language model for summaries and chat."
 msgstr "Sprachmodell für Zusammenfassungen und Chat auswählen."
 
 #: src/settings/automations/index.tsx
-msgid "Choose a Linear team first."
-msgstr "Zuerst ein Linear-Team auswählen."
-
-#: src/settings/automations/index.tsx
-msgid "Choose a Notion page first."
-msgstr "Zuerst eine Notion-Seite auswählen."
-
-#: src/settings/automations/index.tsx
-msgid "Choose a Slack channel first."
-msgstr "Zuerst einen Slack-Kanal auswählen."
-
-#: src/settings/automations/index.tsx
 msgid "Choose a starter from the sidebar, or create a workflow and add steps like Zapier."
 msgstr "Einen Starter aus der Seitenleiste wählen oder einen Workflow erstellen und Schritte hinzufügen – wie bei Zapier."
-
-#: src/settings/automations/starter-config.tsx
-msgid "Choose a team"
-msgstr "Team auswählen"
 
 #: src/settings/ai/stt/local-file-model.tsx
 msgid "Choose a transcription model"
@@ -901,10 +856,6 @@ msgstr "Cloud-Synchronisierung nicht verfügbar"
 msgid "Collaborator"
 msgstr "Mitwirkender"
 
-#: src/automations/starters.tsx
-msgid "Collect action items"
-msgstr "Aufgaben sammeln"
-
 #: src/settings/appearance/theme.tsx
 msgid "Color theme"
 msgstr "Farbschema"
@@ -1015,14 +966,6 @@ msgstr "Kalender verbinden"
 msgid "Connect Google Calendar"
 msgstr "Google Kalender verbinden"
 
-#: src/settings/automations/starter-config.tsx
-msgid "Connect Linear"
-msgstr "Linear verbinden"
-
-#: src/settings/automations/starter-config.tsx
-msgid "Connect Notion"
-msgstr "Notion verbinden"
-
 #. placeholder {0}: provider.name
 #: src/imports/screen.tsx
 msgid "Connect once to bring over your {0} history and keep new meetings coming in while you switch."
@@ -1033,7 +976,6 @@ msgid "Connect Outlook"
 msgstr "Outlook verbinden"
 
 #: src/session-sharing/delivery-panel.tsx
-#: src/settings/automations/starter-config.tsx
 msgid "Connect Slack"
 msgstr "Slack verbinden"
 
@@ -1184,10 +1126,6 @@ msgstr "Gelöschte Notiz konnte nicht wiederhergestellt werden"
 msgid "Could not save the automation draft"
 msgstr "Entwurf der Automatisierung konnte nicht gespeichert werden"
 
-#: src/settings/automations/starter-config.tsx
-msgid "Could not save the automation setting"
-msgstr "Automatisierungseinstellung konnte nicht gespeichert werden"
-
 #: src/session-sharing/delivery-management.ts
 msgid "Could not send the meeting notes to Slack."
 msgstr "Meeting-Notizen konnten nicht an Slack gesendet werden."
@@ -1256,14 +1194,6 @@ msgstr "Wiederherstellungsschlüssel erstellen"
 #: src/settings/team/index.tsx
 msgid "Create a shared workspace"
 msgstr "Gemeinsamen Workspace erstellen"
-
-#: src/automations/starters.tsx
-msgid "Create Linear issues"
-msgstr "Linear-Issues erstellen"
-
-#: src/settings/automations/workflow-builder.tsx
-msgid "Create Linear issues from action items"
-msgstr "Linear-Issues aus Aufgaben erstellen"
 
 #: src/session/components/note-input/transcript/renderer/speaker-assign.tsx
 msgid "Create new speaker"
@@ -1711,10 +1641,6 @@ msgstr "Field Journal"
 msgid "File"
 msgstr "Datei"
 
-#: src/automations/starters.tsx
-msgid "File each action item as an issue in the selected team."
-msgstr "Jede Aufgabe als Issue im ausgewählten Team anlegen."
-
 #: src/session/components/outer-header/overflow/export-modal.tsx
 msgid "File format"
 msgstr "Dateiformat"
@@ -2129,18 +2055,6 @@ msgstr "Personen mit Zugriff erlauben, die Aufnahme abzuspielen."
 msgid "Light"
 msgstr "Hell"
 
-#: src/settings/automations/workflow-builder.tsx
-msgid "Linear issues"
-msgstr "Linear-Issues"
-
-#: src/automations/starters.tsx
-msgid "Linear issues created from meeting follow-ups."
-msgstr "Linear-Issues aus Meeting-Folgeaufgaben erstellt."
-
-#: src/settings/automations/starter-config.tsx
-msgid "Linear team"
-msgstr "Linear-Team"
-
 #: src/contacts/details.tsx
 msgid "LinkedIn"
 msgstr "LinkedIn"
@@ -2162,7 +2076,6 @@ msgid "Loading calendars..."
 msgstr "Kalender werden geladen …"
 
 #: src/session-sharing/delivery-panel.tsx
-#: src/settings/automations/starter-config.tsx
 msgid "Loading channels…"
 msgstr "Kanäle werden geladen …"
 
@@ -2182,10 +2095,6 @@ msgstr "Geplante Aufnahmen werden geladen …"
 #: src/settings/hydration-boundary.tsx
 msgid "Loading settings"
 msgstr "Einstellungen werden geladen"
-
-#: src/settings/automations/starter-config.tsx
-msgid "Loading teams…"
-msgstr "Teams werden geladen …"
 
 #: src/changelog/index.tsx
 #: src/contacts/details.tsx
@@ -2494,10 +2403,6 @@ msgstr "Keine Kalender gefunden"
 msgid "No changelog available for this version."
 msgstr "Für diese Version ist kein Änderungsprotokoll verfügbar."
 
-#: src/settings/automations/starter-config.tsx
-msgid "No channel selected yet."
-msgstr "Noch kein Kanal ausgewählt."
-
 #: src/templates/details.tsx
 msgid "No community templates available"
 msgstr "Keine Community-Vorlagen verfügbar"
@@ -2563,14 +2468,6 @@ msgstr "Keine einsatzbereiten Modelle."
 msgid "No notes found."
 msgstr "Keine Notizen gefunden."
 
-#: src/settings/automations/starter-config.tsx
-msgid "No page selected yet."
-msgstr "Noch keine Seite ausgewählt."
-
-#: src/settings/automations/starter-config.tsx
-msgid "No pages found. Share the page with the Session Echo integration in Notion first."
-msgstr "Keine Seiten gefunden. Teilen Sie die Seite zuerst in Notion mit der Session-Echo-Integration."
-
 #: src/session/components/note-input/transcript/renderer/speaker-assign.tsx
 msgid "No people"
 msgstr "Keine Personen"
@@ -2606,10 +2503,6 @@ msgstr "Keine geteilten Notizen"
 #: src/chat/components/input/use-dictation.ts
 msgid "No speech detected"
 msgstr "Keine Sprache erkannt"
-
-#: src/settings/automations/starter-config.tsx
-msgid "No team selected yet."
-msgstr "Noch kein Team ausgewählt."
 
 #: src/templates/details.tsx
 msgid "No templates yet"
@@ -2669,14 +2562,6 @@ msgstr "Es wurde nichts Neues importiert. {0} Meetings müssen überprüft werde
 #: src/sidebar/settings.tsx
 msgid "Notifications"
 msgstr "Benachrichtigungen"
-
-#: src/settings/automations/starter-config.tsx
-msgid "Notion page"
-msgstr "Notion-Seite"
-
-#: src/settings/automations/workflow-builder.tsx
-msgid "Notion update"
-msgstr "Notion-Update"
 
 #: src/sidebar/timeline/index.tsx
 #: src/sidebar/timeline/upcoming-meeting.ts
@@ -2929,14 +2814,6 @@ msgstr "Ab hier abspielen"
 msgid "Policies"
 msgstr "Richtlinien"
 
-#: src/automations/starters.tsx
-msgid "Post a meeting recap to a Slack channel."
-msgstr "Meeting-Zusammenfassung in einem Slack-Kanal posten."
-
-#: src/settings/automations/workflow-builder.tsx
-msgid "Post a recap to Slack"
-msgstr "Zusammenfassung an Slack posten"
-
 #: src/settings/general/meeting-settings.tsx
 msgid "Post recording disclosure in meeting chat"
 msgstr "Aufnahmehinweis im Meeting-Chat posten"
@@ -2944,10 +2821,6 @@ msgstr "Aufnahmehinweis im Meeting-Chat posten"
 #: src/session-sharing/delivery-panel.tsx
 msgid "Post the meeting summary to a channel you can access."
 msgstr "Die Meeting-Zusammenfassung in einem Kanal posten, auf den Sie Zugriff haben."
-
-#: src/automations/starters.tsx
-msgid "Post to a channel"
-msgstr "In einem Kanal posten"
 
 #: src/settings/general/notification.tsx
 msgid "Prepare for events with a 5-minute reminder."
@@ -3046,14 +2919,6 @@ msgstr "E-Mail des Empfängers"
 msgid "Reconnect"
 msgstr "Erneut verbinden"
 
-#: src/settings/automations/starter-config.tsx
-msgid "Reconnect Linear"
-msgstr "Linear erneut verbinden"
-
-#: src/settings/automations/starter-config.tsx
-msgid "Reconnect Notion"
-msgstr "Notion erneut verbinden"
-
 #: src/calendar/components/oauth/status.tsx
 msgid "Reconnect required"
 msgstr "Erneute Verbindung erforderlich"
@@ -3064,7 +2929,6 @@ msgid "Reconnect required for {0} Calendar"
 msgstr "Erneute Verbindung für {0}-Kalender erforderlich"
 
 #: src/session-sharing/delivery-panel.tsx
-#: src/settings/automations/starter-config.tsx
 msgid "Reconnect Slack"
 msgstr "Slack erneut verbinden"
 
@@ -3289,10 +3153,6 @@ msgstr "Zusammenfassung überprüfen"
 msgid "Runs after the recording finishes, not during the meeting."
 msgstr "Läuft nach Abschluss der Aufnahme, nicht während des Meetings."
 
-#: src/automations/starters.tsx
-msgid "Runs once the AI summary for the meeting is ready."
-msgstr "Läuft, sobald die KI-Zusammenfassung des Meetings fertig ist."
-
 #: src/templates/auto-form.tsx
 msgid "Save"
 msgstr "Speichern"
@@ -3349,10 +3209,6 @@ msgstr "Nach unten scrollen"
 msgid "Scroll to top"
 msgstr "Nach oben scrollen"
 
-#: src/settings/automations/starter-config.tsx
-msgid "Search"
-msgstr "Suche"
-
 #: src/sidebar/automations.tsx
 msgid "Search automations..."
 msgstr "Automatisierungen durchsuchen …"
@@ -3388,10 +3244,6 @@ msgstr "Ordner suchen oder erstellen"
 #: src/settings/ai/shared/model-combobox.tsx
 msgid "Search or create new"
 msgstr "Suchen oder neu erstellen"
-
-#: src/settings/automations/starter-config.tsx
-msgid "Search pages shared with Session Echo…"
-msgstr "Mit Session Echo geteilte Seiten durchsuchen …"
 
 #: src/settings/ai/shared/provider-search.tsx
 msgid "Search providers"
@@ -3501,10 +3353,6 @@ msgstr "Nachricht senden"
 #: src/settings/privacy/index.tsx
 msgid "Send sanitized crash and error reports to help improve Session Echo."
 msgstr "Bereinigte Absturz- und Fehlerberichte senden, um Session Echo zu verbessern."
-
-#: src/automations/starters.tsx
-msgid "Send the recap to the selected Slack channel."
-msgstr "Zusammenfassung an den ausgewählten Slack-Kanal senden."
 
 #: src/session-sharing/delivery-panel.tsx
 msgid "Send the summary in the email. Replies go directly to you."
@@ -3659,10 +3507,6 @@ msgstr "Einstellungen"
 #: src/session-sharing/management-panel.tsx
 msgid "Share"
 msgstr "Teilen"
-
-#: src/automations/starters.tsx
-msgid "Share a meeting recap in Slack"
-msgstr "Meeting-Zusammenfassung in Slack teilen"
 
 #: src/session-sharing/attachment-controls.tsx
 msgid "Share audio"
@@ -3908,14 +3752,6 @@ msgstr "Vorerst überspringen"
 #: src/session-sharing/delivery-panel.tsx
 msgid "Slack"
 msgstr "Slack"
-
-#: src/settings/automations/starter-config.tsx
-msgid "Slack channel"
-msgstr "Slack-Kanal"
-
-#: src/settings/automations/workflow-builder.tsx
-msgid "Slack recap"
-msgstr "Slack-Zusammenfassung"
 
 #: src/templates/template-icon-picker.tsx
 msgid "Smileys & People"
@@ -4171,14 +4007,6 @@ msgstr "Systemaudio"
 msgid "System audio enabled"
 msgstr "Systemaudio aktiviert"
 
-#: src/automations/starters.tsx
-msgid "Take the enhanced note with decisions and action items."
-msgstr "Die erweiterte Notiz mit Entscheidungen und Aufgaben übernehmen."
-
-#: src/automations/starters.tsx
-msgid "Take the enhanced note with decisions and follow-ups."
-msgstr "Die erweiterte Notiz mit Entscheidungen und Folgeaufgaben übernehmen."
-
 #: src/settings/developers/skills.tsx
 msgid "Teach coding agents when and how to use the Session Echo CLI and MCP"
 msgstr "Coding-Agenten beibringen, wann und wie sie die Session Echo CLI und MCP verwenden"
@@ -4385,14 +4213,6 @@ msgstr "Etwas näher am Mikrofon sprechen."
 msgid "Try the demo"
 msgstr "Demo ausprobieren"
 
-#: src/automations/starters.tsx
-msgid "Turn action items into Linear issues"
-msgstr "Aufgaben in Linear-Issues umwandeln"
-
-#: src/automations/starters.tsx
-msgid "Turn assigned follow-ups into Linear issue drafts."
-msgstr "Zugewiesene Folgeaufgaben in Linear-Issue-Entwürfe umwandeln."
-
 #: src/calendar/components/apple/permission.tsx
 msgid "Turn on Session Echo in System Settings → Privacy & Security → Calendars, then return here."
 msgstr "Session Echo unter Systemeinstellungen → Datenschutz & Sicherheit → Kalender aktivieren und dann hierher zurückkehren."
@@ -4479,10 +4299,6 @@ msgstr "Bevorstehende Bot-Teilnahme"
 msgid "Upcoming Event"
 msgstr "Bevorstehender Termin"
 
-#: src/automations/starters.tsx
-msgid "Update project notes in Notion"
-msgstr "Projektnotizen in Notion aktualisieren"
-
 #: src/session-sharing/access-management.tsx
 msgid "Updating access"
 msgstr "Zugriff wird aktualisiert"
@@ -4498,10 +4314,6 @@ msgstr "Upgrade"
 #: src/calendar/components/oauth/provider-content.tsx
 msgid "Upgrade to connect"
 msgstr "Zum Verbinden upgraden"
-
-#: src/settings/automations/index.tsx
-msgid "Upgrade to enable"
-msgstr "Zum Aktivieren upgraden"
 
 #: src/billing/trial-ended-dialog.tsx
 #: src/calendar/components/sidebar.tsx
@@ -4523,10 +4335,6 @@ msgstr "Auf Pro upgraden, um Personen einzuladen und diese Notiz mit ihnen zu te
 #: src/settings/ai/stt/select.tsx
 msgid "Upgrade to Pro to use this provider."
 msgstr "Auf Pro upgraden, um diesen Anbieter zu nutzen."
-
-#: src/settings/automations/index.tsx
-msgid "Upgrade to save"
-msgstr "Zum Speichern upgraden"
 
 #: src/session/components/floating/options-menu.tsx
 #: src/session/components/note-input/transcript/screens/empty.tsx
@@ -4571,14 +4379,6 @@ msgstr "Dateien verwenden"
 #: src/onboarding/permissions.tsx
 msgid "Use system audio to capture other speakers"
 msgstr "Systemaudio verwenden, um andere Sprecher aufzunehmen"
-
-#: src/automations/starters.tsx
-msgid "Use the AI meeting summary"
-msgstr "Die KI-Meeting-Zusammenfassung verwenden"
-
-#: src/automations/starters.tsx
-msgid "Use the meeting's action items and summary tasks."
-msgstr "Die Aufgaben und Zusammenfassungspunkte des Meetings verwenden."
 
 #: src/settings/team/index.tsx
 msgid "Use this domain for links shared from this workspace."
