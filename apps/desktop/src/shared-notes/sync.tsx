@@ -8,11 +8,11 @@ import {
 } from "./cache";
 
 import { useAuth } from "~/auth";
+import { reconcileManagedSessionShareSnapshot } from "~/session-sharing/reconciliation";
 import {
   isCanonicalSessionEditorActive,
   tryAcquireCanonicalSessionImportLock,
-} from "~/session-sharing/editor-activity";
-import { reconcileManagedSessionShareSnapshot } from "~/session-sharing/reconciliation";
+} from "~/session/editor-activity";
 import { useTabs } from "~/store/zustand/tabs";
 
 const REFRESH_INTERVAL_MS = 60 * 1000;

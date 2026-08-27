@@ -25,12 +25,12 @@ import {
 } from "~/services/audio-retention";
 import { getEnhancerService } from "~/services/enhancer";
 import { maybeExtractVoiceprintCandidates } from "~/services/voiceprint";
-import { flushCanonicalSessionEditorChanges } from "~/session-sharing/editor-activity";
 import {
   catalogLocalSessionAudio,
   markSessionAudioTranscriptionComplete,
 } from "~/session/attachments";
 import { enqueueSessionAudioOperation } from "~/session/audio-operations";
+import { flushCanonicalSessionEditorChanges } from "~/session/editor-activity";
 import { useSession, useSessionTranscriptExistence } from "~/session/queries";
 import { requestAppAttention } from "~/shared/app-attention";
 import { useConfigValue } from "~/shared/config";

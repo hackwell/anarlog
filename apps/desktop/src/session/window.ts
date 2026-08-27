@@ -3,7 +3,7 @@ import { commands as windowsCommands } from "@anlg/plugin-windows";
 import {
   beginCanonicalSessionEditorActivation,
   waitForCanonicalSessionImportUnlock,
-} from "~/session-sharing/editor-activity";
+} from "~/session/editor-activity";
 
 export async function openStandaloneNoteWindow(sessionId: string) {
   let finishActivation = beginCanonicalSessionEditorActivation(sessionId);

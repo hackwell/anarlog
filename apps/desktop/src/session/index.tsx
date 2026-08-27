@@ -39,7 +39,7 @@ import { useAppLock } from "~/lock/store";
 import {
   isCanonicalSessionImportLocked,
   subscribeCanonicalSessionImportLocks,
-} from "~/session-sharing/editor-activity";
+} from "~/session/editor-activity";
 import { useSession } from "~/session/queries";
 import { useMountEffect } from "~/shared/hooks/useMountEffect";
 import { type Tab, useTabs } from "~/store/zustand/tabs";

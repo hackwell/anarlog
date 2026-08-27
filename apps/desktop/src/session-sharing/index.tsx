@@ -30,7 +30,6 @@ import {
   deliverSessionShareRecapToSlack,
 } from "./delivery-management";
 import { type DraftShareAction, SessionShareDraftContent } from "./draft-panel";
-import { flushCanonicalSessionEditorChanges } from "./editor-activity";
 import { generalAccessWorkspaceId } from "./general-access";
 import {
   deliverSessionShareInvitations,
@@ -61,6 +60,7 @@ import { trackAnalyticsEvent } from "~/analytics";
 import { useAuth } from "~/auth";
 import { useBillingAccess } from "~/auth/billing-context";
 import { env } from "~/env";
+import { flushCanonicalSessionEditorChanges } from "~/session/editor-activity";
 import {
   loadManagedSharedNoteForSession,
   markSessionShareActivated,

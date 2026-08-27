@@ -10,7 +10,6 @@ import {
   type SessionShareManagement,
   ShareManagementError,
 } from "./client";
-import { flushCanonicalSessionEditorChanges } from "./editor-activity";
 import type { SharePanelIdentity } from "./management";
 import type {
   PublishLatestSessionShare,
@@ -25,6 +24,7 @@ import {
 import { loadSessionShareSource } from "./source";
 
 import { env } from "~/env";
+import { flushCanonicalSessionEditorChanges } from "~/session/editor-activity";
 import {
   type SharedNoteAttachment,
   type SharedNoteSnapshot,

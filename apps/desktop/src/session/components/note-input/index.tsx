@@ -21,11 +21,11 @@ import { SearchBar } from "./search/bar";
 import { useSearch } from "./search/context";
 import { Transcript } from "./transcript";
 
+import { useCurrentNoteTab } from "~/session/components/shared";
 import {
   registerCanonicalSessionEditor,
   unregisterCanonicalSessionEditor,
-} from "~/session-sharing/editor-activity";
-import { useCurrentNoteTab } from "~/session/components/shared";
+} from "~/session/editor-activity";
 import { useScrollPreservation } from "~/shared/hooks/useScrollPreservation";
 import type { SessionMode } from "~/store/zustand/listener/general";
 import { type Tab, useTabs } from "~/store/zustand/tabs";

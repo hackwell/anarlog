@@ -235,7 +235,7 @@ vi.mock("~/session/queries", () => ({
   useSessionTranscriptExistence: useSessionHasTranscriptMock,
 }));
 
-vi.mock("~/session-sharing/editor-activity", () => ({
+vi.mock("~/session/editor-activity", () => ({
   flushCanonicalSessionEditorChanges: flushCanonicalSessionEditorChangesMock,
 }));
 
