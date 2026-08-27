@@ -84,14 +84,6 @@ msgstr "{primaryModifier} ↩ zum Senden"
 msgid "{title} deleted"
 msgstr "{title} gelöscht"
 
-#: src/settings/general/account.tsx
-msgid "{trialDaysRemaining} day left"
-msgstr "noch {trialDaysRemaining} Tag"
-
-#: src/settings/general/account.tsx
-msgid "{trialDaysRemaining} days left"
-msgstr "noch {trialDaysRemaining} Tage"
-
 #: src/sidebar/timeline/utils/index.ts
 msgid "{weeks} weeks ago"
 msgstr "vor {weeks} Wochen"
@@ -136,11 +128,6 @@ msgstr "vor einer Woche"
 #: src/settings/general/permissions.tsx
 msgid "Accessibility"
 msgstr "Bedienungshilfen"
-
-#: src/settings/general/account.tsx
-#: src/sidebar/settings.tsx
-msgid "Account"
-msgstr "Konto"
 
 #: src/settings/automations/index.tsx
 #: src/settings/automations/workflow-builder.tsx
@@ -229,7 +216,6 @@ msgid "Add organization"
 msgstr "Organisation hinzufügen"
 
 #: src/billing/trial-payment-reminder-dialog.tsx
-#: src/settings/general/account.tsx
 msgid "Add payment method"
 msgstr "Zahlungsmethode hinzufügen"
 
@@ -252,6 +238,10 @@ msgstr "Schritt hinzufügen"
 #: src/settings/developers/webhooks.tsx
 msgid "Add webhook"
 msgstr "Webhook hinzufügen"
+
+#: src/session/components/note-input/enhanced/config-error.tsx
+msgid "Add your own LLM API key to generate a summary from this transcript."
+msgstr "Fügen Sie Ihren eigenen LLM-API-Schlüssel hinzu, um aus diesem Transkript eine Zusammenfassung zu erstellen."
 
 #: src/settings/general/spoken-languages.tsx
 msgid "Additional spoken languages"
@@ -786,10 +776,6 @@ msgstr "Kommentare"
 #: src/contacts/details.tsx
 msgid "Company"
 msgstr "Unternehmen"
-
-#: src/settings/general/account.tsx
-msgid "Compare Free and Pro before you sign in."
-msgstr "Free und Pro vergleichen, bevor Sie sich anmelden."
 
 #: src/instruction/index.tsx
 msgid "Complete sign-in in your browser, then return to Session Echo."
@@ -1419,14 +1405,6 @@ msgstr "Wichtige Entscheidungen finden."
 msgid "Finish checkout in your browser, then return to Session Echo."
 msgstr "Bezahlvorgang im Browser abschließen und dann zu Session Echo zurückkehren."
 
-#: src/settings/general/account.tsx
-msgid "Finish in your browser, then return to Session Echo."
-msgstr "Im Browser abschließen und dann zu Session Echo zurückkehren."
-
-#: src/settings/general/account.tsx
-msgid "Finish sign-in"
-msgstr "Anmeldung abschließen"
-
 #: src/settings/ai/llm/subscriptions/connect.tsx
 msgid "Finishing connection…"
 msgstr "Verbindung wird abgeschlossen …"
@@ -1455,10 +1433,6 @@ msgstr "Für aktivierte Benachrichtigungen"
 msgid "Forever"
 msgstr "Für immer"
 
-#: src/settings/general/account.tsx
-msgid "Free"
-msgstr "Free"
-
 #: src/templates/template-icon-picker.tsx
 msgid "Frequently used"
 msgstr "Häufig verwendet"
@@ -1481,11 +1455,6 @@ msgstr "Titel wird generiert …"
 msgid "Generating transcript..."
 msgstr "Transkript wird generiert …"
 
-#: src/session/components/note-input/enhanced/config-error.tsx
-msgid "Get Pro"
-msgstr "Pro holen"
-
-#: src/settings/general/account.tsx
 #: src/sidebar/automations.tsx
 msgid "Get started"
 msgstr "Loslegen"
@@ -1596,10 +1565,6 @@ msgstr "Ich habe ihn gespeichert"
 #: src/templates/template-icon-picker.tsx
 msgid "Icons"
 msgstr "Symbole"
-
-#: src/settings/general/account.tsx
-msgid "If Session Echo stays closed, paste the link in the sign-in window."
-msgstr "Falls Session Echo geschlossen bleibt, den Link im Anmeldefenster einfügen."
 
 #: src/onboarding/index.tsx
 msgid "Import notes and transcripts from the meeting apps you already use."
@@ -1813,10 +1778,6 @@ msgstr "macOS konnte nicht auf Ihren Wiederherstellungsschlüssel zugreifen. Sch
 #: src/settings/general/main-language.tsx
 msgid "Main language"
 msgstr "Hauptsprache"
-
-#: src/settings/general/account.tsx
-msgid "Manage billing"
-msgstr "Abrechnung verwalten"
 
 #: src/settings/automations/workflow-builder.tsx
 msgid "Markdown export"
@@ -2396,14 +2357,6 @@ msgstr "Telefon"
 msgid "Pin"
 msgstr "Anheften"
 
-#: src/settings/general/account.tsx
-msgid "Plan & Billing"
-msgstr "Plan & Abrechnung"
-
-#: src/settings/general/account.tsx
-msgid "Plans"
-msgstr "Pläne"
-
 #: src/session/components/note-input/transcript/renderer/selection-menu.tsx
 msgid "Play from here"
 msgstr "Ab hier abspielen"
@@ -2447,10 +2400,6 @@ msgstr "Pro"
 #: src/sidebar/toast/registry.tsx
 msgid "Pro features available"
 msgstr "Pro-Funktionen verfügbar"
-
-#: src/settings/general/account.tsx
-msgid "Pro trial"
-msgstr "Pro-Testphase"
 
 #: src/settings/appearance/app-icon.tsx
 msgid "Production"
@@ -2530,10 +2479,6 @@ msgstr "Aufnahme nicht gefunden. Sie wurde möglicherweise gelöscht."
 msgid "Redo"
 msgstr "Wiederholen"
 
-#: src/settings/general/account.tsx
-msgid "Refresh billing status"
-msgstr "Abrechnungsstatus aktualisieren"
-
 #: src/calendar/components/calendar-selection.tsx
 msgid "Refresh calendars"
 msgstr "Kalender aktualisieren"
@@ -2590,10 +2535,6 @@ msgstr "Bezahlseite erneut öffnen"
 #: src/instruction/index.tsx
 msgid "Reopen in browser"
 msgstr "Im Browser erneut öffnen"
-
-#: src/settings/general/account.tsx
-msgid "Reopen sign-in page"
-msgstr "Anmeldeseite erneut öffnen"
 
 #: src/auth/cloudsync-keychain-repair.tsx
 #: src/settings/ai/shared/index.tsx
@@ -2668,7 +2609,6 @@ msgid "Restoring cloud sync..."
 msgstr "Cloud-Synchronisierung wird wiederhergestellt …"
 
 #: src/session/components/outer-header/index.tsx
-#: src/settings/general/account.tsx
 msgid "Resume"
 msgstr "Fortsetzen"
 
@@ -2916,10 +2856,6 @@ msgstr "Session Echo konnte diese Zusammenfassung nicht erstellen, da Sie nicht 
 msgid "Session Echo couldn't read cloud sync status. Your notes are still available locally."
 msgstr "Session Echo konnte den Status der Cloud-Synchronisierung nicht lesen. Ihre Notizen sind weiterhin lokal verfügbar."
 
-#: src/settings/general/account.tsx
-msgid "Session Echo couldn't sign you out. Try again."
-msgstr "Session Echo konnte Sie nicht abmelden. Erneut versuchen."
-
 #: src/lock/gate.tsx
 msgid "Session Echo is Locked"
 msgstr "Session Echo ist gesperrt"
@@ -3066,7 +3002,6 @@ msgid "Show tray icon"
 msgstr "Symbol in der Taskleiste anzeigen"
 
 #: src/session/components/note-input/enhanced/enhance-error.tsx
-#: src/settings/general/account.tsx
 #: src/sidebar/toast/registry.tsx
 msgid "Sign in"
 msgstr "Anmelden"
@@ -3074,14 +3009,6 @@ msgstr "Anmelden"
 #: src/main/sync-status.tsx
 msgid "Sign in again"
 msgstr "Erneut anmelden"
-
-#: src/settings/general/account.tsx
-msgid "Sign in for cloud transcription, AI models, and sharing."
-msgstr "Für Cloud-Transkription, KI-Modelle und Freigabe anmelden."
-
-#: src/settings/general/account.tsx
-msgid "Sign in for Pro"
-msgstr "Für Pro anmelden"
 
 #: src/imports/screen.tsx
 #: src/onboarding/calendar.tsx
@@ -3099,10 +3026,6 @@ msgstr "Anmelden, um diese Zusammenfassung zu erstellen"
 #: src/sidebar/toast/registry.tsx
 msgid "Sign in to get the most out of Session Echo"
 msgstr "Anmelden, um Session Echo optimal zu nutzen"
-
-#: src/settings/general/account.tsx
-msgid "Sign in to Session Echo"
-msgstr "Bei Session Echo anmelden"
 
 #: src/instruction/index.tsx
 msgid "Sign in to your account"
@@ -3128,25 +3051,9 @@ msgstr "Mit GitHub Copilot anmelden und den Code unten eingeben."
 msgid "Sign in with SuperGrok or X Premium+ and enter the code below."
 msgstr "Mit SuperGrok oder X Premium+ anmelden und den Code unten eingeben."
 
-#: src/settings/general/account.tsx
-msgid "Sign out"
-msgstr "Abmelden"
-
 #: src/main/sync-status.tsx
 msgid "Sign out and sign in again to resume cloud sync."
 msgstr "Abmelden und erneut anmelden, um die Cloud-Synchronisierung fortzusetzen."
-
-#: src/settings/general/account.tsx
-msgid "Sign out of Session Echo?"
-msgstr "Von Session Echo abmelden?"
-
-#: src/settings/general/account.tsx
-msgid "Signed in"
-msgstr "Angemeldet"
-
-#: src/settings/general/account.tsx
-msgid "Signing out..."
-msgstr "Wird abgemeldet …"
 
 #: src/settings/developers/webhooks.tsx
 msgid "Signing secret copied"
@@ -3200,10 +3107,6 @@ msgstr "SQLite-Migrationsprüfung ist unvollständig"
 #: src/settings/automations/workflow-builder.tsx
 msgid "Stack another destination. Steps run top to bottom."
 msgstr "Ein weiteres Ziel hinzufügen. Schritte laufen von oben nach unten."
-
-#: src/session/components/note-input/enhanced/config-error.tsx
-msgid "Start a Pro trial or add your own LLM API key to generate a summary from this transcript."
-msgstr "Pro-Testphase starten oder eigenen LLM-API-Schlüssel hinzufügen, um eine Zusammenfassung aus diesem Transkript zu erstellen."
 
 #: src/settings/general/meeting-settings.tsx
 msgid "Start listening when a scheduled meeting begins."
@@ -3389,10 +3292,6 @@ msgstr "Synchronisierung pausiert"
 msgid "Sync status unavailable"
 msgstr "Synchronisierungsstatus nicht verfügbar"
 
-#: src/settings/general/account.tsx
-msgid "Sync your changes before signing out."
-msgstr "Änderungen vor dem Abmelden synchronisieren."
-
 #: src/main/sync-status.tsx
 msgid "Synced"
 msgstr "Synchronisiert"
@@ -3574,10 +3473,6 @@ msgstr "Transkription nicht verfügbar"
 #: src/templates/template-icon-picker.tsx
 msgid "Travel & Places"
 msgstr "Reisen & Orte"
-
-#: src/settings/general/account.tsx
-msgid "Trial"
-msgstr "Testphase"
 
 #: src/settings/automations/index.tsx
 #: src/settings/automations/workflow-builder.tsx
@@ -3860,14 +3755,6 @@ msgstr "Sie können diese Aktion für kurze Zeit rückgängig machen."
 msgid "You can use up to three example summaries."
 msgstr "Sie können bis zu drei Beispielzusammenfassungen verwenden."
 
-#: src/settings/general/account.tsx
-msgid "You'll need to sign in again to use cloud sync and account features."
-msgstr "Sie müssen sich erneut anmelden, um Cloud-Synchronisierung und Kontofunktionen zu nutzen."
-
-#: src/settings/general/account.tsx
-msgid "You're on the <0>{planLabel}</0> plan"
-msgstr "Sie nutzen den Plan <0>{planLabel}</0>"
-
 #: src/billing/trial-started-dialog.tsx
 msgid "Your {days}-day Pro trial starts now. Add a payment method before it ends to keep Pro."
 msgstr "Ihre {days}-tägige Pro-Testphase beginnt jetzt. Fügen Sie vor Ablauf eine Zahlungsmethode hinzu, um Pro zu behalten."
@@ -3875,10 +3762,6 @@ msgstr "Ihre {days}-tägige Pro-Testphase beginnt jetzt. Fügen Sie vor Ablauf e
 #: src/billing/trial-started-dialog.tsx
 msgid "Your {days}-day Pro trial starts now. Pro will continue automatically when it ends."
 msgstr "Ihre {days}-tägige Pro-Testphase beginnt jetzt. Pro wird nach Ablauf automatisch fortgesetzt."
-
-#: src/settings/general/account.tsx
-msgid "Your Account"
-msgstr "Ihr Konto"
 
 #: src/settings/dictionary/index.tsx
 msgid "Your dictionary is empty"
@@ -3901,7 +3784,6 @@ msgid "Your Pro trial ends in 1 day"
 msgstr "Ihre Pro-Testphase endet in 1 Tag"
 
 #: src/billing/trial-ended-dialog.tsx
-#: src/settings/general/account.tsx
 msgid "Your Pro trial has ended"
 msgstr "Ihre Pro-Testphase ist abgelaufen"
 

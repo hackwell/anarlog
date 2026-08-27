@@ -84,14 +84,6 @@ msgstr "{primaryModifier} ↩ to send"
 msgid "{title} deleted"
 msgstr "{title} deleted"
 
-#: src/settings/general/account.tsx
-msgid "{trialDaysRemaining} day left"
-msgstr "{trialDaysRemaining} day left"
-
-#: src/settings/general/account.tsx
-msgid "{trialDaysRemaining} days left"
-msgstr "{trialDaysRemaining} days left"
-
 #: src/sidebar/timeline/utils/index.ts
 msgid "{weeks} weeks ago"
 msgstr "{weeks} weeks ago"
@@ -136,11 +128,6 @@ msgstr "a week ago"
 #: src/settings/general/permissions.tsx
 msgid "Accessibility"
 msgstr "Accessibility"
-
-#: src/settings/general/account.tsx
-#: src/sidebar/settings.tsx
-msgid "Account"
-msgstr "Account"
 
 #: src/settings/automations/index.tsx
 #: src/settings/automations/workflow-builder.tsx
@@ -229,7 +216,6 @@ msgid "Add organization"
 msgstr "Add organization"
 
 #: src/billing/trial-payment-reminder-dialog.tsx
-#: src/settings/general/account.tsx
 msgid "Add payment method"
 msgstr "Add payment method"
 
@@ -252,6 +238,10 @@ msgstr "Add step"
 #: src/settings/developers/webhooks.tsx
 msgid "Add webhook"
 msgstr "Add webhook"
+
+#: src/session/components/note-input/enhanced/config-error.tsx
+msgid "Add your own LLM API key to generate a summary from this transcript."
+msgstr "Add your own LLM API key to generate a summary from this transcript."
 
 #: src/settings/general/spoken-languages.tsx
 msgid "Additional spoken languages"
@@ -786,10 +776,6 @@ msgstr "comments"
 #: src/contacts/details.tsx
 msgid "Company"
 msgstr "Company"
-
-#: src/settings/general/account.tsx
-msgid "Compare Free and Pro before you sign in."
-msgstr "Compare Free and Pro before you sign in."
 
 #: src/instruction/index.tsx
 msgid "Complete sign-in in your browser, then return to Session Echo."
@@ -1419,14 +1405,6 @@ msgstr "Find key decisions."
 msgid "Finish checkout in your browser, then return to Session Echo."
 msgstr "Finish checkout in your browser, then return to Session Echo."
 
-#: src/settings/general/account.tsx
-msgid "Finish in your browser, then return to Session Echo."
-msgstr "Finish in your browser, then return to Session Echo."
-
-#: src/settings/general/account.tsx
-msgid "Finish sign-in"
-msgstr "Finish sign-in"
-
 #: src/settings/ai/llm/subscriptions/connect.tsx
 msgid "Finishing connection…"
 msgstr "Finishing connection…"
@@ -1455,10 +1433,6 @@ msgstr "For enabled notifications"
 msgid "Forever"
 msgstr "Forever"
 
-#: src/settings/general/account.tsx
-msgid "Free"
-msgstr "Free"
-
 #: src/templates/template-icon-picker.tsx
 msgid "Frequently used"
 msgstr "Frequently used"
@@ -1481,11 +1455,6 @@ msgstr "Generating title..."
 msgid "Generating transcript..."
 msgstr "Generating transcript..."
 
-#: src/session/components/note-input/enhanced/config-error.tsx
-msgid "Get Pro"
-msgstr "Get Pro"
-
-#: src/settings/general/account.tsx
 #: src/sidebar/automations.tsx
 msgid "Get started"
 msgstr "Get started"
@@ -1596,10 +1565,6 @@ msgstr "I saved it"
 #: src/templates/template-icon-picker.tsx
 msgid "Icons"
 msgstr "Icons"
-
-#: src/settings/general/account.tsx
-msgid "If Session Echo stays closed, paste the link in the sign-in window."
-msgstr "If Session Echo stays closed, paste the link in the sign-in window."
 
 #: src/onboarding/index.tsx
 msgid "Import notes and transcripts from the meeting apps you already use."
@@ -1813,10 +1778,6 @@ msgstr "macOS could not access your recovery key. Repair Keychain access, then r
 #: src/settings/general/main-language.tsx
 msgid "Main language"
 msgstr "Main language"
-
-#: src/settings/general/account.tsx
-msgid "Manage billing"
-msgstr "Manage billing"
 
 #: src/settings/automations/workflow-builder.tsx
 msgid "Markdown export"
@@ -2396,14 +2357,6 @@ msgstr "Phone"
 msgid "Pin"
 msgstr "Pin"
 
-#: src/settings/general/account.tsx
-msgid "Plan & Billing"
-msgstr "Plan & Billing"
-
-#: src/settings/general/account.tsx
-msgid "Plans"
-msgstr "Plans"
-
 #: src/session/components/note-input/transcript/renderer/selection-menu.tsx
 msgid "Play from here"
 msgstr "Play from here"
@@ -2447,10 +2400,6 @@ msgstr "Pro"
 #: src/sidebar/toast/registry.tsx
 msgid "Pro features available"
 msgstr "Pro features available"
-
-#: src/settings/general/account.tsx
-msgid "Pro trial"
-msgstr "Pro trial"
 
 #: src/settings/appearance/app-icon.tsx
 msgid "Production"
@@ -2530,10 +2479,6 @@ msgstr "Recording not found. It may have been deleted."
 msgid "Redo"
 msgstr "Redo"
 
-#: src/settings/general/account.tsx
-msgid "Refresh billing status"
-msgstr "Refresh billing status"
-
 #: src/calendar/components/calendar-selection.tsx
 msgid "Refresh calendars"
 msgstr "Refresh calendars"
@@ -2590,10 +2535,6 @@ msgstr "Reopen checkout page"
 #: src/instruction/index.tsx
 msgid "Reopen in browser"
 msgstr "Reopen in browser"
-
-#: src/settings/general/account.tsx
-msgid "Reopen sign-in page"
-msgstr "Reopen sign-in page"
 
 #: src/auth/cloudsync-keychain-repair.tsx
 #: src/settings/ai/shared/index.tsx
@@ -2668,7 +2609,6 @@ msgid "Restoring cloud sync..."
 msgstr "Restoring cloud sync..."
 
 #: src/session/components/outer-header/index.tsx
-#: src/settings/general/account.tsx
 msgid "Resume"
 msgstr "Resume"
 
@@ -2916,10 +2856,6 @@ msgstr "Session Echo could not generate this summary because you were not signed
 msgid "Session Echo couldn't read cloud sync status. Your notes are still available locally."
 msgstr "Session Echo couldn't read cloud sync status. Your notes are still available locally."
 
-#: src/settings/general/account.tsx
-msgid "Session Echo couldn't sign you out. Try again."
-msgstr "Session Echo couldn't sign you out. Try again."
-
 #: src/lock/gate.tsx
 msgid "Session Echo is Locked"
 msgstr "Session Echo is Locked"
@@ -3066,7 +3002,6 @@ msgid "Show tray icon"
 msgstr "Show tray icon"
 
 #: src/session/components/note-input/enhanced/enhance-error.tsx
-#: src/settings/general/account.tsx
 #: src/sidebar/toast/registry.tsx
 msgid "Sign in"
 msgstr "Sign in"
@@ -3074,14 +3009,6 @@ msgstr "Sign in"
 #: src/main/sync-status.tsx
 msgid "Sign in again"
 msgstr "Sign in again"
-
-#: src/settings/general/account.tsx
-msgid "Sign in for cloud transcription, AI models, and sharing."
-msgstr "Sign in for cloud transcription, AI models, and sharing."
-
-#: src/settings/general/account.tsx
-msgid "Sign in for Pro"
-msgstr "Sign in for Pro"
 
 #: src/imports/screen.tsx
 #: src/onboarding/calendar.tsx
@@ -3099,10 +3026,6 @@ msgstr "Sign in to generate this summary"
 #: src/sidebar/toast/registry.tsx
 msgid "Sign in to get the most out of Session Echo"
 msgstr "Sign in to get the most out of Session Echo"
-
-#: src/settings/general/account.tsx
-msgid "Sign in to Session Echo"
-msgstr "Sign in to Session Echo"
 
 #: src/instruction/index.tsx
 msgid "Sign in to your account"
@@ -3128,25 +3051,9 @@ msgstr "Sign in with GitHub Copilot and enter the code below."
 msgid "Sign in with SuperGrok or X Premium+ and enter the code below."
 msgstr "Sign in with SuperGrok or X Premium+ and enter the code below."
 
-#: src/settings/general/account.tsx
-msgid "Sign out"
-msgstr "Sign out"
-
 #: src/main/sync-status.tsx
 msgid "Sign out and sign in again to resume cloud sync."
 msgstr "Sign out and sign in again to resume cloud sync."
-
-#: src/settings/general/account.tsx
-msgid "Sign out of Session Echo?"
-msgstr "Sign out of Session Echo?"
-
-#: src/settings/general/account.tsx
-msgid "Signed in"
-msgstr "Signed in"
-
-#: src/settings/general/account.tsx
-msgid "Signing out..."
-msgstr "Signing out..."
 
 #: src/settings/developers/webhooks.tsx
 msgid "Signing secret copied"
@@ -3200,10 +3107,6 @@ msgstr "SQLite migration verification is incomplete"
 #: src/settings/automations/workflow-builder.tsx
 msgid "Stack another destination. Steps run top to bottom."
 msgstr "Stack another destination. Steps run top to bottom."
-
-#: src/session/components/note-input/enhanced/config-error.tsx
-msgid "Start a Pro trial or add your own LLM API key to generate a summary from this transcript."
-msgstr "Start a Pro trial or add your own LLM API key to generate a summary from this transcript."
 
 #: src/settings/general/meeting-settings.tsx
 msgid "Start listening when a scheduled meeting begins."
@@ -3389,10 +3292,6 @@ msgstr "Sync paused"
 msgid "Sync status unavailable"
 msgstr "Sync status unavailable"
 
-#: src/settings/general/account.tsx
-msgid "Sync your changes before signing out."
-msgstr "Sync your changes before signing out."
-
 #: src/main/sync-status.tsx
 msgid "Synced"
 msgstr "Synced"
@@ -3574,10 +3473,6 @@ msgstr "Transcription unavailable"
 #: src/templates/template-icon-picker.tsx
 msgid "Travel & Places"
 msgstr "Travel & Places"
-
-#: src/settings/general/account.tsx
-msgid "Trial"
-msgstr "Trial"
 
 #: src/settings/automations/index.tsx
 #: src/settings/automations/workflow-builder.tsx
@@ -3860,14 +3755,6 @@ msgstr "You can undo this action for a short time."
 msgid "You can use up to three example summaries."
 msgstr "You can use up to three example summaries."
 
-#: src/settings/general/account.tsx
-msgid "You'll need to sign in again to use cloud sync and account features."
-msgstr "You'll need to sign in again to use cloud sync and account features."
-
-#: src/settings/general/account.tsx
-msgid "You're on the <0>{planLabel}</0> plan"
-msgstr "You're on the <0>{planLabel}</0> plan"
-
 #: src/billing/trial-started-dialog.tsx
 msgid "Your {days}-day Pro trial starts now. Add a payment method before it ends to keep Pro."
 msgstr "Your {days}-day Pro trial starts now. Add a payment method before it ends to keep Pro."
@@ -3875,10 +3762,6 @@ msgstr "Your {days}-day Pro trial starts now. Add a payment method before it end
 #: src/billing/trial-started-dialog.tsx
 msgid "Your {days}-day Pro trial starts now. Pro will continue automatically when it ends."
 msgstr "Your {days}-day Pro trial starts now. Pro will continue automatically when it ends."
-
-#: src/settings/general/account.tsx
-msgid "Your Account"
-msgstr "Your Account"
 
 #: src/settings/dictionary/index.tsx
 msgid "Your dictionary is empty"
@@ -3901,7 +3784,6 @@ msgid "Your Pro trial ends in 1 day"
 msgstr "Your Pro trial ends in 1 day"
 
 #: src/billing/trial-ended-dialog.tsx
-#: src/settings/general/account.tsx
 msgid "Your Pro trial has ended"
 msgstr "Your Pro trial has ended"
 

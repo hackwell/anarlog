@@ -7,7 +7,6 @@ import { useQuery } from "@tanstack/react-query";
 import { commands as analyticsCommands } from "@anlg/plugin-analytics";
 import { commands as listenerCommands } from "@anlg/plugin-transcription";
 
-export { SettingsAccount } from "./account";
 import { AppSettingsView } from "./app-settings";
 import { AudioSettingsView } from "./audio-settings";
 import {

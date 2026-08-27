@@ -102,7 +102,6 @@ const renderers: RendererMap = {
         key: entity.key,
         icon: User,
         label: "Account",
-        tab: { type: "settings", state: { tab: "account" } },
       };
     },
   },

@@ -354,11 +354,7 @@ describe("ContextBar", () => {
     fireEvent.click(screen.getByText("Account"));
     fireEvent.click(screen.getByText("Device"));
 
-    expect(openNewMock).toHaveBeenCalledTimes(1);
-    expect(openNewMock).toHaveBeenCalledWith({
-      type: "settings",
-      state: { tab: "account" },
-    });
+    expect(openNewMock).not.toHaveBeenCalled();
   });
 
   it("opens a calendar event chip on its linked session when present", () => {
