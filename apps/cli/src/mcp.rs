@@ -623,6 +623,17 @@ mod tests {
             );
         }
         for tool in tools {
+            let properties = tool
+                .input_schema
+                .get("properties")
+                .and_then(Value::as_object)
+                .expect("tool input properties");
+            for parameter in properties.keys() {
+                assert!(
+                    mcp_skill.contains(&format!("`{parameter}`")),
+                    "Anarlog skill is missing `{parameter}`"
+                );
+            }
             let annotations = tool.annotations.expect("tool annotations");
             let write_tool = matches!(
                 tool.name.as_ref(),

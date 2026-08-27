@@ -14,6 +14,57 @@ Read tools are idempotent. Proposal tools insert or decline staged edits; they n
 | `get_proposal`                  | Read one proposal and its unified `diff`.                                                               |
 | `decline_proposal`              | Discard a pending proposal without changing the meeting.                                                |
 
+## Tool parameters
+
+**`list_meetings`** accepts optional filters:
+
+- `query`: Case-insensitive title or meeting ID substring
+- `series_id`: Exact recurring series ID
+- `limit`: Maximum results (1–200, defaults to 20)
+- `offset`: Number of results to skip (defaults to 0)
+
+**`get_meeting`** requires:
+
+- `meeting_id`: Anarlog meeting ID
+
+**`get_meeting_transcript`** requires `meeting_id` and accepts:
+
+- `offset`: Word offset (defaults to 0)
+- `limit`: Maximum words (1–500, defaults to 200)
+
+**`get_recurring_meeting_history`** requires `meeting_id` and accepts:
+
+- `limit`: Maximum results (1–200, defaults to 20)
+- `offset`: Number of results to skip (defaults to 0)
+
+**`propose_summary_edit`** requires:
+
+- `meeting_id`: Anarlog meeting ID
+- `kind`: Document type — `summary` or `memo` (or `note` as alias for memo)
+- `content`: Complete replacement markdown; cannot be empty
+
+Accepts optional:
+
+- `target_id`: For summaries, names which existing summary to replace; ignored for memos
+- `source`: Origin of the proposal — `cli`, `mcp`, or `chat`
+
+**`propose_memo_edit`** is identical to `propose_summary_edit` (same input schema).
+
+**`list_proposals`** accepts optional filters:
+
+- `meeting_id`: Limit results to one meeting
+- `status`: Filter by state — `pending`, `applied`, or `declined` (defaults to `pending`)
+- `limit`: Maximum results (1–200, defaults to 20)
+- `offset`: Number of results to skip (defaults to 0)
+
+**`get_proposal`** requires:
+
+- `proposal_id`: Proposal ID
+
+**`decline_proposal`** requires:
+
+- `proposal_id`: Proposal ID
+
 Transcript limits are measured in words. The default is 200 and the maximum is 500.
 
 Available resources:
