@@ -20,6 +20,7 @@ import { OnboardingSection } from "./shared";
 
 import { trackAnalyticsEvent } from "~/analytics";
 import { useAuth } from "~/auth";
+import { useWindowControlsGutter } from "~/shared/hooks/useWindowControlsGutter";
 import { StandaloneWindowShell } from "~/shared/window-shell";
 import { type Tab, useTabs } from "~/store/zustand/tabs";
 
@@ -48,7 +49,7 @@ function OnboardingScreen({
   return (
     <OnboardingScreenContent
       onFinish={onFinish}
-      headerClassName="px-12 pt-4 pb-8"
+      headerClassName="pr-12 pt-4 pb-8"
       headerDragRegion
     />
   );
@@ -63,7 +64,7 @@ export function StandaloneOnboardingScreen({
     <StandaloneWindowShell>
       <OnboardingScreenContent
         onFinish={onFinish}
-        headerClassName="px-12 pt-4 pb-8"
+        headerClassName="pr-12 pt-4 pb-8"
         headerDragRegion
       />
     </StandaloneWindowShell>
@@ -83,6 +84,7 @@ function OnboardingScreenContent({
   const auth = useAuth();
   const [currentStep, setCurrentStep] = useState(getInitialStep);
   const currentPlatform = platform();
+  const showWindowControlsGutter = useWindowControlsGutter();
 
   const goNext = useCallback(() => {
     trackAnalyticsEvent("onboarding_step_completed", {
@@ -137,6 +139,7 @@ function OnboardingScreenContent({
         className={cn([
           "relative z-10 flex shrink-0 items-center",
           headerClassName,
+          showWindowControlsGutter ? "pl-[76px]" : "pl-12",
         ])}
       >
         <img
