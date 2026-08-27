@@ -132,20 +132,6 @@ msgstr "A bis Z"
 msgid "a week ago"
 msgstr "vor einer Woche"
 
-#: src/shared-notes/index.tsx
-msgid "Access no longer available"
-msgstr "Zugriff nicht mehr verfügbar"
-
-#: src/session-sharing/management-panel.tsx
-msgid "Access settings could not be loaded."
-msgstr "Zugriffseinstellungen konnten nicht geladen werden."
-
-#: src/session-sharing/access-management.tsx
-#: src/session-sharing/index.tsx
-#: src/session-sharing/management-panel.tsx
-msgid "Access updated."
-msgstr "Zugriff aktualisiert."
-
 #: src/onboarding/permissions.tsx
 #: src/settings/general/permissions.tsx
 msgid "Accessibility"
@@ -325,15 +311,6 @@ msgstr "Struktur wird analysiert …"
 msgid "Animals & Nature"
 msgstr "Tiere & Natur"
 
-#: src/session-sharing/general-access.tsx
-msgid "Anyone with the link"
-msgstr "Jeder mit dem Link"
-
-#: src/session-sharing/index.tsx
-#: src/session-sharing/management-panel.tsx
-msgid "Anyone with the link can view. Link copied."
-msgstr "Jeder mit dem Link kann ansehen. Link kopiert."
-
 #: src/settings/ai/shared/index.tsx
 msgid "API Key"
 msgstr "API-Schlüssel"
@@ -375,10 +352,6 @@ msgstr "Auf Memo anwenden"
 msgid "Apply to summary"
 msgstr "Auf Zusammenfassung anwenden"
 
-#: src/session-sharing/access-management.tsx
-msgid "Approve"
-msgstr "Genehmigen"
-
 #: src/chat/components/input/index.tsx
 #: src/shared/chat-cta.tsx
 msgid "Ask anything"
@@ -404,10 +377,6 @@ msgstr "Markdown oder Text anhängen"
 msgid "Attach up to three past summaries you like. Session Echo will learn how you prefer meeting notes to be structured and written."
 msgstr "Bis zu drei bevorzugte frühere Zusammenfassungen anhängen. Session Echo lernt daraus, wie Sie Meeting-Notizen strukturiert und geschrieben haben möchten."
 
-#: src/session-sharing/attachment-management.ts
-msgid "Attachment settings updated."
-msgstr "Anhang-Einstellungen aktualisiert."
-
 #: src/settings/general/index.tsx
 #: src/settings/general/permissions.tsx
 msgid "Audio"
@@ -420,10 +389,6 @@ msgstr "Audio verfügbar"
 #: src/settings/general/audio-settings.tsx
 msgid "Audio file retention"
 msgstr "Aufbewahrung von Audiodateien"
-
-#: src/session-sharing/attachment-controls.tsx
-msgid "Audio is not available on this device."
-msgstr "Audio ist auf diesem Gerät nicht verfügbar."
 
 #: src/lock/screen.tsx
 msgid "Authenticate to continue."
@@ -480,7 +445,6 @@ msgstr "Automatisierungen"
 
 #: src/calendar/components/apple/permission.tsx
 #: src/instruction/index.tsx
-#: src/session-sharing/delivery-panel.tsx
 #: src/settings/general/e2ee-setup.tsx
 #: src/sidebar/custom-sidebar-header.tsx
 msgid "Back"
@@ -541,25 +505,12 @@ msgstr "Kalender"
 msgid "Calendar connected"
 msgstr "Kalender verbunden"
 
-#: src/session-sharing/access-management.tsx
-msgid "Can comment"
-msgstr "Kann kommentieren"
-
-#: src/session-sharing/access-management.tsx
-msgid "Can edit"
-msgstr "Kann bearbeiten"
-
 #: src/settings/ai/stt/select.tsx
 msgid "Can transcribe while the meeting is happening."
 msgstr "Kann transkribieren, während das Meeting läuft."
 
-#: src/session-sharing/access-management.tsx
-msgid "Can view"
-msgstr "Kann ansehen"
-
 #: src/calendar/components/apple/permission.tsx
 #: src/imports/screen.tsx
-#: src/session-sharing/comments.tsx
 #: src/settings/ai/llm/subscriptions/connect.tsx
 #: src/settings/general/e2ee-setup.tsx
 #: src/settings/general/storage/legacy-cleanup.tsx
@@ -621,10 +572,6 @@ msgstr "Wird geprüft …"
 #: src/imports/screen.tsx
 msgid "Choose {0} export files"
 msgstr "{0}-Exportdateien auswählen"
-
-#: src/session-sharing/delivery-panel.tsx
-msgid "Choose a channel"
-msgstr "Kanal auswählen"
 
 #: src/session/components/outer-header/overflow/export-modal.tsx
 msgid "Choose a file format and what to include."
@@ -816,10 +763,6 @@ msgstr "Status der Cloud-Synchronisierung: {0}"
 msgid "Cloud sync unavailable"
 msgstr "Cloud-Synchronisierung nicht verfügbar"
 
-#: src/session-sharing/comments.tsx
-msgid "Collaborator"
-msgstr "Mitwirkender"
-
 #: src/settings/appearance/theme.tsx
 msgid "Color theme"
 msgstr "Farbschema"
@@ -831,22 +774,6 @@ msgstr "Metadaten, Zusammenfassung, Notizen und Transkript kombinieren."
 #: src/task/resource-view.tsx
 msgid "comment"
 msgstr "Kommentar"
-
-#: src/session-sharing/comments.tsx
-msgid "Comment"
-msgstr "Kommentar"
-
-#: src/session-sharing/comments.tsx
-msgid "Comment is too long."
-msgstr "Kommentar ist zu lang."
-
-#: src/session-sharing/comments.tsx
-msgid "Comment on selected text"
-msgstr "Ausgewählten Text kommentieren"
-
-#: src/session-sharing/comments.tsx
-msgid "Comment on the selected text…"
-msgstr "Ausgewählten Text kommentieren …"
 
 #: src/task/resource-view.tsx
 msgid "commented on"
@@ -939,14 +866,6 @@ msgstr "Einmal verbinden, um Ihren {0}-Verlauf zu übernehmen und während des W
 msgid "Connect Outlook"
 msgstr "Outlook verbinden"
 
-#: src/session-sharing/delivery-panel.tsx
-msgid "Connect Slack"
-msgstr "Slack verbinden"
-
-#: src/session-sharing/delivery-panel.tsx
-msgid "Connect Slack to choose a channel for this recap."
-msgstr "Slack verbinden, um einen Kanal für diese Zusammenfassung auszuwählen."
-
 #: src/instruction/index.tsx
 msgid "Connect your integration"
 msgstr "Integration verbinden"
@@ -996,11 +915,6 @@ msgstr "Kopieren"
 msgid "Copy config"
 msgstr "Konfiguration kopieren"
 
-#: src/session-sharing/draft-panel.tsx
-#: src/session-sharing/management-panel.tsx
-msgid "Copy link"
-msgstr "Link kopieren"
-
 #: src/chat/components/message/normal.tsx
 msgid "Copy message"
 msgstr "Nachricht kopieren"
@@ -1026,10 +940,6 @@ msgstr "Ausgewähltes Modell konnte nicht entfernt werden"
 msgid "Could not copy the MCP configuration"
 msgstr "MCP-Konfiguration konnte nicht kopiert werden"
 
-#: src/session-sharing/management-panel.tsx
-msgid "Could not copy the share link."
-msgstr "Freigabelink konnte nicht kopiert werden."
-
 #: src/settings/developers/clipboard.ts
 msgid "Could not copy to clipboard"
 msgstr "In die Zwischenablage konnte nicht kopiert werden"
@@ -1037,14 +947,6 @@ msgstr "In die Zwischenablage konnte nicht kopiert werden"
 #: src/session/hooks/useCreatePreMeetingBrief.ts
 msgid "Could not create the pre-meeting brief. Try again."
 msgstr "Briefing konnte nicht erstellt werden. Erneut versuchen."
-
-#: src/session-sharing/invitation-management.ts
-msgid "Could not create these invitations."
-msgstr "Diese Einladungen konnten nicht erstellt werden."
-
-#: src/session-sharing/invitation-management.ts
-msgid "Could not create this invitation."
-msgstr "Diese Einladung konnte nicht erstellt werden."
 
 #: src/automations/actions.ts
 msgid "Could not delete the automation"
@@ -1054,29 +956,13 @@ msgstr "Automatisierung konnte nicht gelöscht werden"
 msgid "Could not delete this note. Please try again."
 msgstr "Diese Notiz konnte nicht gelöscht werden. Bitte erneut versuchen."
 
-#: src/session-sharing/delivery-management.ts
-msgid "Could not email the meeting notes."
-msgstr "Meeting-Notizen konnten nicht per E-Mail versendet werden."
-
 #: src/session/insights/past-notes.ts
 msgid "Could not generate meeting insights. Try again."
 msgstr "Meeting-Insights konnten nicht generiert werden. Erneut versuchen."
 
-#: src/session-sharing/delivery-panel.tsx
-msgid "Could not load Slack channels. Reconnect Slack and try again."
-msgstr "Slack-Kanäle konnten nicht geladen werden. Slack erneut verbinden und noch einmal versuchen."
-
-#: src/session-sharing/management-panel.tsx
-msgid "Could not open the web copy."
-msgstr "Web-Kopie konnte nicht geöffnet werden."
-
 #: src/shared/useNewNote.ts
 msgid "Could not prepare this upload. Please try again."
 msgstr "Dieser Upload konnte nicht vorbereitet werden. Bitte erneut versuchen."
-
-#: src/session-sharing/management-panel.tsx
-msgid "Could not publish the desktop edits. Check the latest web copy and try again."
-msgstr "Desktop-Änderungen konnten nicht veröffentlicht werden. Aktuelle Web-Kopie prüfen und erneut versuchen."
 
 #: src/automations/actions.ts
 msgid "Could not remove the automation"
@@ -1090,14 +976,6 @@ msgstr "Gelöschte Notiz konnte nicht wiederhergestellt werden"
 msgid "Could not save the automation draft"
 msgstr "Entwurf der Automatisierung konnte nicht gespeichert werden"
 
-#: src/session-sharing/delivery-management.ts
-msgid "Could not send the meeting notes to Slack."
-msgstr "Meeting-Notizen konnten nicht an Slack gesendet werden."
-
-#: src/session-sharing/index.tsx
-msgid "Could not start sign-in."
-msgstr "Anmeldung konnte nicht gestartet werden."
-
 #: src/shared/integration.ts
 msgid "Could not start the integration setup. Try again."
 msgstr "Einrichtung der Integration konnte nicht gestartet werden. Erneut versuchen."
@@ -1109,14 +987,6 @@ msgstr "Spracheingabe konnte nicht gestartet werden"
 #: src/chat/components/input/use-dictation.ts
 msgid "Could not transcribe voice input"
 msgstr "Spracheingabe konnte nicht transkribiert werden"
-
-#: src/session-sharing/attachment-management.ts
-msgid "Could not update attachment sharing."
-msgstr "Freigabe von Anhängen konnte nicht aktualisiert werden."
-
-#: src/session-sharing/management-panel.tsx
-msgid "Could not update general access."
-msgstr "Allgemeiner Zugriff konnte nicht aktualisiert werden."
 
 #: src/settings/automations/index.tsx
 #: src/settings/automations/workflow-builder.tsx
@@ -1130,10 +1000,6 @@ msgstr "Exportordner konnte nicht aktualisiert werden"
 #: src/session/components/outer-header/metadata/date.tsx
 msgid "Could not update the note date."
 msgstr "Datum der Notiz konnte nicht aktualisiert werden."
-
-#: src/session-sharing/access-management.tsx
-msgid "Could not update this person's access."
-msgstr "Zugriff dieser Person konnte nicht aktualisiert werden."
 
 #: src/settings/ai/stt/local-file-model.tsx
 msgid "Could not use the selected model"
@@ -1237,10 +1103,6 @@ msgstr "Alle wiederkehrenden Termine löschen"
 msgid "Delete automation"
 msgstr "Automatisierung löschen"
 
-#: src/session-sharing/comments.tsx
-msgid "Delete comment"
-msgstr "Kommentar löschen"
-
 #: src/sidebar/timeline/item.tsx
 msgid "Delete Event"
 msgstr "Termin löschen"
@@ -1269,17 +1131,9 @@ msgstr "Diesen Termin löschen"
 msgid "Deleting..."
 msgstr "Wird gelöscht …"
 
-#: src/session-sharing/access-management.tsx
-msgid "Deny"
-msgstr "Ablehnen"
-
 #: src/templates/template-form.tsx
 msgid "Describe the template purpose..."
 msgstr "Zweck der Vorlage beschreiben …"
-
-#: src/session-sharing/management-panel.tsx
-msgid "Desktop edits published. Sharing resumed."
-msgstr "Desktop-Änderungen veröffentlicht. Freigabe fortgesetzt."
 
 #: src/settings/general/summary-length.tsx
 msgid "Detailed"
@@ -1406,22 +1260,8 @@ msgid "Edit date"
 msgstr "Datum bearbeiten"
 
 #: src/contacts/details.tsx
-#: src/session-sharing/delivery-panel.tsx
 msgid "Email"
 msgstr "E-Mail"
-
-#: src/session-sharing/delivery-panel.tsx
-msgid "Email meeting notes"
-msgstr "Meeting-Notizen per E-Mail senden"
-
-#: src/session-sharing/delivery-panel.tsx
-msgid "Email or name"
-msgstr "E-Mail oder Name"
-
-#: src/session-sharing/access-management.tsx
-#: src/session-sharing/invitation-management.ts
-msgid "Email unavailable. Invite link copied instead."
-msgstr "E-Mail nicht verfügbar. Einladungslink stattdessen kopiert."
 
 #: src/templates/template-icon-picker.tsx
 msgid "Emojis"
@@ -1485,11 +1325,6 @@ msgstr "Esc zum Schließen"
 #: src/settings/general/notification.tsx
 msgid "Event notifications"
 msgstr "Termin-Benachrichtigungen"
-
-#. placeholder {0}: workspace.name
-#: src/session-sharing/general-access.tsx
-msgid "Everyone in {0}"
-msgstr "Alle in {0}"
 
 #: src/imports/screen.tsx
 msgid "Everything is already here."
@@ -1628,11 +1463,6 @@ msgstr "Free"
 msgid "Frequently used"
 msgstr "Häufig verwendet"
 
-#: src/session-sharing/draft-panel.tsx
-#: src/session-sharing/management-panel.tsx
-msgid "Full access"
-msgstr "Voller Zugriff"
-
 #: src/main/windows-title-bar.tsx
 msgid "Full Screen"
 msgstr "Vollbild"
@@ -1641,10 +1471,6 @@ msgstr "Vollbild"
 #: src/sidebar/settings.tsx
 msgid "General"
 msgstr "Allgemein"
-
-#: src/session-sharing/general-access.tsx
-msgid "General access"
-msgstr "Allgemeiner Zugriff"
 
 #: src/session/components/note-input/enhanced/streaming.tsx
 #: src/session/components/title-input.tsx
@@ -1849,38 +1675,6 @@ msgstr "Installiert"
 msgid "Intelligence"
 msgstr "Intelligenz"
 
-#: src/session-sharing/access-management.tsx
-msgid "Invitation pending"
-msgstr "Einladung ausstehend"
-
-#: src/session-sharing/access-management.tsx
-#: src/session-sharing/invitation-management.ts
-msgid "Invitation sent."
-msgstr "Einladung gesendet."
-
-#: src/session-sharing/invitation-management.ts
-msgid "Invitations sent."
-msgstr "Einladungen gesendet."
-
-#: src/session-sharing/invite-recipients.tsx
-msgid "Invite"
-msgstr "Einladen"
-
-#: src/session-sharing/draft-panel.tsx
-#: src/session-sharing/management-panel.tsx
-msgid "Invite people"
-msgstr "Personen einladen"
-
-#: src/session-sharing/draft-panel.tsx
-#: src/session-sharing/management-panel.tsx
-msgid "Invite people to this note."
-msgstr "Personen zu dieser Notiz einladen."
-
-#. placeholder {0}: sent.length
-#: src/session-sharing/invitation-management.ts
-msgid "Invited {0}. Could not invite {failed}. Try again."
-msgstr "{0} eingeladen. {failed} konnte nicht eingeladen werden. Erneut versuchen."
-
 #: src/contacts/details.tsx
 msgid "Job Title"
 msgstr "Position"
@@ -1900,10 +1694,6 @@ msgstr "Treten Sie unserer Community bei und bleiben Sie auf dem Laufenden:"
 #: src/settings/general/meeting-settings.tsx
 msgid "Join scheduled meetings"
 msgstr "Geplanten Meetings beitreten"
-
-#: src/session-sharing/management-panel.tsx
-msgid "Keep desktop edits"
-msgstr "Desktop-Änderungen behalten"
 
 #: src/settings/ai/llm/subscriptions/connect.tsx
 msgid "Kimi Code API key"
@@ -1947,10 +1737,6 @@ msgstr "Zuletzt synchronisiert {0}"
 msgid "Learn how to fix this"
 msgstr "Erfahren, wie sich das beheben lässt"
 
-#: src/session-sharing/attachment-controls.tsx
-msgid "Let people with access play the recording."
-msgstr "Personen mit Zugriff erlauben, die Aufnahme abzuspielen."
-
 #: src/settings/appearance/theme.tsx
 msgid "Light"
 msgstr "Hell"
@@ -1974,10 +1760,6 @@ msgstr "Auto-Format wird geladen …"
 #: src/calendar/components/calendar-selection.tsx
 msgid "Loading calendars..."
 msgstr "Kalender werden geladen …"
-
-#: src/session-sharing/delivery-panel.tsx
-msgid "Loading channels…"
-msgstr "Kanäle werden geladen …"
 
 #: src/edit/tab-content.tsx
 msgid "Loading edit…"
@@ -2092,23 +1874,6 @@ msgstr "Meeting-Exporte"
 msgid "Meeting history imported"
 msgstr "Meeting-Historie importiert"
 
-#: src/session-sharing/delivery-management.ts
-#: src/session-sharing/index.tsx
-msgid "Meeting note sent."
-msgstr "Meeting-Notiz gesendet."
-
-#. placeholder {0}: actionResult.channelName
-#. placeholder {0}: channel.name
-#: src/session-sharing/delivery-management.ts
-#: src/session-sharing/index.tsx
-msgid "Meeting notes sent to #{0}."
-msgstr "Meeting-Notizen an #{0} gesendet."
-
-#: src/session-sharing/delivery-management.ts
-#: src/session-sharing/index.tsx
-msgid "Meeting notes sent."
-msgstr "Meeting-Notizen gesendet."
-
 #: src/settings/general/index.tsx
 #: src/sidebar/settings.tsx
 msgid "Meetings"
@@ -2194,7 +1959,6 @@ msgstr "Modell denkt nach …"
 msgid "Monday"
 msgstr "Montag"
 
-#: src/session-sharing/delivery-panel.tsx
 #: src/session/components/floating/options-menu.tsx
 msgid "More options"
 msgstr "Weitere Optionen"
@@ -2388,10 +2152,6 @@ msgstr "Kein Transkript verfügbar"
 msgid "Not installed"
 msgstr "Nicht installiert"
 
-#: src/session-sharing/invite-recipients.tsx
-msgid "Not invited"
-msgstr "Nicht eingeladen"
-
 #: src/billing/trial-payment-reminder-dialog.tsx
 msgid "Not now"
 msgstr "Nicht jetzt"
@@ -2452,10 +2212,6 @@ msgstr "Älteste"
 #: src/session/components/note-input/enhanced/streaming.tsx
 msgid "On-device models can take a few minutes to warm up before text appears."
 msgstr "Modelle auf dem Gerät können ein paar Minuten zum Aufwärmen benötigen, bevor Text erscheint."
-
-#: src/session-sharing/general-access.tsx
-msgid "Only people invited"
-msgstr "Nur eingeladene Personen"
 
 #: src/calendar/components/apple/permission.tsx
 #: src/task/resource-view.tsx
@@ -2528,17 +2284,12 @@ msgstr "Einstellungen öffnen"
 msgid "Open the meeting link when listening starts."
 msgstr "Meeting-Link öffnen, wenn das Zuhören beginnt."
 
-#: src/session-sharing/management-panel.tsx
-msgid "Open web copy"
-msgstr "Web-Kopie öffnen"
-
 #: src/settings/ai/llm/subscriptions/connect.tsx
 msgid "Opening sign-in…"
 msgstr "Anmeldung wird geöffnet …"
 
 #: src/imports/screen.tsx
 #: src/session/components/note-input/enhanced/enhance-error.tsx
-#: src/shared-notes/index.tsx
 msgid "Opening…"
 msgstr "Wird geöffnet …"
 
@@ -2624,15 +2375,6 @@ msgstr "Pausiert"
 msgid "People"
 msgstr "Personen"
 
-#: src/session-sharing/draft-panel.tsx
-#: src/session-sharing/management-panel.tsx
-msgid "People with access"
-msgstr "Personen mit Zugriff"
-
-#: src/session-sharing/access-management.tsx
-msgid "Permission for {label}"
-msgstr "Berechtigung für {label}"
-
 #: src/calendar/components/apple/permission.tsx
 msgid "permission panel."
 msgstr "Berechtigungsbereich."
@@ -2669,10 +2411,6 @@ msgstr "Ab hier abspielen"
 #: src/settings/general/meeting-settings.tsx
 msgid "Post recording disclosure in meeting chat"
 msgstr "Aufnahmehinweis im Meeting-Chat posten"
-
-#: src/session-sharing/delivery-panel.tsx
-msgid "Post the meeting summary to a channel you can access."
-msgstr "Die Meeting-Zusammenfassung in einem Kanal posten, auf den Sie Zugriff haben."
 
 #: src/settings/general/notification.tsx
 msgid "Prepare for events with a 5-minute reminder."
@@ -2722,10 +2460,6 @@ msgstr "Production"
 msgid "Protect cloud sync"
 msgstr "Cloud-Synchronisierung schützen"
 
-#: src/session-sharing/general-access.tsx
-msgid "Public on the web"
-msgstr "Öffentlich im Web"
-
 #: src/session/components/note-input/transcript/screens/empty.tsx
 msgid "Re-transcribe"
 msgstr "Neu transkribieren"
@@ -2762,10 +2496,6 @@ msgstr "empfangen"
 msgid "Recent"
 msgstr "Zuletzt"
 
-#: src/session-sharing/delivery-panel.tsx
-msgid "Recipient email"
-msgstr "E-Mail des Empfängers"
-
 #: src/calendar/components/oauth/provider-content.tsx
 #: src/calendar/components/sidebar.tsx
 msgid "Reconnect"
@@ -2779,10 +2509,6 @@ msgstr "Erneute Verbindung erforderlich"
 #: src/calendar/components/oauth/provider-content.tsx
 msgid "Reconnect required for {0} Calendar"
 msgstr "Erneute Verbindung für {0}-Kalender erforderlich"
-
-#: src/session-sharing/delivery-panel.tsx
-msgid "Reconnect Slack"
-msgstr "Slack erneut verbinden"
 
 #: src/session/components/outer-header/index.tsx
 msgid "Record"
@@ -2832,7 +2558,6 @@ msgstr "Verwandte Notizen"
 msgid "Remember speakers"
 msgstr "Sprecher merken"
 
-#: src/session-sharing/access-management.tsx
 #: src/sidebar/automations.tsx
 msgid "Remove"
 msgstr "Entfernen"
@@ -2905,11 +2630,6 @@ msgstr "{0} anfragen"
 msgid "Request {0} permission"
 msgstr "{0}-Berechtigung anfragen"
 
-#. placeholder {0}: capabilityLabels[entry.capability].toLowerCase()
-#: src/session-sharing/access-management.tsx
-msgid "Requested {0}"
-msgstr "Angefragt {0}"
-
 #: src/settings/privacy/index.tsx
 msgid "Require Touch ID or your password when opening Session Echo."
 msgstr "Touch ID oder Passwort beim Öffnen von Session Echo verlangen."
@@ -2917,10 +2637,6 @@ msgstr "Touch ID oder Passwort beim Öffnen von Session Echo verlangen."
 #: src/settings/privacy/index.tsx
 msgid "Require Windows Hello face, PIN, or password when opening Session Echo."
 msgstr "Windows Hello Gesichtserkennung, PIN oder Passwort beim Öffnen von Session Echo verlangen."
-
-#: src/session-sharing/access-management.tsx
-msgid "Resend invite"
-msgstr "Einladung erneut senden"
 
 #: src/calendar/components/apple/permission.tsx
 #: src/settings/ai/shared/index.tsx
@@ -2930,10 +2646,6 @@ msgstr "Zurücksetzen"
 #: src/templates/auto-form.tsx
 msgid "Reset to default format"
 msgstr "Auf Standardformat zurücksetzen"
-
-#: src/session-sharing/management-panel.tsx
-msgid "Resolve the web and desktop edits before inviting anyone."
-msgstr "Web- und Desktop-Änderungen abgleichen, bevor Sie jemanden einladen."
 
 #: src/settings/general/notification.tsx
 msgid "Respect Do-Not-Disturb mode"
@@ -3150,10 +2862,6 @@ msgstr "Zeitzone auswählen"
 msgid "Select..."
 msgstr "Auswählen …"
 
-#: src/session-sharing/delivery-panel.tsx
-msgid "Send"
-msgstr "Senden"
-
 #: src/contacts/organization-details.tsx
 msgid "Send email"
 msgstr "E-Mail senden"
@@ -3165,14 +2873,6 @@ msgstr "Nachricht senden"
 #: src/settings/privacy/index.tsx
 msgid "Send sanitized crash and error reports to help improve Session Echo."
 msgstr "Bereinigte Absturz- und Fehlerberichte senden, um Session Echo zu verbessern."
-
-#: src/session-sharing/delivery-panel.tsx
-msgid "Send the summary in the email. Replies go directly to you."
-msgstr "Die Zusammenfassung in der E-Mail versenden. Antworten gehen direkt an Sie."
-
-#: src/session-sharing/delivery-panel.tsx
-msgid "Send to Slack"
-msgstr "An Slack senden"
 
 #: src/session/components/note-input/meeting-chat-highlights.tsx
 msgid "sent"
@@ -3212,10 +2912,6 @@ msgstr "Session Echo CLI"
 msgid "Session Echo could not generate this summary because you were not signed in. Sign in, then try again."
 msgstr "Session Echo konnte diese Zusammenfassung nicht erstellen, da Sie nicht angemeldet waren. Melden Sie sich an und versuchen Sie es erneut."
 
-#: src/shared-notes/index.tsx
-msgid "Session Echo could not read the local shared-note cache."
-msgstr "Session Echo konnte den lokalen Cache geteilter Notizen nicht lesen."
-
 #: src/main/sync-status.tsx
 msgid "Session Echo couldn't read cloud sync status. Your notes are still available locally."
 msgstr "Session Echo konnte den Status der Cloud-Synchronisierung nicht lesen. Ihre Notizen sind weiterhin lokal verfügbar."
@@ -3231,10 +2927,6 @@ msgstr "Session Echo ist gesperrt"
 #: src/main/sync-status.tsx
 msgid "Session Echo is repairing cloud sync in the background. Your notes remain available locally."
 msgstr "Session Echo repariert die Cloud-Synchronisierung im Hintergrund. Ihre Notizen bleiben lokal verfügbar."
-
-#: src/session-sharing/access-management.tsx
-msgid "Session Echo member"
-msgstr "Session-Echo-Mitglied"
 
 #: src/onboarding/index.tsx
 msgid "Session Echo needs access to your microphone and system audio to record and transcribe your meetings"
@@ -3261,10 +2953,6 @@ msgstr "Session-Echo-Skill zu {0} hinzugefügt"
 #: src/settings/developers/skills.tsx
 msgid "Session Echo skill added to {0} agents"
 msgstr "Session-Echo-Skill zu {0} Agenten hinzugefügt"
-
-#: src/session-sharing/access-management.tsx
-msgid "Session Echo user"
-msgstr "Session-Echo-Nutzer"
 
 #: src/main/sync-status.tsx
 msgid "Session Echo will keep retrying in the background. Your notes remain available locally."
@@ -3314,63 +3002,9 @@ msgstr "Cloud-Synchronisierung wird eingerichtet"
 msgid "Settings"
 msgstr "Einstellungen"
 
-#: src/session-sharing/draft-panel.tsx
-#: src/session-sharing/management-panel.tsx
-msgid "Share"
-msgstr "Teilen"
-
-#: src/session-sharing/attachment-controls.tsx
-msgid "Share audio"
-msgstr "Audio teilen"
-
-#: src/session-sharing/index.tsx
-#: src/session-sharing/management-panel.tsx
-msgid "Share link copied."
-msgstr "Freigabelink kopiert."
-
-#: src/session-sharing/index.tsx
-msgid "Share note"
-msgstr "Notiz teilen"
-
-#: src/session-sharing/index.tsx
-msgid "Share notes with others"
-msgstr "Notizen mit anderen teilen"
-
 #: src/settings/general/app-settings.tsx
 msgid "Share usage data"
 msgstr "Nutzungsdaten teilen"
-
-#: src/shared-notes/index.tsx
-msgid "Shared link · View only"
-msgstr "Freigabelink · Nur Ansicht"
-
-#: src/shared-notes/index.tsx
-msgid "Shared note · Owner"
-msgstr "Geteilte Notiz · Inhaber"
-
-#: src/shared-notes/index.tsx
-msgid "Shared note unavailable"
-msgstr "Geteilte Notiz nicht verfügbar"
-
-#: src/shared-notes/index.tsx
-msgid "Shared notes are tied to the account they were shared with."
-msgstr "Geteilte Notizen sind an das Konto gebunden, mit dem sie geteilt wurden."
-
-#: src/shared-notes/index.tsx
-msgid "Shared with me · Can comment"
-msgstr "Mit mir geteilt · Kann kommentieren"
-
-#: src/shared-notes/index.tsx
-msgid "Shared with me · Can edit"
-msgstr "Mit mir geteilt · Kann bearbeiten"
-
-#: src/shared-notes/index.tsx
-msgid "Shared with me · View only"
-msgstr "Mit mir geteilt · Nur Ansicht"
-
-#: src/session-sharing/management-panel.tsx
-msgid "Sharing paused to protect your edits"
-msgstr "Freigabe pausiert, um Ihre Änderungen zu schützen"
 
 #: src/sidebar/timeline/item.tsx
 msgid "Show All Recurring Events"
@@ -3433,7 +3067,6 @@ msgstr "Symbol in der Taskleiste anzeigen"
 
 #: src/session/components/note-input/enhanced/enhance-error.tsx
 #: src/settings/general/account.tsx
-#: src/shared-notes/index.tsx
 #: src/sidebar/toast/registry.tsx
 msgid "Sign in"
 msgstr "Anmelden"
@@ -3470,10 +3103,6 @@ msgstr "Anmelden, um Session Echo optimal zu nutzen"
 #: src/settings/general/account.tsx
 msgid "Sign in to Session Echo"
 msgstr "Bei Session Echo anmelden"
-
-#: src/shared-notes/index.tsx
-msgid "Sign in to view this shared note"
-msgstr "Anmelden, um diese geteilte Notiz anzuzeigen"
 
 #: src/instruction/index.tsx
 msgid "Sign in to your account"
@@ -3538,10 +3167,6 @@ msgstr "Überspringen"
 #: src/onboarding/imports.tsx
 msgid "Skip for now"
 msgstr "Vorerst überspringen"
-
-#: src/session-sharing/delivery-panel.tsx
-msgid "Slack"
-msgstr "Slack"
 
 #: src/templates/template-icon-picker.tsx
 msgid "Smileys & People"
@@ -3700,10 +3325,6 @@ msgstr "Callback-URL übermitteln"
 msgid "Suggest a Feature"
 msgstr "Funktion vorschlagen"
 
-#: src/session-sharing/invite-recipients.tsx
-msgid "Suggested attendees"
-msgstr "Vorgeschlagene Teilnehmer"
-
 #: src/session/components/note-input/raw.tsx
 msgid "Suggested templates"
 msgstr "Vorgeschlagene Vorlagen"
@@ -3842,14 +3463,6 @@ msgstr "Testläufe sind noch nicht verfügbar."
 msgid "The app will restart after onboarding to apply your storage changes"
 msgstr "Die App wird nach dem Onboarding neu gestartet, um Ihre Speicheränderungen anzuwenden."
 
-#: src/shared-notes/index.tsx
-msgid "The link may have expired or its access may have changed."
-msgstr "Der Link ist möglicherweise abgelaufen oder der Zugriff hat sich geändert."
-
-#: src/shared-notes/index.tsx
-msgid "The note may have been unshared or moved out of a workspace you can access."
-msgstr "Die Notiz wurde möglicherweise nicht mehr geteilt oder aus einem Workspace verschoben, auf den Sie Zugriff haben."
-
 #: src/auth/context.tsx
 msgid "The notes on this device are linked to another Session Echo account. Sign in with the account previously used here."
 msgstr "Die Notizen auf diesem Gerät sind mit einem anderen Session-Echo-Konto verknüpft. Melden Sie sich mit dem zuvor hier verwendeten Konto an."
@@ -3977,7 +3590,6 @@ msgstr "Trigger"
 
 #: src/contacts/details.tsx
 #: src/onboarding/permissions.tsx
-#: src/session-sharing/management-panel.tsx
 #: src/settings/general/permissions.tsx
 msgid "Try again"
 msgstr "Erneut versuchen"
@@ -4044,7 +3656,6 @@ msgstr "Loslösen"
 #: src/session/components/note-input/raw.tsx
 #: src/session/components/outer-header/overflow/export-modal.tsx
 #: src/session/components/title-input.tsx
-#: src/shared-notes/index.tsx
 #: src/shared/open-note-dialog.tsx
 #: src/shared/ui/resource-list/preview-header.tsx
 #: src/sidebar/timeline/item.tsx
@@ -4071,14 +3682,6 @@ msgstr "Unbenannte Session"
 msgid "Upcoming Event"
 msgstr "Bevorstehender Termin"
 
-#: src/session-sharing/access-management.tsx
-msgid "Updating access"
-msgstr "Zugriff wird aktualisiert"
-
-#: src/session-sharing/attachment-controls.tsx
-msgid "Updating audio sharing"
-msgstr "Audiofreigabe wird aktualisiert"
-
 #: src/sidebar/toast/registry.tsx
 msgid "Upgrade"
 msgstr "Upgrade"
@@ -4089,7 +3692,6 @@ msgstr "Zum Verbinden upgraden"
 
 #: src/billing/trial-ended-dialog.tsx
 #: src/calendar/components/sidebar.tsx
-#: src/session-sharing/index.tsx
 msgid "Upgrade to Pro"
 msgstr "Auf Pro upgraden"
 
@@ -4097,10 +3699,6 @@ msgstr "Auf Pro upgraden"
 #: src/calendar/components/sidebar.tsx
 msgid "Upgrade to Pro for {0}"
 msgstr "Für {0} auf Pro upgraden"
-
-#: src/session-sharing/index.tsx
-msgid "Upgrade to Pro to invite people and share this note with them."
-msgstr "Auf Pro upgraden, um Personen einzuladen und diese Notiz mit ihnen zu teilen."
 
 #: src/settings/ai/llm/select.tsx
 #: src/settings/ai/stt/select.tsx
@@ -4255,10 +3853,6 @@ msgstr "In einen Ordner schreiben"
 msgid "Yesterday"
 msgstr "Gestern"
 
-#: src/session-sharing/comments.tsx
-msgid "You"
-msgstr "Sie"
-
 #: src/calendar/components/apple/permission.tsx
 msgid "You can"
 msgstr "Sie können"
@@ -4290,10 +3884,6 @@ msgstr "Ihre {days}-tägige Pro-Testphase beginnt jetzt. Pro wird nach Ablauf au
 #: src/settings/general/account.tsx
 msgid "Your Account"
 msgstr "Ihr Konto"
-
-#: src/session-sharing/comments.tsx
-msgid "Your comment couldn’t be added. Try again."
-msgstr "Ihr Kommentar konnte nicht hinzugefügt werden. Erneut versuchen."
 
 #: src/settings/dictionary/index.tsx
 msgid "Your dictionary is empty"
