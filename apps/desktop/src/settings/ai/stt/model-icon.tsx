@@ -15,7 +15,7 @@ type ModelIconSpec = {
 };
 
 const MODEL_ICON_ASSET_BASE = "/assets/model-icons";
-const ANARLOG_ICON_SRC = "/assets/anarlog-icon.png";
+const SESSION_ECHO_ICON_SRC = "/assets/sessionecho-icon.png";
 
 export function getLocalModelIcon(model: string): ModelIconSpec | null {
   const value = model.toLowerCase();
@@ -24,7 +24,7 @@ export function getLocalModelIcon(model: string): ModelIconSpec | null {
     return {
       label: "A",
       title: "Session Echo Pro",
-      imageSrc: ANARLOG_ICON_SRC,
+      imageSrc: SESSION_ECHO_ICON_SRC,
     };
   }
 

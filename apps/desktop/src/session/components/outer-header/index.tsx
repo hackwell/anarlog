@@ -322,7 +322,7 @@ function HeaderMeetingActionPill({
         title: t`Join meeting and record`,
         icon: isWelcomeDemo ? (
           <img
-            src="/assets/anarlog-icon.png"
+            src="/assets/sessionecho-icon.png"
             alt=""
             className="size-3.5 shrink-0"
           />

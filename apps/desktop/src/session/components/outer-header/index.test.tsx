@@ -797,7 +797,7 @@ describe("OuterHeader", () => {
 
     fireEvent.click(joinButton);
 
-    expect(logo?.getAttribute("src")).toBe("/assets/anarlog-icon.png");
+    expect(logo?.getAttribute("src")).toBe("/assets/sessionecho-icon.png");
     expect(logo?.getAttribute("alt")).toBe("");
     expect(logo?.className).toContain("size-3.5");
     expect(mocks.startListening).toHaveBeenCalledOnce();

@@ -73,12 +73,12 @@ type ProviderConfig = {
   };
 };
 
-const ANARLOG_ICON_SRC = "/assets/anarlog-icon.png";
+const SESSION_ECHO_ICON_SRC = "/assets/sessionecho-icon.png";
 
 export function AnarlogProviderIcon() {
   return (
     <img
-      src={ANARLOG_ICON_SRC}
+      src={SESSION_ECHO_ICON_SRC}
       alt="Session Echo"
       data-slot="provider-logo"
       className="size-full object-contain object-center"

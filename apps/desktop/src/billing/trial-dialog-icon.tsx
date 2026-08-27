@@ -1,6 +1,6 @@
 import { cn } from "@anlg/utils";
 
-const ANARLOG_ICON_SRC = "/assets/anarlog-icon.png";
+const SESSION_ECHO_ICON_SRC = "/assets/sessionecho-icon.png";
 
 export function TrialDialogIcon({ state }: { state: "started" | "ended" }) {
   const isStarted = state === "started";
@@ -28,7 +28,7 @@ export function TrialDialogIcon({ state }: { state: "started" | "ended" }) {
         ])}
       >
         <img
-          src={ANARLOG_ICON_SRC}
+          src={SESSION_ECHO_ICON_SRC}
           alt=""
           aria-hidden="true"
           className={cn([

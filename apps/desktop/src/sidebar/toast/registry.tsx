@@ -7,7 +7,7 @@ import type { DownloadProgress, ToastCondition, ToastType } from "./types";
 import type { DesktopUpdateControl } from "~/main/update-banner";
 import type { DevtoolsToastPreview } from "~/store/zustand/devtools-toast-preview";
 
-const ANARLOG_ICON_SRC = "/assets/anarlog-icon.png";
+const SESSION_ECHO_ICON_SRC = "/assets/sessionecho-icon.png";
 const DESKTOP_UPDATE_TOAST_PREFIX = "desktop-update:";
 
 type ToastRegistryEntry = {
@@ -132,7 +132,7 @@ export function createToastRegistry({
         id: "sign-in-benefits",
         icon: (
           <img
-            src={ANARLOG_ICON_SRC}
+            src={SESSION_ECHO_ICON_SRC}
             alt="Session Echo"
             className="size-5 object-contain object-center"
           />
