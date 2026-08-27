@@ -510,20 +510,31 @@ mod tests {
 
     #[test]
     fn does_not_migrate_secrets_across_identities() {
-        // Keychain/Secret Service items are ACL-bound to the signing identity
-        // that created them, so an anarlog- or hyprnote-signed build's
-        // secrets are unreachable to a differently-signed Session Echo build
-        // regardless of service-name lookups. There is deliberately no
-        // branch here that can produce a location under another identity's
-        // service name — this documents that decision so it isn't
-        // "restored" by accident.
+        // Keychain/Secret Service items are ACL-bound to the signing identity that
+        // created them, so an anarlog- or hyprnote-signed build's secrets are
+        // unreachable to a differently-signed Session Echo build regardless of
+        // service-name lookups. This asserts no lookup is ever produced under
+        // another identity's service name, so the behaviour is not "restored" by
+        // accident.
         let locations =
-            pre_v2_dev_secret_location("de.flagbit.sessionecho", "provider", "deepgram");
-        assert!(locations.is_empty());
+            pre_v2_dev_secret_location("de.flagbit.sessionecho.dev", "provider", "deepgram");
+
         assert!(
-            locations.iter().all(|(service, _)| {
-                !service.contains("anarlog") && !service.contains("hyprnote")
-            })
+            !locations.is_empty(),
+            "dev identifier must yield a pre-v2 location to inspect"
+        );
+        for (service, _) in &locations {
+            assert!(
+                !service.contains("anarlog") && !service.contains("hyprnote"),
+                "pre-v2 lookup points at a foreign identity's service name: {service}"
+            );
+        }
+    }
+
+    #[test]
+    fn finds_nothing_for_the_stable_identifier() {
+        assert!(
+            pre_v2_dev_secret_location("de.flagbit.sessionecho", "provider", "deepgram").is_empty()
         );
     }
 
