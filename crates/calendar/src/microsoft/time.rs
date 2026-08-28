@@ -285,3 +285,229 @@ pub fn iana_name(label: &str) -> String {
         .map(|zone| zone.name().to_string())
         .unwrap_or_else(|_| label.to_string())
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn utc(value: &str) -> DateTime<Utc> {
+        DateTime::parse_from_rfc3339(value)
+            .unwrap()
+            .with_timezone(&Utc)
+    }
+
+    // --- the Windows -> IANA table itself ---
+
+    #[test]
+    fn every_windows_mapping_names_a_real_zone() {
+        for (windows, iana) in WINDOWS_TO_IANA {
+            assert!(
+                iana.parse::<Tz>().is_ok(),
+                "{windows} maps to {iana}, which is not an IANA zone"
+            );
+        }
+    }
+
+    #[test]
+    fn the_table_has_no_duplicate_windows_names() {
+        let mut seen = std::collections::HashSet::new();
+        for (windows, _) in WINDOWS_TO_IANA {
+            assert!(seen.insert(*windows), "{windows} appears twice");
+        }
+    }
+
+    #[test]
+    fn resolves_the_labels_graph_actually_sends() {
+        assert_eq!(resolve_time_zone("UTC").unwrap(), Tz::UTC);
+        assert_eq!(resolve_time_zone("tzone://Microsoft/Utc").unwrap(), Tz::UTC);
+        assert_eq!(
+            resolve_time_zone("W. Europe Standard Time").unwrap(),
+            Tz::Europe__Berlin
+        );
+        assert_eq!(
+            resolve_time_zone("Pacific Standard Time").unwrap(),
+            Tz::America__Los_Angeles
+        );
+        // Mailboxes configured outside Windows can come back as IANA already.
+        assert_eq!(
+            resolve_time_zone("Europe/Berlin").unwrap(),
+            Tz::Europe__Berlin
+        );
+    }
+
+    #[test]
+    fn refuses_to_guess_at_an_unknown_zone() {
+        // Silently defaulting an unrecognised label to UTC is exactly how a
+        // whole mailbox ends up shifted, so this must stay an error.
+        let error = resolve_time_zone("tzone://Microsoft/Custom").unwrap_err();
+        assert!(error.to_string().contains("refusing to guess"));
+        assert!(resolve_time_zone("Nowhere Standard Time").is_err());
+    }
+
+    // --- Preference-Applied ---
+
+    #[test]
+    fn reads_preference_applied_the_way_graph_writes_it() {
+        assert!(utc_preference_applied(Some("outlook.timezone=\"UTC\"")));
+        assert!(utc_preference_applied(Some(
+            "odata.include-annotations, outlook.timezone=\"UTC\""
+        )));
+        assert!(utc_preference_applied(Some("outlook.timezone=UTC")));
+        assert!(utc_preference_applied(Some("Outlook.Timezone=\"utc\"")));
+    }
+
+    #[test]
+    fn a_fallback_to_the_mailbox_zone_is_not_a_utc_preference() {
+        // The header Graph sends when it did NOT honour the request.
+        assert!(!utc_preference_applied(Some(
+            "outlook.timezone=\"W. Europe Standard Time\""
+        )));
+        assert!(!utc_preference_applied(Some("odata.maxpagesize=100")));
+        assert!(!utc_preference_applied(None));
+    }
+
+    // --- timed events ---
+
+    #[test]
+    fn honours_utc_when_graph_applied_the_preference() {
+        assert_eq!(
+            timed_instant("2026-06-15T10:00:00.0000000", Some("UTC")).unwrap(),
+            utc("2026-06-15T10:00:00Z")
+        );
+    }
+
+    #[test]
+    fn honours_the_mailbox_zone_when_graph_fell_back() {
+        // The reported bug: the predecessor stamped a Z on this string and put
+        // the meeting at 10:00Z, two hours late. W. Europe is on CEST in June.
+        assert_eq!(
+            timed_instant(
+                "2026-06-15T10:00:00.0000000",
+                Some("W. Europe Standard Time")
+            )
+            .unwrap(),
+            utc("2026-06-15T08:00:00Z")
+        );
+    }
+
+    #[test]
+    fn the_same_wall_clock_moves_across_a_dst_boundary() {
+        // Europe/Berlin leaves summer time on 2026-10-25. A fixed offset — for
+        // this zone or any other — gets exactly one of these two wrong.
+        let before = timed_instant(
+            "2026-10-24T10:00:00.0000000",
+            Some("W. Europe Standard Time"),
+        )
+        .unwrap();
+        let after = timed_instant(
+            "2026-10-26T10:00:00.0000000",
+            Some("W. Europe Standard Time"),
+        )
+        .unwrap();
+
+        assert_eq!(before, utc("2026-10-24T08:00:00Z"));
+        assert_eq!(after, utc("2026-10-26T09:00:00Z"));
+        assert_ne!(
+            before.signed_duration_since(after).num_hours() % 24,
+            0,
+            "the two wall clocks must not map to the same offset"
+        );
+    }
+
+    #[test]
+    fn an_ambiguous_wall_clock_takes_the_first_occurrence() {
+        // 02:30 happens twice on the night the clocks go back; Outlook shows
+        // the summer-time one.
+        assert_eq!(
+            timed_instant(
+                "2026-10-25T02:30:00.0000000",
+                Some("W. Europe Standard Time")
+            )
+            .unwrap(),
+            utc("2026-10-25T00:30:00Z")
+        );
+    }
+
+    #[test]
+    fn a_wall_clock_inside_the_spring_gap_is_nudged_past_it() {
+        // 02:30 never happens on 2026-03-29; failing the event would be worse
+        // than moving it to the first instant that does exist.
+        assert_eq!(
+            timed_instant(
+                "2026-03-29T02:30:00.0000000",
+                Some("W. Europe Standard Time")
+            )
+            .unwrap(),
+            utc("2026-03-29T01:30:00Z")
+        );
+    }
+
+    #[test]
+    fn accepts_a_fully_qualified_instant_when_graph_sends_one() {
+        assert_eq!(
+            timed_instant("2026-06-15T10:00:00Z", Some("UTC")).unwrap(),
+            utc("2026-06-15T10:00:00Z")
+        );
+        assert_eq!(
+            timed_instant("2026-06-15T12:00:00+02:00", None).unwrap(),
+            utc("2026-06-15T10:00:00Z")
+        );
+    }
+
+    #[test]
+    fn refuses_a_naive_datetime_with_no_zone() {
+        let error = timed_instant("2026-06-15T10:00:00.0000000", None).unwrap_err();
+        assert!(error.to_string().contains("refusing to assume UTC"));
+        assert!(timed_instant("2026-06-15T10:00:00.0000000", Some("  ")).is_err());
+    }
+
+    #[test]
+    fn parses_graph_datetimes_with_and_without_fractional_seconds() {
+        assert_eq!(
+            timed_instant("2026-06-15T10:00:00", Some("UTC")).unwrap(),
+            utc("2026-06-15T10:00:00Z")
+        );
+        assert!(timed_instant("15 June 2026", Some("UTC")).is_err());
+    }
+
+    // --- all-day events ---
+
+    #[test]
+    fn an_all_day_event_keeps_its_date_in_utc() {
+        assert_eq!(
+            all_day_instant("2026-06-15T00:00:00.0000000").unwrap(),
+            utc("2026-06-15T00:00:00Z")
+        );
+    }
+
+    #[test]
+    fn an_all_day_event_keeps_its_date_after_a_fallback_too() {
+        // The same midnight, whichever zone Graph answered in. Reading it as a
+        // W. Europe instant would land on 2026-06-14T22:00Z and show the event
+        // on the wrong day.
+        let honoured = all_day_instant("2026-06-15T00:00:00.0000000").unwrap();
+        let fell_back = all_day_instant("2026-06-15T00:00:00.0000000").unwrap();
+        let as_an_instant = timed_instant(
+            "2026-06-15T00:00:00.0000000",
+            Some("W. Europe Standard Time"),
+        )
+        .unwrap();
+
+        assert_eq!(honoured, fell_back);
+        assert_eq!(honoured, utc("2026-06-15T00:00:00Z"));
+        assert_eq!(as_an_instant, utc("2026-06-14T22:00:00Z"));
+        assert_ne!(
+            honoured.date_naive(),
+            as_an_instant.date_naive(),
+            "this is the day the all-day path exists to avoid losing"
+        );
+    }
+
+    #[test]
+    fn iana_names_are_what_downstream_sees() {
+        assert_eq!(iana_name("W. Europe Standard Time"), "Europe/Berlin");
+        assert_eq!(iana_name("UTC"), "UTC");
+        // Unmapped labels survive rather than vanishing.
+        assert_eq!(iana_name("Nowhere Standard Time"), "Nowhere Standard Time");
+    }
+}

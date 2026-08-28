@@ -185,3 +185,260 @@ fn convert_attendee_role(role: Option<&AttendeeType>) -> AttendeeRole {
         _ => AttendeeRole::Required,
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use serde_json::json;
+
+    /// A `calendarView` item as Graph actually returns it, with the `$select`
+    /// this integration asks for.
+    fn graph_event(start: serde_json::Value, end: serde_json::Value, all_day: bool) -> Event {
+        serde_json::from_value(json!({
+            "id": "AAMkADAwATM0MDAAMS0yNzY1LWJmNjEtMDACLTAwCgBGAAAD",
+            "iCalUId": "040000008200E00074C5B7101A82E0080000000",
+            "subject": "Weekly sync",
+            "bodyPreview": "Join here",
+            "body": {
+                "contentType": "html",
+                "content": "<p>Join Zoom Meeting<br/>https://anarlog.zoom.us/j/86746313244</p>"
+            },
+            "start": start,
+            "end": end,
+            "location": { "displayName": "Conference room 4" },
+            "attendees": [
+                {
+                    "type": "required",
+                    "status": { "response": "accepted", "time": "2026-06-01T09:00:00Z" },
+                    "emailAddress": { "name": "Ada", "address": "ada@example.com" }
+                },
+                {
+                    "type": "optional",
+                    "status": { "response": "none", "time": "0001-01-01T00:00:00Z" },
+                    "emailAddress": { "name": "Grace", "address": "grace@example.com" }
+                }
+            ],
+            "organizer": { "emailAddress": { "name": "Ada", "address": "ada@example.com" } },
+            "isAllDay": all_day,
+            "isCancelled": false,
+            "isOrganizer": true,
+            "isOnlineMeeting": false,
+            "onlineMeeting": null,
+            "onlineMeetingUrl": null,
+            "showAs": "busy",
+            "type": "singleInstance",
+            "webLink": "https://outlook.office365.com/owa/?itemid=AAMk&exvsurl=1",
+            "recurrence": null,
+            "seriesMasterId": null
+        }))
+        .unwrap()
+    }
+
+    fn convert_one(event: Event) -> CalendarEvent {
+        let mut converted = convert_events(vec![event], "cal-1");
+        assert_eq!(converted.len(), 1, "the event should not have been dropped");
+        converted.remove(0)
+    }
+
+    #[test]
+    fn utc_honoured_lands_on_the_time_graph_reported() {
+        let converted = convert_one(graph_event(
+            json!({ "dateTime": "2026-06-15T10:00:00.0000000", "timeZone": "UTC" }),
+            json!({ "dateTime": "2026-06-15T11:00:00.0000000", "timeZone": "UTC" }),
+            false,
+        ));
+
+        assert_eq!(converted.started_at, "2026-06-15T10:00:00+00:00");
+        assert_eq!(converted.ended_at, "2026-06-15T11:00:00+00:00");
+        assert_eq!(converted.timezone.as_deref(), Some("UTC"));
+        assert!(!converted.is_all_day);
+    }
+
+    #[test]
+    fn a_mailbox_zone_fallback_does_not_shift_the_meeting() {
+        // Same event, but Graph ignored Prefer: outlook.timezone="UTC" and
+        // answered in the mailbox's zone. Reading the string as UTC would put
+        // this meeting two hours late — the reported symptom.
+        let converted = convert_one(graph_event(
+            json!({
+                "dateTime": "2026-06-15T12:00:00.0000000",
+                "timeZone": "W. Europe Standard Time"
+            }),
+            json!({
+                "dateTime": "2026-06-15T13:00:00.0000000",
+                "timeZone": "W. Europe Standard Time"
+            }),
+            false,
+        ));
+
+        assert_eq!(converted.started_at, "2026-06-15T10:00:00+00:00");
+        assert_eq!(converted.ended_at, "2026-06-15T11:00:00+00:00");
+        assert_eq!(converted.timezone.as_deref(), Some("Europe/Berlin"));
+    }
+
+    #[test]
+    fn the_two_answers_describe_the_same_meeting() {
+        let honoured = convert_one(graph_event(
+            json!({ "dateTime": "2026-06-15T10:00:00.0000000", "timeZone": "UTC" }),
+            json!({ "dateTime": "2026-06-15T11:00:00.0000000", "timeZone": "UTC" }),
+            false,
+        ));
+        let fell_back = convert_one(graph_event(
+            json!({
+                "dateTime": "2026-06-15T12:00:00.0000000",
+                "timeZone": "W. Europe Standard Time"
+            }),
+            json!({
+                "dateTime": "2026-06-15T13:00:00.0000000",
+                "timeZone": "W. Europe Standard Time"
+            }),
+            false,
+        ));
+
+        assert_eq!(honoured.started_at, fell_back.started_at);
+        assert_eq!(honoured.ended_at, fell_back.ended_at);
+    }
+
+    #[test]
+    fn an_all_day_event_stays_on_its_day() {
+        // Graph encodes all-day boundaries as midnight in whichever zone it
+        // answered in, and its end is the exclusive next midnight.
+        let converted = convert_one(graph_event(
+            json!({
+                "dateTime": "2026-06-15T00:00:00.0000000",
+                "timeZone": "W. Europe Standard Time"
+            }),
+            json!({
+                "dateTime": "2026-06-16T00:00:00.0000000",
+                "timeZone": "W. Europe Standard Time"
+            }),
+            true,
+        ));
+
+        assert!(converted.is_all_day);
+        assert_eq!(converted.started_at, "2026-06-15T00:00:00+00:00");
+        assert_eq!(converted.ended_at, "2026-06-16T00:00:00+00:00");
+    }
+
+    #[test]
+    fn an_event_crossing_the_dst_boundary_keeps_its_wall_clock_length() {
+        // 23:30 CEST on the night the clocks go back, running two wall-clock
+        // hours into 01:30 CET — three real hours.
+        let converted = convert_one(graph_event(
+            json!({
+                "dateTime": "2026-10-24T23:30:00.0000000",
+                "timeZone": "W. Europe Standard Time"
+            }),
+            json!({
+                "dateTime": "2026-10-25T02:30:00.0000000",
+                "timeZone": "W. Europe Standard Time"
+            }),
+            false,
+        ));
+
+        assert_eq!(converted.started_at, "2026-10-24T21:30:00+00:00");
+        assert_eq!(converted.ended_at, "2026-10-25T00:30:00+00:00");
+    }
+
+    #[test]
+    fn an_event_after_the_dst_boundary_uses_the_winter_offset() {
+        let converted = convert_one(graph_event(
+            json!({
+                "dateTime": "2026-10-26T10:00:00.0000000",
+                "timeZone": "W. Europe Standard Time"
+            }),
+            json!({
+                "dateTime": "2026-10-26T11:00:00.0000000",
+                "timeZone": "W. Europe Standard Time"
+            }),
+            false,
+        ));
+
+        assert_eq!(converted.started_at, "2026-10-26T09:00:00+00:00");
+        assert_eq!(converted.ended_at, "2026-10-26T10:00:00+00:00");
+    }
+
+    #[test]
+    fn an_unresolvable_event_is_dropped_not_mistimed() {
+        let event = graph_event(
+            json!({ "dateTime": "2026-06-15T10:00:00.0000000", "timeZone": "tzone://Microsoft/Custom" }),
+            json!({ "dateTime": "2026-06-15T11:00:00.0000000", "timeZone": "tzone://Microsoft/Custom" }),
+            false,
+        );
+
+        assert!(convert_events(vec![event], "cal-1").is_empty());
+    }
+
+    #[test]
+    fn carries_the_rest_of_the_event_across() {
+        let converted = convert_one(graph_event(
+            json!({ "dateTime": "2026-06-15T10:00:00.0000000", "timeZone": "UTC" }),
+            json!({ "dateTime": "2026-06-15T11:00:00.0000000", "timeZone": "UTC" }),
+            false,
+        ));
+
+        assert_eq!(converted.provider, CalendarProviderType::Microsoft);
+        assert_eq!(converted.calendar_id, "cal-1");
+        assert_eq!(converted.title, "Weekly sync");
+        assert_eq!(converted.status, EventStatus::Confirmed);
+        assert_eq!(converted.location.as_deref(), Some("Conference room 4"));
+        assert_eq!(
+            converted.meeting_link.as_deref(),
+            Some("https://anarlog.zoom.us/j/86746313244")
+        );
+        assert_eq!(
+            converted.organizer.unwrap().email.unwrap(),
+            "ada@example.com"
+        );
+        assert_eq!(converted.attendees.len(), 2);
+        assert_eq!(converted.attendees[0].status, AttendeeStatus::Accepted);
+        assert_eq!(converted.attendees[0].role, AttendeeRole::Required);
+        assert_eq!(converted.attendees[1].status, AttendeeStatus::Pending);
+        assert_eq!(converted.attendees[1].role, AttendeeRole::Optional);
+        assert!(!converted.has_recurrence_rules);
+    }
+
+    #[test]
+    fn a_teams_join_url_wins_over_a_link_in_the_body() {
+        let mut event = graph_event(
+            json!({ "dateTime": "2026-06-15T10:00:00.0000000", "timeZone": "UTC" }),
+            json!({ "dateTime": "2026-06-15T11:00:00.0000000", "timeZone": "UTC" }),
+            false,
+        );
+        event.is_online_meeting = Some(true);
+        event.online_meeting = Some(
+            serde_json::from_value(json!({
+                "joinUrl": "https://teams.microsoft.com/l/meetup-join/19%3ameeting_abc"
+            }))
+            .unwrap(),
+        );
+
+        assert_eq!(
+            convert_one(event).meeting_link.as_deref(),
+            Some("https://teams.microsoft.com/l/meetup-join/19%3ameeting_abc")
+        );
+    }
+
+    #[test]
+    fn converts_a_calendar_list_the_way_graph_returns_it() {
+        let calendars: Vec<Calendar> = serde_json::from_value(json!([{
+            "id": "AAMkADAwATM0MDAAMS0yNzY1LWJmNjEA",
+            "name": "Calendar",
+            "color": "auto",
+            "hexColor": "#0078d4",
+            "isDefaultCalendar": true,
+            "canEdit": true,
+            "owner": { "name": "Ada Lovelace", "address": "ada@example.com" }
+        }]))
+        .unwrap();
+
+        let converted = convert_calendars(calendars);
+
+        assert_eq!(converted.len(), 1);
+        assert_eq!(converted[0].provider, CalendarProviderType::Microsoft);
+        assert_eq!(converted[0].title, "Calendar");
+        assert_eq!(converted[0].source.as_deref(), Some("Ada Lovelace"));
+        assert_eq!(converted[0].is_primary, Some(true));
+        assert_eq!(converted[0].can_edit, Some(true));
+    }
+}
