@@ -1647,10 +1647,6 @@ msgstr "Dunkle Oberfläche"
 msgid "macOS cannot access your login Keychain. Repairing briefly locks it and asks for your Mac password before Session Echo retries this API key."
 msgstr "macOS kann nicht auf Ihren Anmelde-Schlüsselbund zugreifen. Die Reparatur sperrt ihn kurzzeitig und fragt nach Ihrem Mac-Passwort, bevor Session Echo diesen API-Schlüssel erneut versucht."
 
-#: src/auth/cloudsync-keychain-repair.tsx
-msgid "macOS could not access your recovery key. Repair Keychain access, then resume sync."
-msgstr "macOS konnte nicht auf Ihren Wiederherstellungsschlüssel zugreifen. Schlüsselbund-Zugriff reparieren und dann die Synchronisierung fortsetzen."
-
 #: src/settings/general/main-language.tsx
 msgid "Main language"
 msgstr "Hauptsprache"
@@ -2380,7 +2376,6 @@ msgstr "Bezahlseite erneut öffnen"
 msgid "Reopen in browser"
 msgstr "Im Browser erneut öffnen"
 
-#: src/auth/cloudsync-keychain-repair.tsx
 #: src/settings/ai/shared/index.tsx
 msgid "Repair Keychain Access"
 msgstr "Schlüsselbund-Zugriff reparieren"

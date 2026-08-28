@@ -2,8 +2,6 @@ import { useRouteContext } from "@tanstack/react-router";
 import { useCallback, useEffect, useRef } from "react";
 
 import { useLanguageModel, useLLMConnection } from "~/ai/hooks";
-import { useAuth } from "~/auth";
-import { CloudsyncKeychainRepairToast } from "~/auth/cloudsync-keychain-repair";
 import { searchCalendarEvents } from "~/calendar/queries";
 import { useSessionTab } from "~/chat/components/use-session-tab";
 import { buildChatTools } from "~/chat/tools";
@@ -43,7 +41,6 @@ export function useClassicMainLifecycle() {
 export function ClassicMainServices() {
   return (
     <>
-      <CloudsyncKeychainRepairToast />
       <LiveCaptureRecovery />
       <ScheduledMeetingAutoStart />
       <MainListenerControlBridge />
@@ -54,7 +51,6 @@ export function ClassicMainServices() {
 }
 
 function ToolRegistration() {
-  const auth = useAuth();
   const { search } = useSearchEngine();
 
   const getContactSearchResults = searchContacts;
@@ -62,7 +58,6 @@ function ToolRegistration() {
   const getCalendarEventSearchResults = searchCalendarEvents;
 
   const { getSessionId, getEnhancedNoteId } = useSessionTab();
-  const getAuthHeaders = useCallback(() => auth?.getHeaders(), [auth]);
   const openEditTab = useCallback((requestId: string) => {
     useTabs.getState().openNew({ type: "edit", requestId });
   }, []);
@@ -77,7 +72,6 @@ function ToolRegistration() {
         getSessionId,
         getEnhancedNoteId,
         openEditTab,
-        getAuthHeaders,
       }),
     [
       search,
@@ -86,7 +80,6 @@ function ToolRegistration() {
       getSessionId,
       getEnhancedNoteId,
       openEditTab,
-      getAuthHeaders,
     ],
   );
 

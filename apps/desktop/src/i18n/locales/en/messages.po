@@ -1647,10 +1647,6 @@ msgstr "Low-light canvas"
 msgid "macOS cannot access your login Keychain. Repairing briefly locks it and asks for your Mac password before Session Echo retries this API key."
 msgstr "macOS cannot access your login Keychain. Repairing briefly locks it and asks for your Mac password before Session Echo retries this API key."
 
-#: src/auth/cloudsync-keychain-repair.tsx
-msgid "macOS could not access your recovery key. Repair Keychain access, then resume sync."
-msgstr "macOS could not access your recovery key. Repair Keychain access, then resume sync."
-
 #: src/settings/general/main-language.tsx
 msgid "Main language"
 msgstr "Main language"
@@ -2380,7 +2376,6 @@ msgstr "Reopen checkout page"
 msgid "Reopen in browser"
 msgstr "Reopen in browser"
 
-#: src/auth/cloudsync-keychain-repair.tsx
 #: src/settings/ai/shared/index.tsx
 msgid "Repair Keychain Access"
 msgstr "Repair Keychain Access"
