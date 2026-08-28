@@ -115,7 +115,11 @@ recurring_event_id: string | null;
  */
 raw: string }
 export type CalendarListItem = { provider: CalendarProviderType; id: string; title: string; source: string | null; color: string | null; is_primary: boolean | null; can_edit: boolean | null; raw: string }
-export type CalendarProviderType = "apple"
+export type CalendarProviderType = "apple" | 
+/**
+ * Microsoft 365 / Outlook.com, read directly from Microsoft Graph.
+ */
+"microsoft"
 export type CreateEventInput = { calendar_tracking_id: string; title: string; started_at: string; ended_at: string; is_all_day: boolean | null; location: string | null; notes: string | null; url: string | null }
 export type EventAttendee = { name: string | null; 
 /**

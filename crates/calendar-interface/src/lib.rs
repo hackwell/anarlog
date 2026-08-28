@@ -6,6 +6,8 @@ use chrono::{DateTime, Utc};
 #[serde(rename_all = "lowercase")]
 pub enum CalendarProviderType {
     Apple,
+    /// Microsoft 365 / Outlook.com, read directly from Microsoft Graph.
+    Microsoft,
 }
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize, specta::Type)]

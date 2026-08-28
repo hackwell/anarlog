@@ -18,7 +18,10 @@ pub async fn is_provider_enabled<R: tauri::Runtime>(
     provider: CalendarProviderType,
 ) -> Result<bool, Error> {
     let apple = is_apple_authorized(&app).await?;
-    Ok(anlg_calendar::is_provider_enabled(apple, provider))
+    let microsoft = is_microsoft_connected(&app);
+    Ok(anlg_calendar::is_provider_enabled(
+        apple, microsoft, provider,
+    ))
 }
 
 #[tauri::command]
@@ -27,7 +30,8 @@ pub async fn list_connection_ids<R: tauri::Runtime>(
     app: tauri::AppHandle<R>,
 ) -> Result<Vec<anlg_calendar::ProviderConnectionIds>, Error> {
     let apple = is_apple_authorized(&app).await?;
-    Ok(anlg_calendar::list_connection_ids(apple))
+    let microsoft = is_microsoft_connected(&app);
+    Ok(anlg_calendar::list_connection_ids(apple, microsoft))
 }
 
 #[tauri::command]
@@ -37,7 +41,9 @@ pub async fn list_calendars<R: tauri::Runtime>(
     provider: CalendarProviderType,
     _connection_id: String,
 ) -> Result<Vec<CalendarListItem>, Error> {
-    anlg_calendar::list_calendars(provider).map_err(Into::into)
+    anlg_calendar::list_calendars(provider)
+        .await
+        .map_err(Into::into)
 }
 
 #[tauri::command]
@@ -48,7 +54,9 @@ pub async fn list_events<R: tauri::Runtime>(
     _connection_id: String,
     filter: EventFilter,
 ) -> Result<Vec<CalendarEvent>, Error> {
-    anlg_calendar::list_events(provider, filter).map_err(Into::into)
+    anlg_calendar::list_events(provider, filter)
+        .await
+        .map_err(Into::into)
 }
 
 #[tauri::command]
@@ -68,6 +76,11 @@ pub fn create_event<R: tauri::Runtime>(
     input: CreateEventInput,
 ) -> Result<String, Error> {
     anlg_calendar::create_event(provider, input).map_err(Into::into)
+}
+
+fn is_microsoft_connected<R: tauri::Runtime>(app: &tauri::AppHandle<R>) -> bool {
+    let _ = app;
+    false
 }
 
 async fn is_apple_authorized<R: tauri::Runtime>(app: &tauri::AppHandle<R>) -> Result<bool, Error> {

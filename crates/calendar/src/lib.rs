@@ -30,17 +30,29 @@ pub struct ProviderConnectionIds {
     pub connection_ids: Vec<String>,
 }
 
-pub fn available_providers() -> Vec<CalendarProviderType> {
-    #[cfg(target_os = "macos")]
-    let providers = vec![CalendarProviderType::Apple];
+/// Microsoft, like Apple, has exactly one connection per install: the signed-in
+/// mailbox. The sync loop keys off connection ids, so it gets a stable
+/// pseudo-id rather than something derived from the account.
+pub const MICROSOFT_CONNECTION_ID: &str = "microsoft";
 
-    #[cfg(not(target_os = "macos"))]
-    let providers = Vec::new();
+pub fn available_providers() -> Vec<CalendarProviderType> {
+    let mut providers = Vec::new();
+
+    #[cfg(target_os = "macos")]
+    providers.push(CalendarProviderType::Apple);
+
+    // Graph is reachable from every platform, and a build without
+    // MICROSOFT_CLIENT_ID still advertises it so the connect attempt can say so
+    // out loud instead of the provider silently disappearing.
+    providers.push(CalendarProviderType::Microsoft);
 
     providers
 }
 
-pub fn list_connection_ids(apple_authorized: bool) -> Vec<ProviderConnectionIds> {
+pub fn list_connection_ids(
+    apple_authorized: bool,
+    microsoft_connected: bool,
+) -> Vec<ProviderConnectionIds> {
     let mut connection_ids = Vec::new();
 
     #[cfg(target_os = "macos")]
@@ -59,25 +71,43 @@ pub fn list_connection_ids(apple_authorized: bool) -> Vec<ProviderConnectionIds>
     #[cfg(not(target_os = "macos"))]
     let _ = apple_authorized;
 
+    connection_ids.push(ProviderConnectionIds {
+        provider: CalendarProviderType::Microsoft,
+        connection_ids: if microsoft_connected {
+            vec![MICROSOFT_CONNECTION_ID.to_string()]
+        } else {
+            Vec::new()
+        },
+    });
+
     connection_ids
 }
 
-pub fn is_provider_enabled(apple_authorized: bool, provider: CalendarProviderType) -> bool {
-    list_connection_ids(apple_authorized)
+pub fn is_provider_enabled(
+    apple_authorized: bool,
+    microsoft_connected: bool,
+    provider: CalendarProviderType,
+) -> bool {
+    list_connection_ids(apple_authorized, microsoft_connected)
         .iter()
         .any(|p| p.provider == provider && !p.connection_ids.is_empty())
 }
 
-pub fn list_calendars(provider: CalendarProviderType) -> Result<Vec<CalendarListItem>, Error> {
+pub async fn list_calendars(
+    provider: CalendarProviderType,
+) -> Result<Vec<CalendarListItem>, Error> {
     match provider {
         CalendarProviderType::Apple => {
             let calendars = list_apple_calendars()?;
             Ok(convert::convert_apple_calendars(calendars))
         }
+        CalendarProviderType::Microsoft => Err(Error::ProviderUnavailable {
+            provider: CalendarProviderType::Microsoft,
+        }),
     }
 }
 
-pub fn list_events(
+pub async fn list_events(
     provider: CalendarProviderType,
     filter: EventFilter,
 ) -> Result<Vec<CalendarEvent>, Error> {
@@ -86,12 +116,19 @@ pub fn list_events(
             let events = list_apple_events(filter)?;
             Ok(convert::convert_apple_events(events))
         }
+        CalendarProviderType::Microsoft => Err(Error::ProviderUnavailable {
+            provider: CalendarProviderType::Microsoft,
+        }),
     }
 }
 
 pub fn open_calendar(provider: CalendarProviderType) -> Result<(), Error> {
     match provider {
         CalendarProviderType::Apple => open_apple_calendar(),
+        CalendarProviderType::Microsoft => Err(Error::UnsupportedOperation {
+            operation: "open_calendar",
+            provider,
+        }),
     }
 }
 
@@ -101,6 +138,10 @@ pub fn create_event(
 ) -> Result<String, Error> {
     match provider {
         CalendarProviderType::Apple => create_apple_event(input),
+        CalendarProviderType::Microsoft => Err(Error::UnsupportedOperation {
+            operation: "create_event",
+            provider,
+        }),
     }
 }
 
