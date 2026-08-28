@@ -23,7 +23,6 @@ jobs:
       - run: pnpm -F desktop tauri build --no-bundle --target x86_64-unknown-linux-gnu --config ./src-tauri/tauri.conf.staging.json --features devtools
         env:
           CI: false
-          POSTHOG_API_KEY: phc_e2e
           VITE_API_URL: https://api.sessionecho.flagbit.de
       - uses: ./.github/actions/desktop-e2e-linux
         with:
@@ -47,7 +46,6 @@ jobs:
       - run: pnpm -F desktop tauri build --no-bundle --target aarch64-apple-darwin --config ./src-tauri/tauri.conf.staging.json --features devtools,automation
         env:
           CI: false
-          POSTHOG_API_KEY: phc_e2e
           VITE_API_URL: https://api.sessionecho.flagbit.de
       - uses: FedericoCarboni/setup-ffmpeg@v3
         with:

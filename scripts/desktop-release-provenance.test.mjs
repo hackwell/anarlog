@@ -317,7 +317,6 @@ test("stable desktop releases submit only the Microsoft Store package", async ()
     "MAC_APP_STORE_INSTALLER_CERTIFICATE",
     "MAC_APP_STORE_INSTALLER_CERTIFICATE_PASSWORD",
     "MAC_APP_STORE_PROVISIONING_PROFILE",
-    "POSTHOG_API_KEY",
     "SELLER_ID",
     "SENTRY_DSN_HYPRNOTE_2",
     "VITE_PRO_PRODUCT_ID",
