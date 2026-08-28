@@ -14,10 +14,7 @@ use db::{cloudsync_runtime_config_from_env, open_desktop_db};
 use ext::*;
 use store::*;
 
-use std::sync::{
-    Arc, Mutex,
-    atomic::{AtomicBool, Ordering},
-};
+use std::sync::atomic::{AtomicBool, Ordering};
 
 use tauri::{Emitter, Manager};
 use tauri_plugin_permissions::{Permission, PermissionsPluginExt};
@@ -29,91 +26,8 @@ const STAGING_BUNDLE_ID: &str = "de.flagbit.sessionecho.staging";
 const APP_EXIT_REQUESTED_EVENT: &str = "app-exit-requested";
 static EXIT_FLUSH_COMPLETE: AtomicBool = AtomicBool::new(false);
 static EXIT_FLUSH_REQUESTED: AtomicBool = AtomicBool::new(false);
-static CRASH_REPORTING_ENABLED: AtomicBool = AtomicBool::new(true);
 const EXIT_FLUSH_FALLBACK_TIMEOUT: std::time::Duration = std::time::Duration::from_secs(10);
 const EXIT_HARD_FALLBACK_TIMEOUT: std::time::Duration = std::time::Duration::from_secs(12);
-
-pub(crate) struct CrashReportingState {
-    client: Option<sentry::Client>,
-    minidump: Mutex<Option<tauri_plugin_sentry::minidump::Handle>>,
-}
-
-impl CrashReportingState {
-    fn new(client: Option<sentry::Client>, enabled: bool) -> Self {
-        CRASH_REPORTING_ENABLED.store(enabled, Ordering::SeqCst);
-        let minidump = enabled
-            .then(|| client.as_ref().and_then(start_minidump_reporting))
-            .flatten();
-        Self {
-            client,
-            minidump: Mutex::new(minidump),
-        }
-    }
-
-    fn set_enabled(&self, enabled: bool) {
-        CRASH_REPORTING_ENABLED.store(enabled, Ordering::SeqCst);
-        let mut minidump = self.minidump.lock().unwrap();
-        if enabled {
-            if minidump.is_none() {
-                *minidump = self.client.as_ref().and_then(start_minidump_reporting);
-            }
-        } else {
-            minidump.take();
-        }
-    }
-}
-
-fn start_minidump_reporting(
-    client: &sentry::Client,
-) -> Option<tauri_plugin_sentry::minidump::Handle> {
-    match tauri_plugin_sentry::minidump::init(client) {
-        Ok(handle) => Some(handle),
-        Err(error) => {
-            tracing::warn!(%error, "failed to initialize Sentry minidump reporting");
-            None
-        }
-    }
-}
-
-fn run_crash_reporter_process() -> ! {
-    let client = sentry::init(sentry::ClientOptions {
-        dsn: option_env!("SENTRY_DSN")
-            .filter(|_| std::env::var_os("ANARLOG_DISABLE_SENTRY").is_none())
-            .and_then(|dsn| dsn.parse().ok()),
-        release: option_env!("APP_VERSION").map(|v| format!("anarlog-desktop@{}", v).into()),
-        auto_session_tracking: false,
-        before_send: Some(Arc::new(|event| {
-            tauri_plugin_tracing::redaction::sanitize_sentry_event(event)
-        })),
-        ..Default::default()
-    });
-    let _ = tauri_plugin_sentry::minidump::init(&client);
-    std::process::exit(0);
-}
-
-async fn load_crash_reporting_consent(db: &anlg_db_core::Db) -> bool {
-    let rows = sqlx::query_as::<_, (String, String)>(
-        "SELECT id, value_json FROM app_settings \
-         WHERE id IN ('crash_reporting_consent', 'telemetry_consent')",
-    )
-    .fetch_all(db.pool())
-    .await
-    .unwrap_or_default();
-
-    crash_reporting_consent_from_rows(&rows)
-}
-
-fn crash_reporting_consent_from_rows(rows: &[(String, String)]) -> bool {
-    let read = |id: &str| {
-        rows.iter()
-            .find(|(key, _)| key == id)
-            .and_then(|(_, value)| serde_json::from_str::<bool>(value).ok())
-    };
-
-    read("crash_reporting_consent")
-        .or_else(|| read("telemetry_consent"))
-        .unwrap_or(true)
-}
 
 fn mark_exit_flush_complete() {
     EXIT_FLUSH_COMPLETE.store(true, Ordering::SeqCst);
@@ -150,12 +64,6 @@ fn create_audio_provider(_bundle_id: &str) -> std::sync::Arc<dyn anlg_audio_actu
 
 pub fn main() {
     startup::apply_linux_webkit_workarounds();
-    // Sentry minidump reporting re-execs this binary with --crash-reporter-server.
-    // That helper must reach minidump::init instead of the launch lock, or it
-    // shows "Session Echo is already starting" on every launch and never serves dumps.
-    if startup::is_crash_reporter_process() {
-        run_crash_reporter_process();
-    }
 
     // Keep a process-wide Tokio runtime for Tauri plugins, but leave it before
     // Builder::build(). tauri-plugin-single-instance's Linux setup uses zbus's
@@ -184,81 +92,24 @@ pub fn main() {
         }
     };
 
-    let (root_supervisor_ctx, root_supervisor_handle, db, crash_reporting_enabled) = runtime
-        .block_on(async {
-            let (root_supervisor_ctx, root_supervisor_handle) =
-                match supervisor::spawn_root_supervisor().await {
-                    Some((ctx, handle)) => (Some(ctx), Some(handle)),
-                    None => (None, None),
-                };
-
-            let startup_indicator = startup::SlowStartupIndicator::show_after_delay();
-            let db = match open_desktop_db(&identifier).await {
-                Ok(db) => db,
-                Err(error) => {
-                    startup_indicator.dismiss();
-                    exit_after_startup_failure(&identifier, &error)
-                }
+    let (root_supervisor_ctx, root_supervisor_handle, db) = runtime.block_on(async {
+        let (root_supervisor_ctx, root_supervisor_handle) =
+            match supervisor::spawn_root_supervisor().await {
+                Some((ctx, handle)) => (Some(ctx), Some(handle)),
+                None => (None, None),
             };
-            startup_indicator.dismiss();
-            let crash_reporting_enabled = load_crash_reporting_consent(&db).await;
-            (
-                root_supervisor_ctx,
-                root_supervisor_handle,
-                db,
-                crash_reporting_enabled,
-            )
-        });
 
-    let sentry_client = {
-        let dsn = if std::env::var_os("ANARLOG_DISABLE_SENTRY").is_some() {
-            None
-        } else {
-            option_env!("SENTRY_DSN")
+        let startup_indicator = startup::SlowStartupIndicator::show_after_delay();
+        let db = match open_desktop_db(&identifier).await {
+            Ok(db) => db,
+            Err(error) => {
+                startup_indicator.dismiss();
+                exit_after_startup_failure(&identifier, &error)
+            }
         };
-
-        if let Some(dsn) = dsn {
-            let release =
-                option_env!("APP_VERSION").map(|v| format!("anarlog-desktop@{}", v).into());
-
-            let client = sentry::init((
-                dsn,
-                sentry::ClientOptions {
-                    release,
-                    traces_sample_rate: 1.0,
-                    auto_session_tracking: false,
-                    before_send: Some(Arc::new(|event| {
-                        CRASH_REPORTING_ENABLED
-                            .load(Ordering::SeqCst)
-                            .then(|| tauri_plugin_tracing::redaction::sanitize_sentry_event(event))
-                            .flatten()
-                    })),
-                    before_breadcrumb: Some(Arc::new(|breadcrumb| {
-                        CRASH_REPORTING_ENABLED
-                            .load(Ordering::SeqCst)
-                            .then_some(breadcrumb)
-                    })),
-                    ..Default::default()
-                },
-            ));
-
-            sentry::configure_scope(|scope| {
-                scope.set_tag("service.namespace", "anarlog");
-                scope.set_tag("service.name", "desktop");
-                scope.set_tag("enduser.pseudo.id", anlg_host::fingerprint());
-                scope.set_user(Some(sentry::User {
-                    id: Some(anlg_host::fingerprint()),
-                    ..Default::default()
-                }));
-            });
-
-            Some(client)
-        } else {
-            None
-        }
-    };
-    let crash_reporting_state =
-        CrashReportingState::new(sentry_client.as_deref().cloned(), crash_reporting_enabled);
+        startup_indicator.dismiss();
+        (root_supervisor_ctx, root_supervisor_handle, db)
+    });
 
     let audio: std::sync::Arc<dyn anlg_audio_actual::AudioProvider> =
         create_audio_provider(&context.config().identifier);
@@ -272,8 +123,7 @@ pub fn main() {
 
     let mut builder = tauri_plugin_windows::extend_builder(tauri::Builder::default())
         .manage(audio)
-        .manage(db.clone())
-        .manage(crash_reporting_state);
+        .manage(db.clone());
 
     // https://docs.crabnebula.dev/plugins/tauri-e2e-tests/#macos-support
     #[cfg(all(target_os = "macos", feature = "automation"))]
@@ -395,10 +245,6 @@ pub fn main() {
             tauri_plugin_autostart::MacosLauncher::LaunchAgent,
             Some(vec!["--background"]),
         ));
-    }
-
-    if let Some(client) = sentry_client.as_ref() {
-        builder = builder.plugin(tauri_plugin_sentry::init_with_no_injection(client));
     }
 
     #[cfg(any(debug_assertions, feature = "devtools"))]
@@ -607,7 +453,6 @@ fn exit_after_startup_failure(identifier: &str, error: &impl std::fmt::Display) 
     eprintln!("{message}");
     tracing::error!(error = %error, "desktop startup failed");
     append_startup_failure_to_log(identifier, &message);
-    report_startup_failure_to_sentry(&message);
 
     #[cfg(target_os = "macos")]
     {
@@ -658,36 +503,6 @@ fn append_startup_failure_to_log(identifier: &str, message: &str) {
     }
 }
 
-// The main Sentry client is initialized after the database opens, so database
-// startup failures need their own short-lived client to be reported at all.
-fn report_startup_failure_to_sentry(message: &str) {
-    if let Some(client) = sentry::Hub::current().client() {
-        sentry::capture_message(message, sentry::Level::Error);
-        client.flush(Some(std::time::Duration::from_secs(3)));
-        return;
-    }
-
-    if std::env::var_os("ANARLOG_DISABLE_SENTRY").is_some() {
-        return;
-    }
-    let Some(dsn) = option_env!("SENTRY_DSN") else {
-        return;
-    };
-    let guard = sentry::init((
-        dsn,
-        sentry::ClientOptions {
-            release: option_env!("APP_VERSION").map(|v| format!("anarlog-desktop@{}", v).into()),
-            auto_session_tracking: false,
-            before_send: Some(Arc::new(|event| {
-                tauri_plugin_tracing::redaction::sanitize_sentry_event(event)
-            })),
-            ..Default::default()
-        },
-    ));
-    sentry::capture_message(message, sentry::Level::Error);
-    guard.flush(Some(std::time::Duration::from_secs(3)));
-}
-
 fn get_onboarding_flag() -> Option<bool> {
     let parse_value = |v: &str| -> Option<bool> {
         match v {
@@ -736,8 +551,6 @@ fn make_specta_builder<R: tauri::Runtime>() -> tauri_specta::Builder<R> {
             commands::set_pinned_tabs::<tauri::Wry>,
             commands::get_recently_opened_sessions::<tauri::Wry>,
             commands::set_recently_opened_sessions::<tauri::Wry>,
-            commands::is_crash_reporting_enabled,
-            commands::set_crash_reporting_enabled,
             commands::check_embedded_cli::<tauri::Wry>,
             commands::install_embedded_cli::<tauri::Wry>,
             commands::list_skill_agents,
@@ -795,18 +608,6 @@ mod test {
         assert!(!should_allow_immediate_exit());
         anlg_intercept::set_force_quit();
         assert!(should_allow_immediate_exit());
-    }
-
-    #[test]
-    fn crash_reporting_uses_new_consent_before_legacy_telemetry_consent() {
-        let rows = vec![
-            ("telemetry_consent".to_string(), "false".to_string()),
-            ("crash_reporting_consent".to_string(), "true".to_string()),
-        ];
-
-        assert!(crash_reporting_consent_from_rows(&rows));
-        assert!(!crash_reporting_consent_from_rows(&rows[..1]));
-        assert!(crash_reporting_consent_from_rows(&[]));
     }
 
     #[test]

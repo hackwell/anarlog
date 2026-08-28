@@ -7,9 +7,7 @@ use ractor::{
 };
 use tracing::Instrument;
 
-use crate::actors::session::lifecycle::{
-    clear_sentry_session_context, configure_sentry_session_context, emit_session_ended,
-};
+use crate::actors::session::lifecycle::emit_session_ended;
 use crate::actors::{
     SessionConfigUpdate, SessionContext, SessionMsg, SessionParams, session_span,
     spawn_session_supervisor,
@@ -162,13 +160,10 @@ async fn start_session_impl(
             return Err(StartSessionError::SessionAlreadyRunning);
         }
 
-        configure_sentry_session_context(&params);
-
         let app_dir = match state.runtime.vault_base() {
             Ok(base) => base.join("sessions"),
             Err(e) => {
                 tracing::error!(error.message = %e, "failed_to_resolve_sessions_dir");
-                clear_sentry_session_context();
                 return Err(StartSessionError::FailedToResolveSessionsDir);
             }
         };
@@ -188,7 +183,6 @@ async fn start_session_impl(
                 supervisor_cell.link(root_cell);
 
                 if supervisor_cell.get_status() == ActorStatus::Stopped {
-                    clear_sentry_session_context();
                     return Err(StartSessionError::FailedToStartSession);
                 }
 
@@ -209,7 +203,6 @@ async fn start_session_impl(
             }
             Err(e) => {
                 tracing::error!(error.message = ?e, "failed_to_start_session");
-                clear_sentry_session_context();
                 Err(StartSessionError::FailedToStartSession)
             }
         }
@@ -311,13 +304,7 @@ fn handle_supervisor_completion(
             .vault_base()
             .map(|base| base.join("sessions"))
             .unwrap_or_else(|_| std::env::temp_dir());
-        emit_session_ended(
-            &*state.runtime,
-            &sessions_base,
-            &session_id,
-            reason,
-            state.active_session_id.is_none(),
-        );
+        emit_session_ended(&*state.runtime, &sessions_base, &session_id, reason);
         return;
     }
 
@@ -343,12 +330,6 @@ fn handle_supervisor_completion(
             .vault_base()
             .map(|base| base.join("sessions"))
             .unwrap_or_else(|_| std::env::temp_dir());
-        emit_session_ended(
-            &*state.runtime,
-            &sessions_base,
-            &session_id,
-            reason,
-            state.active_session_id.is_none(),
-        );
+        emit_session_ended(&*state.runtime, &sessions_base, &session_id, reason);
     }
 }

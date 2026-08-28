@@ -11,13 +11,11 @@ path = "src/main.rs"
 anlg-agent-access = { workspace = true }
 anlg-db-app = { workspace = true }
 anlg-db-core = { workspace = true }
-anlg-user-error = { workspace = true }
 
 clap = { workspace = true, features = ["derive", "env"] }
 dirs = { workspace = true }
 rmcp = { workspace = true, features = ["server", "transport-io"] }
 schemars = { workspace = true }
-sentry = { workspace = true }
 serde = { workspace = true, features = ["derive"] }
 serde_json = { workspace = true }
 thiserror = { workspace = true }

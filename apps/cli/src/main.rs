@@ -4,8 +4,6 @@ use anarlog_cli::Args;
 use clap::Parser;
 use clap::error::ErrorKind;
 
-mod error_reporting;
-
 #[tokio::main]
 async fn main() -> ExitCode {
     let json = std::env::args_os().any(|arg| arg == "--json");
@@ -37,13 +35,7 @@ async fn main() -> ExitCode {
         }
     };
 
-    let command = args.command_name();
-    let _sentry_guard = error_reporting::init();
     let result = anarlog_cli::run(args).await;
-    if let Err(error) = &result {
-        error_reporting::capture_command_error(command, error.code());
-        error_reporting::flush();
-    }
 
     match result {
         Ok(code) => ExitCode::from(code),

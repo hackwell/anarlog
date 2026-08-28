@@ -119,7 +119,6 @@ anlg-transcribe-whisper-local = { path = "crates/transcribe-whisper-local", pack
 anlg-transcript = { path = "crates/transcript", package = "transcript" }
 anlg-transcription-core = { path = "crates/transcription-core", package = "transcription-core" }
 anlg-updater-core = { path = "crates/updater-core", package = "updater-core" }
-anlg-user-error = { path = "crates/user-error", package = "user-error" }
 anlg-vad = { path = "crates/vad", package = "vad" }
 anlg-vad-masking = { path = "crates/vad-masking", package = "vad-masking" }
 anlg-voiceprint = { path = "crates/voiceprint", package = "voiceprint" }
@@ -150,7 +149,6 @@ tauri-plugin-opener = "2.5"
 tauri-plugin-os = "2.3"
 tauri-plugin-prevent-default = "4"
 tauri-plugin-process = "2.3"
-tauri-plugin-sentry = "0.5"
 tauri-plugin-shell = "2.3"
 tauri-plugin-single-instance = "2.4"
 tauri-plugin-store = "2.4.3"
@@ -295,7 +293,6 @@ async-stripe-core = { version = "1.0.0-rc.1", default-features = false }
 gbnf-validator = { git = "https://github.com/fastrepl/gbnf-validator", rev = "3dec055" }
 
 jsonwebtoken = { version = "10", features = ["rust_crypto"] }
-sentry = "=0.42.0"
 vergen-gix = "9"
 
 askama = "0.15"
