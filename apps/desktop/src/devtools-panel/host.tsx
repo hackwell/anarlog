@@ -36,7 +36,6 @@ const canResolveDevtoolsPanel = import.meta.env.MODE !== "test";
 
 type DevtoolsPanelAction =
   | "navigation:onboarding"
-  | "instruction:sign-in"
   | "instruction:billing"
   | "instruction:integration"
   | `toasts:preview:${DevtoolsToastPreview}`
@@ -365,9 +364,6 @@ function useDevtoolsPanelActions() {
       switch (action as DevtoolsPanelAction) {
         case "navigation:onboarding":
           void showOnboarding();
-          return;
-        case "instruction:sign-in":
-          showInstruction("sign-in");
           return;
         case "instruction:billing":
           showInstruction("billing");

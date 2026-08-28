@@ -468,10 +468,6 @@ msgstr "Meeting-Historie mitbringen"
 msgid "Brought in {0} new meetings. {1} were already here."
 msgstr "{0} neue Meetings importiert. {1} waren bereits vorhanden."
 
-#: src/instruction/index.tsx
-msgid "Browser handoff not working? Paste the callback link instead"
-msgstr "Übergabe über den Browser funktioniert nicht? Stattdessen den Callback-Link einfügen"
-
 #: src/settings/general/audio-settings.tsx
 msgid "Build voiceprints from meeting audio so speakers you name in a transcript are recognized in later meetings. Voiceprints never leave this device, and unnamed ones are deleted after 45 days."
 msgstr "Erstellt Stimmprofile aus Meeting-Audio, damit von Ihnen benannte Sprecher in einem Transkript auch in späteren Meetings erkannt werden. Stimmprofile verlassen dieses Gerät nie, unbenannte werden nach 45 Tagen gelöscht."
@@ -728,10 +724,6 @@ msgstr "Kommentare"
 #: src/contacts/details.tsx
 msgid "Company"
 msgstr "Unternehmen"
-
-#: src/instruction/index.tsx
-msgid "Complete sign-in in your browser, then return to Session Echo."
-msgstr "Anmeldung im Browser abschließen und dann zu Session Echo zurückkehren."
 
 #: src/instruction/index.tsx
 msgid "Complete your purchase"
@@ -2185,10 +2177,6 @@ msgstr "API-Schlüssel Ihrer Kimi-Code-Mitgliedschaft einfügen."
 msgid "Paste the authorization code"
 msgstr "Autorisierungscode einfügen"
 
-#: src/instruction/index.tsx
-msgid "Paste the browser URL here if the browser button did not reopen Session Echo."
-msgstr "Browser-URL hier einfügen, falls der Browser-Button Session Echo nicht wieder geöffnet hat."
-
 #: src/settings/ai/llm/subscriptions/connect.tsx
 msgid "Paste the localhost redirect URL"
 msgstr "Localhost-Redirect-URL einfügen"
@@ -2823,10 +2811,6 @@ msgstr "Anmelden"
 msgid "Sign in to generate this summary"
 msgstr "Anmelden, um diese Zusammenfassung zu erstellen"
 
-#: src/instruction/index.tsx
-msgid "Sign in to your account"
-msgstr "Bei Ihrem Konto anmelden"
-
 #: src/settings/ai/llm/subscriptions/connect.tsx
 msgid "Sign in with ChatGPT Plus or Pro, then paste the redirect URL from your browser."
 msgstr "Mit ChatGPT Plus oder Pro anmelden, dann die Redirect-URL aus Ihrem Browser einfügen."
@@ -3011,10 +2995,6 @@ msgstr "Speicher konfiguriert"
 #: src/onboarding/folder-location.tsx
 msgid "Storage Updated"
 msgstr "Speicher aktualisiert"
-
-#: src/instruction/index.tsx
-msgid "Submit callback URL"
-msgstr "Callback-URL übermitteln"
 
 #: src/main/windows-title-bar.tsx
 msgid "Suggest a Feature"

@@ -468,10 +468,6 @@ msgstr "Bring your meeting history"
 msgid "Brought in {0} new meetings. {1} were already here."
 msgstr "Brought in {0} new meetings. {1} were already here."
 
-#: src/instruction/index.tsx
-msgid "Browser handoff not working? Paste the callback link instead"
-msgstr "Browser handoff not working? Paste the callback link instead"
-
 #: src/settings/general/audio-settings.tsx
 msgid "Build voiceprints from meeting audio so speakers you name in a transcript are recognized in later meetings. Voiceprints never leave this device, and unnamed ones are deleted after 45 days."
 msgstr "Build voiceprints from meeting audio so speakers you name in a transcript are recognized in later meetings. Voiceprints never leave this device, and unnamed ones are deleted after 45 days."
@@ -728,10 +724,6 @@ msgstr "comments"
 #: src/contacts/details.tsx
 msgid "Company"
 msgstr "Company"
-
-#: src/instruction/index.tsx
-msgid "Complete sign-in in your browser, then return to Session Echo."
-msgstr "Complete sign-in in your browser, then return to Session Echo."
 
 #: src/instruction/index.tsx
 msgid "Complete your purchase"
@@ -2185,10 +2177,6 @@ msgstr "Paste an API key from your Kimi Code membership."
 msgid "Paste the authorization code"
 msgstr "Paste the authorization code"
 
-#: src/instruction/index.tsx
-msgid "Paste the browser URL here if the browser button did not reopen Session Echo."
-msgstr "Paste the browser URL here if the browser button did not reopen Session Echo."
-
 #: src/settings/ai/llm/subscriptions/connect.tsx
 msgid "Paste the localhost redirect URL"
 msgstr "Paste the localhost redirect URL"
@@ -2823,10 +2811,6 @@ msgstr "Sign in"
 msgid "Sign in to generate this summary"
 msgstr "Sign in to generate this summary"
 
-#: src/instruction/index.tsx
-msgid "Sign in to your account"
-msgstr "Sign in to your account"
-
 #: src/settings/ai/llm/subscriptions/connect.tsx
 msgid "Sign in with ChatGPT Plus or Pro, then paste the redirect URL from your browser."
 msgstr "Sign in with ChatGPT Plus or Pro, then paste the redirect URL from your browser."
@@ -3011,10 +2995,6 @@ msgstr "Storage configured"
 #: src/onboarding/folder-location.tsx
 msgid "Storage Updated"
 msgstr "Storage Updated"
-
-#: src/instruction/index.tsx
-msgid "Submit callback URL"
-msgstr "Submit callback URL"
 
 #: src/main/windows-title-bar.tsx
 msgid "Suggest a Feature"
