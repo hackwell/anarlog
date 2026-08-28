@@ -56,7 +56,6 @@ import {
   sttModelQueries,
 } from "./shared";
 
-import { useBillingAccess } from "~/billing/access";
 import { useNotifications } from "~/contexts/notifications";
 import { providerRowId, ProviderIconSlot } from "~/settings/ai/shared";
 import {
@@ -99,7 +98,6 @@ export function SelectProviderAndModel() {
     "current_stt_provider",
     "current_stt_model",
   ] as const);
-  const billing = useBillingAccess();
   const { providers: configuredProviders, isReady: providerSettingsReady } =
     useConfiguredMapping();
   const { startDownload } = useSttSettings();
@@ -258,15 +256,14 @@ export function SelectProviderAndModel() {
                   provider.requirements,
                   "pro",
                 );
-                const locked = requiresPro && !billing.isPaid;
                 return (
                   <SelectItem
                     key={provider.id}
                     value={provider.id}
-                    disabled={provider.disabled || locked}
+                    disabled={provider.disabled || requiresPro}
                     className={cn([
                       "data-disabled:text-muted-foreground data-disabled:!opacity-100",
-                      !configured && !locked && "text-muted-foreground",
+                      !configured && !requiresPro && "text-muted-foreground",
                     ])}
                   >
                     <div className="flex flex-col gap-0.5">
@@ -279,7 +276,7 @@ export function SelectProviderAndModel() {
                           </span>
                         ) : null}
                       </div>
-                      {locked ? (
+                      {requiresPro ? (
                         <span className="text-muted-foreground text-[11px]">
                           <Trans>Upgrade to Pro to use this provider.</Trans>
                         </span>
@@ -613,7 +610,6 @@ function useConfiguredMapping(): {
   >;
   isReady: boolean;
 } {
-  const billing = useBillingAccess();
   const { providers: configuredProviders, isReady } =
     useAiProvidersState("stt");
   const { local_stt_model_path } = useConfigValues([
@@ -666,7 +662,7 @@ function useConfiguredMapping(): {
       const eligible =
         getProviderSelectionBlockers(provider.requirements, {
           isAuthenticated: true,
-          isPaid: billing.isPaid,
+          isPaid: false,
           config: { base_url: baseUrl, api_key: apiKey },
         }).length === 0;
 
