@@ -1,4 +1,10 @@
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import {
+  act,
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+} from "@testing-library/react";
 import type { ReactNode } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -33,6 +39,8 @@ const mocks = vi.hoisted(() => ({
   timelineSelectionSelectedIds: [] as string[],
   timelineEventsTable: {} as Record<string, Record<string, unknown>>,
   timelineSessionsTable: {} as Record<string, Record<string, unknown>>,
+  timelineTablesVersion: 0,
+  timelineTablesSubscribers: new Set<() => void>(),
 }));
 
 const lingui = vi.hoisted(() => {
@@ -111,12 +119,28 @@ vi.mock("~/shared/config", () => ({
   useConfigValue: () => mocks.configValue,
 }));
 
-vi.mock("~/calendar/queries", () => ({
-  useTimelineTables: () => ({
-    timelineEventsTable: mocks.timelineEventsTable,
-    timelineSessionsTable: mocks.timelineSessionsTable,
-  }),
-}));
+vi.mock("~/calendar/queries", async () => {
+  const React = await vi.importActual<typeof import("react")>("react");
+
+  return {
+    useTimelineTables: () => {
+      React.useSyncExternalStore(
+        (onStoreChange: () => void) => {
+          mocks.timelineTablesSubscribers.add(onStoreChange);
+          return () => {
+            mocks.timelineTablesSubscribers.delete(onStoreChange);
+          };
+        },
+        () => mocks.timelineTablesVersion,
+      );
+
+      return {
+        timelineEventsTable: mocks.timelineEventsTable,
+        timelineSessionsTable: mocks.timelineSessionsTable,
+      };
+    },
+  };
+});
 
 vi.mock("~/session/hooks/useDeleteSession", () => ({
   useDeleteSession: () => mocks.deleteSession,
@@ -1473,7 +1497,7 @@ describe("TimelineView", () => {
     mocks.configValue = "UTC";
     mocks.currentTimeMs = Date.now();
 
-    const { rerender } = render(<TimelineView />);
+    render(<TimelineView />);
 
     vi.setSystemTime(new Date("2024-01-16T00:01:00.000Z"));
     mocks.timelineSessionsTable = {
@@ -1486,7 +1510,7 @@ describe("TimelineView", () => {
         created_at: "2024-01-15T23:59:00.000Z",
       },
     };
-    rerender(<TimelineView showOpenCalendarButton />);
+    emitTimelineTablesUpdate();
 
     const tomorrowHeading = screen.getByText("Tomorrow");
     const yesterdayHeading = screen.getByText("Yesterday");
@@ -1513,11 +1537,11 @@ describe("TimelineView", () => {
       },
     };
 
-    const { rerender } = render(<TimelineView />);
+    render(<TimelineView />);
 
     vi.setSystemTime(new Date("2024-01-16T00:01:00.000Z"));
     mocks.currentTimeMs = Date.now();
-    rerender(<TimelineView showOpenCalendarButton />);
+    emitTimelineTablesUpdate();
 
     const staleTomorrowHeading = screen.getByText("Tomorrow");
     const staleTomorrowItem = screen.getByTestId("timeline-item-soon");
@@ -1529,6 +1553,16 @@ describe("TimelineView", () => {
     expect(isBefore(indicator, yesterdayHeading)).toBe(true);
   });
 });
+
+// TimelineView is memoized, so re-rendering it from a test with equal props is a
+// no-op. In production the live query pushes new tables into the mounted tree; this
+// emits that push so a refresh is observable without depending on prop identity.
+function emitTimelineTablesUpdate() {
+  act(() => {
+    mocks.timelineTablesVersion += 1;
+    mocks.timelineTablesSubscribers.forEach((notify) => notify());
+  });
+}
 
 function getSidebarActionTabsOrNull() {
   return document.querySelector("[data-sidebar-timeline-action-tabs]");
