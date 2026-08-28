@@ -39,11 +39,6 @@ pub struct Args {
 impl Args {
     pub fn analytics_command_name(&self) -> &'static str {
         match &self.command {
-            Command::Auth { command } => match command {
-                AuthCommand::Login => "auth_login",
-                AuthCommand::Status => "auth_status",
-                AuthCommand::Logout => "auth_logout",
-            },
             Command::Doctor => "doctor",
             Command::Meetings { command } => match command {
                 MeetingCommand::List { .. } => "meetings_list",
@@ -75,11 +70,6 @@ impl Args {
 
 #[derive(Debug, Subcommand)]
 pub enum Command {
-    /// Sign in to a Session Echo account from a browser
-    Auth {
-        #[command(subcommand)]
-        command: AuthCommand,
-    },
     /// Check the local CLI and database connection without changing data
     Doctor,
     /// Browse and export meetings
@@ -141,16 +131,6 @@ impl ProposalKind {
             Self::Memo => "memo",
         }
     }
-}
-
-#[derive(Debug, Subcommand)]
-pub enum AuthCommand {
-    /// Sign in through a browser on this or another device
-    Login,
-    /// Show the locally stored account session
-    Status,
-    /// Remove the locally stored account session
-    Logout,
 }
 
 #[derive(Debug, Subcommand)]
@@ -242,7 +222,6 @@ mod tests {
     #[test]
     fn help_exposes_mcp_and_export() {
         let help = Args::command().render_long_help().to_string();
-        assert!(help.contains("auth"));
         assert!(help.contains("meetings"));
         assert!(help.contains("mcp"));
         assert!(help.contains("doctor"));
@@ -265,28 +244,6 @@ mod tests {
             MeetingCommand::Export {
                 format: ExportFormat::Json,
                 ..
-            }
-        ));
-    }
-
-    #[test]
-    fn parses_auth_commands() {
-        assert!(matches!(
-            Args::parse_from(["anarlog", "auth", "login"]).command,
-            Command::Auth {
-                command: AuthCommand::Login
-            }
-        ));
-        assert!(matches!(
-            Args::parse_from(["anarlog", "auth", "status"]).command,
-            Command::Auth {
-                command: AuthCommand::Status
-            }
-        ));
-        assert!(matches!(
-            Args::parse_from(["anarlog", "auth", "logout"]).command,
-            Command::Auth {
-                command: AuthCommand::Logout
             }
         ));
     }
