@@ -50,17 +50,23 @@ ok "Team-ID:    $TEAM_ID"
 
 EXPIRY="$(security find-certificate -c "$SIGNING_IDENTITY" -p 2>/dev/null \
   | openssl x509 -noout -enddate 2>/dev/null | cut -d= -f2 || true)"
-[[ -n "$EXPIRY" ]] && ok "Gueltig bis: $EXPIRY"
+if [[ -n "$EXPIRY" ]]; then ok "Gueltig bis: $EXPIRY"; fi
 
 # --- Zertifikat exportieren (gefuehrt) ------------------------------------
 
 say "Zertifikat exportieren"
 
-P12_PATH="$(mktemp -t session-echo-signing).p12"
-rm -f "$P12_PATH"
+# Schreibtisch statt mktemp: der Pfad muss im Speichern-Dialog eintippbar
+# sein, und /var/folders/... ist es nicht. Wird am Ende wieder geloescht.
+P12_PATH="$HOME/Desktop/session-echo-signing.p12"
+if [[ -e "$P12_PATH" ]]; then
+  die "Es liegt schon eine Datei unter $P12_PATH - bitte pruefen und entfernen."
+fi
 
 # Zufallspasswort: nie getippt, geht direkt ins Secret, staerker als Erfundenes.
-P12_PASSWORD="$(LC_ALL=C tr -dc 'A-Za-z0-9' </dev/urandom | head -c 32)"
+# openssl statt tr/head: die Pipe stirbt an SIGPIPE (141) und reisst unter
+# 'set -o pipefail' das ganze Skript kommentarlos mit.
+P12_PASSWORD="$(openssl rand -hex 16)"
 
 cat <<EOF
 
@@ -74,8 +80,8 @@ cat <<EOF
     2. Rechtsklick auf:
          $SIGNING_IDENTITY
     3. 'Exportieren ...', Format 'Persoenlicher Informationsaustausch (.p12)'
-    4. Als Dateiname exakt eintragen:
-         $P12_PATH
+    4. Auf dem Schreibtisch speichern, Dateiname:
+         session-echo-signing.p12
     5. Beim Passwort GENAU DAS EINFUEGEN (Zwischenablage liegt bereit):
 
 EOF
@@ -146,7 +152,7 @@ set_secret APPLE_SIGNING_IDENTITY "$SIGNING_IDENTITY"
 set_secret APPLE_TEAM_ID "$TEAM_ID"
 set_secret APPLE_ID "$APPLE_ID"
 set_secret APPLE_PASSWORD "$APPLE_PASSWORD"
-set_secret KEYCHAIN_PASSWORD "$(LC_ALL=C tr -dc 'A-Za-z0-9' </dev/urandom | head -c 32)"
+set_secret KEYCHAIN_PASSWORD "$(openssl rand -hex 16)"
 
 # --- Kontrolle ------------------------------------------------------------
 
@@ -157,7 +163,7 @@ REQUIRED=(APPLE_CERTIFICATE APPLE_CERTIFICATE_PASSWORD APPLE_ID APPLE_PASSWORD
           TAURI_SIGNING_PRIVATE_KEY TAURI_SIGNING_PRIVATE_KEY_PASSWORD
           RELEASES_TOKEN)
 
-PRESENT="$(gh secret list --repo "$REPO" --json name -q '.[].name' 2>/dev/null)"
+PRESENT="$(gh secret list --repo "$REPO" --json name -q '.[].name' 2>/dev/null || true)"
 MISSING=()
 for name in "${REQUIRED[@]}"; do
   grep -qx "$name" <<<"$PRESENT" || MISSING+=("$name")
