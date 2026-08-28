@@ -16,7 +16,6 @@ const mocks = vi.hoisted(() => ({
   authenticating: false,
   platform: "macos" as string,
   values: {
-    crash_reporting_consent: false,
     lock_app: false,
   },
 }));
@@ -30,7 +29,7 @@ vi.mock("~/settings/queries", () => ({
   useStoredSettingValuesQuery: () => ({
     data: {
       values: mocks.values,
-      hasValues: new Set(["crash_reporting_consent", "lock_app"]),
+      hasValues: new Set(["lock_app"]),
     },
     isLoading: false,
     error: null,
@@ -53,7 +52,6 @@ import { SettingsPrivacy } from ".";
 describe("SettingsPrivacy", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mocks.values.crash_reporting_consent = false;
     mocks.values.lock_app = false;
     mocks.available = true;
     mocks.authenticating = false;
@@ -63,20 +61,6 @@ describe("SettingsPrivacy", () => {
   });
 
   afterEach(cleanup);
-
-  it("controls the Sentry crash reporting consent", () => {
-    render(<SettingsPrivacy />);
-
-    const sentry = screen.getByRole("switch", { name: "Sentry" });
-
-    expect(sentry.getAttribute("data-state")).toBe("unchecked");
-
-    fireEvent.click(sentry);
-
-    expect(mocks.setSettingValues).toHaveBeenCalledWith({
-      crash_reporting_consent: true,
-    });
-  });
 
   it("requires device authentication before locking the app", async () => {
     render(<SettingsPrivacy />);

@@ -13,8 +13,6 @@ import { cn } from "@anlg/utils";
 
 import { BrandLoadingView } from "./brand-loading-view";
 
-import { captureOperationalError } from "~/error-reporting";
-
 export const LONG_LOAD_SPLASH_DELAY_MS = 400;
 const STARTUP_STATUS_REFETCH_INTERVAL_MS = 250;
 
@@ -112,9 +110,7 @@ function StartupErrorView({ error }: { error: Error }) {
     try {
       await relaunch();
     } catch (cause) {
-      captureOperationalError(cause, {
-        operation: "app_restart",
-      });
+      console.error("app_restart failed", cause);
     }
   };
 

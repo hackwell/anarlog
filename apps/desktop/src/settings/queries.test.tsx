@@ -4,16 +4,11 @@ const mocks = vi.hoisted(() => ({
   execute: vi.fn(),
   getPreferredLanguages: vi.fn(),
   getTemplateSource: vi.fn(),
-  setErrorReportingEnabled: vi.fn(async () => undefined),
   setAutomaticUpdatesEnabled: vi.fn(async () => undefined),
   executeTransaction: vi.fn(
     (_statements: Array<{ sql: string; params: unknown[] }>) =>
       Promise.resolve([1]),
   ),
-}));
-
-vi.mock("~/error-reporting", () => ({
-  setErrorReportingEnabled: mocks.setErrorReportingEnabled,
 }));
 
 vi.mock("@anlg/plugin-detect", () => ({
@@ -169,12 +164,6 @@ describe("SQLite settings", () => {
     expect(mocks.setAutomaticUpdatesEnabled).toHaveBeenCalledWith(false);
   });
 
-  it("updates Sentry when the crash reporting consent changes", async () => {
-    await setSettingValues({ crash_reporting_consent: false });
-
-    expect(mocks.setErrorReportingEnabled).toHaveBeenCalledWith(false);
-  });
-
   it("migrates and persists the consent chat auto-send setting", async () => {
     const imported = parseSettingRows([
       {
@@ -230,28 +219,6 @@ describe("SQLite settings", () => {
     ]);
     expect(restored.values.summary_length).toBe("balanced");
     expect(restored.hasValues.has("summary_length")).toBe(true);
-  });
-
-  it("preserves the legacy telemetry choice when splitting crash reporting", async () => {
-    mocks.execute.mockResolvedValue([
-      {
-        id: "telemetry_consent",
-        value_json: JSON.stringify(false),
-      },
-    ]);
-
-    await initializeApplicationSettings();
-
-    const statements = mocks.executeTransaction.mock.calls[0][0];
-    expect(statements).toContainEqual(
-      expect.objectContaining({
-        params: [
-          "crash_reporting_consent",
-          JSON.stringify(false),
-          expect.any(String),
-        ],
-      }),
-    );
   });
 
   it("initializes languages from OS preferences", async () => {

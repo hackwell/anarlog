@@ -34,10 +34,6 @@ export function SettingsPrivacy() {
     return null;
   }
 
-  const sentryEnabled = resolveConfigValue(
-    "crash_reporting_consent",
-    settingsQuery.data,
-  );
   const lockAppEnabled = resolveConfigValue("lock_app", settingsQuery.data);
   const authAvailable = available === true;
   const lockAppDescription = !authAvailable
@@ -67,16 +63,6 @@ export function SettingsPrivacy() {
               setSettingValues({ lock_app: next });
               if (next) lockApp();
             })();
-          }}
-        />
-        <SettingSwitchRow
-          title={t`Sentry`}
-          description={t`Send sanitized crash and error reports to help improve Session Echo.`}
-          checked={sentryEnabled}
-          onChange={(crashReportingConsent) => {
-            setSettingValues({
-              crash_reporting_consent: crashReportingConsent,
-            });
           }}
         />
       </section>

@@ -15,7 +15,6 @@ import { motion } from "motion/react";
 
 import { Button } from "@anlg/ui/components/ui/button";
 
-import { captureOperationalError } from "~/error-reporting";
 import { useMountEffect } from "~/shared/hooks/useMountEffect";
 
 const routeErrorKeys = new WeakMap<object, number>();
@@ -38,18 +37,14 @@ function getRouteErrorKey(error: unknown) {
 
 const ReportedErrorComponent = ({ error }: { error: Error }) => {
   useMountEffect(() => {
-    captureOperationalError(error, {
-      operation: "route_render",
-    });
+    console.error("route_render failed", error);
   });
 
   const handleRestart = async () => {
     try {
       await relaunch();
     } catch (err) {
-      captureOperationalError(err, {
-        operation: "app_restart",
-      });
+      console.error("app_restart failed", err);
     }
   };
 

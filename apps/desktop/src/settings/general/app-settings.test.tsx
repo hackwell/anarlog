@@ -94,10 +94,4 @@ describe("AppSettingsView", () => {
 
     expect(screen.queryByRole("switch", { name: "Cloud sync" })).toBeNull();
   });
-
-  it("keeps crash reporting in its dedicated privacy page", () => {
-    renderAppSettings();
-
-    expect(screen.queryByRole("switch", { name: "Sentry" })).toBeNull();
-  });
 });

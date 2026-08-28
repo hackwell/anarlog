@@ -15,10 +15,6 @@ import { Toaster } from "@anlg/ui/components/ui/toast";
 
 import { AITaskWindowSyncBridge } from "./ai/task-window-sync";
 import { createToolRegistry } from "./contexts/tool-registry/core";
-import {
-  captureOperationalError,
-  initializeErrorReporting,
-} from "./error-reporting";
 import { AppI18nProvider } from "./i18n/provider";
 import { AppLockGate } from "./lock/gate";
 import { FloatingMeetingWindowHost } from "./meeting-float/host";
@@ -89,8 +85,6 @@ function App() {
   );
 }
 
-initializeErrorReporting();
-
 function AppRoot() {
   return (
     <QueryClientProvider client={queryClient}>
@@ -136,9 +130,7 @@ const isMainWindow = getCurrentWebviewWindowLabel() === "main";
 
 if (isMainWindow) {
   void initializeAppExitFlush().catch((error) => {
-    captureOperationalError(error, {
-      operation: "app_exit_flush_initialize",
-    });
+    console.error("app_exit_flush_initialize failed", error);
   });
 }
 
@@ -210,7 +202,7 @@ async function runStartupTask(
     void task().then(resolve, reject);
   })
     .catch((error) => {
-      captureOperationalError(error, { operation });
+      console.error(`startup operation failed: ${operation}`, error);
     })
     .finally(() => {
       if (timeoutHandle) {

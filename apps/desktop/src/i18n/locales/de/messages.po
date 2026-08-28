@@ -2599,17 +2599,9 @@ msgstr "E-Mail senden"
 msgid "Send message"
 msgstr "Nachricht senden"
 
-#: src/settings/privacy/index.tsx
-msgid "Send sanitized crash and error reports to help improve Session Echo."
-msgstr "Bereinigte Absturz- und Fehlerberichte senden, um Session Echo zu verbessern."
-
 #: src/session/components/note-input/meeting-chat-highlights.tsx
 msgid "sent"
 msgstr "gesendet"
-
-#: src/settings/privacy/index.tsx
-msgid "Sentry"
-msgstr "Sentry"
 
 #. placeholder {0}: update.version
 #: src/sidebar/toast/registry.tsx

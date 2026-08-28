@@ -10,7 +10,6 @@ import { commands as windowsCommands } from "@anlg/plugin-windows";
 
 import { executeTransaction, liveQueryClient, useLiveQuery } from "~/db";
 import { enqueueDatabaseWrite } from "~/db/write-queue";
-import { setErrorReportingEnabled } from "~/error-reporting";
 import { normalizeAudioRetention } from "~/services/audio-retention-policy";
 import {
   LEGACY_MAIN_VALUES_ID,
@@ -106,13 +105,6 @@ export async function initializeApplicationSettings(): Promise<void> {
     stored.values.current_stt_provider,
     stored.values.current_stt_model,
   );
-
-  if (
-    !stored.hasValues.has("crash_reporting_consent") &&
-    stored.hasValues.has("telemetry_consent")
-  ) {
-    updates.crash_reporting_consent = stored.values.telemetry_consent ?? true;
-  }
 
   if (normalizedSttSelection.provider !== stored.values.current_stt_provider) {
     updates.current_stt_provider = normalizedSttSelection.provider;
@@ -452,11 +444,6 @@ function applySettingSideEffects(values: SettingValues): void {
     void detectCommands
       .setMicActiveThreshold(values.mic_active_threshold)
       .catch(console.error);
-  }
-  if (values.crash_reporting_consent !== undefined) {
-    void setErrorReportingEnabled(values.crash_reporting_consent).catch(
-      console.error,
-    );
   }
   if (values.show_app_in_dock !== undefined) {
     void windowsCommands
