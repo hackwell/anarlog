@@ -55,8 +55,6 @@ on:
         required: false
       SELLER_ID:
         required: false
-      SENTRY_DSN_HYPRNOTE_2:
-        required: false
       VITE_PRO_PRODUCT_ID:
         required: false
       VITE_SUPABASE_ANON_KEY:
@@ -423,7 +421,6 @@ jobs:
           APPLE_SIGNING_IDENTITY: ${{ steps.apple-store-cert.outputs.application-cert-id }}
           APP_VERSION: ${{ needs.validate.outputs.version }}
           CI: false
-          SENTRY_DSN: ${{ secrets.SENTRY_DSN_HYPRNOTE_2 }}
           VITE_API_URL: https://api.sessionecho.flagbit.de
           VITE_APP_URL: https://sessionecho.flagbit.de
           VITE_APP_VERSION: ${{ needs.validate.outputs.version }}

@@ -279,7 +279,6 @@ jobs:
       - if: github.event_name == 'workflow_dispatch'
         run: pnpm -F desktop tauri build --ci --bundles nsis --no-sign --target x86_64-pc-windows-msvc --config ./src-tauri/tauri.conf.staging.json --features devtools --verbose
         env:
-          SENTRY_DSN: ${{ secrets.SENTRY_DSN_HYPRNOTE_2 }}
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
           VITE_APP_URL: https://sessionecho.flagbit.de
@@ -488,7 +487,6 @@ jobs:
       - if: github.event_name == 'workflow_dispatch'
         run: pnpm -F desktop tauri build --ci --bundles appimage,deb --target ${{ matrix.target }} --config ./src-tauri/tauri.conf.staging.json --features devtools --verbose
         env:
-          SENTRY_DSN: ${{ secrets.SENTRY_DSN_HYPRNOTE_2 }}
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
           VITE_APP_URL: https://sessionecho.flagbit.de

@@ -27,7 +27,6 @@ peerDependencyRules:
 allowBuilds:
   "@infisical/cli": true
   "@parcel/watcher": true
-  "@sentry/cli": true
   cbor-extract: true
   core-js: true
   dprint: true

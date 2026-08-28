@@ -192,7 +192,6 @@ jobs:
           # https://v2.tauri.app/reference/environment-variables/
           CI: false
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SENTRY_DSN: ${{ secrets.SENTRY_DSN_HYPRNOTE_2 }}
           CARGO_PROFILE_RELEASE_DEBUG: line-tables-only
           APP_VERSION: ${{ needs.compute-version.outputs.version }}
           APPLE_ID: ${{ secrets.APPLE_ID }}
@@ -209,59 +208,6 @@ jobs:
           VITE_API_URL: "https://api.sessionecho.flagbit.de"
           VITE_PRO_PRODUCT_ID: ${{ secrets.VITE_PRO_PRODUCT_ID }}
           VITE_APP_VERSION: ${{ needs.compute-version.outputs.version }}
-      - if: ${{ inputs.channel == 'stable' }}
-        id: macos-symbols
-        name: Generate and verify macOS debug symbols
-        run: |
-          shopt -s nullglob
-          app_dir="apps/desktop/src-tauri/target/${{ matrix.target }}/release/bundle/macos"
-          apps=("$app_dir"/*.app)
-          if [[ ${#apps[@]} -ne 1 ]]; then
-            echo "::error::Expected one macOS app for ${{ matrix.target }}, found ${#apps[@]}"
-            exit 1
-          fi
-
-          binary="${apps[0]}/Contents/MacOS/anarlog"
-          dsym="apps/desktop/src-tauri/target/${{ matrix.target }}/release/anarlog.dSYM"
-          dsymutil "$binary" -o "$dsym"
-
-          binary_uuid=$(dwarfdump --uuid "$binary" | awk '{print $2}')
-          dsym_uuid=$(dwarfdump --uuid "$dsym" | awk '{print $2}')
-          if [[ -z "$binary_uuid" || "$binary_uuid" != "$dsym_uuid" ]]; then
-            echo "::error::dSYM UUID does not match the packaged binary"
-            exit 1
-          fi
-
-          echo "Verified dSYM UUID $dsym_uuid"
-          echo "path=$dsym" >> "$GITHUB_OUTPUT"
-      - if: ${{ inputs.channel == 'stable' }}
-        uses: ./.github/actions/sentry_cli
-      - if: ${{ inputs.channel == 'stable' }}
-        name: Upload macOS debug symbols to Sentry
-        env:
-          INFISICAL_PROJECT_ID: ${{ secrets.INFISICAL_PROJECT_ID }}
-          INFISICAL_TOKEN: ${{ secrets.INFISICAL_SENTRY_TOKEN }}
-        run: |
-          response=$(
-            curl --fail --silent --show-error --get \
-              --header "Authorization: Bearer $INFISICAL_TOKEN" \
-              --data-urlencode "projectId=$INFISICAL_PROJECT_ID" \
-              --data-urlencode "environment=prod" \
-              --data-urlencode "secretPath=/anarlog/github" \
-              --data-urlencode "expandSecretReferences=false" \
-              "https://app.infisical.com/api/v4/secrets/SENTRY_AUTH_TOKEN"
-          )
-          if ! SENTRY_AUTH_TOKEN=$(jq -er '.secret.secretValue | select(length > 0)' <<< "$response"); then
-            echo "::error::Missing SENTRY_AUTH_TOKEN in Infisical prod:/anarlog/github"
-            exit 1
-          fi
-          export SENTRY_AUTH_TOKEN
-
-          sentry-cli debug-files upload \
-            --org fastrepl \
-            --project anarlog \
-            --include-sources \
-            "${{ steps.macos-symbols.outputs.path }}"
       - if: ${{ inputs.channel == 'stable' }}
         name: Verify macOS updater signature
         run: |
@@ -394,7 +340,6 @@ jobs:
           pnpm -F desktop tauri build "${BUILD_ARGS[@]}"
         env:
           CARGO_PROFILE_RELEASE_DEBUG: line-tables-only
-          SENTRY_DSN: ${{ secrets.SENTRY_DSN_HYPRNOTE_2 }}
           APP_VERSION: ${{ needs.compute-version.outputs.version }}
           TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
           TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
@@ -409,37 +354,6 @@ jobs:
           ARCH: ${{ matrix.target == 'aarch64-unknown-linux-gnu' && 'aarch64' || 'x86_64' }}
           TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
           TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
-      - if: ${{ inputs.channel == 'stable' }}
-        uses: ./.github/actions/sentry_cli
-      - if: ${{ inputs.channel == 'stable' }}
-        name: Upload Linux debug symbols to Sentry
-        env:
-          INFISICAL_PROJECT_ID: ${{ secrets.INFISICAL_PROJECT_ID }}
-          INFISICAL_TOKEN: ${{ secrets.INFISICAL_SENTRY_TOKEN }}
-        run: |
-          binary="apps/desktop/src-tauri/target/${{ matrix.target }}/release/anarlog"
-          sentry-cli debug-files check "$binary"
-
-          response=$(
-            curl --fail --silent --show-error --get \
-              --header "Authorization: Bearer $INFISICAL_TOKEN" \
-              --data-urlencode "projectId=$INFISICAL_PROJECT_ID" \
-              --data-urlencode "environment=prod" \
-              --data-urlencode "secretPath=/anarlog/github" \
-              --data-urlencode "expandSecretReferences=false" \
-              "https://app.infisical.com/api/v4/secrets/SENTRY_AUTH_TOKEN"
-          )
-          if ! SENTRY_AUTH_TOKEN=$(jq -er '.secret.secretValue | select(length > 0)' <<< "$response"); then
-            echo "::error::Missing SENTRY_AUTH_TOKEN in Infisical prod:/anarlog/github"
-            exit 1
-          fi
-          export SENTRY_AUTH_TOKEN
-
-          sentry-cli debug-files upload \
-            --org fastrepl \
-            --project anarlog \
-            --include-sources \
-            "$binary"
       - run: |
           shopt -s nullglob
           appimage_dir="apps/desktop/src-tauri/target/${{ matrix.target }}/release/bundle/appimage"
@@ -504,7 +418,6 @@ jobs:
             --volume "$PWD:/workspace:ro" \
             --env DEB_PATH="/workspace/$deb" \
             --env BINARY_PATH="/usr/bin/$binary_name" \
-            --env ANARLOG_DISABLE_SENTRY=1 \
             --env RUST_BACKTRACE=1 \
             ubuntu:24.04 \
             bash -euxo pipefail -c '
@@ -613,7 +526,6 @@ jobs:
           pnpm -F desktop tauri build "${BUILD_ARGS[@]}"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SENTRY_DSN: ${{ secrets.SENTRY_DSN_HYPRNOTE_2 }}
           CARGO_PROFILE_RELEASE_DEBUG: line-tables-only
           APP_VERSION: ${{ needs.compute-version.outputs.version }}
           TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
@@ -624,51 +536,6 @@ jobs:
           VITE_API_URL: https://api.sessionecho.flagbit.de
           VITE_PRO_PRODUCT_ID: ${{ secrets.VITE_PRO_PRODUCT_ID }}
           VITE_APP_VERSION: ${{ needs.compute-version.outputs.version }}
-      - if: ${{ inputs.channel == 'stable' }}
-        uses: ./.github/actions/sentry_cli
-      - if: ${{ inputs.channel == 'stable' }}
-        name: Upload Windows debug symbols to Sentry
-        shell: bash
-        env:
-          INFISICAL_PROJECT_ID: ${{ secrets.INFISICAL_PROJECT_ID }}
-          INFISICAL_TOKEN: ${{ secrets.INFISICAL_SENTRY_TOKEN }}
-        run: |
-          release_dir="apps/desktop/src-tauri/target/x86_64-pc-windows-msvc/release"
-          # Tauri renames the exe to mainBinaryName (anarlog.exe) but the PDB
-          # keeps the cargo target name (desktop.pdb), so glob instead of
-          # hardcoding a name that never exists.
-          shopt -s nullglob
-          pdbs=("$release_dir"/*.pdb)
-          if [[ ${#pdbs[@]} -eq 0 ]]; then
-            echo "::error::No PDB found next to the Windows binary"
-            exit 1
-          fi
-          echo "Found PDBs: ${pdbs[*]}"
-          for pdb in "${pdbs[@]}"; do
-            sentry-cli debug-files check "$pdb"
-          done
-
-          response=$(
-            curl --fail --silent --show-error --get \
-              --header "Authorization: Bearer $INFISICAL_TOKEN" \
-              --data-urlencode "projectId=$INFISICAL_PROJECT_ID" \
-              --data-urlencode "environment=prod" \
-              --data-urlencode "secretPath=/anarlog/github" \
-              --data-urlencode "expandSecretReferences=false" \
-              "https://app.infisical.com/api/v4/secrets/SENTRY_AUTH_TOKEN"
-          )
-          if ! SENTRY_AUTH_TOKEN=$(jq -er '.secret.secretValue | select(length > 0)' <<< "$response"); then
-            echo "::error::Missing SENTRY_AUTH_TOKEN in Infisical prod:/anarlog/github"
-            exit 1
-          fi
-          export SENTRY_AUTH_TOKEN
-
-          sentry-cli debug-files upload \
-            --org fastrepl \
-            --project anarlog \
-            --include-sources \
-            "$release_dir/anarlog.exe" \
-            "${pdbs[@]}"
       - if: ${{ inputs.channel == 'stable' }}
         name: Sign in to Azure
         uses: azure/login@v3

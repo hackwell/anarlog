@@ -7,17 +7,16 @@ It defines:
 - how we use OpenTelemetry
 - how data is expected to appear in Honeycomb
 - what `x-request-id` means
-- how we use Sentry tags, contexts, and user identity
 - which attribute names are allowed
 
-If a change introduces new tracing fields, propagation behavior, or Sentry tagging conventions, update this file in the same change.
+If a change introduces new tracing fields or propagation behavior, update this file in the same change.
 
 ## Scope
 
 This repo has multiple binaries and runtime surfaces, but the same conventions apply everywhere:
 
 - `apps/api` is one OTEL service
-- `apps/desktop` is one Sentry/desktop service
+- `apps/desktop` is one desktop service
 - internal route groups or modules are not separate OTEL services
 - internal logical breakdowns use `anarlog.subsystem`
 
@@ -30,7 +29,7 @@ Current canonical subsystem values include:
 
 ## Observability Stack
 
-We use three separate concepts:
+We use two separate concepts:
 
 1. OpenTelemetry
    - canonical tracing model
@@ -39,9 +38,9 @@ We use three separate concepts:
 2. Honeycomb
    - primary trace analysis backend
    - expects OTEL resources, spans, and high-cardinality fields
-3. Sentry
-   - error reporting and local debugging context
-   - should mirror OTEL naming where practical
+
+The desktop app sends no telemetry or error reports of any kind. Its
+`tracing` output stays on the user's machine in the local log file.
 
 `x-request-id` is not trace propagation. It is a separate request-correlation mechanism.
 
@@ -97,12 +96,7 @@ For distributed tracing, use W3C Trace Context:
 - `traceparent`
 - `baggage` only when intentionally needed
 
-Sentry headers may also exist:
-
-- `sentry-trace`
-- `baggage`
-
-But OTEL trace stitching must work through W3C propagation.
+OTEL trace stitching must work through W3C propagation.
 
 ### Rules
 
@@ -227,8 +221,6 @@ If a concept already has an approved key, reuse it everywhere:
 
 - OTEL spans
 - tracing logs/events
-- Sentry tags
-- Sentry contexts
 
 Do not rename the same concept differently per backend.
 
@@ -376,83 +368,6 @@ This matters for:
 
 If a field is not declared on span creation, later `span.record(...)` calls will not create a new OTEL attribute.
 
-## Sentry Conventions
-
-### Purpose
-
-Sentry is for:
-
-- errors
-- crash reports
-- request-local debugging context
-
-It is not the canonical trace schema. OTEL is.
-
-### Dropped events
-
-Failures caused by the end user's own account state (exhausted provider credits, expired plans, rejected API keys) are dropped before they leave the process. `crates/user-error` owns the marker list and is wired into every Rust `before_send` (desktop, API, CLI); `apps/desktop/src/error-reporting.ts` keeps a matching list for the desktop webview. Add new markers in both places.
-
-### Tag naming
-
-Reuse OTEL names when possible.
-
-Canonical Sentry tags include:
-
-- `service.namespace`
-- `service.name`
-- `enduser.id`
-- `enduser.pseudo.id`
-- `http.response.status_code`
-- `error.type`
-- `gen_ai.provider.name`
-- `gen_ai.request.model`
-- `anarlog.gen_ai.request.streaming`
-- `anarlog.stt.provider.name`
-- `anarlog.stt.routing_strategy`
-- `anarlog.stt.model`
-- `anarlog.stt.language_codes`
-
-### Context naming
-
-Use contexts for structured objects that are too rich for tags.
-
-Canonical context names include:
-
-- `gen_ai.request`
-- `gen_ai.response`
-- `anarlog.stt.request`
-- `anarlog.enduser.claims`
-- `anarlog.session`
-
-### Sentry user
-
-Set `scope.set_user(...)` when identity is available.
-
-API:
-
-- authenticated requests use the auth subject as the Sentry user ID
-
-Desktop:
-
-- use a pseudonymous device identity when no authenticated user exists yet
-
-### Alignment rule
-
-Do not invent Sentry-only field names for concepts that already exist in OTEL unless Sentry forces it.
-
-Good:
-
-- `enduser.id`
-- `service.name`
-- `error.type`
-
-Bad:
-
-- `user_id`
-- `service`
-- `upstream.status`
-- `llm.model` when `gen_ai.request.model` already exists
-
 ## Error Conventions
 
 Use:
@@ -480,15 +395,13 @@ Canonical headers used in this repo:
 
 - `traceparent`
 - `baggage`
-- `sentry-trace`
 - `x-request-id`
 - `x-device-fingerprint`
 
 Meaning:
 
 - `traceparent`: canonical trace propagation
-- `baggage`: optional propagation metadata, usually originating from Sentry on desktop HTTP requests
-- `sentry-trace`: Sentry tracing integration
+- `baggage`: optional propagation metadata
 - `x-request-id`: request correlation only
 - `x-device-fingerprint`: local pseudonymous device identifier
 
@@ -500,8 +413,7 @@ Meaning:
 4. If the field will be recorded later on a span, declare it at span creation.
 5. If the code crosses a network boundary, extract or inject W3C trace context.
 6. If request correlation is needed, keep `x-request-id` separate from trace propagation.
-7. Mirror the most important fields into Sentry tags or contexts using the same names.
-8. Update this file if you introduce a new field family or a new rule.
+7. Update this file if you introduce a new field family or a new rule.
 
 ## Anti-Patterns
 
@@ -511,7 +423,7 @@ Do not do any of the following:
 - `x-request-id = trace_id`
 - custom propagation instead of W3C trace context
 - `app.*` custom fields
-- different names for the same concept across OTEL and Sentry
+- different names for the same concept across backends
 - stuffing user identity into baggage by default
 - creating new span attributes with `span.record` without declaring them first
 - using route groups as separate Honeycomb services
