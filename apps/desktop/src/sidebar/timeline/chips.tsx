@@ -4,6 +4,33 @@ import type { ReactNode } from "react";
 import { Button } from "@anlg/ui/components/ui/button";
 import { cn } from "@anlg/utils";
 
+export function TimelineCardChip({
+  children,
+  icon,
+  tone,
+}: {
+  children: ReactNode;
+  icon?: ReactNode;
+  tone: "recording" | "muted";
+}) {
+  return (
+    <span
+      data-sidebar-timeline-card-chip={tone}
+      className={cn([
+        "inline-flex h-4 shrink-0 items-center gap-1 rounded-full px-1.5",
+        "text-[10px] leading-none font-semibold tracking-wide uppercase",
+        tone === "recording" && [
+          "bg-destructive-foreground/20 text-destructive-foreground",
+        ],
+        tone === "muted" && ["bg-muted text-muted-foreground"],
+      ])}
+    >
+      {icon}
+      {children}
+    </span>
+  );
+}
+
 export function UpcomingMeetingChip({
   ariaLabel,
   label,

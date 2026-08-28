@@ -242,6 +242,137 @@ describe("TimelineItemComponent", () => {
     expect(mocks.openCurrent).not.toHaveBeenCalled();
   });
 
+  it("flags a live session with a recording chip, not just a red fill", () => {
+    mocks.sessionMode = "active";
+
+    render(
+      <TimelineItemComponent
+        item={{
+          type: "session",
+          id: "session-live",
+          data: {
+            title: "Live Note",
+            created_at: "2024-01-15T10:30:00.000Z",
+          },
+        }}
+        precision="time"
+        selected={false}
+        timezone="UTC"
+        multiSelected={false}
+        flatItemKeys={["session-session-live"]}
+      />,
+    );
+
+    const chip = document.querySelector(
+      "[data-sidebar-timeline-card-chip='recording']",
+    );
+
+    expect(chip?.textContent).toBe("Recording");
+    expect(chip?.className).toContain("text-destructive-foreground");
+    expect(
+      document.querySelector("[data-sidebar-timeline-card-meta]"),
+    ).toBeTruthy();
+  });
+
+  it("puts the clock time on the title line and the duration underneath", () => {
+    render(
+      <TimelineItemComponent
+        item={{
+          type: "event",
+          id: "event-review",
+          data: {
+            title: "Quarterly review",
+            started_at: "2024-01-15T10:30:00.000Z",
+            ended_at: "2024-01-15T12:00:00.000Z",
+            tracking_id_event: "tracking-review",
+            has_recurrence_rules: false,
+          },
+        }}
+        precision="time"
+        selected={false}
+        timezone="UTC"
+        multiSelected={false}
+        flatItemKeys={["event-event-review"]}
+      />,
+    );
+
+    const titleLine = screen.getByText("Quarterly review").parentElement;
+    const time = document.querySelector("[data-sidebar-timeline-card-time]");
+    const duration = document.querySelector(
+      "[data-sidebar-timeline-card-duration]",
+    );
+
+    expect(time?.textContent).toBe("10:30 AM");
+    expect(titleLine?.contains(time as Node)).toBe(true);
+    expect(duration?.textContent).toBe("1 h 30 min");
+    expect(
+      document
+        .querySelector("[data-sidebar-timeline-card-meta]")
+        ?.contains(duration as Node),
+    ).toBe(true);
+  });
+
+  it("drops the metadata row for a note the query has no duration for", () => {
+    mocks.storeTitle = "Quick note";
+
+    render(
+      <TimelineItemComponent
+        item={{
+          type: "session",
+          id: "session-adhoc",
+          data: {
+            title: "Quick note",
+            created_at: "2024-01-15T10:30:00.000Z",
+          },
+        }}
+        precision="time"
+        selected={false}
+        timezone="UTC"
+        multiSelected={false}
+        flatItemKeys={["session-session-adhoc"]}
+      />,
+    );
+
+    expect(screen.getByText("Quick note")).toBeTruthy();
+    expect(
+      document.querySelector("[data-sidebar-timeline-card-time]")?.textContent,
+    ).toBe("10:30 AM");
+    expect(
+      document.querySelector("[data-sidebar-timeline-card-meta]"),
+    ).toBeNull();
+    expect(
+      document.querySelector("[data-sidebar-timeline-card-duration]"),
+    ).toBeNull();
+  });
+
+  it("renders the open note as a filled card", () => {
+    mocks.storeTitle = "Open Note";
+
+    render(
+      <TimelineItemComponent
+        item={{
+          type: "session",
+          id: "session-open",
+          data: {
+            title: "Open Note",
+            created_at: "2024-01-15T10:30:00.000Z",
+          },
+        }}
+        precision="time"
+        selected
+        timezone="UTC"
+        multiSelected={false}
+        flatItemKeys={["session-session-open"]}
+      />,
+    );
+
+    const rowButton = screen.getByText("Open Note").closest("button");
+
+    expect(rowButton?.className).toContain("bg-accent");
+    expect(rowButton?.className).toContain("border-border");
+    expect(rowButton?.className).toContain("shadow-xs");
+  });
+
   it("exposes the selected session row for sidebar scroll anchoring", () => {
     const selectedNodeRef = vi.fn();
 

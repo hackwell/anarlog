@@ -6,6 +6,7 @@ import {
   deriveTimelineWindowData,
   filterTimelineTablesUpToTomorrow,
   getBucketInfo,
+  getItemDurationMinutes,
   hasTimelineItemsAfterTomorrow,
   isTimelineItemInFuture,
   type TimelineEventsTable,
@@ -636,5 +637,57 @@ describe("timeline utils", () => {
       "in 4 weeks",
       "in 2 weeks",
     ]);
+  });
+
+  test("derives a duration from an event's start and end", () => {
+    expect(
+      getItemDurationMinutes({
+        type: "event",
+        id: "event-1",
+        data: {
+          started_at: "2024-01-15T10:00:00.000Z",
+          ended_at: "2024-01-15T11:30:00.000Z",
+          has_recurrence_rules: false,
+        },
+      }),
+    ).toBe(90);
+  });
+
+  test("derives a duration for a session backed by a calendar event", () => {
+    expect(
+      getItemDurationMinutes({
+        type: "session",
+        id: "session-1",
+        data: {
+          created_at: "2024-01-15T09:55:00.000Z",
+          event_json: JSON.stringify({
+            started_at: "2024-01-15T10:00:00.000Z",
+            ended_at: "2024-01-15T10:25:00.000Z",
+          }),
+        },
+      }),
+    ).toBe(25);
+  });
+
+  test("has no duration for an ad-hoc note or a zero-length range", () => {
+    expect(
+      getItemDurationMinutes({
+        type: "session",
+        id: "session-2",
+        data: { created_at: "2024-01-15T10:00:00.000Z" },
+      }),
+    ).toBeNull();
+
+    expect(
+      getItemDurationMinutes({
+        type: "event",
+        id: "event-2",
+        data: {
+          started_at: "2024-01-15T10:00:00.000Z",
+          ended_at: "2024-01-15T10:00:00.000Z",
+          has_recurrence_rules: false,
+        },
+      }),
+    ).toBeNull();
   });
 });

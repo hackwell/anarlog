@@ -263,6 +263,21 @@ export function getItemTimestamp(item: TimelineItem): Date | null {
   return getItemTimeRange(item).start;
 }
 
+/**
+ * Only calendar-backed items carry an end time: events always do, sessions only
+ * when they were created from an event. Ad-hoc notes have `created_at` alone and
+ * therefore no duration to show.
+ */
+export function getItemDurationMinutes(item: TimelineItem): number | null {
+  const { start, end } = getItemTimeRange(item);
+  if (!start || !end) {
+    return null;
+  }
+
+  const minutes = Math.round((end.getTime() - start.getTime()) / 60_000);
+  return minutes > 0 ? minutes : null;
+}
+
 export function isTimelineItemInFuture(item: TimelineItem): boolean {
   const timestamp = getItemTimestamp(item);
   if (!timestamp) {

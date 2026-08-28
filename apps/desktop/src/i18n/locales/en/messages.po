@@ -63,6 +63,18 @@ msgstr "{absDays} days ago"
 msgid "{entryCount} selected"
 msgstr "{entryCount} selected"
 
+#: src/sidebar/timeline/item.tsx
+msgid "{hours} h"
+msgstr "{hours} h"
+
+#: src/sidebar/timeline/item.tsx
+msgid "{hours} h {remainingMinutes} min"
+msgstr "{hours} h {remainingMinutes} min"
+
+#: src/sidebar/timeline/item.tsx
+msgid "{minutes} min"
+msgstr "{minutes} min"
+
 #. placeholder {0}: formatLanguageList(unsupportedLanguages)
 #: src/settings/ai/stt/select.tsx
 msgid "{model} can't transcribe {0}. Try another model or change your spoken languages."
@@ -2265,6 +2277,10 @@ msgstr "Record other participants in meetings."
 #: src/settings/general/permissions.tsx
 msgid "Record your voice in meetings and calls."
 msgstr "Record your voice in meetings and calls."
+
+#: src/sidebar/timeline/item.tsx
+msgid "Recording"
+msgstr "Recording"
 
 #: src/session/components/note-input/transcript/actions.ts
 msgid "Recording not found. It may have been deleted."

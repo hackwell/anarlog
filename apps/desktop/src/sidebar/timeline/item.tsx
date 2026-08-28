@@ -16,8 +16,10 @@ import { DancingSticks } from "@anlg/ui/components/ui/dancing-sticks";
 import { Spinner } from "@anlg/ui/components/ui/spinner";
 import { cn, getYear, safeParseDate, TZDate } from "@anlg/utils";
 
+import { TimelineCardChip } from "./chips";
 import {
   type EventTimelineItem,
+  getItemDurationMinutes,
   isTimelineItemInFuture,
   type SessionTimelineItem,
   type TimelineItem,
@@ -51,6 +53,7 @@ const EMPTY_TIMELINE_ITEM_KEYS: string[] = [];
 type ItemBaseProps = {
   title: string;
   displayTime: string;
+  durationMinutes?: number | null;
   isLive?: boolean;
   amplitude?: number;
   showSpinner?: boolean;
@@ -142,6 +145,7 @@ export const TimelineItemComponent = memo(
 const ItemBase = memo(function ItemBase({
   title,
   displayTime,
+  durationMinutes,
   isLive,
   amplitude,
   showSpinner,
@@ -168,6 +172,8 @@ const ItemBase = memo(function ItemBase({
 }: ItemBaseProps) {
   const { t } = useLingui();
   const hasSelection = useTimelineSelection((s) => s.selectedIds.length > 0);
+  const durationLabel = useDurationLabel(durationMinutes);
+  const hasMetadata = Boolean(isLive || durationLabel);
   const showLiveStop = isLive && onStop;
   const showUpcomingGauge =
     typeof upcomingProgress === "number" &&
@@ -203,13 +209,14 @@ const ItemBase = memo(function ItemBase({
         onDragStart={onDragStart}
         contextMenu={hasSelection ? undefined : contextMenu}
         className={cn([
-          "w-full rounded-lg px-3 py-2 text-left",
+          "w-full rounded-lg border border-transparent px-3 py-2 text-left",
           showUpcomingGauge && "pl-4",
           showTrailingStatus && "pr-10",
           ignored ? "cursor-default" : "cursor-pointer",
           multiSelected && "bg-accent",
           !multiSelected && selected && "bg-accent",
           !multiSelected && !selected && "hover:bg-accent/50",
+          !isLive && (selected || multiSelected) && "border-border shadow-xs",
           isUpcoming &&
             !isLive && [
               "bg-destructive/8 text-foreground",
@@ -224,20 +231,21 @@ const ItemBase = memo(function ItemBase({
         ])}
         draggable={draggable}
       >
-        <div className="flex items-center gap-2">
-          <div className="flex min-w-0 flex-1 flex-col gap-0.5">
+        <div className="flex min-w-0 flex-col gap-1">
+          <div className="flex min-w-0 items-baseline gap-2">
             <div
-              className={cn(
-                "pointer-events-none min-w-0 truncate text-sm font-normal",
+              className={cn([
+                "pointer-events-none min-w-0 flex-1 truncate text-sm font-normal",
                 ignored && "line-through",
-              )}
+              ])}
             >
               {title || t`Untitled`}
             </div>
-            {displayTime && (
+            {displayTime ? (
               <div
+                data-sidebar-timeline-card-time
                 className={cn([
-                  "font-mono text-xs",
+                  "shrink-0 font-mono text-[11px] tabular-nums",
                   isLive
                     ? "text-destructive-foreground/65"
                     : "text-muted-foreground",
@@ -245,22 +253,55 @@ const ItemBase = memo(function ItemBase({
               >
                 {displayTime}
               </div>
-            )}
+            ) : null}
+            {isLocked ? (
+              isLockRevealed ? (
+                <LockOpen
+                  aria-label={t`Unlock Note`}
+                  className="text-muted-foreground size-3.5 shrink-0 self-center"
+                  weight="fill"
+                />
+              ) : (
+                <Lock
+                  aria-label={t`Locked note`}
+                  className="text-muted-foreground size-3.5 shrink-0 self-center"
+                  weight="fill"
+                />
+              )
+            ) : null}
           </div>
-          {isLocked ? (
-            isLockRevealed ? (
-              <LockOpen
-                aria-label={t`Unlock Note`}
-                className="text-muted-foreground size-3.5 shrink-0"
-                weight="fill"
-              />
-            ) : (
-              <Lock
-                aria-label={t`Locked note`}
-                className="text-muted-foreground size-3.5 shrink-0"
-                weight="fill"
-              />
-            )
+          {hasMetadata ? (
+            <div
+              data-sidebar-timeline-card-meta
+              className="flex min-w-0 items-center gap-1.5"
+            >
+              {isLive ? (
+                <TimelineCardChip
+                  tone="recording"
+                  icon={
+                    <span
+                      aria-hidden
+                      className="size-1.5 rounded-full bg-current motion-safe:animate-pulse"
+                    />
+                  }
+                >
+                  {t`Recording`}
+                </TimelineCardChip>
+              ) : null}
+              {durationLabel ? (
+                <span
+                  data-sidebar-timeline-card-duration
+                  className={cn([
+                    "min-w-0 truncate text-[11px]",
+                    isLive
+                      ? "text-destructive-foreground/65"
+                      : "text-muted-foreground",
+                  ])}
+                >
+                  {durationLabel}
+                </span>
+              ) : null}
+            </div>
           ) : null}
         </div>
       </InteractiveButton>
@@ -329,6 +370,7 @@ function itemBasePropsAreEqual(prev: ItemBaseProps, next: ItemBaseProps) {
   return (
     prev.title === next.title &&
     prev.displayTime === next.displayTime &&
+    prev.durationMinutes === next.durationMinutes &&
     prev.isLive === next.isLive &&
     prev.amplitude === next.amplitude &&
     prev.showSpinner === next.showSpinner &&
@@ -408,6 +450,8 @@ const EventItem = memo(
         ),
       [item.data.started_at, precision, dateFormatter, timezone],
     );
+
+    const durationMinutes = useMemo(() => getItemDurationMinutes(item), [item]);
 
     const [isOpening, setIsOpening] = useState(false);
     const openEvent = useCallback(() => {
@@ -510,6 +554,7 @@ const EventItem = memo(
       <ItemBase
         title={title}
         displayTime={displayTime}
+        durationMinutes={durationMinutes}
         showSpinner={isOpening}
         selected={selected}
         ignored={ignored}
@@ -601,6 +646,7 @@ const SessionItem = memo(
         timezone,
       ],
     );
+    const durationMinutes = useMemo(() => getItemDurationMinutes(item), [item]);
     const muted = isTimelineItemInFuture(item);
 
     const itemKey = `session-${item.id}`;
@@ -722,6 +768,7 @@ const SessionItem = memo(
       <ItemBase
         title={title}
         displayTime={displayTime}
+        durationMinutes={durationMinutes}
         isLive={isLive}
         amplitude={Math.max(
           0.25,
@@ -751,6 +798,29 @@ const SessionItem = memo(
     );
   },
 );
+
+function useDurationLabel(minutes: number | null | undefined) {
+  const { t } = useLingui();
+
+  return useMemo(() => {
+    if (!minutes || minutes <= 0) {
+      return null;
+    }
+
+    const hours = Math.floor(minutes / 60);
+    const remainingMinutes = minutes % 60;
+
+    if (hours === 0) {
+      return t`${minutes} min`;
+    }
+
+    if (remainingMinutes === 0) {
+      return t`${hours} h`;
+    }
+
+    return t`${hours} h ${remainingMinutes} min`;
+  }, [minutes, t]);
+}
 
 function formatDisplayTime(
   timestamp: string | null | undefined,
