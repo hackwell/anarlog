@@ -519,10 +519,6 @@ msgstr "Foto ändern"
 msgid "Change speaker"
 msgstr "Sprecher ändern"
 
-#: src/main/sync-status.tsx
-msgid "Changes stay on this device until you resume sync"
-msgstr "Änderungen bleiben auf diesem Gerät, bis die Synchronisierung fortgesetzt wird"
-
 #: src/chat/components/toolbar-controls.tsx
 msgid "Chat history"
 msgstr "Chatverlauf"
@@ -701,18 +697,6 @@ msgstr "Chat schließen"
 msgid "Closed"
 msgstr "Geschlossen"
 
-#: src/main/sync-status.tsx
-msgid "Cloud sync could not start on this device. Open Sync settings to try again."
-msgstr "Cloud-Synchronisierung konnte auf diesem Gerät nicht gestartet werden. Öffnen Sie die Synchronisierungseinstellungen, um es erneut zu versuchen."
-
-#: src/main/sync-status.tsx
-msgid "Cloud sync delayed"
-msgstr "Cloud-Synchronisierung verzögert"
-
-#: src/main/sync-status.tsx
-msgid "Cloud sync identity mismatch"
-msgstr "Cloud-Synchronisierung: Identität stimmt nicht überein"
-
 #: src/auth/cloudsync.ts
 msgid "Cloud sync is limited to 5 devices. Remove another device to sync here."
 msgstr "Cloud-Synchronisierung ist auf 5 Geräte begrenzt. Entfernen Sie ein anderes Gerät, um hier zu synchronisieren."
@@ -720,27 +704,6 @@ msgstr "Cloud-Synchronisierung ist auf 5 Geräte begrenzt. Entfernen Sie ein and
 #: src/auth/cloudsync.ts
 msgid "Cloud sync is limited to 5 devices. Replace or remove another device to sync here."
 msgstr "Cloud-Synchronisierung ist auf 5 Geräte begrenzt. Ersetzen oder entfernen Sie ein anderes Gerät, um hier zu synchronisieren."
-
-#: src/main/sync-status.tsx
-msgid "Cloud sync resumes after this meeting finishes processing"
-msgstr "Cloud-Synchronisierung wird fortgesetzt, sobald dieses Meeting fertig verarbeitet ist"
-
-#: src/main/sync-status.tsx
-msgid "Cloud sync resumes when the current activity finishes"
-msgstr "Cloud-Synchronisierung wird fortgesetzt, sobald der aktuelle Vorgang abgeschlossen ist"
-
-#: src/main/sync-status.tsx
-msgid "Cloud sync setup required"
-msgstr "Einrichtung der Cloud-Synchronisierung erforderlich"
-
-#. placeholder {0}: view.label
-#: src/main/sync-status.tsx
-msgid "Cloud sync status: {0}"
-msgstr "Status der Cloud-Synchronisierung: {0}"
-
-#: src/main/sync-status.tsx
-msgid "Cloud sync unavailable"
-msgstr "Cloud-Synchronisierung nicht verfügbar"
 
 #: src/settings/appearance/theme.tsx
 msgid "Color theme"
@@ -844,10 +807,6 @@ msgstr "Verbunden mit Ihrem {0}-Abonnement."
 #: src/settings/ai/shared/index.tsx
 msgid "Connected with your existing subscription."
 msgstr "Verbunden mit Ihrem bestehenden Abonnement."
-
-#: src/main/sync-status.tsx
-msgid "Connecting..."
-msgstr "Verbindung wird hergestellt …"
 
 #: src/contacts/contact-page-header.tsx
 msgid "Contact options"
@@ -970,10 +929,6 @@ msgstr "Briefing erstellen, um dieses Meeting vorzubereiten"
 #: src/session/components/note-input/transcript/renderer/speaker-assign.tsx
 msgid "Create new speaker"
 msgstr "Neuen Sprecher erstellen"
-
-#: src/main/sync-status.tsx
-msgid "Create or enter your recovery key in Sync settings to start syncing."
-msgstr "Wiederherstellungsschlüssel in den Synchronisierungseinstellungen erstellen oder eingeben, um die Synchronisierung zu starten."
 
 #: src/templates/details.tsx
 msgid "Create template"
@@ -1105,10 +1060,6 @@ msgstr "Entwickler"
 #: src/settings/privacy/index.tsx
 msgid "Device authentication is not available on this computer."
 msgstr "Geräteauthentifizierung ist auf diesem Computer nicht verfügbar."
-
-#: src/main/sync-status.tsx
-msgid "Device limit reached"
-msgstr "Gerätelimit erreicht"
 
 #: src/settings/developers/devtools.tsx
 msgid "Devtools"
@@ -1632,11 +1583,6 @@ msgstr "Zuletzt ausgeführt {relative}: {0}"
 msgid "Last run failed {relative}: {0}"
 msgstr "Letzte Ausführung fehlgeschlagen {relative}: {0}"
 
-#. placeholder {0}: formatDistanceToNow( new Date(status.last_sync_at_ms), { addSuffix: true }, )
-#: src/main/sync-status.tsx
-msgid "Last synced {0}"
-msgstr "Zuletzt synchronisiert {0}"
-
 #: src/chat/components/message/error.tsx
 msgid "Learn how to fix this"
 msgstr "Erfahren, wie sich das beheben lässt"
@@ -1710,7 +1656,6 @@ msgid "macOS cannot access your login Keychain. Repairing briefly locks it and a
 msgstr "macOS kann nicht auf Ihren Anmelde-Schlüsselbund zugreifen. Die Reparatur sperrt ihn kurzzeitig und fragt nach Ihrem Mac-Passwort, bevor Session Echo diesen API-Schlüssel erneut versucht."
 
 #: src/auth/cloudsync-keychain-repair.tsx
-#: src/main/sync-status.tsx
 msgid "macOS could not access your recovery key. Repair Keychain access, then resume sync."
 msgstr "macOS konnte nicht auf Ihren Wiederherstellungsschlüssel zugreifen. Schlüsselbund-Zugriff reparieren und dann die Synchronisierung fortsetzen."
 
@@ -2172,10 +2117,6 @@ msgstr "Session Echo öffnen"
 msgid "Open Session Echo from the menu bar."
 msgstr "Session Echo über die Menüleiste öffnen."
 
-#: src/main/sync-status.tsx
-msgid "Open Session Echo on a device that already has access, then approve this device."
-msgstr "Session Echo auf einem Gerät mit bestehendem Zugriff öffnen und dann dieses Gerät genehmigen."
-
 #: src/calendar/components/apple/permission.tsx
 msgid "Open Settings"
 msgstr "Einstellungen öffnen"
@@ -2259,10 +2200,6 @@ msgstr "Pausieren"
 #: src/settings/general/notification.tsx
 msgid "Pause alerts while Do Not Disturb is on."
 msgstr "Benachrichtigungen pausieren, solange „Nicht stören\" aktiv ist."
-
-#: src/main/sync-status.tsx
-msgid "Pause sync"
-msgstr "Synchronisierung pausieren"
 
 #: src/settings/developers/webhooks.tsx
 msgid "Paused"
@@ -2527,10 +2464,6 @@ msgstr "App neu starten"
 msgid "Restore"
 msgstr "Wiederherstellen"
 
-#: src/main/sync-status.tsx
-msgid "Restoring cloud sync..."
-msgstr "Cloud-Synchronisierung wird wiederhergestellt …"
-
 #: src/session/components/outer-header/index.tsx
 msgid "Resume"
 msgstr "Fortsetzen"
@@ -2539,12 +2472,7 @@ msgstr "Fortsetzen"
 msgid "Resume listening"
 msgstr "Zuhören fortsetzen"
 
-#: src/main/sync-status.tsx
-msgid "Resume sync"
-msgstr "Synchronisierung fortsetzen"
-
 #: src/chat/components/message/error.tsx
-#: src/main/sync-status.tsx
 #: src/session/components/note-input/enhanced/enhance-error.tsx
 #: src/settings/general/storage/legacy-cleanup.tsx
 #: src/sidebar/toast/registry.tsx
@@ -2587,10 +2515,6 @@ msgstr "Entwurf speichern"
 #: src/settings/general/meeting-settings.tsx
 msgid "Save visible chat from supported meetings using Accessibility."
 msgstr "Sichtbaren Chat unterstützter Meetings über Bedienungshilfen speichern."
-
-#: src/main/sync-status.tsx
-msgid "Saved locally"
-msgstr "Lokal gespeichert"
 
 #: src/session/components/note-input/transcript/renderer/index.tsx
 msgid "Scroll to bottom"
@@ -2771,17 +2695,9 @@ msgstr "Session Echo CLI"
 msgid "Session Echo could not generate this summary because you were not signed in. Sign in, then try again."
 msgstr "Session Echo konnte diese Zusammenfassung nicht erstellen, da Sie nicht angemeldet waren. Melden Sie sich an und versuchen Sie es erneut."
 
-#: src/main/sync-status.tsx
-msgid "Session Echo couldn't read cloud sync status. Your notes are still available locally."
-msgstr "Session Echo konnte den Status der Cloud-Synchronisierung nicht lesen. Ihre Notizen sind weiterhin lokal verfügbar."
-
 #: src/lock/gate.tsx
 msgid "Session Echo is Locked"
 msgstr "Session Echo ist gesperrt"
-
-#: src/main/sync-status.tsx
-msgid "Session Echo is repairing cloud sync in the background. Your notes remain available locally."
-msgstr "Session Echo repariert die Cloud-Synchronisierung im Hintergrund. Ihre Notizen bleiben lokal verfügbar."
 
 #: src/onboarding/index.tsx
 msgid "Session Echo needs access to your microphone and system audio to record and transcribe your meetings"
@@ -2790,14 +2706,6 @@ msgstr "Session Echo benötigt Zugriff auf Ihr Mikrofon und die Systemaudioausga
 #: src/onboarding/index.tsx
 msgid "Session Echo needs microphone and system audio to transcribe your meetings, plus Accessibility to read meeting controls, visible chat, and participant status."
 msgstr "Session Echo benötigt Mikrofon und Systemaudio, um Ihre Meetings zu transkribieren, sowie Bedienungshilfen, um Meeting-Steuerelemente, sichtbaren Chat und Teilnehmerstatus zu lesen."
-
-#: src/main/sync-status.tsx
-msgid "Session Echo Pro is required to use cloud sync."
-msgstr "Session Echo Pro ist für die Cloud-Synchronisierung erforderlich."
-
-#: src/main/sync-status.tsx
-msgid "Session Echo Pro required"
-msgstr "Session Echo Pro erforderlich"
 
 #. placeholder {0}: statuses[0].displayName
 #: src/settings/developers/skills.tsx
@@ -2809,11 +2717,6 @@ msgstr "Session-Echo-Skill zu {0} hinzugefügt"
 msgid "Session Echo skill added to {0} agents"
 msgstr "Session-Echo-Skill zu {0} Agenten hinzugefügt"
 
-#: src/main/sync-status.tsx
-msgid "Session Echo will keep retrying in the background. Your notes remain available locally."
-msgstr "Session Echo versucht es im Hintergrund weiter. Ihre Notizen bleiben lokal verfügbar."
-
-#: src/main/sync-status.tsx
 #: src/settings/general/storage/legacy-cleanup.tsx
 msgid "Session Echo will retry automatically. This does not affect your notes."
 msgstr "Session Echo versucht es automatisch erneut. Ihre Notizen sind davon nicht betroffen."
@@ -2846,10 +2749,6 @@ msgstr "Als Standard festlegen"
 #: src/session/components/note-input/enhanced/config-error.tsx
 msgid "Set up AI summaries"
 msgstr "KI-Zusammenfassungen einrichten"
-
-#: src/main/sync-status.tsx
-msgid "Setting up cloud sync"
-msgstr "Cloud-Synchronisierung wird eingerichtet"
 
 #: src/main/empty.tsx
 #: src/main/windows-title-bar.tsx
@@ -2925,10 +2824,6 @@ msgstr "Symbol in der Taskleiste anzeigen"
 msgid "Sign in"
 msgstr "Anmelden"
 
-#: src/main/sync-status.tsx
-msgid "Sign in again"
-msgstr "Erneut anmelden"
-
 #: src/session/components/note-input/enhanced/enhance-error.tsx
 msgid "Sign in to generate this summary"
 msgstr "Anmelden, um diese Zusammenfassung zu erstellen"
@@ -2960,10 +2855,6 @@ msgstr "Mit GitHub Copilot anmelden und den Code unten eingeben."
 #: src/settings/ai/llm/subscriptions/connect.tsx
 msgid "Sign in with SuperGrok or X Premium+ and enter the code below."
 msgstr "Mit SuperGrok oder X Premium+ anmelden und den Code unten eingeben."
-
-#: src/main/sync-status.tsx
-msgid "Sign out and sign in again to resume cloud sync."
-msgstr "Abmelden und erneut anmelden, um die Cloud-Synchronisierung fortzusetzen."
 
 #: src/settings/developers/webhooks.tsx
 msgid "Signing secret copied"
@@ -3181,34 +3072,9 @@ msgstr "Sonntag"
 msgid "Symbols"
 msgstr "Symbole"
 
-#: src/main/sync-status.tsx
-msgid "Sync issue"
-msgstr "Synchronisierungsproblem"
-
-#: src/main/sync-status.tsx
-msgid "Sync needs attention"
-msgstr "Synchronisierung erfordert Aufmerksamkeit"
-
 #: src/imports/screen.tsx
-#: src/main/sync-status.tsx
 msgid "Sync now"
 msgstr "Jetzt synchronisieren"
-
-#: src/main/sync-status.tsx
-msgid "Sync paused"
-msgstr "Synchronisierung pausiert"
-
-#: src/main/sync-status.tsx
-msgid "Sync status unavailable"
-msgstr "Synchronisierungsstatus nicht verfügbar"
-
-#: src/main/sync-status.tsx
-msgid "Synced"
-msgstr "Synchronisiert"
-
-#: src/main/sync-status.tsx
-msgid "Syncing..."
-msgstr "Wird synchronisiert …"
 
 #: src/settings/appearance/theme.tsx
 msgid "System"
@@ -3291,14 +3157,6 @@ msgstr "Dann"
 #: src/chat/components/message/loading.tsx
 msgid "Thinking..."
 msgstr "Denkt nach …"
-
-#: src/main/sync-status.tsx
-msgid "This account already syncs on 5 devices. Remove another device to sync here."
-msgstr "Dieses Konto synchronisiert bereits auf 5 Geräten. Entfernen Sie ein anderes Gerät, um hier zu synchronisieren."
-
-#: src/main/sync-status.tsx
-msgid "This device's sync identity does not match your account. Sign in again or check Sync settings."
-msgstr "Die Synchronisierungsidentität dieses Geräts stimmt nicht mit Ihrem Konto überein. Erneut anmelden oder die Synchronisierungseinstellungen prüfen."
 
 #: src/edit/tab-content.tsx
 msgid "This edit is no longer pending."
@@ -3578,10 +3436,6 @@ msgstr "Warten, bis Transkript und Notiz vollständig sind."
 #: src/settings/ai/llm/subscriptions/connect.tsx
 msgid "Waiting for authorization in your browser…"
 msgstr "Warten auf Autorisierung in Ihrem Browser …"
-
-#: src/main/sync-status.tsx
-msgid "Waiting for device approval"
-msgstr "Warten auf Gerätegenehmigung"
 
 #: src/settings/appearance/app-icon.tsx
 msgid "Walnut"
