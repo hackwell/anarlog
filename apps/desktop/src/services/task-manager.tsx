@@ -1,7 +1,7 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { useRef } from "react";
 
-import { events as appleCalendarEvents } from "@anlg/plugin-calendar";
+import { events as calendarEvents } from "@anlg/plugin-calendar";
 
 import {
   AUDIO_RETENTION_INTERVAL,
@@ -10,6 +10,7 @@ import {
   normalizeAudioRetention,
 } from "./audio-retention";
 import {
+  allowReconnectedCalendarConnections,
   CALENDAR_SYNC_TASK_ID,
   scheduleCalendarSync,
   syncCalendarEvents,
@@ -85,15 +86,26 @@ export function TaskManager() {
         }
       },
     );
-    const unlisten = appleCalendarEvents.calendarChangedEvent.listen(() => {
+    const unlisten = calendarEvents.calendarChangedEvent.listen(() => {
       scheduleCalendarSync(manager);
     });
+    // The Microsoft OAuth callback arrives over the OS deep link, so a finished
+    // sign-in never reaches the app as the reply to a command. Sync from here
+    // as well as from the calendar UI, so the new mailbox appears even when no
+    // calendar panel happens to be mounted.
+    const unlistenMicrosoft =
+      calendarEvents.microsoftConnectionChangedEvent.listen(({ payload }) => {
+        if (!payload.connected) return;
+        allowReconnectedCalendarConnections("microsoft");
+        scheduleCalendarSync(manager);
+      });
     scheduleCalendarSync(manager);
 
     return () => {
       clearNextSync();
       manager.delListener(taskRunListenerId);
       unlisten.then((fn) => fn());
+      unlistenMicrosoft.then((fn) => fn());
     };
   });
 

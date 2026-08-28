@@ -129,6 +129,21 @@ describe("syncCalendarEventsForRange", () => {
     );
   });
 
+  test("removes the microsoft calendar connection", async () => {
+    await removeDisconnectedCalendarConnection("microsoft", "microsoft");
+
+    expect(storageMocks.tombstoneCalendarConnection).toHaveBeenCalledWith(
+      "microsoft",
+      "microsoft",
+    );
+  });
+
+  test("ignores an integration id that names no calendar provider", async () => {
+    await removeDisconnectedCalendarConnection("slack", "conn-1");
+
+    expect(storageMocks.tombstoneCalendarConnection).not.toHaveBeenCalled();
+  });
+
   test("allows recovery sync when disconnect persistence fails", async () => {
     storageMocks.tombstoneCalendarConnection.mockRejectedValueOnce(
       new Error("write failed"),
