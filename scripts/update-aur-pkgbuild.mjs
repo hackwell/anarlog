@@ -4,7 +4,9 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { parseArgs } from "node:util";
 
-const REPO = "fastrepl/anarlog";
+import { releaseRepository } from "./desktop-release-plan.mjs";
+
+const REPO = releaseRepository();
 const SHA256_PATTERN = /^[0-9a-f]{64}$/;
 const DEB_ASSETS = {
   x86_64: "anarlog-linux-x86_64.deb",
@@ -147,9 +149,11 @@ async function fetchReleaseChecksum(version, asset) {
   return text.trim().split(/\s+/)[0];
 }
 
+// The source repository is private, so the licence ships as a release asset
+// beside the packages rather than being read from a tag.
 async function fetchLicenseChecksum(version) {
   const license = await fetchText(
-    `https://raw.githubusercontent.com/${REPO}/desktop_v${version}/LICENSE`,
+    `https://github.com/${REPO}/releases/download/desktop_v${version}/LICENSE`,
   );
   return createHash("sha256").update(license).digest("hex");
 }

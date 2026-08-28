@@ -3,6 +3,8 @@ import { lstat, readFile } from "node:fs/promises";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
 
+import { releaseRepository } from "./desktop-release-plan.mjs";
+
 // Shared with scripts/qa/verify_linux_audio_tracks.py so the producer and
 // release verifier apply identical thresholds and phase rules.
 export const linuxAudioQaPolicy = JSON.parse(
@@ -12,7 +14,7 @@ export const linuxAudioQaPolicy = JSON.parse(
   ),
 );
 
-const APPLICATION = "fastrepl/hyprnote2";
+const RELEASE_REPOSITORY = releaseRepository();
 const SOURCE_WORKFLOW = ".github/workflows/desktop_cd.yaml";
 const ARCHITECTURES = [
   {
@@ -194,8 +196,8 @@ async function verifyArchitecture({
 
   const provenance = await readJson(await required("provenance.json"));
   invariant(
-    provenance.application === APPLICATION,
-    `Linux ${architecture.artifactArch} application mismatch`,
+    provenance.release_repository === RELEASE_REPOSITORY,
+    `Linux ${architecture.artifactArch} release repository mismatch`,
   );
   invariant(
     provenance.version === version,
@@ -218,13 +220,13 @@ async function verifyArchitecture({
     `Linux ${architecture.artifactArch} platform mismatch`,
   );
   invariant(
-    typeof provenance.crabnebula_asset_id === "string" &&
-      /^[A-Za-z0-9_-]+$/.test(provenance.crabnebula_asset_id),
-    `Linux ${architecture.artifactArch} asset ID is invalid`,
+    typeof provenance.release_asset === "string" &&
+      /^[A-Za-z0-9][A-Za-z0-9._-]*$/.test(provenance.release_asset),
+    `Linux ${architecture.artifactArch} release asset name is invalid`,
   );
   invariant(
-    Number.isSafeInteger(provenance.crabnebula_asset_size) &&
-      provenance.crabnebula_asset_size > 0,
+    Number.isSafeInteger(provenance.release_asset_size) &&
+      provenance.release_asset_size > 0,
     `Linux ${architecture.artifactArch} asset size is invalid`,
   );
   const expectedSha256 = normalizeSha256(
@@ -233,7 +235,7 @@ async function verifyArchitecture({
   );
 
   const matchingAssets = manifest.assets.filter(
-    (asset) => asset.id === provenance.crabnebula_asset_id,
+    (asset) => asset.id === provenance.release_asset,
   );
   invariant(
     matchingAssets.length === 1,
@@ -242,7 +244,7 @@ async function verifyArchitecture({
   const manifestAsset = matchingAssets[0];
   invariant(
     manifestAsset.publicPlatform === architecture.publicPlatform &&
-      manifestAsset.size === provenance.crabnebula_asset_size &&
+      manifestAsset.size === provenance.release_asset_size &&
       manifestAsset.sha256 === expectedSha256,
     `Linux ${architecture.artifactArch} asset does not match release provenance`,
   );
@@ -253,20 +255,6 @@ async function verifyArchitecture({
   invariant(
     JSON.stringify(embeddedManifest) === JSON.stringify(manifest),
     `Linux ${architecture.artifactArch} embedded release provenance mismatch`,
-  );
-
-  const crabNebulaAsset = await readJson(
-    await required("crabnebula-asset.json"),
-  );
-  invariant(
-    crabNebulaAsset.id === provenance.crabnebula_asset_id &&
-      typeof crabNebulaAsset.filename === "string" &&
-      crabNebulaAsset.filename.length > 0 &&
-      crabNebulaAsset.publicPlatform === architecture.publicPlatform &&
-      (crabNebulaAsset.updatePlatform ?? null) ===
-        (manifestAsset.updatePlatform ?? null) &&
-      Number(crabNebulaAsset.size) === provenance.crabnebula_asset_size,
-    `Linux ${architecture.artifactArch} CrabNebula metadata mismatch`,
   );
 
   const downloadSha256 = parseChecksum(

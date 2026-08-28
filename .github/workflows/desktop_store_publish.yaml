@@ -39,8 +39,6 @@ on:
         required: false
       AZURE_AD_APPLICATION_SECRET:
         required: false
-      CN_API_KEY:
-        required: false
       KEYCHAIN_PASSWORD:
         required: false
       MAC_APP_STORE_APPLICATION_CERTIFICATE:
@@ -621,42 +619,31 @@ jobs:
         with:
           ref: ${{ needs.validate.outputs.candidate_sha }}
           persist-credentials: false
-      - id: crabnebula-release
-        uses: ./.github/actions/cn_release
-        with:
-          raw: >-
-            release show fastrepl/hyprnote2 ${{ needs.validate.outputs.version }}
-            --channel stable
-          key: ${{ secrets.CN_API_KEY }}
-      - name: Download and verify stable Windows installer
+      - id: package-url
+        name: Resolve the published Windows installer
+        shell: bash
+        env:
+          VERSION: ${{ needs.validate.outputs.version }}
+        run: |
+          set -euo pipefail
+          repository=$(jq -er '.releaseRepository' scripts/desktop-release-platforms.json)
+          if [[ ! "$repository" =~ ^[A-Za-z0-9._-]+/[A-Za-z0-9._-]+$ ]]; then
+            echo "::error::Release plan has no valid releaseRepository, got '$repository'"
+            exit 1
+          fi
+          package="anarlog-windows-x86_64-setup.exe"
+          echo "url=https://github.com/$repository/releases/download/desktop_v$VERSION/$package" >> "$GITHUB_OUTPUT"
+      - name: Download and verify the published Windows installer
         shell: pwsh
         env:
-          CRABNEBULA_RELEASE: ${{ steps.crabnebula-release.outputs.raw }}
-          VERSION: ${{ needs.validate.outputs.version }}
+          PACKAGE_URL: ${{ steps.package-url.outputs.url }}
           WINDOWS_SIGNER_ORGANIZATION: ${{ vars.WINDOWS_SIGNER_ORGANIZATION }}
         run: |
           $ErrorActionPreference = "Stop"
 
-          $release = $env:CRABNEBULA_RELEASE | ConvertFrom-Json
-          if ([string]$release.version -ne $env:VERSION) {
-            throw "Expected CrabNebula release $env:VERSION, got $($release.version)"
-          }
-
-          $assets = @(
-            $release.assets | Where-Object {
-              $_.publicPlatform -eq "nsis-x86_64" -and [long]$_.size -gt 0
-            }
-          )
-          if ($assets.Count -ne 1) {
-            throw "Expected exactly one nonempty CrabNebula nsis-x86_64 asset"
-          }
-
-          $assetId = [string]$assets[0].id
-          if ($assetId -notmatch '^[A-Za-z0-9_-]+$') {
-            throw "Invalid CrabNebula asset ID '$assetId'"
-          }
-
-          $packageUrl = "https://cdn.crabnebula.app/asset/$assetId"
+          # The Microsoft Store fetches the package itself, so the URL recorded
+          # here has to be the public release asset, not an internal artifact.
+          $packageUrl = $env:PACKAGE_URL
           Invoke-WebRequest -Uri $packageUrl -OutFile "anarlog-windows-x86_64-setup.exe"
 
           $signature = Get-AuthenticodeSignature "anarlog-windows-x86_64-setup.exe"

@@ -26,9 +26,6 @@ concurrency:
   group: desktop-stable-release
   cancel-in-progress: false
 
-env:
-  CN_APPLICATION: "fastrepl/hyprnote2"
-
 jobs:
   parse:
     runs-on: ubuntu-latest
@@ -123,18 +120,24 @@ jobs:
     if: ${{ needs.parse.outputs.include_windows == 'true' }}
     needs: [parse, verify-candidate]
     runs-on: windows-latest
+    permissions:
+      actions: read
+      contents: read
     steps:
       - uses: actions/checkout@v4
         with:
           ref: ${{ needs.parse.outputs.candidate_sha }}
-      - uses: ./.github/actions/cn_download
-        with:
-          app: ${{ env.CN_APPLICATION }}
-          version: ${{ needs.parse.outputs.version }}
-          channel: ${{ needs.parse.outputs.channel }}
-          platform: nsis-x86_64
-          output: anarlog-windows-x86_64-setup.exe
-          key: ${{ secrets.CN_API_KEY }}
+      - name: Download the candidate Windows installer
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RUN_ID: ${{ needs.parse.outputs.dry_run_id }}
+        run: |
+          gh run download "$RUN_ID" \
+            --repo "$GITHUB_REPOSITORY" \
+            --name "desktop-release-assets-x86_64-pc-windows-msvc" \
+            --dir windows-candidate
+          cp windows-candidate/anarlog-windows-x86_64-setup.exe .
       - shell: pwsh
         env:
           WINDOWS_SIGNER_ORGANIZATION: ${{ vars.WINDOWS_SIGNER_ORGANIZATION }}
@@ -157,7 +160,7 @@ jobs:
             throw "Windows Authenticode signature is missing a trusted timestamp"
           }
 
-  cn-publish:
+  tag-candidate:
     needs: [parse, verify-candidate, verify-windows-signature]
     if: ${{ !cancelled() && needs.parse.result == 'success' && needs.verify-candidate.result == 'success' && (needs.parse.outputs.include_windows != 'true' || needs.verify-windows-signature.result == 'success') }}
     runs-on: ubuntu-latest
@@ -203,65 +206,49 @@ jobs:
             --repo "$GITHUB_REPOSITORY" \
             --name "desktop-release-provenance-$VERSION-$EXPECTED_SHA" \
             --dir release-provenance
-      - id: release
-        uses: ./.github/actions/cn_release
-        with:
-          raw: >-
-            release show ${{ env.CN_APPLICATION }} ${{ needs.parse.outputs.version }}
-            --channel ${{ needs.parse.outputs.channel }}
-          key: ${{ secrets.CN_API_KEY }}
-      - id: publish-decision
+      - name: Download the candidate release assets
         env:
-          RELEASE: ${{ steps.release.outputs.raw }}
-          EXPECTED_VERSION: ${{ needs.parse.outputs.version }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RUN_ID: ${{ needs.parse.outputs.dry_run_id }}
+        run: |
+          gh run download "$RUN_ID" \
+            --repo "$GITHUB_REPOSITORY" \
+            --pattern "desktop-release-assets-*" \
+            --dir "$RUNNER_TEMP/staged-assets"
+          # gh run download nests per-artifact directories when it matches more
+          # than one artifact, and extracts flat when it matches exactly one.
+          mkdir -p "$RUNNER_TEMP/release-assets"
+          find "$RUNNER_TEMP/staged-assets" -mindepth 1 -maxdepth 2 -type f \
+            -exec mv -n {} "$RUNNER_TEMP/release-assets/" ';'
+      - name: Verify the candidate release against the release plan
+        env:
           INCLUDE_LINUX: ${{ needs.parse.outputs.include_linux }}
           INCLUDE_WINDOWS: ${{ needs.parse.outputs.include_windows }}
+          VERSION: ${{ needs.parse.outputs.version }}
         run: |
-          ACTUAL_VERSION=$(echo "$RELEASE" | jq -r '.version // empty')
-          if [[ "$ACTUAL_VERSION" != "$EXPECTED_VERSION" ]]; then
-            echo "::error::Expected CrabNebula release $EXPECTED_VERSION, got $ACTUAL_VERSION"
-            exit 1
-          fi
-
-          printf '%s' "$RELEASE" > "$RUNNER_TEMP/crabnebula-release.json"
-          node scripts/desktop-release-provenance.mjs verify-platforms \
-            --release "$RUNNER_TEMP/crabnebula-release.json" \
+          node scripts/desktop-release-assets.mjs merge \
+            --asset-dir "$RUNNER_TEMP/release-assets" \
+            --output "$RUNNER_TEMP/release.json" \
+            --version "$VERSION" \
             --include-linux "$INCLUDE_LINUX" \
             --include-windows "$INCLUDE_WINDOWS"
-
-          STATUS=$(echo "$RELEASE" | jq -r '.status // empty | ascii_downcase')
-          case "$STATUS" in
-            draft)
-              echo "publish_needed=true" >> "$GITHUB_OUTPUT"
-              ;;
-            published)
-              echo "publish_needed=false" >> "$GITHUB_OUTPUT"
-              ;;
-            *)
-              echo "::error::Unexpected CrabNebula release status: $STATUS"
-              exit 1
-              ;;
-          esac
+          node scripts/desktop-release-provenance.mjs verify-platforms \
+            --release "$RUNNER_TEMP/release.json" \
+            --include-linux "$INCLUDE_LINUX" \
+            --include-windows "$INCLUDE_WINDOWS"
       - name: Verify candidate provenance
         env:
-          CN_ASSET_ID: ${{ steps.release.outputs.cli-asset-id }}
-          CN_SHA256: ${{ steps.release.outputs.cli-sha256 }}
-          CN_VERSION: ${{ steps.release.outputs.cli-version }}
           EXPECTED_SHA: ${{ needs.parse.outputs.candidate_sha }}
-          RELEASE: ${{ steps.release.outputs.raw }}
           RUN_ID: ${{ needs.parse.outputs.dry_run_id }}
           VERSION: ${{ needs.parse.outputs.version }}
         run: |
-          printf '%s' "$RELEASE" > "$RUNNER_TEMP/crabnebula-release.json"
           node scripts/desktop-release-provenance.mjs verify \
-            --release "$RUNNER_TEMP/crabnebula-release.json" \
+            --release "$RUNNER_TEMP/release.json" \
             --manifest release-provenance/manifest.json \
             --version "$VERSION" \
             --candidate-sha "$EXPECTED_SHA" \
             --run-id "$RUN_ID" \
-            --cn-version "$CN_VERSION" \
-            --cn-asset-id "$CN_ASSET_ID" \
-            --cn-sha256 "$CN_SHA256"
+            --asset-dir "$RUNNER_TEMP/release-assets"
       - name: Create immutable release tag
         env:
           EXPECTED_SHA: ${{ needs.parse.outputs.candidate_sha }}
@@ -291,45 +278,25 @@ jobs:
             git tag "$TAG" "$EXPECTED_SHA"
             git push origin "refs/tags/$TAG"
           fi
-      - name: Verify candidate before publication
-        if: ${{ steps.publish-decision.outputs.publish_needed == 'true' }}
-        env:
-          EXPECTED_SHA: ${{ needs.parse.outputs.candidate_sha }}
-          VERSION: ${{ needs.parse.outputs.version }}
-        run: |
-          git fetch origin main --no-tags
-          git fetch --tags --force
-
-          TARGET=$(git rev-parse HEAD)
-          MAIN=$(git rev-parse origin/main)
-          TAG_TARGET=$(git rev-parse "desktop_v$VERSION^{commit}")
-          if [[ "$TARGET" != "$EXPECTED_SHA" || "$MAIN" != "$EXPECTED_SHA" || "$TAG_TARGET" != "$EXPECTED_SHA" ]]; then
-            echo "::error::Candidate moved before publication (candidate=$EXPECTED_SHA, checkout=$TARGET, main=$MAIN, tag=$TAG_TARGET)"
-            exit 1
-          fi
-      - uses: ./.github/actions/cn_release
-        if: ${{ steps.publish-decision.outputs.publish_needed == 'true' }}
-        with:
-          cmd: publish
-          app: ${{ env.CN_APPLICATION }}
-          key: ${{ secrets.CN_API_KEY }}
-          channel: ${{ needs.parse.outputs.channel }}
-          framework: tauri
-          working-directory: ./apps/desktop
 
   gh-release:
-    needs: [parse, cn-publish]
-    if: ${{ !cancelled() && needs.parse.result == 'success' && needs.cn-publish.result == 'success' }}
+    needs: [parse, tag-candidate]
+    if: ${{ !cancelled() && needs.parse.result == 'success' && needs.tag-candidate.result == 'success' }}
     runs-on: ubuntu-latest
     permissions:
       actions: read
-      contents: write
+      contents: read
     steps:
       - uses: actions/checkout@v4
         with:
           ref: ${{ needs.parse.outputs.candidate_sha }}
           fetch-depth: 0
           fetch-tags: true
+      - name: Verify the releases repository is writable
+        id: releases
+        uses: ./.github/actions/releases_preflight
+        with:
+          token: ${{ secrets.RELEASES_TOKEN }}
       - env:
           EXPECTED_SHA: ${{ needs.parse.outputs.candidate_sha }}
           VERSION: ${{ needs.parse.outputs.version }}
@@ -353,216 +320,142 @@ jobs:
             --repo "$GITHUB_REPOSITORY" \
             --name "desktop-release-provenance-$VERSION-$EXPECTED_SHA" \
             --dir release-provenance
-      - id: download-macos-aarch64
-        uses: ./.github/actions/cn_download
-        with:
-          app: ${{ env.CN_APPLICATION }}
-          version: ${{ needs.parse.outputs.version }}
-          channel: ${{ needs.parse.outputs.channel }}
-          platform: dmg-aarch64
-          output: anarlog-macos-aarch64.dmg
-          key: ${{ secrets.CN_API_KEY }}
-      - id: download-macos-x86_64
-        uses: ./.github/actions/cn_download
-        with:
-          app: ${{ env.CN_APPLICATION }}
-          version: ${{ needs.parse.outputs.version }}
-          channel: ${{ needs.parse.outputs.channel }}
-          platform: dmg-x86_64
-          output: anarlog-macos-x86_64.dmg
-          key: ${{ secrets.CN_API_KEY }}
-      - id: download-linux-x86_64-appimage
-        if: ${{ needs.parse.outputs.include_linux == 'true' }}
-        uses: ./.github/actions/cn_download
-        with:
-          app: ${{ env.CN_APPLICATION }}
-          version: ${{ needs.parse.outputs.version }}
-          channel: ${{ needs.parse.outputs.channel }}
-          platform: appimage-x86_64
-          output: anarlog-linux-x86_64.AppImage
-          key: ${{ secrets.CN_API_KEY }}
-      - id: download-linux-x86_64-deb
-        if: ${{ needs.parse.outputs.include_linux == 'true' }}
-        uses: ./.github/actions/cn_download
-        with:
-          app: ${{ env.CN_APPLICATION }}
-          version: ${{ needs.parse.outputs.version }}
-          channel: ${{ needs.parse.outputs.channel }}
-          platform: debian-x86_64
-          output: anarlog-linux-x86_64.deb
-          key: ${{ secrets.CN_API_KEY }}
-      - id: download-linux-aarch64-appimage
-        if: ${{ needs.parse.outputs.include_linux == 'true' }}
-        uses: ./.github/actions/cn_download
-        with:
-          app: ${{ env.CN_APPLICATION }}
-          version: ${{ needs.parse.outputs.version }}
-          channel: ${{ needs.parse.outputs.channel }}
-          platform: appimage-aarch64
-          output: anarlog-linux-aarch64.AppImage
-          key: ${{ secrets.CN_API_KEY }}
-      - id: download-linux-aarch64-deb
-        if: ${{ needs.parse.outputs.include_linux == 'true' }}
-        uses: ./.github/actions/cn_download
-        with:
-          app: ${{ env.CN_APPLICATION }}
-          version: ${{ needs.parse.outputs.version }}
-          channel: ${{ needs.parse.outputs.channel }}
-          platform: debian-aarch64
-          output: anarlog-linux-aarch64.deb
-          key: ${{ secrets.CN_API_KEY }}
-      - id: download-windows-x86_64
-        if: ${{ needs.parse.outputs.include_windows == 'true' }}
-        uses: ./.github/actions/cn_download
-        with:
-          app: ${{ env.CN_APPLICATION }}
-          version: ${{ needs.parse.outputs.version }}
-          channel: ${{ needs.parse.outputs.channel }}
-          platform: nsis-x86_64
-          output: anarlog-windows-x86_64-setup.exe
-          key: ${{ secrets.CN_API_KEY }}
-      - name: Verify GitHub release assets against provenance
+      - name: Download the candidate release assets
         env:
-          CN_ASSET_ID: ${{ steps.download-macos-aarch64.outputs.cli-asset-id }}
-          CN_SHA256: ${{ steps.download-macos-aarch64.outputs.cli-sha256 }}
-          CN_VERSION: ${{ steps.download-macos-aarch64.outputs.cli-version }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RUN_ID: ${{ needs.parse.outputs.dry_run_id }}
+        run: |
+          gh run download "$RUN_ID" \
+            --repo "$GITHUB_REPOSITORY" \
+            --pattern "desktop-release-assets-*" \
+            --dir "$RUNNER_TEMP/staged-assets"
+          # gh run download nests per-artifact directories when it matches more
+          # than one artifact, and extracts flat when it matches exactly one.
+          mkdir -p "$RUNNER_TEMP/release-assets"
+          find "$RUNNER_TEMP/staged-assets" -mindepth 1 -maxdepth 2 -type f \
+            -exec mv -n {} "$RUNNER_TEMP/release-assets/" ';'
+      - name: Verify the release assets against provenance
+        env:
           EXPECTED_SHA: ${{ needs.parse.outputs.candidate_sha }}
           INCLUDE_LINUX: ${{ needs.parse.outputs.include_linux }}
           INCLUDE_WINDOWS: ${{ needs.parse.outputs.include_windows }}
-          LINUX_ARM64_APPIMAGE_ID: ${{ steps.download-linux-aarch64-appimage.outputs.asset_id }}
-          LINUX_ARM64_DEB_ID: ${{ steps.download-linux-aarch64-deb.outputs.asset_id }}
-          LINUX_X64_APPIMAGE_ID: ${{ steps.download-linux-x86_64-appimage.outputs.asset_id }}
-          LINUX_X64_DEB_ID: ${{ steps.download-linux-x86_64-deb.outputs.asset_id }}
-          MACOS_ARM64_ID: ${{ steps.download-macos-aarch64.outputs.asset_id }}
-          MACOS_X64_ID: ${{ steps.download-macos-x86_64.outputs.asset_id }}
           RUN_ID: ${{ needs.parse.outputs.dry_run_id }}
           VERSION: ${{ needs.parse.outputs.version }}
-          WINDOWS_X64_ID: ${{ steps.download-windows-x86_64.outputs.asset_id }}
         run: |
-          ASSET_DIR="$RUNNER_TEMP/gh-release-assets"
-          mkdir -p "$ASSET_DIR"
-
-          copy_asset() {
-            local asset_id="$1"
-            local source="$2"
-            if [[ ! "$asset_id" =~ ^[A-Za-z0-9_-]+$ ]]; then
-              echo "::error::Invalid CrabNebula asset ID for $source"
-              exit 1
-            fi
-            if [[ -e "$ASSET_DIR/$asset_id" ]]; then
-              echo "::error::Duplicate CrabNebula asset ID $asset_id"
-              exit 1
-            fi
-            cp "$source" "$ASSET_DIR/$asset_id"
-          }
-
-          copy_asset "$MACOS_ARM64_ID" "anarlog-macos-aarch64.dmg"
-          copy_asset "$MACOS_X64_ID" "anarlog-macos-x86_64.dmg"
-          if [[ "$INCLUDE_LINUX" == "true" ]]; then
-            copy_asset "$LINUX_X64_APPIMAGE_ID" "anarlog-linux-x86_64.AppImage"
-            copy_asset "$LINUX_X64_DEB_ID" "anarlog-linux-x86_64.deb"
-            copy_asset "$LINUX_ARM64_APPIMAGE_ID" "anarlog-linux-aarch64.AppImage"
-            copy_asset "$LINUX_ARM64_DEB_ID" "anarlog-linux-aarch64.deb"
-          fi
-          if [[ "$INCLUDE_WINDOWS" == "true" ]]; then
-            copy_asset "$WINDOWS_X64_ID" "anarlog-windows-x86_64-setup.exe"
-          fi
-
-          PLATFORM_ASSET_IDS=$(jq -cn \
-            --arg include_linux "$INCLUDE_LINUX" \
-            --arg include_windows "$INCLUDE_WINDOWS" \
-            --arg dmg_aarch64 "$MACOS_ARM64_ID" \
-            --arg dmg_x86_64 "$MACOS_X64_ID" \
-            --arg appimage_x86_64 "$LINUX_X64_APPIMAGE_ID" \
-            --arg deb_x86_64 "$LINUX_X64_DEB_ID" \
-            --arg appimage_aarch64 "$LINUX_ARM64_APPIMAGE_ID" \
-            --arg deb_aarch64 "$LINUX_ARM64_DEB_ID" \
-            --arg nsis_x86_64 "$WINDOWS_X64_ID" \
-            '{
-              "dmg-aarch64": $dmg_aarch64,
-              "dmg-x86_64": $dmg_x86_64
-            }
-            + if $include_linux == "true" then {
-                "appimage-x86_64": $appimage_x86_64,
-                "debian-x86_64": $deb_x86_64,
-                "appimage-aarch64": $appimage_aarch64,
-                "debian-aarch64": $deb_aarch64
-              } else {} end
-            + if $include_windows == "true" then {
-                "nsis-x86_64": $nsis_x86_64
-              } else {} end')
-
-          node scripts/desktop-release-provenance.mjs verify-assets \
+          node scripts/desktop-release-assets.mjs merge \
+            --asset-dir "$RUNNER_TEMP/release-assets" \
+            --output "$RUNNER_TEMP/release.json" \
+            --version "$VERSION" \
+            --include-linux "$INCLUDE_LINUX" \
+            --include-windows "$INCLUDE_WINDOWS"
+          node scripts/desktop-release-provenance.mjs verify \
+            --release "$RUNNER_TEMP/release.json" \
             --manifest release-provenance/manifest.json \
-            --asset-dir "$ASSET_DIR" \
-            --platform-asset-ids "$PLATFORM_ASSET_IDS" \
             --version "$VERSION" \
             --candidate-sha "$EXPECTED_SHA" \
             --run-id "$RUN_ID" \
-            --cn-version "$CN_VERSION" \
-            --cn-asset-id "$CN_ASSET_ID" \
-            --cn-sha256 "$CN_SHA256"
-      - id: checksums
-        uses: ./.github/actions/generate_checksums
-        with:
-          files: |
-            anarlog-macos-aarch64.dmg
-            anarlog-macos-x86_64.dmg
-            ${{ needs.parse.outputs.include_linux == 'true' && 'anarlog-linux-x86_64.AppImage' || '' }}
-            ${{ needs.parse.outputs.include_linux == 'true' && 'anarlog-linux-x86_64.deb' || '' }}
-            ${{ needs.parse.outputs.include_linux == 'true' && 'anarlog-linux-aarch64.AppImage' || '' }}
-            ${{ needs.parse.outputs.include_linux == 'true' && 'anarlog-linux-aarch64.deb' || '' }}
-            ${{ needs.parse.outputs.include_windows == 'true' && 'anarlog-windows-x86_64-setup.exe' || '' }}
-      - id: release-assets
+            --asset-dir "$RUNNER_TEMP/release-assets"
+      - id: assemble
+        name: Assemble the release payload
         env:
-          CHECKSUM_FILES: ${{ steps.checksums.outputs.checksum_files }}
           INCLUDE_LINUX: ${{ needs.parse.outputs.include_linux }}
           INCLUDE_WINDOWS: ${{ needs.parse.outputs.include_windows }}
-        run: |
-          files=(
-            "anarlog-macos-aarch64.dmg"
-            "anarlog-macos-x86_64.dmg"
-          )
-          if [[ "$INCLUDE_LINUX" == "true" ]]; then
-            files+=(
-              "anarlog-linux-x86_64.AppImage"
-              "anarlog-linux-x86_64.deb"
-              "anarlog-linux-aarch64.AppImage"
-              "anarlog-linux-aarch64.deb"
-            )
-          fi
-          if [[ "$INCLUDE_WINDOWS" == "true" ]]; then
-            files+=("anarlog-windows-x86_64-setup.exe")
-          fi
-
-          artifact_files=$(IFS=,; echo "${files[*]}")
-          echo "artifacts=$artifact_files,$CHECKSUM_FILES" >> "$GITHUB_OUTPUT"
-      - id: release-body
-        run: |
-          echo "value=https://sessionecho.flagbit.de/changelog/${{ needs.parse.outputs.version }}" >> "$GITHUB_OUTPUT"
-      - uses: ncipollo/release-action@v1
-        with:
-          tag: desktop_v${{ needs.parse.outputs.version }}
-          name: desktop_v${{ needs.parse.outputs.version }}
-          body: ${{ steps.release-body.outputs.value }}
-          prerelease: false
-          artifacts: ${{ steps.release-assets.outputs.artifacts }}
-          allowUpdates: true
-          makeLatest: true
-          replacesArtifacts: true
-      - name: Summarize Microsoft Store submission
-        if: ${{ needs.parse.outputs.include_windows == 'true' }}
-        env:
           VERSION: ${{ needs.parse.outputs.version }}
         run: |
-          package_url="https://github.com/$GITHUB_REPOSITORY/releases/download/desktop_v$VERSION/anarlog-windows-x86_64-setup.exe"
-          package_sha256=$(sha256sum anarlog-windows-x86_64-setup.exe | cut -d ' ' -f 1)
+          upload_dir="$RUNNER_TEMP/release-upload"
+          mkdir -p "$upload_dir"
+
+          # latest.json is what the shipped updater polls; its platform keys and
+          # signatures come from the release plan and the .sig files tauri build
+          # wrote beside each updater artifact.
+          node scripts/desktop-latest-json.mjs \
+            --asset-dir "$RUNNER_TEMP/release-assets" \
+            --output "$upload_dir/latest.json" \
+            --version "$VERSION" \
+            --notes "https://sessionecho.flagbit.de/changelog/$VERSION" \
+            --pub-date "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+            --include-linux "$INCLUDE_LINUX" \
+            --include-windows "$INCLUDE_WINDOWS"
+
+          while IFS= read -r asset; do
+            cp "$RUNNER_TEMP/release-assets/$asset" "$upload_dir/$asset"
+            (cd "$upload_dir" && sha256sum "$asset" > "$asset.sha256")
+          done < <(node scripts/desktop-release-assets.mjs list \
+            --include-linux "$INCLUDE_LINUX" \
+            --include-windows "$INCLUDE_WINDOWS")
+
+          # The AUR package reads the licence from the release: the source
+          # repository is private, so a tag URL is not reachable.
+          cp LICENSE "$upload_dir/LICENSE"
+
+          echo "upload_dir=$upload_dir" >> "$GITHUB_OUTPUT"
+          ls -l "$upload_dir"
+      - name: Publish the GitHub release
+        env:
+          GH_TOKEN: ${{ secrets.RELEASES_TOKEN }}
+          RELEASES_REPOSITORY: ${{ steps.releases.outputs.repository }}
+          UPLOAD_DIR: ${{ steps.assemble.outputs.upload_dir }}
+          VERSION: ${{ needs.parse.outputs.version }}
+        run: |
+          TAG="desktop_v$VERSION"
+          if gh release view "$TAG" --repo "$RELEASES_REPOSITORY" > /dev/null 2>&1; then
+            gh release upload "$TAG" --repo "$RELEASES_REPOSITORY" --clobber "$UPLOAD_DIR"/*
+            gh release edit "$TAG" --repo "$RELEASES_REPOSITORY" \
+              --title "$TAG" \
+              --notes "https://sessionecho.flagbit.de/changelog/$VERSION" \
+              --draft=false \
+              --prerelease=false \
+              --latest
+          else
+            gh release create "$TAG" --repo "$RELEASES_REPOSITORY" \
+              --title "$TAG" \
+              --notes "https://sessionecho.flagbit.de/changelog/$VERSION" \
+              --latest \
+              "$UPLOAD_DIR"/*
+          fi
+      - name: Verify the published updater manifest
+        env:
+          GH_TOKEN: ${{ secrets.RELEASES_TOKEN }}
+          RELEASES_REPOSITORY: ${{ steps.releases.outputs.repository }}
+          UPLOAD_DIR: ${{ steps.assemble.outputs.upload_dir }}
+          VERSION: ${{ needs.parse.outputs.version }}
+        run: |
+          published_dir="$RUNNER_TEMP/published"
+          mkdir -p "$published_dir"
+          gh release download "desktop_v$VERSION" \
+            --repo "$RELEASES_REPOSITORY" \
+            --pattern latest.json \
+            --dir "$published_dir" \
+            --clobber
+          published="$published_dir/latest.json"
+          if ! diff -u "$UPLOAD_DIR/latest.json" "$published"; then
+            echo "::error::The published latest.json does not match the one this run generated"
+            exit 1
+          fi
+          jq -e --arg version "$VERSION" '.version == $version and (.platforms | length) > 0' "$published"
+      - name: Summarize the release
+        env:
+          INCLUDE_WINDOWS: ${{ needs.parse.outputs.include_windows }}
+          RELEASES_REPOSITORY: ${{ steps.releases.outputs.repository }}
+          UPLOAD_DIR: ${{ steps.assemble.outputs.upload_dir }}
+          VERSION: ${{ needs.parse.outputs.version }}
+        run: |
           {
-            echo "## Microsoft Store submission"
-            echo "- Package URL: \`$package_url\`"
-            echo "- SHA-256: \`$package_sha256\`"
-            echo "- Silent install argument: \`/S\`"
+            echo "## Release"
+            echo "- Repository: \`$RELEASES_REPOSITORY\`"
+            echo "- Tag: \`desktop_v$VERSION\`"
+            echo "- Updater platforms: \`$(jq -r '.platforms | keys | join(", ")' "$UPLOAD_DIR/latest.json")\`"
           } >> "$GITHUB_STEP_SUMMARY"
+
+          if [[ "$INCLUDE_WINDOWS" == "true" ]]; then
+            package="anarlog-windows-x86_64-setup.exe"
+            {
+              echo "## Microsoft Store submission"
+              echo "- Package URL: \`https://github.com/$RELEASES_REPOSITORY/releases/download/desktop_v$VERSION/$package\`"
+              echo "- SHA-256: \`$(sha256sum "$UPLOAD_DIR/$package" | cut -d ' ' -f 1)\`"
+              echo "- Silent install argument: \`/S\`"
+            } >> "$GITHUB_STEP_SUMMARY"
+          fi
 
   store-publish:
     needs: [parse, gh-release]
@@ -582,7 +475,6 @@ jobs:
       APPSTORE_API_PRIVATE_KEY: ${{ secrets.APPSTORE_API_PRIVATE_KEY }}
       APPSTORE_ISSUER_ID: ${{ secrets.APPSTORE_ISSUER_ID }}
       AZURE_AD_APPLICATION_SECRET: ${{ secrets.AZURE_AD_APPLICATION_SECRET }}
-      CN_API_KEY: ${{ secrets.CN_API_KEY }}
       KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
       MAC_APP_STORE_APPLICATION_CERTIFICATE: ${{ secrets.MAC_APP_STORE_APPLICATION_CERTIFICATE }}
       MAC_APP_STORE_APPLICATION_CERTIFICATE_PASSWORD: ${{ secrets.MAC_APP_STORE_APPLICATION_CERTIFICATE_PASSWORD }}
@@ -609,14 +501,17 @@ jobs:
       - id: linux-release
         name: Download published Debian packages
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.RELEASES_TOKEN }}
           VERSION: ${{ needs.parse.outputs.version }}
         run: |
+          repository=$(jq -er '.releaseRepository' scripts/desktop-release-platforms.json)
           mkdir -p "$RUNNER_TEMP/apt-packages"
           gh release download "desktop_v$VERSION" \
+            --repo "$repository" \
             --pattern "anarlog-linux-*.deb" \
             --dir "$RUNNER_TEMP/apt-packages"
           published_at=$(gh release view "desktop_v$VERSION" \
+            --repo "$repository" \
             --json publishedAt \
             --jq .publishedAt)
           echo "published_at=$published_at" >> "$GITHUB_OUTPUT"

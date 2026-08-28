@@ -152,9 +152,10 @@ The dry-run workflow must:
 - use the exact explicit stable version
 - build both Apple Silicon and Intel macOS artifacts
 - build the signed Windows and Linux artifacts for the same version and commit
-- upload a draft CrabNebula release without publishing it
+- stage every planned release asset as `desktop-release-assets-<target>`
+  artifacts, each updater artifact with the `.sig` tauri build wrote beside it
 - upload `desktop-release-provenance-<version>-<sha>`, including the exact
-  artifact hashes and pinned CrabNebula CLI version, asset ID, and SHA-256
+  artifact hashes for every staged release asset
 
 After the exact dry-run artifacts pass the required platform gates and `main`
 still points to the candidate SHA, publish only through the provenance
@@ -171,9 +172,10 @@ gh workflow run desktop_publish.yaml \
 ```
 
 Watch that workflow to completion. It must verify the dry-run run identity,
-artifact hashes, CrabNebula tool identity and hash, current `main`, and the
-immutable tag before publishing. It must also verify every file mirrored to
-GitHub against the provenance manifest.
+artifact hashes, current `main`, and the immutable tag before publishing. It
+must also verify every file uploaded to the public releases repository against
+the provenance manifest, and confirm the published `latest.json` matches the
+one the run generated.
 
 ## Final Checks
 
@@ -183,8 +185,8 @@ Before reporting success, capture:
 - dry-run workflow URL and head SHA
 - publish workflow URL and head SHA
 - `desktop_v<version>` tag
-- GitHub release URL
-- whether CrabNebula publish completed
+- GitHub release URL in `flagbit/session-echo-releases`
+- the updater platform keys listed in the published `latest.json`
 - changelog URL
 - stable DMG SHA-256
 

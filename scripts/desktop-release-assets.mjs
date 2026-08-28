@@ -11,11 +11,10 @@ import {
   releasePlatformPlan,
 } from "./desktop-release-plan.mjs";
 
-// CrabNebula used to be the store that carried built bundles from the
-// candidate build to the publish run. GitHub Actions artifacts carry them
-// instead: every build job stages the bundles the release plan expects under
-// their final release asset names, records what it staged, and the publish run
-// merges those records back into one release description.
+// GitHub Actions artifacts carry built bundles from the candidate build to the
+// publish run: every build job stages the bundles the release plan expects
+// under their final release asset names, records what it staged, and the
+// publish run merges those records back into one release description.
 
 const MANIFEST_PREFIX = "assets-";
 const MANIFEST_SUFFIX = ".json";
@@ -193,6 +192,21 @@ export async function mergeStagedAssets({
   return { version, status: "draft", assets };
 }
 
+export function fileForPublicPlatform(
+  publicPlatform,
+  plan = releasePlatformPlan,
+) {
+  const matches = plannedAssets(
+    { includeLinux: true, includeWindows: true },
+    plan,
+  ).filter((asset) => asset.publicPlatform === publicPlatform);
+  invariant(
+    matches.length === 1,
+    `Release plan has ${matches.length} assets for public platform ${publicPlatform}`,
+  );
+  return matches[0].file;
+}
+
 export function publicAssetFiles({
   includeLinux = true,
   includeWindows = true,
@@ -223,6 +237,7 @@ async function main() {
       "build-target": { type: "string" },
       "output-dir": { type: "string" },
       "asset-dir": { type: "string" },
+      "public-platform": { type: "string" },
       output: { type: "string" },
       version: { type: "string" },
       "include-linux": { type: "string", default: "true" },
@@ -270,12 +285,17 @@ async function main() {
     return;
   }
 
+  if (command === "file") {
+    console.log(fileForPublicPlatform(values["public-platform"]));
+    return;
+  }
+
   if (command === "list-public") {
     console.log(publicAssetFiles(selection).join("\n"));
     return;
   }
 
-  throw new Error("Expected stage, merge, list, or list-public command");
+  throw new Error("Expected stage, merge, list, list-public, or file command");
 }
 
 const isMain = process.argv[1]

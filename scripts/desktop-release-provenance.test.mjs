@@ -8,16 +8,11 @@ import {
   createManifest,
   releasePlatformPlan,
   verifyDesktopPlatformSets,
-  verifyLocalAssets,
   verifyManifest,
   verifyWorkflowPlatformCoverage,
 } from "./desktop-release-provenance.mjs";
 
 const candidateSha = "0123456789abcdef0123456789abcdef01234567";
-const cnAssetId = "01KVDB8KPSKMQ5X3SJ0ANF6943";
-const cnSha256 =
-  "760b11d1ab9326dc78068ac8ef450685ea116e329903b14d94a5133641a54128";
-const cnVersion = "cn 0.13.2";
 
 function createDesktopRelease({
   includeLinux = true,
@@ -46,14 +41,14 @@ function createDesktopRelease({
         splitMappings || separateAssets
           ? [
               {
-                id: `asset-public-${index}`,
+                id: `asset-public-${index}.dmg`,
                 publicPlatform,
                 updatePlatform: null,
                 size: index + 1,
                 signature: null,
               },
               {
-                id: `asset-update-${index}`,
+                id: `asset-update-${index}.tar.gz`,
                 publicPlatform: null,
                 updatePlatform,
                 size: index + 1,
@@ -62,7 +57,7 @@ function createDesktopRelease({
             ]
           : [
               {
-                id: `asset-${index}`,
+                id: `asset-${index}.bin`,
                 publicPlatform,
                 updatePlatform,
                 size: index + 1,
@@ -107,7 +102,7 @@ test("rejects an omitted selected platform", () => {
 test("rejects an extra public desktop platform", () => {
   const release = createDesktopRelease();
   release.assets.push({
-    id: "asset-extra-public",
+    id: "asset-extra-public.dmg",
     publicPlatform: "rpm-x86_64",
     updatePlatform: null,
     size: 1,
@@ -133,7 +128,7 @@ test("rejects duplicate public desktop platforms", () => {
 test("rejects an updater-only desktop platform", () => {
   const release = createDesktopRelease();
   release.assets.push({
-    id: "asset-extra-updater",
+    id: "asset-extra-updater.deb",
     publicPlatform: null,
     updatePlatform: "linux-x86_64-rpm",
     size: 1,
@@ -149,7 +144,7 @@ test("rejects an updater-only desktop platform", () => {
 test("rejects an opaque desktop release asset", () => {
   const release = createDesktopRelease();
   release.assets.push({
-    id: "asset-opaque",
+    id: "asset-opaque.bin",
     publicPlatform: null,
     updatePlatform: null,
     size: 1,
@@ -173,78 +168,25 @@ test("rejects an unsigned updater asset", () => {
   );
 });
 
-function workflowFixtures({ publicPlatforms } = {}) {
-  const platforms =
-    publicPlatforms ??
-    Object.values(releasePlatformPlan)
-      .filter((group) => typeof group === "object" && group.publicPlatforms)
-      .flatMap((group) => group.publicPlatforms);
-  const publishWorkflow = platforms
-    .map(
-      (platform) =>
-        `      - uses: ./.github/actions/cn_download\n        with:\n          platform: ${platform}\n`,
-    )
-    .join("");
-  const cdWorkflow = Object.values(releasePlatformPlan)
-    .filter((group) => typeof group === "object" && group.buildTargets)
+function workflowFixtures() {
+  const groups = Object.values(releasePlatformPlan).filter(
+    (group) => typeof group === "object" && group.buildTargets,
+  );
+  const cdWorkflow = groups
     .flatMap((group) => group.buildTargets)
     .map((target) => `          - target: ${target}\n`)
     .join("");
+  const publishWorkflow = [
+    "          node scripts/desktop-release-assets.mjs merge \\\n",
+    '            --asset-dir "$RUNNER_TEMP/release-assets"\n',
+    "          node scripts/desktop-latest-json.mjs \\\n",
+    '            --output "$upload_dir/latest.json"\n',
+  ].join("");
   return { publishWorkflow, cdWorkflow };
 }
 
 test("accepts workflows that cover the complete release plan", () => {
   verifyWorkflowPlatformCoverage(workflowFixtures());
-});
-
-test("rejects a publish workflow that omits a planned platform", () => {
-  const { publishWorkflow, cdWorkflow } = workflowFixtures();
-  assert.throws(
-    () =>
-      verifyWorkflowPlatformCoverage({
-        publishWorkflow: publishWorkflow.replace(
-          /^.*platform: nsis-x86_64.*\n/m,
-          "",
-        ),
-        cdWorkflow,
-      }),
-    /do not match the release plan/,
-  );
-});
-
-test("allows a planned platform to be downloaded by more than one job", () => {
-  const { publishWorkflow, cdWorkflow } = workflowFixtures();
-  verifyWorkflowPlatformCoverage({
-    publishWorkflow: `${publishWorkflow}          platform: dmg-aarch64\n`,
-    cdWorkflow,
-  });
-});
-
-test("rejects a publish workflow with an unknown platform download", () => {
-  const { publishWorkflow, cdWorkflow } = workflowFixtures();
-  assert.throws(
-    () =>
-      verifyWorkflowPlatformCoverage({
-        publishWorkflow: `${publishWorkflow}          platform: msi-x86_64\n`,
-        cdWorkflow,
-      }),
-    /do not match the release plan/,
-  );
-});
-
-test("rejects a publish workflow with a renamed platform download", () => {
-  const { publishWorkflow, cdWorkflow } = workflowFixtures();
-  assert.throws(
-    () =>
-      verifyWorkflowPlatformCoverage({
-        publishWorkflow: publishWorkflow.replace(
-          "platform: debian-x86_64",
-          "platform: deb-x86_64",
-        ),
-        cdWorkflow,
-      }),
-    /do not match the release plan/,
-  );
 });
 
 test("rejects a release workflow that drops a planned build target", () => {
@@ -256,6 +198,59 @@ test("rejects a release workflow that drops a planned build target", () => {
         cdWorkflow: cdWorkflow.replace("x86_64-pc-windows-msvc", ""),
       }),
     /does not build the planned target x86_64-pc-windows-msvc/,
+  );
+});
+
+test("rejects a publish workflow that does not merge the staged assets", () => {
+  const { publishWorkflow, cdWorkflow } = workflowFixtures();
+  assert.throws(
+    () =>
+      verifyWorkflowPlatformCoverage({
+        publishWorkflow: publishWorkflow.replace(
+          "scripts/desktop-release-assets.mjs merge",
+          "cp -r assets/",
+        ),
+        cdWorkflow,
+      }),
+    /must merge the staged release assets/,
+  );
+});
+
+test("rejects a publish workflow that does not generate latest.json", () => {
+  const { publishWorkflow, cdWorkflow } = workflowFixtures();
+  assert.throws(
+    () =>
+      verifyWorkflowPlatformCoverage({
+        publishWorkflow: publishWorkflow.replace(
+          "scripts/desktop-latest-json.mjs",
+          "echo skip",
+        ),
+        cdWorkflow,
+      }),
+    /must generate latest\.json/,
+  );
+});
+
+// Hardcoding an updater platform key in a workflow is exactly how a platform
+// silently stops updating: the key drifts from what the build produces and
+// nothing fails until users stop receiving updates.
+test("rejects a workflow that hardcodes an updater platform key", () => {
+  const { publishWorkflow, cdWorkflow } = workflowFixtures();
+  assert.throws(
+    () =>
+      verifyWorkflowPlatformCoverage({
+        publishWorkflow: `${publishWorkflow}          key: linux-x86_64-appimage\n`,
+        cdWorkflow,
+      }),
+    /desktop_publish\.yaml hardcodes the updater platform key linux-x86_64-appimage/,
+  );
+  assert.throws(
+    () =>
+      verifyWorkflowPlatformCoverage({
+        publishWorkflow,
+        cdWorkflow: `${cdWorkflow}          key: darwin-aarch64\n`,
+      }),
+    /desktop_cd\.yaml hardcodes the updater platform key darwin-aarch64/,
   );
 });
 
@@ -310,7 +305,6 @@ test("stable desktop releases submit only the Microsoft Store package", async ()
     "APPSTORE_API_PRIVATE_KEY",
     "APPSTORE_ISSUER_ID",
     "AZURE_AD_APPLICATION_SECRET",
-    "CN_API_KEY",
     "KEYCHAIN_PASSWORD",
     "MAC_APP_STORE_APPLICATION_CERTIFICATE",
     "MAC_APP_STORE_APPLICATION_CERTIFICATE_PASSWORD",
@@ -414,9 +408,9 @@ test("binds every release asset to a candidate run and detects replacement", asy
   await mkdir(assetDir);
 
   const contents = new Map([
-    ["asset-a", "macOS"],
-    ["asset-b", "Windows"],
-    ["asset-c", "Linux"],
+    ["anarlog-macos-aarch64.dmg", "macOS"],
+    ["anarlog-windows-x86_64-setup.exe", "Windows"],
+    ["anarlog-linux-x86_64.AppImage", "Linux"],
   ]);
   for (const [id, content] of contents) {
     await writeFile(path.join(assetDir, id), content);
@@ -427,51 +421,50 @@ test("binds every release asset to a candidate run and detects replacement", asy
     status: "draft",
     assets: [
       {
-        id: "asset-c",
+        id: "anarlog-linux-x86_64.AppImage",
         publicPlatform: "appimage-x86_64",
         updatePlatform: "linux-x86_64-appimage",
-        size: Buffer.byteLength(contents.get("asset-c")),
+        size: Buffer.byteLength(contents.get("anarlog-linux-x86_64.AppImage")),
         signature: "linux-signature",
       },
       {
-        id: "asset-a",
+        id: "anarlog-macos-aarch64.dmg",
         publicPlatform: "dmg-aarch64",
-        size: Buffer.byteLength(contents.get("asset-a")),
+        size: Buffer.byteLength(contents.get("anarlog-macos-aarch64.dmg")),
       },
       {
-        id: "asset-b",
+        id: "anarlog-windows-x86_64-setup.exe",
         publicPlatform: "nsis-x86_64",
         updatePlatform: "windows-x86_64-nsis",
-        size: Buffer.byteLength(contents.get("asset-b")),
+        size: Buffer.byteLength(
+          contents.get("anarlog-windows-x86_64-setup.exe"),
+        ),
         signature: "windows-signature",
       },
     ],
   };
   const output = path.join(directory, "manifest.json");
 
-  await createManifest({
+  const created = await createManifest({
     release,
     output,
     version: "1.4.0",
     candidateSha,
     workflowRunId: "12345",
-    cnVersion,
-    cnAssetId,
-    cnSha256,
     assetDir,
   });
   const manifest = JSON.parse(await readFile(output, "utf8"));
 
-  assert.deepEqual(manifest.tools, {
-    crabNebula: {
-      cliVersion: cnVersion,
-      cliAssetId: cnAssetId,
-      cliSha256: cnSha256,
-    },
-  });
+  // Nothing outside this repository is pinned any more: the release assets are
+  // the workflow artifacts the candidate run produced.
+  assert.equal(created.tools, undefined);
   assert.deepEqual(
     manifest.assets.map((asset) => asset.id),
-    ["asset-a", "asset-b", "asset-c"],
+    [
+      "anarlog-linux-x86_64.AppImage",
+      "anarlog-macos-aarch64.dmg",
+      "anarlog-windows-x86_64-setup.exe",
+    ],
   );
   await verifyManifest({
     release,
@@ -479,9 +472,6 @@ test("binds every release asset to a candidate run and detects replacement", asy
     version: "1.4.0",
     candidateSha,
     workflowRunId: "12345",
-    cnVersion,
-    cnAssetId,
-    cnSha256,
     assetDir,
   });
 
@@ -491,13 +481,10 @@ test("binds every release asset to a candidate run and detects replacement", asy
       manifest,
       version: "1.4.0",
       candidateSha,
-      workflowRunId: "12345",
-      cnVersion: "cn 0.22.0",
-      cnAssetId,
-      cnSha256,
+      workflowRunId: "12346",
       assetDir,
     }),
-    /CLI version mismatch/,
+    /Workflow run ID mismatch/,
   );
 
   await assert.rejects(
@@ -505,16 +492,29 @@ test("binds every release asset to a candidate run and detects replacement", asy
       release,
       manifest,
       version: "1.4.0",
-      candidateSha,
+      candidateSha: "f".repeat(40),
       workflowRunId: "12345",
-      cnVersion,
-      cnAssetId: "different-asset",
-      cnSha256,
       assetDir,
     }),
-    /CLI asset ID mismatch/,
+    /Candidate SHA mismatch/,
   );
 
+  await assert.rejects(
+    verifyManifest({
+      release,
+      manifest: { ...manifest, tools: { externalCli: {} } },
+      version: "1.4.0",
+      candidateSha,
+      workflowRunId: "12345",
+      assetDir,
+    }),
+    /must not pin an external release tool/,
+  );
+
+  await writeFile(
+    path.join(assetDir, "anarlog-windows-x86_64-setup.exe"),
+    "replaced",
+  );
   await assert.rejects(
     verifyManifest({
       release,
@@ -522,126 +522,42 @@ test("binds every release asset to a candidate run and detects replacement", asy
       version: "1.4.0",
       candidateSha,
       workflowRunId: "12345",
-      cnVersion,
-      cnAssetId,
-      cnSha256: "a".repeat(64),
-      assetDir,
-    }),
-    /CLI SHA-256 mismatch/,
-  );
-
-  await writeFile(path.join(assetDir, "asset-b"), "replaced");
-  await assert.rejects(
-    verifyManifest({
-      release,
-      manifest,
-      version: "1.4.0",
-      candidateSha,
-      workflowRunId: "12345",
-      cnVersion,
-      cnAssetId,
-      cnSha256,
       assetDir,
     }),
     /size .* expected|SHA-256 changed/,
   );
 });
 
-test("binds local GitHub release assets to exact manifest IDs and bytes", async () => {
-  const directory = await mkdtemp(
-    path.join(os.tmpdir(), "anarlog-release-mirror-"),
-  );
-  const assetDir = path.join(directory, "assets");
-  await mkdir(assetDir);
-  await writeFile(path.join(assetDir, "asset-a"), "macOS");
-  await writeFile(path.join(assetDir, "asset-b"), "Windows");
-
-  const release = {
-    version: "1.4.0",
-    status: "draft",
-    assets: [
-      {
-        id: "asset-a",
-        publicPlatform: "dmg-aarch64",
-        size: 5,
-        signature: null,
-      },
-      {
-        id: "asset-b",
-        publicPlatform: "nsis-x86_64",
-        updatePlatform: "windows-x86_64-nsis",
-        size: 7,
-        signature: "signature",
-      },
-    ],
-  };
-  const output = path.join(directory, "manifest.json");
-  await createManifest({
-    release,
-    output,
-    version: "1.4.0",
-    candidateSha,
-    workflowRunId: "12345",
-    cnVersion,
-    cnAssetId,
-    cnSha256,
-    assetDir,
-  });
-  const manifest = JSON.parse(await readFile(output, "utf8"));
-  const platformAssetIds = {
-    "dmg-aarch64": "asset-a",
-    "nsis-x86_64": "asset-b",
-  };
-  const verify = (assetIds = platformAssetIds) =>
-    verifyLocalAssets({
-      manifest,
-      version: "1.4.0",
-      candidateSha,
-      workflowRunId: "12345",
-      cnVersion,
-      cnAssetId,
-      cnSha256,
-      assetDir,
-      platformAssetIds: assetIds,
-    });
-
-  await verify();
-
-  await writeFile(path.join(assetDir, "asset-b"), "replace");
-  await assert.rejects(verify(), /SHA-256 changed/);
-
-  await writeFile(path.join(assetDir, "wrong-id"), "replace");
-  await assert.rejects(
-    verify(),
-    /Local asset IDs do not match the provenance manifest/,
-  );
-});
-
-test("rejects swapped public platform asset IDs with identical bytes", async () => {
+// Asset identity is the published file name, so a platform mapping that moves
+// between artifacts is caught even when the bytes are identical.
+test("rejects a release whose platform mapping moved after the candidate run", async () => {
   const directory = await mkdtemp(
     path.join(os.tmpdir(), "anarlog-release-platform-map-"),
   );
   const assetDir = path.join(directory, "assets");
   await mkdir(assetDir);
-  const contents = "identical payload";
-  await writeFile(path.join(assetDir, "asset-a"), contents);
-  await writeFile(path.join(assetDir, "asset-b"), contents);
+  const payload = "identical payload";
+  await writeFile(path.join(assetDir, "anarlog-macos-aarch64.dmg"), payload);
+  await writeFile(
+    path.join(assetDir, "anarlog-windows-x86_64-setup.exe"),
+    payload,
+  );
 
   const release = {
     version: "1.4.0",
     status: "draft",
     assets: [
       {
-        id: "asset-a",
+        id: "anarlog-macos-aarch64.dmg",
         publicPlatform: "dmg-aarch64",
-        size: Buffer.byteLength(contents),
+        size: Buffer.byteLength(payload),
         signature: null,
       },
       {
-        id: "asset-b",
+        id: "anarlog-windows-x86_64-setup.exe",
         publicPlatform: "nsis-x86_64",
         updatePlatform: "windows-x86_64-nsis",
-        size: Buffer.byteLength(contents),
+        size: Buffer.byteLength(payload),
         signature: "signature",
       },
     ],
@@ -653,28 +569,27 @@ test("rejects swapped public platform asset IDs with identical bytes", async () 
     version: "1.4.0",
     candidateSha,
     workflowRunId: "12345",
-    cnVersion,
-    cnAssetId,
-    cnSha256,
     assetDir,
   });
   const manifest = JSON.parse(await readFile(output, "utf8"));
 
+  const swapped = {
+    ...release,
+    assets: [
+      { ...release.assets[0], publicPlatform: "nsis-x86_64" },
+      { ...release.assets[1], publicPlatform: "dmg-aarch64" },
+    ],
+  };
+
   await assert.rejects(
-    verifyLocalAssets({
+    verifyManifest({
+      release: swapped,
       manifest,
       version: "1.4.0",
       candidateSha,
       workflowRunId: "12345",
-      cnVersion,
-      cnAssetId,
-      cnSha256,
       assetDir,
-      platformAssetIds: {
-        "dmg-aarch64": "asset-b",
-        "nsis-x86_64": "asset-a",
-      },
     }),
-    /Downloaded asset ID for dmg-aarch64 does not match the provenance manifest/,
+    /Asset metadata changed at index 0/,
   );
 });

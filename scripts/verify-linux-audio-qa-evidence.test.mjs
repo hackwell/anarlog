@@ -22,13 +22,13 @@ const architectures = {
     publicPlatform: "debian-x86_64",
     updatePlatform: "linux-x86_64-deb",
     debianArch: "amd64",
-    assetId: "asset-x64",
+    assetId: "anarlog-linux-x86_64.deb",
   },
   arm64: {
     publicPlatform: "debian-aarch64",
     updatePlatform: "linux-aarch64-deb",
     debianArch: "arm64",
-    assetId: "asset-arm64",
+    assetId: "anarlog-linux-aarch64.deb",
   },
 };
 const thresholds = linuxAudioQaPolicy.thresholds;
@@ -111,25 +111,15 @@ async function createFixture() {
     await writeFile(
       path.join(root, "provenance.json"),
       JSON.stringify({
-        application: "fastrepl/hyprnote2",
+        release_repository: "flagbit/session-echo-releases",
         version,
         candidate_sha: candidateSha,
         workflow_run_id: audioQaRunId,
         source_workflow_run_id: dryRunId,
         public_platform: architecture.publicPlatform,
-        crabnebula_asset_id: architecture.assetId,
-        crabnebula_asset_size: 1024,
+        release_asset: architecture.assetId,
+        release_asset_size: 1024,
         expected_sha256: hashes[artifactArch],
-      }),
-    );
-    await writeFile(
-      path.join(root, "crabnebula-asset.json"),
-      JSON.stringify({
-        id: architecture.assetId,
-        filename: `anarlog-${artifactArch}.deb`,
-        publicPlatform: architecture.publicPlatform,
-        updatePlatform: architecture.updatePlatform,
-        size: 1024,
       }),
     );
     await writeFile(

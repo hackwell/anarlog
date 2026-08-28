@@ -1,4 +1,6 @@
-# https://docs.crabnebula.dev/cloud/ci/tauri-v2-workflow/
+# Builds the stable/staging desktop candidate. Stable candidates stage every
+# release asset the plan expects as a workflow artifact; desktop_publish.yaml
+# turns that exact run into the GitHub Release.
 on:
   workflow_dispatch:
     inputs:
@@ -32,7 +34,6 @@ concurrency:
   group: ${{ inputs.channel == 'stable' && 'desktop-stable-release' || format('{0}-{1}-{2}', github.workflow, github.ref, inputs.channel) }}
   cancel-in-progress: ${{ inputs.channel != 'stable' }}
 env:
-  CN_APPLICATION: "fastrepl/hyprnote2"
   RELEASE_CHANNEL: ${{ inputs.channel }}
   TAURI_CONF_PATH: ./src-tauri/tauri.conf.${{ inputs.channel }}.json
   NODE_OPTIONS: "--max-old-space-size=4096"
@@ -87,7 +88,7 @@ jobs:
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "Computed version: $VERSION"
 
-  cn-draft:
+  preflight:
     if: ${{ inputs.channel != 'staging' }}
     needs: compute-version
     runs-on: ubuntu-latest
@@ -95,6 +96,10 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: ${{ inputs.candidate_sha || github.sha }}
+      - name: Verify the releases repository is writable
+        uses: ./.github/actions/releases_preflight
+        with:
+          token: ${{ secrets.RELEASES_TOKEN }}
       - run: ./scripts/version.sh "./apps/desktop/src-tauri/tauri.conf.json" "${{ needs.compute-version.outputs.version }}"
       - if: ${{ inputs.include_windows }}
         name: Verify stable signing configuration
@@ -119,18 +124,10 @@ jobs:
             echo "::error::Stable Windows release signing configuration is missing: ${missing[*]}"
             exit 1
           fi
-      - uses: ./.github/actions/cn_release
-        with:
-          cmd: draft
-          app: ${{ env.CN_APPLICATION }}
-          key: ${{ secrets.CN_API_KEY }}
-          channel: ${{ env.RELEASE_CHANNEL }}
-          framework: tauri
-          working-directory: ./apps/desktop
 
   build-macos:
-    needs: [compute-version, cn-draft]
-    if: ${{ !cancelled() && (needs.cn-draft.result == 'success' || needs.cn-draft.result == 'skipped') }}
+    needs: [compute-version, preflight]
+    if: ${{ !cancelled() && (needs.preflight.result == 'success' || needs.preflight.result == 'skipped') }}
     permissions:
       contents: write
     runs-on: depot-macos-26
@@ -242,20 +239,22 @@ jobs:
           apple-id: ${{ secrets.APPLE_ID }}
           apple-password: ${{ secrets.APPLE_PASSWORD }}
           apple-team-id: ${{ secrets.APPLE_TEAM_ID }}
-      - run: |
-          mkdir -p target/release/
-          find target/${{ matrix.target }}/release -type f -not -path "*/\.*" -exec cp {} target/release/ \;
-        shell: bash
-        working-directory: ./apps/desktop/src-tauri
       - if: ${{ inputs.channel != 'staging' }}
-        uses: ./.github/actions/cn_release
+        name: Stage release assets
+        shell: bash
+        run: |
+          mkdir -p release-assets
+          node scripts/desktop-release-assets.mjs stage \
+            --bundle-root apps/desktop/src-tauri/target \
+            --build-target "${{ matrix.target }}" \
+            --output-dir release-assets
+      - if: ${{ inputs.channel != 'staging' }}
+        uses: actions/upload-artifact@v4
         with:
-          cmd: upload
-          app: ${{ env.CN_APPLICATION }}
-          key: ${{ secrets.CN_API_KEY }}
-          channel: ${{ env.RELEASE_CHANNEL }}
-          framework: tauri
-          working-directory: ./apps/desktop
+          name: desktop-release-assets-${{ matrix.target }}
+          path: release-assets/*
+          if-no-files-found: error
+          retention-days: 7
       - if: ${{ inputs.channel == 'staging' }}
         uses: actions/upload-artifact@v4
         with:
@@ -278,8 +277,8 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.CLOUDFLARE_R2_SECRET_ACCESS_KEY }}
 
   build-linux:
-    needs: [compute-version, cn-draft]
-    if: ${{ inputs.include_linux && !cancelled() && (needs.cn-draft.result == 'success' || needs.cn-draft.result == 'skipped') }}
+    needs: [compute-version, preflight]
+    if: ${{ inputs.include_linux && !cancelled() && (needs.preflight.result == 'success' || needs.preflight.result == 'skipped') }}
     strategy:
       fail-fast: true
       matrix:
@@ -429,11 +428,6 @@ jobs:
                 exit 1
               fi
             '
-      - run: |
-          mkdir -p target/release
-          find target/${{ matrix.target }}/release/bundle/appimage target/${{ matrix.target }}/release/bundle/deb \
-            -maxdepth 1 -type f -exec cp {} target/release/ \;
-        working-directory: ./apps/desktop/src-tauri
       - uses: actions/upload-artifact@v4
         with:
           name: anarlog-${{ inputs.channel }}-linux-${{ matrix.artifact_name }}
@@ -443,14 +437,21 @@ jobs:
           if-no-files-found: error
           retention-days: 7
       - if: ${{ inputs.channel != 'staging' }}
-        uses: ./.github/actions/cn_release
+        name: Stage release assets
+        shell: bash
+        run: |
+          mkdir -p release-assets
+          node scripts/desktop-release-assets.mjs stage \
+            --bundle-root apps/desktop/src-tauri/target \
+            --build-target "${{ matrix.target }}" \
+            --output-dir release-assets
+      - if: ${{ inputs.channel != 'staging' }}
+        uses: actions/upload-artifact@v4
         with:
-          cmd: upload
-          app: ${{ env.CN_APPLICATION }}
-          key: ${{ secrets.CN_API_KEY }}
-          channel: ${{ env.RELEASE_CHANNEL }}
-          framework: tauri
-          working-directory: ./apps/desktop
+          name: desktop-release-assets-${{ matrix.target }}
+          path: release-assets/*
+          if-no-files-found: error
+          retention-days: 7
       - if: ${{ inputs.channel == 'staging' }}
         run: |
           timestamp=$(date -u +"%Y%m%d%H%M%S")
@@ -473,8 +474,8 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.CLOUDFLARE_R2_SECRET_ACCESS_KEY }}
 
   build-windows:
-    needs: [compute-version, cn-draft]
-    if: ${{ inputs.include_windows && !cancelled() && (needs.cn-draft.result == 'success' || needs.cn-draft.result == 'skipped') }}
+    needs: [compute-version, preflight]
+    if: ${{ inputs.include_windows && !cancelled() && (needs.preflight.result == 'success' || needs.preflight.result == 'skipped') }}
     permissions:
       contents: read
       id-token: write
@@ -672,12 +673,6 @@ jobs:
             "${installers[0]}" \
             "${installers[0]}.sig" \
             apps/desktop/src-tauri/tauri.conf.json
-      - shell: pwsh
-        run: |
-          $source = "apps/desktop/src-tauri/target/x86_64-pc-windows-msvc/release/bundle/nsis"
-          $destination = "apps/desktop/src-tauri/target/release"
-          New-Item -ItemType Directory -Force -Path $destination | Out-Null
-          Copy-Item "$source/*" $destination
       - uses: actions/upload-artifact@v4
         with:
           name: anarlog-${{ inputs.channel }}-windows-x64
@@ -685,16 +680,23 @@ jobs:
           if-no-files-found: error
           retention-days: 7
       - if: ${{ inputs.channel != 'staging' }}
-        uses: ./.github/actions/cn_release
+        name: Stage release assets
+        shell: bash
+        run: |
+          mkdir -p release-assets
+          node scripts/desktop-release-assets.mjs stage \
+            --bundle-root apps/desktop/src-tauri/target \
+            --build-target "x86_64-pc-windows-msvc" \
+            --output-dir release-assets
+      - if: ${{ inputs.channel != 'staging' }}
+        uses: actions/upload-artifact@v4
         with:
-          cmd: upload
-          app: ${{ env.CN_APPLICATION }}
-          key: ${{ secrets.CN_API_KEY }}
-          channel: ${{ env.RELEASE_CHANNEL }}
-          framework: tauri
-          working-directory: ./apps/desktop
+          name: desktop-release-assets-x86_64-pc-windows-msvc
+          path: release-assets/*
+          if-no-files-found: error
+          retention-days: 7
 
-  verify-cn-release:
+  verify-release:
     if: ${{ inputs.channel != 'staging' && !cancelled() && needs.build-macos.result == 'success' && (!inputs.include_linux || needs.build-linux.result == 'success') && (!inputs.include_windows || needs.build-windows.result == 'success') }}
     needs: [compute-version, build-macos, build-windows, build-linux]
     runs-on: ubuntu-latest
@@ -702,99 +704,58 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: ${{ inputs.candidate_sha || github.sha }}
-      - id: release
-        uses: ./.github/actions/cn_release
+      - uses: actions/download-artifact@v4
         with:
-          raw: >-
-            release show ${{ env.CN_APPLICATION }} ${{ needs.compute-version.outputs.version }}
-            --channel ${{ env.RELEASE_CHANNEL }}
-          key: ${{ secrets.CN_API_KEY }}
-      - env:
-          EXPECTED_VERSION: ${{ needs.compute-version.outputs.version }}
-          RELEASE: ${{ steps.release.outputs.raw }}
+          pattern: desktop-release-assets-*
+          path: ${{ runner.temp }}/release-assets
+          merge-multiple: true
+      - name: Merge the staged release assets
+        env:
+          INCLUDE_LINUX: ${{ inputs.include_linux }}
+          INCLUDE_WINDOWS: ${{ inputs.include_windows }}
+          VERSION: ${{ needs.compute-version.outputs.version }}
         run: |
-          ACTUAL_VERSION=$(echo "$RELEASE" | jq -r '.version // empty')
-          if [[ "$ACTUAL_VERSION" != "$EXPECTED_VERSION" ]]; then
-            echo "::error::Expected CrabNebula release $EXPECTED_VERSION, got $ACTUAL_VERSION"
-            exit 1
-          fi
-
-          EXPECTED_PLATFORMS=(
-            "dmg-aarch64"
-            "dmg-x86_64"
-          )
-          if [[ "${{ inputs.include_linux }}" == "true" ]]; then
-            EXPECTED_PLATFORMS+=(
-              "appimage-x86_64"
-              "debian-x86_64"
-              "appimage-aarch64"
-              "debian-aarch64"
-            )
-          fi
-          if [[ "${{ inputs.include_windows }}" == "true" ]]; then
-            EXPECTED_PLATFORMS+=("nsis-x86_64")
-          fi
-
-          INVALID_PLATFORMS=()
-          for platform in "${EXPECTED_PLATFORMS[@]}"; do
-            if ! echo "$RELEASE" | jq -e --arg platform "$platform" \
-              '[.assets[]? | select(.publicPlatform == $platform and ((.size // 0) | tonumber) > 0)] | length == 1' > /dev/null; then
-              INVALID_PLATFORMS+=("$platform")
-            fi
-          done
-
-          if [[ "${#INVALID_PLATFORMS[@]}" -gt 0 ]]; then
-            echo "::error::CrabNebula release $EXPECTED_VERSION has missing, duplicate, or empty download assets: ${INVALID_PLATFORMS[*]}"
-            exit 1
-          fi
-
-          EXPECTED_UPDATE_PLATFORMS=(
-            "darwin-aarch64"
-            "darwin-x86_64"
-          )
-          if [[ "${{ inputs.include_linux }}" == "true" ]]; then
-            EXPECTED_UPDATE_PLATFORMS+=(
-              "linux-x86_64-appimage"
-              "linux-x86_64-deb"
-              "linux-aarch64-appimage"
-              "linux-aarch64-deb"
-            )
-          fi
-          if [[ "${{ inputs.include_windows }}" == "true" ]]; then
-            EXPECTED_UPDATE_PLATFORMS+=("windows-x86_64-nsis")
-          fi
-
-          INVALID_UPDATE_PLATFORMS=()
-          for platform in "${EXPECTED_UPDATE_PLATFORMS[@]}"; do
-            if ! echo "$RELEASE" | jq -e --arg platform "$platform" \
-              '[.assets[]? | select(.updatePlatform == $platform and ((.signature // "") | length) > 0 and ((.size // 0) | tonumber) > 0)] | length == 1' > /dev/null; then
-              INVALID_UPDATE_PLATFORMS+=("$platform")
-            fi
-          done
-
-          if [[ "${#INVALID_UPDATE_PLATFORMS[@]}" -gt 0 ]]; then
-            echo "::error::CrabNebula release $EXPECTED_VERSION has missing, duplicate, unsigned, or empty updater assets: ${INVALID_UPDATE_PLATFORMS[*]}"
-            exit 1
-          fi
+          node scripts/desktop-release-assets.mjs merge \
+            --asset-dir "$RUNNER_TEMP/release-assets" \
+            --output "$RUNNER_TEMP/release.json" \
+            --version "$VERSION" \
+            --include-linux "$INCLUDE_LINUX" \
+            --include-windows "$INCLUDE_WINDOWS"
+      - name: Verify the release covers every selected platform
+        env:
+          INCLUDE_LINUX: ${{ inputs.include_linux }}
+          INCLUDE_WINDOWS: ${{ inputs.include_windows }}
+        run: |
+          node scripts/desktop-release-provenance.mjs verify-platforms \
+            --release "$RUNNER_TEMP/release.json" \
+            --include-linux "$INCLUDE_LINUX" \
+            --include-windows "$INCLUDE_WINDOWS"
+      - name: Verify the updater metadata this release will publish
+        env:
+          INCLUDE_LINUX: ${{ inputs.include_linux }}
+          INCLUDE_WINDOWS: ${{ inputs.include_windows }}
+          VERSION: ${{ needs.compute-version.outputs.version }}
+        run: |
+          node scripts/desktop-latest-json.mjs \
+            --asset-dir "$RUNNER_TEMP/release-assets" \
+            --output "$RUNNER_TEMP/latest.json" \
+            --version "$VERSION" \
+            --notes "https://sessionecho.flagbit.de/changelog/$VERSION" \
+            --include-linux "$INCLUDE_LINUX" \
+            --include-windows "$INCLUDE_WINDOWS"
+          jq -r '.platforms | keys[]' "$RUNNER_TEMP/latest.json"
       - name: Record release provenance
         env:
-          CN_ASSET_ID: ${{ steps.release.outputs.cli-asset-id }}
-          CN_SHA256: ${{ steps.release.outputs.cli-sha256 }}
-          CN_VERSION: ${{ steps.release.outputs.cli-version }}
-          RELEASE: ${{ steps.release.outputs.raw }}
           VERSION: ${{ needs.compute-version.outputs.version }}
         run: |
           mkdir -p release-provenance
-          printf '%s' "$RELEASE" > "$RUNNER_TEMP/crabnebula-release.json"
           node scripts/desktop-release-provenance.mjs create \
-            --release "$RUNNER_TEMP/crabnebula-release.json" \
+            --release "$RUNNER_TEMP/release.json" \
             --output release-provenance/manifest.json \
             --version "$VERSION" \
             --candidate-sha "$GITHUB_SHA" \
             --run-id "$GITHUB_RUN_ID" \
-            --cn-version "$CN_VERSION" \
-            --cn-asset-id "$CN_ASSET_ID" \
-            --cn-sha256 "$CN_SHA256"
+            --asset-dir "$RUNNER_TEMP/release-assets"
       - uses: actions/upload-artifact@v4
         with:
           name: desktop-release-provenance-${{ needs.compute-version.outputs.version }}-${{ github.sha }}

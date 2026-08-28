@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: Stable version whose CrabNebula DEBs should be tested
+        description: Stable version whose candidate DEBs should be tested
         required: true
         type: string
       candidate_sha:
@@ -24,9 +24,6 @@ permissions:
 concurrency:
   group: desktop-linux-audio-qa-${{ inputs.version }}-${{ inputs.candidate_sha }}
   cancel-in-progress: false
-
-env:
-  CN_APPLICATION: fastrepl/hyprnote2
 
 jobs:
   parse:
@@ -121,10 +118,12 @@ jobs:
         include:
           - runner: ubuntu-24.04
             artifact_arch: x64
+            build_target: x86_64-unknown-linux-gnu
             public_platform: debian-x86_64
             debian_arch: amd64
           - runner: ubuntu-24.04-arm
             artifact_arch: arm64
+            build_target: aarch64-unknown-linux-gnu
             public_platform: debian-aarch64
             debian_arch: arm64
     runs-on: ${{ matrix.runner }}
@@ -195,129 +194,78 @@ jobs:
             echo "::error::Dry-run provenance does not match this candidate"
             exit 1
           fi
-      - id: release
-        uses: ./.github/actions/cn_release
-        with:
-          raw: >-
-            release show ${{ env.CN_APPLICATION }} ${{ needs.parse.outputs.version }}
-            --channel stable
-          key: ${{ secrets.CN_API_KEY }}
       - id: asset
+        name: Take the candidate package from the dry run
         env:
           CANDIDATE_SHA: ${{ needs.parse.outputs.candidate_sha }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PLATFORM: ${{ matrix.public_platform }}
-          RELEASE: ${{ steps.release.outputs.raw }}
+          RUN_ID: ${{ needs.parse.outputs.dry_run_id }}
           VERSION: ${{ needs.parse.outputs.version }}
         run: |
-          actual_version=$(jq -r '.version // empty' <<< "$RELEASE")
-          if [[ "$actual_version" != "$VERSION" ]]; then
-            echo "::error::Expected CrabNebula release $VERSION, got $actual_version"
-            exit 1
-          fi
-
-          asset=$(jq -cer --arg platform "$PLATFORM" '
-            [.assets[]?
-              | select(
-                  .publicPlatform == $platform
-                  and ((.size // 0) | tonumber) > 0
-                )
-            ]
-            | if length == 1 then .[0]
-              else error("expected exactly one nonempty asset for " + $platform)
-              end
-          ' <<< "$RELEASE")
-
-          asset_id=$(jq -r '.id' <<< "$asset")
-          asset_size=$(jq -r '.size | tonumber' <<< "$asset")
-          asset_filename=$(jq -r '.filename // empty' <<< "$asset")
-          if [[ -z "$asset_id" || -z "$asset_filename" ]]; then
-            echo "::error::CrabNebula asset metadata is incomplete"
-            exit 1
-          fi
-
           artifact_dir="$GITHUB_WORKSPACE/qa-artifacts/linux-${{ matrix.artifact_arch }}"
           manifest="$artifact_dir/release-provenance/manifest.json"
-          manifest_asset=$(jq -cer --arg id "$asset_id" '
+
+          asset_file=$(node scripts/desktop-release-assets.mjs file \
+            --public-platform "$PLATFORM")
+
+          gh run download "$RUN_ID" \
+            --repo "$GITHUB_REPOSITORY" \
+            --name "desktop-release-assets-${{ matrix.build_target }}" \
+            --dir "$RUNNER_TEMP/candidate"
+
+          manifest_asset=$(jq -cer --arg id "$asset_file" '
             [.assets[]? | select(.id == $id)]
             | if length == 1 then .[0]
               else error("expected one matching asset in dry-run provenance")
               end
           ' "$manifest")
+          asset_size=$(jq -r '.size' <<< "$manifest_asset")
           expected_sha256=$(jq -r '.sha256 // empty' <<< "$manifest_asset")
           if [[ ! "$expected_sha256" =~ ^[0-9a-f]{64}$ ]]; then
-            echo "::error::Dry-run provenance has no valid SHA-256 for asset $asset_id"
+            echo "::error::Dry-run provenance has no valid SHA-256 for $asset_file"
             exit 1
           fi
-          if ! jq -e \
-            --arg platform "$PLATFORM" \
-            --argjson size "$asset_size" \
-            '
-              .publicPlatform == $platform
-              and .size == $size
-            ' <<< "$manifest_asset" > /dev/null; then
-            echo "::error::CrabNebula asset metadata changed after the candidate dry run"
+          if ! jq -e --arg platform "$PLATFORM" '.publicPlatform == $platform' \
+            <<< "$manifest_asset" > /dev/null; then
+            echo "::error::$asset_file is not the $PLATFORM asset in the dry-run provenance"
             exit 1
           fi
 
-          jq '{
-            id,
-            filename,
-            publicPlatform,
-            updatePlatform,
-            size,
-            createdAt,
-            updatedAt
-          }' <<< "$asset" > "$artifact_dir/crabnebula-asset.json"
+          output="$GITHUB_WORKSPACE/candidate-linux-${{ matrix.artifact_arch }}.deb"
+          cp "$RUNNER_TEMP/candidate/$asset_file" "$output"
+
+          actual_size=$(stat --format='%s' "$output")
+          if [[ "$actual_size" != "$asset_size" ]]; then
+            echo "::error::Candidate asset size $actual_size does not match provenance $asset_size"
+            exit 1
+          fi
+          echo "$expected_sha256  $output" | sha256sum --check
+          sha256sum "$output" \
+            | awk '{print $1 "  candidate-linux-${{ matrix.artifact_arch }}.deb"}' \
+            > "$artifact_dir/download.sha256"
+
           jq -n \
-            --arg application "$CN_APPLICATION" \
-            --arg asset_id "$asset_id" \
             --arg candidate_sha "$CANDIDATE_SHA" \
-            --arg platform "$PLATFORM" \
-            --arg run_id "$GITHUB_RUN_ID" \
-            --arg source_run_id "${{ needs.parse.outputs.dry_run_id }}" \
-            --arg version "$VERSION" \
             --arg expected_sha256 "$expected_sha256" \
-            --argjson asset_size "$asset_size" \
+            --arg platform "$PLATFORM" \
+            --arg release_asset "$asset_file" \
+            --arg repository "$(jq -er '.releaseRepository' scripts/desktop-release-platforms.json)" \
+            --arg run_id "$GITHUB_RUN_ID" \
+            --arg source_run_id "$RUN_ID" \
+            --arg version "$VERSION" \
+            --argjson release_asset_size "$asset_size" \
             '{
-              application: $application,
+              release_repository: $repository,
               version: $version,
               candidate_sha: $candidate_sha,
               workflow_run_id: $run_id,
               source_workflow_run_id: $source_run_id,
               public_platform: $platform,
-              crabnebula_asset_id: $asset_id,
-              crabnebula_asset_size: $asset_size,
+              release_asset: $release_asset,
+              release_asset_size: $release_asset_size,
               expected_sha256: $expected_sha256
             }' > "$artifact_dir/provenance.json"
-
-          echo "id=$asset_id" >> "$GITHUB_OUTPUT"
-          echo "size=$asset_size" >> "$GITHUB_OUTPUT"
-          echo "sha256=$expected_sha256" >> "$GITHUB_OUTPUT"
-      - env:
-          ASSET_ID: ${{ steps.asset.outputs.id }}
-          EXPECTED_SIZE: ${{ steps.asset.outputs.size }}
-          EXPECTED_SHA256: ${{ steps.asset.outputs.sha256 }}
-        run: |
-          output="$GITHUB_WORKSPACE/candidate-linux-${{ matrix.artifact_arch }}.deb"
-          curl \
-            --fail \
-            --show-error \
-            --location \
-            --retry 3 \
-            --retry-all-errors \
-            "https://cdn.crabnebula.app/asset/$ASSET_ID" \
-            --output "$output"
-
-          actual_size=$(stat --format='%s' "$output")
-          if [[ "$actual_size" != "$EXPECTED_SIZE" ]]; then
-            echo "::error::Downloaded asset size $actual_size does not match CrabNebula metadata $EXPECTED_SIZE"
-            exit 1
-          fi
-
-          echo "$EXPECTED_SHA256  $output" | sha256sum --check
-          sha256sum "$output" \
-            | awk '{print $1 "  candidate-linux-${{ matrix.artifact_arch }}.deb"}' \
-            > "$GITHUB_WORKSPACE/qa-artifacts/linux-${{ matrix.artifact_arch }}/download.sha256"
       - uses: ./.github/actions/rust_install
         with:
           platform: linux
