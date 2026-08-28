@@ -73,15 +73,6 @@ struct DevtoolsPanelView: View {
       DevtoolsActionButton("Onboarding") {
         RustBridge.devtoolsPanelAction("navigation:onboarding")
       }
-      DevtoolsActionButton("Instruction: sign-in") {
-        RustBridge.devtoolsPanelAction("instruction:sign-in")
-      }
-      DevtoolsActionButton("Instruction: billing") {
-        RustBridge.devtoolsPanelAction("instruction:billing")
-      }
-      DevtoolsActionButton("Instruction: integration") {
-        RustBridge.devtoolsPanelAction("instruction:integration")
-      }
     }
   }
 

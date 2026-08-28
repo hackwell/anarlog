@@ -371,10 +371,6 @@ msgstr "Authenticate to continue."
 msgid "Authenticating…"
 msgstr "Authenticating…"
 
-#: src/instruction/index.tsx
-msgid "Authorize access in your browser, then return to Session Echo."
-msgstr "Authorize access in your browser, then return to Session Echo."
-
 #: src/templates/auto-form.tsx
 msgid "Auto summary format"
 msgstr "Auto summary format"
@@ -417,7 +413,6 @@ msgid "Automations"
 msgstr "Automations"
 
 #: src/calendar/components/apple/permission.tsx
-#: src/instruction/index.tsx
 #: src/sidebar/custom-sidebar-header.tsx
 msgid "Back"
 msgstr "Back"
@@ -709,10 +704,6 @@ msgstr "comments"
 msgid "Company"
 msgstr "Company"
 
-#: src/instruction/index.tsx
-msgid "Complete your purchase"
-msgstr "Complete your purchase"
-
 #: src/composer/index.tsx
 msgid "Composer"
 msgstr "Composer"
@@ -744,10 +735,9 @@ msgid "Connect"
 msgstr "Connect"
 
 #. placeholder {0}: config.displayName
-#. placeholder {0}: integration.displayName
 #. placeholder {0}: provider.displayName
+#. placeholder {0}: subscriptionProvider.displayName
 #: src/calendar/components/sidebar.tsx
-#: src/instruction/index.tsx
 #: src/settings/ai/llm/subscriptions/connect.tsx
 #: src/settings/ai/shared/index.tsx
 msgid "Connect {0}"
@@ -766,10 +756,6 @@ msgstr "Connect calendar"
 #: src/imports/screen.tsx
 msgid "Connect once to bring over your {0} history and keep new meetings coming in while you switch."
 msgstr "Connect once to bring over your {0} history and keep new meetings coming in while you switch."
-
-#: src/instruction/index.tsx
-msgid "Connect your integration"
-msgstr "Connect your integration"
 
 #: src/imports/screen.tsx
 msgid "Connected · New meetings are imported automatically while Session Echo is running."
@@ -1270,10 +1256,6 @@ msgstr "Find a note..."
 #: src/chat/components/body/empty.tsx
 msgid "Find key decisions."
 msgstr "Find key decisions."
-
-#: src/instruction/index.tsx
-msgid "Finish checkout in your browser, then return to Session Echo."
-msgstr "Finish checkout in your browser, then return to Session Echo."
 
 #: src/settings/ai/llm/subscriptions/connect.tsx
 msgid "Finishing connection…"
@@ -2334,14 +2316,6 @@ msgstr "Remove photo"
 #: src/automations/starters.tsx
 msgid "Render canonical Markdown"
 msgstr "Render canonical Markdown"
-
-#: src/instruction/index.tsx
-msgid "Reopen checkout page"
-msgstr "Reopen checkout page"
-
-#: src/instruction/index.tsx
-msgid "Reopen in browser"
-msgstr "Reopen in browser"
 
 #: src/settings/ai/shared/index.tsx
 msgid "Repair Keychain Access"

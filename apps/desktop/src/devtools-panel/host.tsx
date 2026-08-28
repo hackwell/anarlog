@@ -6,7 +6,6 @@ import {
   commands as windowsCommands,
   events as windowsEvents,
   getCurrentWebviewWindowLabel,
-  openUrlWithInstruction,
 } from "@anlg/plugin-windows";
 
 import { executeTransaction } from "~/db";
@@ -34,8 +33,6 @@ const canResolveDevtoolsPanel = import.meta.env.MODE !== "test";
 
 type DevtoolsPanelAction =
   | "navigation:onboarding"
-  | "instruction:billing"
-  | "instruction:integration"
   | `toasts:preview:${DevtoolsToastPreview}`
   | "toasts:clear"
   | "ota:available"
@@ -148,14 +145,6 @@ function useDevtoolsPanelActions() {
     await showMainWindow();
     openNew({ type: "onboarding" });
   }, [openNew, showMainWindow]);
-
-  const showInstruction = useCallback((type: string) => {
-    void openUrlWithInstruction(
-      `https://example.com/${type}`,
-      type,
-      async () => ({ status: "ok" as const }),
-    );
-  }, []);
 
   const showToastPreviewInMainWindow = useCallback(
     async (preview: DevtoolsToastPreview) => {
@@ -360,12 +349,6 @@ function useDevtoolsPanelActions() {
         case "navigation:onboarding":
           void showOnboarding();
           return;
-        case "instruction:billing":
-          showInstruction("billing");
-          return;
-        case "instruction:integration":
-          showInstruction("integration");
-          return;
         case "toasts:preview:language-model":
           void showToastPreviewInMainWindow("language-model");
           return;
@@ -441,7 +424,6 @@ function useDevtoolsPanelActions() {
       clearNotifications,
       showAutoStopNotification,
       showCalendarNotification,
-      showInstruction,
       showMicDetectedNotification,
       showMicOptionsNotification,
       showOnboarding,
