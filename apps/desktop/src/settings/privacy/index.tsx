@@ -34,10 +34,6 @@ export function SettingsPrivacy() {
     return null;
   }
 
-  const posthogEnabled = resolveConfigValue(
-    "telemetry_consent",
-    settingsQuery.data,
-  );
   const sentryEnabled = resolveConfigValue(
     "crash_reporting_consent",
     settingsQuery.data,
@@ -71,14 +67,6 @@ export function SettingsPrivacy() {
               setSettingValues({ lock_app: next });
               if (next) lockApp();
             })();
-          }}
-        />
-        <SettingSwitchRow
-          title={`${i18n._(privacyMessages.posthogTitle)} (PostHog)`}
-          description={i18n._(privacyMessages.posthogDescription)}
-          checked={posthogEnabled}
-          onChange={(telemetryConsent) => {
-            setSettingValues({ telemetry_consent: telemetryConsent });
           }}
         />
         <SettingSwitchRow

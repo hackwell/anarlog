@@ -16,7 +16,6 @@ const mocks = vi.hoisted(() => ({
   authenticating: false,
   platform: "macos" as string,
   values: {
-    telemetry_consent: true,
     crash_reporting_consent: false,
     lock_app: false,
   },
@@ -31,11 +30,7 @@ vi.mock("~/settings/queries", () => ({
   useStoredSettingValuesQuery: () => ({
     data: {
       values: mocks.values,
-      hasValues: new Set([
-        "telemetry_consent",
-        "crash_reporting_consent",
-        "lock_app",
-      ]),
+      hasValues: new Set(["crash_reporting_consent", "lock_app"]),
     },
     isLoading: false,
     error: null,
@@ -58,7 +53,6 @@ import { SettingsPrivacy } from ".";
 describe("SettingsPrivacy", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mocks.values.telemetry_consent = true;
     mocks.values.crash_reporting_consent = false;
     mocks.values.lock_app = false;
     mocks.available = true;
@@ -70,24 +64,16 @@ describe("SettingsPrivacy", () => {
 
   afterEach(cleanup);
 
-  it("controls PostHog and Sentry independently", () => {
+  it("controls the Sentry crash reporting consent", () => {
     render(<SettingsPrivacy />);
 
-    const posthog = screen.getByRole("switch", {
-      name: "Share usage data (PostHog)",
-    });
     const sentry = screen.getByRole("switch", { name: "Sentry" });
 
-    expect(posthog.getAttribute("data-state")).toBe("checked");
     expect(sentry.getAttribute("data-state")).toBe("unchecked");
 
-    fireEvent.click(posthog);
     fireEvent.click(sentry);
 
-    expect(mocks.setSettingValues).toHaveBeenNthCalledWith(1, {
-      telemetry_consent: false,
-    });
-    expect(mocks.setSettingValues).toHaveBeenNthCalledWith(2, {
+    expect(mocks.setSettingValues).toHaveBeenCalledWith({
       crash_reporting_consent: true,
     });
   });

@@ -4,7 +4,6 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { EnhancerService } from ".";
 
 const mocks = vi.hoisted(() => ({
-  analyticsEvent: vi.fn().mockResolvedValue(undefined),
   loadSessionContentSnapshot: vi.fn(),
   loadPendingAutoEnhanceJobs: vi.fn(),
   discardPendingAutoEnhanceJob: vi.fn(),
@@ -15,10 +14,6 @@ const mocks = vi.hoisted(() => ({
   getTemplateById: vi.fn().mockResolvedValue(null),
   listenerSubscribe: vi.fn(),
   listenerGetState: vi.fn(),
-}));
-
-vi.mock("@anlg/plugin-analytics", () => ({
-  commands: { event: mocks.analyticsEvent },
 }));
 
 vi.mock("~/session/content-queries", () => ({
@@ -235,7 +230,6 @@ describe("EnhancerService", () => {
           enhancedNoteId: "note-1",
           templateId: undefined,
         },
-        onComplete: expect.any(Function),
       }),
     );
   });

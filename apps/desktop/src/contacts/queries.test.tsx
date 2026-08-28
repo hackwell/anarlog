@@ -7,13 +7,8 @@ const mocks = vi.hoisted(() => ({
     (_statements: Array<{ sql: string; params: unknown[] }>) =>
       Promise.resolve([1]),
   ),
-  trackAnalyticsEvent: vi.fn(),
   rows: [] as Array<Record<string, unknown>>,
   loading: false,
-}));
-
-vi.mock("~/analytics", () => ({
-  trackAnalyticsEvent: mocks.trackAnalyticsEvent,
 }));
 
 vi.mock("~/db", () => ({
@@ -545,16 +540,12 @@ describe("contact SQLite queries", () => {
     expect(statements[3].params[statements[3].params.length - 1]).toBe(
       "human-duplicate",
     );
-    expect(mocks.trackAnalyticsEvent).toHaveBeenCalledWith("contact_merged", {
-      entry_point: "contact_details",
-    });
   });
 
-  it("does not report an organization edit as a contact merge", async () => {
+  it("writes a single transaction for an organization edit", async () => {
     await updateOrganization("organization-1", { name: "Renamed" });
 
     expect(mocks.executeTransaction).toHaveBeenCalledOnce();
-    expect(mocks.trackAnalyticsEvent).not.toHaveBeenCalled();
   });
 
   it("keeps the bound self human when it is selected as the duplicate", async () => {
@@ -648,9 +639,5 @@ describe("contact SQLite queries", () => {
       expect.any(String),
     ]);
     expect(statements[1]?.sql).toContain("UPDATE humans");
-    expect(mocks.trackAnalyticsEvent).toHaveBeenCalledWith("contact_created", {
-      entry_point: "session_participants",
-      has_email: true,
-    });
   });
 });

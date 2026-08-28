@@ -1,6 +1,5 @@
 import { useCallback } from "react";
 
-import { commands as analyticsCommands } from "@anlg/plugin-analytics";
 import { sonnerToast } from "@anlg/ui/components/ui/toast";
 
 import { useCaptureLifecycle } from "./capture-lifecycle";
@@ -11,9 +10,7 @@ import {
   startMeetingRecordingDisclosure,
 } from "./meeting-disclosure";
 
-import { trackAnalyticsEvent } from "~/analytics";
 import { useShell } from "~/contexts/shell";
-import { getSessionEvent } from "~/session/utils";
 import { useConfigValue } from "~/shared/config";
 import { useTabs } from "~/store/zustand/tabs";
 import {
@@ -85,9 +82,6 @@ export function useStartListening(sessionId: string) {
       await lifecycle.acquireCloudsyncLease();
     } catch (error) {
       console.error("[listener] failed to defer CloudSync for capture", error);
-      trackAnalyticsEvent("session_start_failed", {
-        failure_stage: "cloud_sync_deferral",
-      });
       try {
         await lifecycle.releaseCloudsyncLease();
       } catch (cleanupError) {
@@ -110,9 +104,6 @@ export function useStartListening(sessionId: string) {
         "[listener] failed to prepare durable capture state",
         error,
       );
-      trackAnalyticsEvent("session_start_failed", {
-        failure_stage: "recovery_marker",
-      });
       try {
         await lifecycle.cleanupFailedStart();
       } catch (cleanupError) {
@@ -160,9 +151,6 @@ export function useStartListening(sessionId: string) {
       );
     } catch (error) {
       console.error("[listener] failed to start recording", error);
-      trackAnalyticsEvent("session_start_failed", {
-        failure_stage: "capture_start",
-      });
       try {
         await lifecycle.cleanupFailedStart();
       } catch (cleanupError) {
@@ -181,9 +169,6 @@ export function useStartListening(sessionId: string) {
     }
 
     if (!started) {
-      trackAnalyticsEvent("session_start_failed", {
-        failure_stage: "capture_rejected",
-      });
       await stopMeetingChatTasks();
       try {
         await lifecycle.cleanupFailedStart();
@@ -239,19 +224,6 @@ export function useStartListening(sessionId: string) {
         () => getSessionMode(sessionId) === "active",
       );
     }
-
-    void analyticsCommands.event({
-      event: "session_started",
-      has_calendar_event: Boolean(
-        getSessionEvent({ event_json: session?.event_json }),
-      ),
-      ...(conn
-        ? {
-            stt_provider: conn.provider,
-            stt_model: conn.model,
-          }
-        : {}),
-    });
   }, [
     aiLanguage,
     canStartLiveSession,

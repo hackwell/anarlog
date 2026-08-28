@@ -9,7 +9,6 @@ import { useMutation, useQueries } from "@tanstack/react-query";
 import { type ComponentType, type ReactNode, useMemo, useState } from "react";
 import { Streamdown } from "streamdown";
 
-import { commands as analyticsCommands } from "@anlg/plugin-analytics";
 import type { AIProvider } from "@anlg/store";
 import { aiProviderSchema } from "@anlg/store";
 import {
@@ -349,16 +348,6 @@ export function NonAnarlogProviderCard({
 
       setHasUnresolvedKeychainError(false);
       notifyProviderSelection(value.api_key);
-
-      void analyticsCommands.event({
-        event: "ai_provider_configured",
-        provider: value.type,
-      });
-      void analyticsCommands.setProperties({
-        set: {
-          has_configured_ai: true,
-        },
-      });
     },
     defaultValues:
       provider ??

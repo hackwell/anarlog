@@ -12,7 +12,6 @@ import {
   updateSummaryDocumentTitleIfCurrent,
 } from "./storage";
 
-import { trackAnalyticsEvent } from "~/analytics";
 import { retryDatabaseLock } from "~/db/retry";
 import {
   loadSessionContentSnapshot,
@@ -524,8 +523,7 @@ export class EnhancerService {
   }
 
   async enhance(sessionId: string, opts?: EnhanceOpts): Promise<EnhanceResult> {
-    const { aiTaskStore, getModel, getLLMConn, getSelectedTemplateId } =
-      this.deps;
+    const { aiTaskStore, getModel, getSelectedTemplateId } = this.deps;
 
     const model = getModel();
     if (!model) return { type: "no_model" };
@@ -597,7 +595,6 @@ export class EnhancerService {
       return { type: "already_active", noteId: note.id };
     }
 
-    const llmConn = getLLMConn();
     void aiTaskStore
       .getState()
       .generate(enhanceTaskId, {
@@ -618,28 +615,10 @@ export class EnhancerService {
               }
             : {}),
         },
-        onComplete: () => {
-          trackAnalyticsEvent("note_enhanced", {
-            is_auto: opts?.isAuto ?? false,
-            llm_provider: llmConn?.providerId ?? "unknown",
-            llm_model: llmConn?.modelId ?? "unknown",
-            used_template: Boolean(templateId),
-          });
-          if (templateId) {
-            trackAnalyticsEvent("template_applied", {
-              entry_point: opts?.isAuto ? "auto_enhance" : "enhance",
-            });
-          }
-        },
       })
       .then(async () => {
         const taskState = aiTaskStore.getState().getState(enhanceTaskId);
         if (taskState?.status === "error") {
-          trackAnalyticsEvent("enhancement_failed", {
-            is_auto: opts?.isAuto ?? false,
-            llm_provider: llmConn?.providerId ?? "unknown",
-            failure_stage: "generation",
-          });
           if (opts?.pendingAutoEnhance && taskState.error) {
             if (isRetryableAIError(taskState.error)) {
               await this.recordAutoEnhanceFailure(

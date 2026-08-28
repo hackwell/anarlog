@@ -1,16 +1,11 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const mocks = vi.hoisted(() => ({
-  analyticsEventFireAndForget: vi.fn(() => Promise.resolve()),
   execute: vi.fn(),
   executeTransaction: vi.fn(
     (_statements: Array<{ sql: string; params: unknown[] }>) =>
       Promise.resolve([1]),
   ),
-}));
-
-vi.mock("@anlg/plugin-analytics", () => ({
-  commands: { eventFireAndForget: mocks.analyticsEventFireAndForget },
 }));
 
 vi.mock("@anlg/plugin-fs-sync", () => ({
@@ -327,10 +322,7 @@ describe("session SQLite operations", () => {
     ).toBe(false);
   });
 
-  it("does not wait for analytics before returning a newly created event note", async () => {
-    mocks.analyticsEventFireAndForget.mockImplementationOnce(
-      () => new Promise<never>(() => {}),
-    );
+  it("returns a newly created event note", async () => {
     mocks.execute
       .mockResolvedValueOnce([event])
       .mockResolvedValueOnce([])
@@ -341,10 +333,6 @@ describe("session SQLite operations", () => {
     await expect(getOrCreateSessionForEventId("event-1")).resolves.toBe(
       "session-created",
     );
-    expect(mocks.analyticsEventFireAndForget).toHaveBeenCalledWith({
-      event: "note_created",
-      has_event_id: true,
-    });
   }, 1_000);
 
   it("tombstones the session and every owned child with one timestamp", async () => {

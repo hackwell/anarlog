@@ -1377,10 +1377,6 @@ msgstr "Probleme? Redirect-URL einfügen"
 msgid "Help"
 msgstr "Hilfe"
 
-#: src/settings/general/app-settings.tsx
-msgid "Help improve Session Echo with anonymous usage data."
-msgstr "Helfen Sie mit, Session Echo durch anonyme Nutzungsdaten zu verbessern."
-
 #: src/onboarding/permissions.tsx
 msgid "Help Session Echo listen to others"
 msgstr "Session Echo helfen, andere zu hören"
@@ -2701,10 +2697,6 @@ msgstr "KI-Zusammenfassungen einrichten"
 #: src/sidebar/toast/registry.tsx
 msgid "Settings"
 msgstr "Einstellungen"
-
-#: src/settings/general/app-settings.tsx
-msgid "Share usage data"
-msgstr "Nutzungsdaten teilen"
 
 #: src/sidebar/timeline/item.tsx
 msgid "Show All Recurring Events"

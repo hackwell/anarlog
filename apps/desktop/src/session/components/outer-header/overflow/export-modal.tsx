@@ -4,7 +4,6 @@ import { downloadDir, join } from "@tauri-apps/api/path";
 import { useMemo, useState } from "react";
 
 import { json2md } from "@anlg/editor/markdown";
-import { commands as analyticsCommands } from "@anlg/plugin-analytics";
 import {
   commands as exportCommands,
   type ExportMetadata,
@@ -377,12 +376,6 @@ export function ExportModal({
     },
     onSuccess: (path) => {
       if (path) {
-        void analyticsCommands.event({
-          event: "session_exported",
-          format,
-          include_summary: includeSummary,
-          include_transcript: includeTranscript,
-        });
         void openerCommands.revealItemInDir(path);
       }
       onOpenChange(false);

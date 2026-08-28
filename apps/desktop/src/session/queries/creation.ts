@@ -1,4 +1,3 @@
-import { commands as analyticsCommands } from "@anlg/plugin-analytics";
 import {
   eventParticipantSchema,
   type EventParticipant,
@@ -93,7 +92,6 @@ export async function createSession(
     },
   ]);
 
-  trackNoteCreated(false);
   return sessionId;
 }
 
@@ -254,16 +252,13 @@ export async function getOrCreateSessionForEventId(
     });
   }
 
-  const rowsAffected = await executeTransaction(statements);
+  await executeTransaction(statements);
 
   const createdSessionId = await findSessionForEvent(event, sessionId);
   if (!createdSessionId) {
     throw new Error(`Failed to create a session for event ${eventId}`);
   }
 
-  if (rowsAffected[0] === 1) {
-    trackNoteCreated(true);
-  }
   return createdSessionId;
 }
 
@@ -360,18 +355,4 @@ function toSessionEvent(event: EventSqlRow): SessionEvent {
     description: event.description,
     recurrence_series_id: event.recurrence_series_id,
   };
-}
-
-function trackNoteCreated(hasEventId: boolean): void {
-  void analyticsCommands
-    .eventFireAndForget({
-      event: "note_created",
-      has_event_id: hasEventId,
-    })
-    .catch((error) => {
-      console.error(
-        "[session] failed to record note creation analytics",
-        error,
-      );
-    });
 }

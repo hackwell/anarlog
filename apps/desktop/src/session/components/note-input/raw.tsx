@@ -10,7 +10,6 @@ import {
   type NoteEditorRef,
   normalizePortableAttachmentUrls,
 } from "@anlg/editor/note";
-import { commands as analyticsCommands } from "@anlg/plugin-analytics";
 import { cn } from "@anlg/utils";
 
 import { AudioDropTarget } from "./audio-drop-target";
@@ -18,7 +17,6 @@ import { CreateBriefSuggestion } from "./create-brief-suggestion";
 import { useNoteFileHandlerConfig } from "./file-handler";
 import { MeetingChatHighlights } from "./meeting-chat-highlights";
 
-import { trackAnalyticsEvent } from "~/analytics";
 import { useAudioPlayer } from "~/audio-player";
 import { useSessionEventParticipants } from "~/calendar/queries";
 import { AppLinkView } from "~/editor-bridge/app-link-view";
@@ -157,19 +155,6 @@ export const RawEditor = forwardRef<
     );
 
     const pendingTemplateIdRef = useRef<string | undefined>(undefined);
-    const hasTrackedWriteRef = useRef(false);
-    const trackedSessionIdRef = useRef(sessionId);
-    if (trackedSessionIdRef.current !== sessionId) {
-      trackedSessionIdRef.current = sessionId;
-      hasTrackedWriteRef.current = false;
-    }
-
-    const hasNonEmptyText = useCallback(
-      (node?: JSONContent): boolean =>
-        !!node?.text?.trim() ||
-        !!node?.content?.some((child: JSONContent) => hasNonEmptyText(child)),
-      [],
-    );
 
     const handleChange = useCallback(
       (input: JSONContent) => {
@@ -178,16 +163,8 @@ export const RawEditor = forwardRef<
         void persistChange(input, templateId).catch((error) => {
           console.error("[raw-editor] failed to persist note", error);
         });
-
-        if (!hasTrackedWriteRef.current) {
-          const hasContent = hasNonEmptyText(input);
-          if (hasContent) {
-            hasTrackedWriteRef.current = true;
-            void trackNoteEdited();
-          }
-        }
       },
-      [persistChange, hasNonEmptyText],
+      [persistChange],
     );
 
     const handleDocumentChange = useCallback(
@@ -258,9 +235,6 @@ export const RawEditor = forwardRef<
       pendingTemplateIdRef.current = template.id;
       editor.commands.replaceContent(nextContent);
       editor.flushPendingChanges();
-      trackAnalyticsEvent("template_applied", {
-        entry_point: "memo",
-      });
     }, []);
 
     const mentionConfig = useMentionConfig();
@@ -407,7 +381,7 @@ function TemplateEmptyState({
   const { t } = useLingui();
   const userTemplates = useUserTemplates();
   const eventParticipants = useSessionEventParticipants(sessionId);
-  const createTemplate = useCreateTemplate("session_note");
+  const createTemplate = useCreateTemplate();
   const openTemplatesTab = useOpenTemplatesTab();
   const favoriteTemplates = useMemo(
     () => getFavoriteTemplates(userTemplates),
@@ -512,15 +486,4 @@ function TemplateSection({
       ))}
     </>
   );
-}
-
-async function trackNoteEdited() {
-  try {
-    await analyticsCommands.event({
-      event: "note_edited",
-      has_content: true,
-    });
-  } catch (error) {
-    console.error("[raw-editor] failed to record note analytics", error);
-  }
 }

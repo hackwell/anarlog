@@ -1,7 +1,7 @@
 import { Trans } from "@lingui/react/macro";
 import { useQueryClient } from "@tanstack/react-query";
 import { platform } from "@tauri-apps/plugin-os";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 
 import { cn } from "@anlg/utils";
 
@@ -18,7 +18,6 @@ import { ImportSection } from "./imports";
 import { PermissionsSection } from "./permissions";
 import { OnboardingSection } from "./shared";
 
-import { trackAnalyticsEvent } from "~/analytics";
 import { useWindowControlsGutter } from "~/shared/hooks/useWindowControlsGutter";
 import { StandaloneWindowShell } from "~/shared/window-shell";
 import { type Tab, useTabs } from "~/store/zustand/tabs";
@@ -85,45 +84,26 @@ function OnboardingScreenContent({
   const showWindowControlsGutter = useWindowControlsGutter();
 
   const goNext = useCallback(() => {
-    trackAnalyticsEvent("onboarding_step_completed", {
-      step: currentStep,
-      platform: currentPlatform,
-    });
     const next = getNextStep(currentStep);
     if (next) setCurrentStep(next);
-  }, [currentPlatform, currentStep]);
+  }, [currentStep]);
 
   const skipCurrentStep = useCallback(() => {
-    trackAnalyticsEvent("onboarding_step_skipped", {
-      step: currentStep,
-      platform: currentPlatform,
-    });
     const next = getNextStep(currentStep);
     if (next) setCurrentStep(next);
-  }, [currentPlatform, currentStep]);
+  }, [currentStep]);
 
   const goBack = useCallback(() => {
     const prev = getPrevStep(currentStep);
     if (prev) setCurrentStep(prev);
   }, [currentStep]);
 
-  useEffect(() => {
-    trackAnalyticsEvent("onboarding_step_viewed", {
-      step: currentStep,
-      platform: currentPlatform,
-    });
-  }, [currentPlatform, currentStep]);
-
   const handleFinish = useCallback(
     (sessionId: string) => {
-      trackAnalyticsEvent("onboarding_step_completed", {
-        step: "final",
-        platform: currentPlatform,
-      });
       void queryClient.invalidateQueries({ queryKey: ["onboarding-needed"] });
       onFinish(sessionId);
     },
-    [currentPlatform, onFinish, queryClient],
+    [onFinish, queryClient],
   );
 
   return (

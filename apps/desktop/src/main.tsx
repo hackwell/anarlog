@@ -7,7 +7,6 @@ import { StrictMode, useEffect, useMemo } from "react";
 import ReactDOM from "react-dom/client";
 
 import "@anlg/ui/globals.css";
-import { commands as analyticsCommands } from "@anlg/plugin-analytics";
 import {
   getCurrentWebviewWindowLabel,
   init as initWindowsPlugin,
@@ -15,7 +14,6 @@ import {
 import { Toaster } from "@anlg/ui/components/ui/toast";
 
 import { AITaskWindowSyncBridge } from "./ai/task-window-sync";
-import { trackAnalyticsEvent } from "./analytics";
 import { createToolRegistry } from "./contexts/tool-registry/core";
 import {
   captureOperationalError,
@@ -137,16 +135,6 @@ initWindowsPlugin();
 const isMainWindow = getCurrentWebviewWindowLabel() === "main";
 
 if (isMainWindow) {
-  void analyticsCommands.eventFireAndForget({ event: "app_started" });
-  try {
-    const firstOpenKey = "anarlog:analytics:first-opened";
-    if (localStorage.getItem(firstOpenKey) === null) {
-      localStorage.setItem(firstOpenKey, "1");
-      trackAnalyticsEvent("app_first_opened", {
-        first_open_marker: "local_install",
-      });
-    }
-  } catch {}
   void initializeAppExitFlush().catch((error) => {
     captureOperationalError(error, {
       operation: "app_exit_flush_initialize",

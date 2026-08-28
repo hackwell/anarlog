@@ -15,7 +15,6 @@ import { titleSuccess } from "./title-success";
 import { titleTransform } from "./title-transform";
 import { titleWorkflow } from "./title-workflow";
 
-import { trackMeetingNoteCompletion } from "~/onboarding/meeting-note-analytics";
 import type { SummaryLengthMode } from "~/services/enhancer/summary-length";
 import type { SettingValues } from "~/settings/schema";
 import { StreamTransform } from "~/store/zustand/ai-task/shared/transform_infra";
@@ -101,17 +100,7 @@ type TaskConfigMap = {
 const onEnhanceSuccess: NonNullable<
   TaskConfig<"enhance">["onSuccess"]
 > = async (params) => {
-  await runEnhanceSuccess({
-    ...params,
-    onPersisted: () => {
-      void trackMeetingNoteCompletion(params.args.sessionId).catch((error) => {
-        console.error(
-          "[analytics] failed to record meeting note completion",
-          error,
-        );
-      });
-    },
-  });
+  await runEnhanceSuccess(params);
 };
 
 export const TASK_CONFIGS: TaskConfigMap = {

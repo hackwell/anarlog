@@ -8,7 +8,6 @@ import {
 } from "@phosphor-icons/react";
 import { useRef, useState } from "react";
 
-import { commands as analyticsCommands } from "@anlg/plugin-analytics";
 import { commands as openerCommands } from "@anlg/plugin-opener2";
 
 import { OnboardingButton } from "./shared";
@@ -143,9 +142,6 @@ export async function finishOnboarding(
     throw new Error(result.error);
   }
   await new Promise((resolve) => setTimeout(resolve, 100));
-  void analyticsCommands
-    .event({ event: "onboarding_completed" })
-    .catch(console.error);
   setPendingWelcomeSession(welcomeSessionId);
   if (await flushAutomaticRelaunch()) {
     return;

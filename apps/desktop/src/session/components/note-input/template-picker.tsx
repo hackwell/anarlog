@@ -54,7 +54,7 @@ export function TemplatePickerPopover({
   const searchInputRef = useRef<HTMLInputElement>(null);
   const resultRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const userTemplates = useUserTemplates();
-  const createTemplate = useCreateTemplate("session_note");
+  const createTemplate = useCreateTemplate();
   const { data: rawWebTemplates = [] } =
     useWebResources<Record<string, unknown>>("templates");
   const webTemplates = useMemo(

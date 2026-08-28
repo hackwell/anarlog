@@ -6,8 +6,6 @@ import { SettingSwitchRow } from "~/settings/setting-row";
 
 export const privacyMessages = {
   title: msg`Privacy`,
-  posthogTitle: msg`Share usage data`,
-  posthogDescription: msg`Help improve Session Echo with anonymous usage data.`,
 };
 
 interface SettingItem {

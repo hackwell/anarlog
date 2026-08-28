@@ -1377,10 +1377,6 @@ msgstr "Having trouble? Paste the redirect URL"
 msgid "Help"
 msgstr "Help"
 
-#: src/settings/general/app-settings.tsx
-msgid "Help improve Session Echo with anonymous usage data."
-msgstr "Help improve Session Echo with anonymous usage data."
-
 #: src/onboarding/permissions.tsx
 msgid "Help Session Echo listen to others"
 msgstr "Help Session Echo listen to others"
@@ -2701,10 +2697,6 @@ msgstr "Set up AI summaries"
 #: src/sidebar/toast/registry.tsx
 msgid "Settings"
 msgstr "Settings"
-
-#: src/settings/general/app-settings.tsx
-msgid "Share usage data"
-msgstr "Share usage data"
 
 #: src/sidebar/timeline/item.tsx
 msgid "Show All Recurring Events"

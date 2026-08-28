@@ -2,7 +2,6 @@ import { Trans } from "@lingui/react/macro";
 import { CircleNotch, Trash } from "@phosphor-icons/react";
 import { useCallback } from "react";
 
-import { commands as analyticsCommands } from "@anlg/plugin-analytics";
 import { DropdownMenuItem } from "@anlg/ui/components/ui/dropdown-menu";
 import { cn } from "@anlg/utils";
 
@@ -55,11 +54,6 @@ export function DeleteNote({ sessionId }: { sessionId: string }) {
 
   const handleDeleteNote = useCallback(() => {
     deleteSession(sessionId, { title });
-
-    void analyticsCommands.event({
-      event: "session_deleted",
-      includes_recording: true,
-    });
   }, [sessionId, deleteSession, title]);
 
   return (
