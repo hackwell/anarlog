@@ -37,11 +37,11 @@ pub async fn list_connection_ids<R: tauri::Runtime>(
 #[tauri::command]
 #[specta::specta]
 pub async fn list_calendars<R: tauri::Runtime>(
-    _app: tauri::AppHandle<R>,
+    app: tauri::AppHandle<R>,
     provider: CalendarProviderType,
     _connection_id: String,
 ) -> Result<Vec<CalendarListItem>, Error> {
-    anlg_calendar::list_calendars(provider)
+    anlg_calendar::list_calendars(provider, &crate::microsoft::tokens(&app))
         .await
         .map_err(Into::into)
 }
@@ -49,12 +49,12 @@ pub async fn list_calendars<R: tauri::Runtime>(
 #[tauri::command]
 #[specta::specta]
 pub async fn list_events<R: tauri::Runtime>(
-    _app: tauri::AppHandle<R>,
+    app: tauri::AppHandle<R>,
     provider: CalendarProviderType,
     _connection_id: String,
     filter: EventFilter,
 ) -> Result<Vec<CalendarEvent>, Error> {
-    anlg_calendar::list_events(provider, filter)
+    anlg_calendar::list_events(provider, filter, &crate::microsoft::tokens(&app))
         .await
         .map_err(Into::into)
 }
@@ -114,6 +114,51 @@ pub async fn microsoft_disconnect<R: tauri::Runtime>(
 #[specta::specta]
 pub async fn microsoft_is_connected<R: tauri::Runtime>(app: tauri::AppHandle<R>) -> bool {
     is_microsoft_connected(&app)
+}
+
+/// Write one raw Microsoft Graph `calendarView` response — request URL,
+/// `Preference-Applied`, and the untouched body — to a file, and return its
+/// path. This is how a tenant's actual timezone behaviour gets confirmed rather
+/// than assumed.
+#[tauri::command]
+#[specta::specta]
+pub async fn microsoft_dump_raw_events<R: tauri::Runtime>(
+    app: tauri::AppHandle<R>,
+    from: String,
+    to: String,
+    calendar_id: Option<String>,
+) -> Result<String, Error> {
+    use tauri::Manager;
+
+    let from = parse_rfc3339(&from, "from")?;
+    let to = parse_rfc3339(&to, "to")?;
+
+    let dump = anlg_calendar::microsoft::dump_calendar_view(
+        &crate::microsoft::tokens(&app),
+        calendar_id.as_deref().unwrap_or_default(),
+        from,
+        to,
+    )
+    .await?;
+
+    let directory = app
+        .path()
+        .app_data_dir()
+        .map_err(|error| Error::Dump(error.to_string()))?;
+    std::fs::create_dir_all(&directory).map_err(|error| Error::Dump(error.to_string()))?;
+    let path = directory.join(format!(
+        "ms-calendar-dump-{}.json",
+        chrono::Utc::now().format("%Y%m%dT%H%M%SZ")
+    ));
+    std::fs::write(&path, dump).map_err(|error| Error::Dump(error.to_string()))?;
+
+    Ok(path.to_string_lossy().into_owned())
+}
+
+fn parse_rfc3339(value: &str, field: &'static str) -> Result<chrono::DateTime<chrono::Utc>, Error> {
+    chrono::DateTime::parse_from_rfc3339(value)
+        .map(|parsed| parsed.with_timezone(&chrono::Utc))
+        .map_err(|error| Error::Dump(format!("invalid RFC 3339 '{field}': {error}")))
 }
 
 fn is_microsoft_connected<R: tauri::Runtime>(app: &tauri::AppHandle<R>) -> bool {

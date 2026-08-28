@@ -158,6 +158,17 @@ fn resolve_meeting_link(location: Option<&str>, description: Option<&str>) -> Op
         .or_else(|| description.and_then(crate::parse_meeting_link))
 }
 
+// Providers that hand out a join URL of their own (Teams, and whatever else an
+// Outlook event carries in onlineMeeting) get to win over anything scraped out
+// of the free-text fields.
+pub(crate) fn resolve_provider_meeting_link(
+    provider_link: Option<String>,
+    location: Option<&str>,
+    description: Option<&str>,
+) -> Option<String> {
+    provider_link.or_else(|| resolve_meeting_link(location, description))
+}
+
 #[cfg(test)]
 mod meeting_link_tests {
     use super::*;

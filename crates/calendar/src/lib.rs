@@ -96,30 +96,28 @@ pub fn is_provider_enabled(
 
 pub async fn list_calendars(
     provider: CalendarProviderType,
+    tokens: &dyn microsoft::TokenStore,
 ) -> Result<Vec<CalendarListItem>, Error> {
     match provider {
         CalendarProviderType::Apple => {
             let calendars = list_apple_calendars()?;
             Ok(convert::convert_apple_calendars(calendars))
         }
-        CalendarProviderType::Microsoft => Err(Error::ProviderUnavailable {
-            provider: CalendarProviderType::Microsoft,
-        }),
+        CalendarProviderType::Microsoft => microsoft::list_calendars(tokens).await,
     }
 }
 
 pub async fn list_events(
     provider: CalendarProviderType,
     filter: EventFilter,
+    tokens: &dyn microsoft::TokenStore,
 ) -> Result<Vec<CalendarEvent>, Error> {
     match provider {
         CalendarProviderType::Apple => {
             let events = list_apple_events(filter)?;
             Ok(convert::convert_apple_events(events))
         }
-        CalendarProviderType::Microsoft => Err(Error::ProviderUnavailable {
-            provider: CalendarProviderType::Microsoft,
-        }),
+        CalendarProviderType::Microsoft => microsoft::list_events(tokens, filter).await,
     }
 }
 

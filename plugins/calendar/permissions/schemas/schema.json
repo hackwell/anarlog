@@ -391,6 +391,18 @@
           "markdownDescription": "Denies the microsoft_disconnect command without any pre-configured scope."
         },
         {
+          "description": "Enables the microsoft_dump_raw_events command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-microsoft-dump-raw-events",
+          "markdownDescription": "Enables the microsoft_dump_raw_events command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the microsoft_dump_raw_events command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-microsoft-dump-raw-events",
+          "markdownDescription": "Denies the microsoft_dump_raw_events command without any pre-configured scope."
+        },
+        {
           "description": "Enables the microsoft_is_connected command without any pre-configured scope.",
           "type": "string",
           "const": "allow-microsoft-is-connected",
@@ -427,10 +439,10 @@
           "markdownDescription": "Denies the open_calendar command without any pre-configured scope."
         },
         {
-          "description": "Default permissions for the plugin\n#### This default permission set includes:\n\n- `allow-available-providers`\n- `allow-is-provider-enabled`\n- `allow-list-connection-ids`\n- `allow-list-calendars`\n- `allow-list-events`\n- `allow-open-calendar`\n- `allow-create-event`\n- `allow-microsoft-start-login`\n- `allow-microsoft-complete-login`\n- `allow-microsoft-disconnect`\n- `allow-microsoft-is-connected`",
+          "description": "Default permissions for the plugin\n#### This default permission set includes:\n\n- `allow-available-providers`\n- `allow-is-provider-enabled`\n- `allow-list-connection-ids`\n- `allow-list-calendars`\n- `allow-list-events`\n- `allow-open-calendar`\n- `allow-create-event`\n- `allow-microsoft-start-login`\n- `allow-microsoft-complete-login`\n- `allow-microsoft-disconnect`\n- `allow-microsoft-is-connected`\n- `allow-microsoft-dump-raw-events`",
           "type": "string",
           "const": "default",
-          "markdownDescription": "Default permissions for the plugin\n#### This default permission set includes:\n\n- `allow-available-providers`\n- `allow-is-provider-enabled`\n- `allow-list-connection-ids`\n- `allow-list-calendars`\n- `allow-list-events`\n- `allow-open-calendar`\n- `allow-create-event`\n- `allow-microsoft-start-login`\n- `allow-microsoft-complete-login`\n- `allow-microsoft-disconnect`\n- `allow-microsoft-is-connected`"
+          "markdownDescription": "Default permissions for the plugin\n#### This default permission set includes:\n\n- `allow-available-providers`\n- `allow-is-provider-enabled`\n- `allow-list-connection-ids`\n- `allow-list-calendars`\n- `allow-list-events`\n- `allow-open-calendar`\n- `allow-create-event`\n- `allow-microsoft-start-login`\n- `allow-microsoft-complete-login`\n- `allow-microsoft-disconnect`\n- `allow-microsoft-is-connected`\n- `allow-microsoft-dump-raw-events`"
         }
       ]
     }

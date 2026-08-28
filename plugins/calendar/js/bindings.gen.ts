@@ -96,6 +96,20 @@ async microsoftDisconnect() : Promise<Result<null, string>> {
 },
 async microsoftIsConnected() : Promise<boolean> {
     return await TAURI_INVOKE("plugin:calendar|microsoft_is_connected");
+},
+/**
+ * Write one raw Microsoft Graph `calendarView` response — request URL,
+ * `Preference-Applied`, and the untouched body — to a file, and return its
+ * path. This is how a tenant's actual timezone behaviour gets confirmed rather
+ * than assumed.
+ */
+async microsoftDumpRawEvents(from: string, to: string, calendarId: string | null) : Promise<Result<string, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("plugin:calendar|microsoft_dump_raw_events", { from, to, calendarId }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
 }
 }
 

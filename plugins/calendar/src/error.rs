@@ -4,6 +4,8 @@ pub enum Error {
     Calendar(#[from] anlg_calendar::Error),
     #[error("permissions error: {0}")]
     Permissions(String),
+    #[error("graph dump error: {0}")]
+    Dump(String),
 }
 
 impl serde::Serialize for Error {

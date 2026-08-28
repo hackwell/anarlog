@@ -10,6 +10,7 @@ const COMMANDS: &[&str] = &[
     "microsoft_complete_login",
     "microsoft_disconnect",
     "microsoft_is_connected",
+    "microsoft_dump_raw_events",
 ];
 
 fn main() {

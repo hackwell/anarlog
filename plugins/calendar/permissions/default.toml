@@ -12,4 +12,5 @@ permissions = [
     "allow-microsoft-complete-login",
     "allow-microsoft-disconnect",
     "allow-microsoft-is-connected",
+    "allow-microsoft-dump-raw-events",
 ]

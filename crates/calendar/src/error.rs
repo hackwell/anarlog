@@ -21,6 +21,8 @@ pub enum Error {
     MicrosoftNotConnected,
     #[error("microsoft sign-in error: {0}")]
     MicrosoftAuth(String),
+    #[error("microsoft graph error: {0}")]
+    MicrosoftGraph(String),
     #[error("token store error: {0}")]
     TokenStore(String),
 }

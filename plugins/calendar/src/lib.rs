@@ -25,6 +25,7 @@ fn make_specta_builder<R: tauri::Runtime>() -> tauri_specta::Builder<R> {
             commands::microsoft_complete_login::<tauri::Wry>,
             commands::microsoft_disconnect::<tauri::Wry>,
             commands::microsoft_is_connected::<tauri::Wry>,
+            commands::microsoft_dump_raw_events::<tauri::Wry>,
         ])
         .events(tauri_specta::collect_events![
             CalendarChangedEvent,

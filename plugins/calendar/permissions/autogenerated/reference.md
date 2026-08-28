@@ -15,6 +15,7 @@ Default permissions for the plugin
 - `allow-microsoft-complete-login`
 - `allow-microsoft-disconnect`
 - `allow-microsoft-is-connected`
+- `allow-microsoft-dump-raw-events`
 
 ## Permission Table
 
@@ -229,6 +230,32 @@ Enables the microsoft_disconnect command without any pre-configured scope.
 <td>
 
 Denies the microsoft_disconnect command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`calendar:allow-microsoft-dump-raw-events`
+
+</td>
+<td>
+
+Enables the microsoft_dump_raw_events command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`calendar:deny-microsoft-dump-raw-events`
+
+</td>
+<td>
+
+Denies the microsoft_dump_raw_events command without any pre-configured scope.
 
 </td>
 </tr>

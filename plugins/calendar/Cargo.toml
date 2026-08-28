@@ -16,6 +16,7 @@ tauri-plugin-permissions = { workspace = true }
 tauri-plugin-store2 = { workspace = true }
 tauri-specta = { workspace = true, features = ["derive", "typescript"] }
 
+chrono = { workspace = true }
 serde = { workspace = true, features = ["derive"] }
 serde_json = { workspace = true }
 specta = { workspace = true, features = ["chrono"] }
