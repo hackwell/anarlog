@@ -1,6 +1,5 @@
 import { useLingui } from "@lingui/react/macro";
 import { platform } from "@tauri-apps/plugin-os";
-import { format } from "date-fns";
 import { useCallback, useMemo } from "react";
 
 import { commands as fsSyncCommands } from "@anlg/plugin-fs-sync";
@@ -15,6 +14,7 @@ import {
 import { cn } from "@anlg/utils";
 
 import { toTz, useTimezone } from "~/calendar/hooks";
+import { useDateFormatter } from "~/i18n/date-format";
 import { useDeleteSession } from "~/session/hooks/useDeleteSession";
 import { getSessionEvent } from "~/session/utils";
 import {
@@ -33,11 +33,12 @@ export function SessionChip({
 }) {
   const { t } = useLingui();
   const tz = useTimezone();
+  const dateFormatter = useDateFormatter();
   const deleteSession = useDeleteSession();
   const title = session?.title ?? undefined;
   const eventJson = session?.event_json;
   const createdAt = session?.created_at
-    ? format(toTz(session.created_at, tz), "h:mm a")
+    ? dateFormatter.time(toTz(session.created_at, tz))
     : null;
 
   const handleShowInFolder = useCallback(async () => {
@@ -119,13 +120,14 @@ function SessionPopoverContent({
 }) {
   const openCurrent = useTabs((state) => state.openCurrent);
   const tz = useTimezone();
+  const dateFormatter = useDateFormatter();
 
   const handleOpen = useCallback(() => {
     openCurrent({ type: "sessions", id: sessionId });
   }, [openCurrent, sessionId]);
 
   const createdAt = session.created_at
-    ? format(toTz(session.created_at, tz), "MMM d, yyyy h:mm a")
+    ? dateFormatter.dateTime(toTz(session.created_at, tz))
     : null;
 
   return (

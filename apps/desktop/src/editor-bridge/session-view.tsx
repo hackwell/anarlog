@@ -2,7 +2,6 @@ import {
   type NodeViewComponentProps,
   useEditorEventCallback,
 } from "@handlewithcare/react-prosemirror";
-import { format } from "date-fns";
 import { forwardRef, type ReactNode, useCallback, useMemo } from "react";
 
 import { getSafeNodePos, TaskCheckbox } from "@anlg/editor/node-views";
@@ -16,6 +15,7 @@ import {
 import { cn, safeParseDate } from "@anlg/utils";
 
 import { toTz, useTimezone } from "~/calendar/hooks";
+import { useDateFormatter } from "~/i18n/date-format";
 import { useSession } from "~/session/queries";
 import { getSessionEvent } from "~/session/utils";
 import { useTabs } from "~/store/zustand/tabs";
@@ -30,6 +30,7 @@ export const SessionNodeView = forwardRef<
 
   const session = useSession(sessionId);
   const tz = useTimezone();
+  const dateFormatter = useDateFormatter();
   const liveSessionId = useListener((state) => state.live.sessionId);
   const liveStatus = useListener((state) => state.live.status);
   const isRecording =
@@ -44,8 +45,14 @@ export const SessionNodeView = forwardRef<
     const rawDate = event?.started_at ?? session?.created_at;
     const parsed = rawDate ? safeParseDate(rawDate) : null;
 
-    return parsed ? format(toTz(parsed, tz), "h:mm a") : null;
-  }, [event?.is_all_day, event?.started_at, session?.created_at, tz]);
+    return parsed ? dateFormatter.time(toTz(parsed, tz)) : null;
+  }, [
+    dateFormatter,
+    event?.is_all_day,
+    event?.started_at,
+    session?.created_at,
+    tz,
+  ]);
 
   const isMeetingOver = useMemo(() => {
     if (!event?.ended_at) return false;

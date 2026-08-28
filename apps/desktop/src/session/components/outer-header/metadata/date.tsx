@@ -6,12 +6,14 @@ import { useState } from "react";
 import { Button } from "@anlg/ui/components/ui/button";
 import { Input } from "@anlg/ui/components/ui/input";
 import { sonnerToast } from "@anlg/ui/components/ui/toast";
-import { format, safeFormat, safeParseDate } from "@anlg/utils";
+import { format, safeParseDate } from "@anlg/utils";
 
+import { useDateFormatter } from "~/i18n/date-format";
 import { useSession, useUpdateSession } from "~/session/queries";
 
 export function DateEditor({ sessionId }: { sessionId: string }) {
   const { t } = useLingui();
+  const dateFormatter = useDateFormatter();
   const [isEditing, setIsEditing] = useState(false);
   // Shown between closing the editor and the live query re-emitting, so the
   // read-only label never flashes the pre-save date. It masks the live value
@@ -23,11 +25,10 @@ export function DateEditor({ sessionId }: { sessionId: string }) {
     pendingCreatedAt !== null && createdAt !== pendingCreatedAt
       ? pendingCreatedAt
       : createdAt;
-  const noteDate = safeFormat(
-    effectiveCreatedAt ?? new Date(),
-    "MMM d, yyyy h:mm a",
-    t`Unknown date`,
-  );
+  const parsedCreatedAt = safeParseDate(effectiveCreatedAt ?? new Date());
+  const noteDate = parsedCreatedAt
+    ? dateFormatter.dateTime(parsedCreatedAt)
+    : t`Unknown date`;
 
   if (!isEditing) {
     return (

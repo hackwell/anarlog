@@ -14,6 +14,7 @@ import { SessionChip } from "./session-chip";
 
 import type { CalendarData } from "~/calendar/hooks";
 import { useNow } from "~/calendar/hooks";
+import { useDateFormatter } from "~/i18n/date-format";
 
 function useVisibleItemCount(
   ref: React.RefObject<HTMLDivElement | null>,
@@ -81,6 +82,7 @@ export function DayCell({
   const sessionIds = calendarData.sessionIdsByDate[dateKey] ?? [];
 
   const now = useNow();
+  const dateFormatter = useDateFormatter();
   const itemsRef = useRef<HTMLDivElement>(null);
   const totalItems = eventIds.length + sessionIds.length;
   const maxVisible = useVisibleItemCount(itemsRef, totalItems);
@@ -153,7 +155,7 @@ export function DayCell({
             >
               <AppFloatingPanel className="p-2">
                 <div className="text-foreground mb-2 text-sm font-medium">
-                  {format(day, "MMM d, yyyy")}
+                  {dateFormatter.date(day)}
                 </div>
                 <div className="flex flex-col gap-0.5">
                   {eventIds.map((eventId) => (

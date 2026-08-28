@@ -1,6 +1,7 @@
 import { fireEvent, render, screen } from "@testing-library/react";
-import { format } from "date-fns";
 import { describe, expect, it, vi } from "vitest";
+
+import { getDateFormatter } from "~/i18n/date-format";
 
 const hoisted = vi.hoisted(() => {
   const transaction = {
@@ -167,13 +168,12 @@ describe("SessionNodeView", () => {
   });
 
   it("renders the event start time instead of the session creation time", () => {
-    const expectedEventTime = format(
+    const formatter = getDateFormatter("en");
+    const expectedEventTime = formatter.time(
       new Date("2026-04-06T02:30:00.000Z"),
-      "h:mm a",
     );
-    const unexpectedCreatedTime = format(
+    const unexpectedCreatedTime = formatter.time(
       new Date("2026-04-06T00:00:00.000Z"),
-      "h:mm a",
     );
 
     render(

@@ -1,9 +1,10 @@
 import { forwardRef, useEffect, useMemo, useState } from "react";
 
-import { TZDate, format, safeParseDate } from "@anlg/utils";
+import { TZDate, safeParseDate } from "@anlg/utils";
 
 import type { TimelineEventsTable, TimelineSessionsTable } from "./utils";
 
+import { useDateFormatter } from "~/i18n/date-format";
 import { getSessionEvent } from "~/session/utils";
 import { useMountEffect } from "~/shared/hooks/useMountEffect";
 
@@ -18,13 +19,14 @@ export const CurrentTimeIndicator = forwardRef<
   ref,
 ) {
   const currentTimeMs = useCurrentTimeMs();
+  const dateFormatter = useDateFormatter();
   const insideOffset = `${(1 - progress) * 100}%`;
   const label = useMemo(() => {
     const now = timezone
       ? new TZDate(new Date(currentTimeMs), timezone)
       : new Date(currentTimeMs);
-    return format(now, "h:mm a").toUpperCase();
-  }, [currentTimeMs, timezone]);
+    return dateFormatter.time(now);
+  }, [currentTimeMs, dateFormatter, timezone]);
 
   return (
     <div

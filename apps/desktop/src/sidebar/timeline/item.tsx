@@ -14,7 +14,7 @@ import { commands as fsSyncCommands } from "@anlg/plugin-fs-sync";
 import { commands as openerCommands } from "@anlg/plugin-opener2";
 import { DancingSticks } from "@anlg/ui/components/ui/dancing-sticks";
 import { Spinner } from "@anlg/ui/components/ui/spinner";
-import { cn, format, getYear, safeParseDate, TZDate } from "@anlg/utils";
+import { cn, getYear, safeParseDate, TZDate } from "@anlg/utils";
 
 import {
   type EventTimelineItem,
@@ -26,6 +26,7 @@ import {
 
 import { useIgnoredEvents } from "~/calendar/ignored-events";
 import { writeSessionContextDragData } from "~/chat/context/session-drag";
+import { type DateFormatter, useDateFormatter } from "~/i18n/date-format";
 import { DEVICE_AUTH_REASON } from "~/lock/auth";
 import { isLockedFlag } from "~/lock/flag";
 import { revealLockedNote, setSessionLocked } from "~/lock/notes";
@@ -396,9 +397,16 @@ const EventItem = memo(
 
     const ignored = isIgnored(trackingIdEvent, recurrenceSeriesId);
 
+    const dateFormatter = useDateFormatter();
     const displayTime = useMemo(
-      () => formatDisplayTime(item.data.started_at, precision, timezone),
-      [item.data.started_at, precision, timezone],
+      () =>
+        formatDisplayTime(
+          item.data.started_at,
+          precision,
+          dateFormatter,
+          timezone,
+        ),
+      [item.data.started_at, precision, dateFormatter, timezone],
     );
 
     const [isOpening, setIsOpening] = useState(false);
@@ -576,14 +584,22 @@ const SessionItem = memo(
 
     const sessionEvent = getSessionEvent(item.data);
 
+    const dateFormatter = useDateFormatter();
     const displayTime = useMemo(
       () =>
         formatDisplayTime(
           sessionEvent?.started_at ?? item.data.created_at,
           precision,
+          dateFormatter,
           timezone,
         ),
-      [sessionEvent?.started_at, item.data.created_at, precision, timezone],
+      [
+        sessionEvent?.started_at,
+        item.data.created_at,
+        precision,
+        dateFormatter,
+        timezone,
+      ],
     );
     const muted = isTimelineItemInFuture(item);
 
@@ -739,6 +755,7 @@ const SessionItem = memo(
 function formatDisplayTime(
   timestamp: string | null | undefined,
   precision: TimelinePrecision,
+  dateFormatter: DateFormatter,
   timezone?: string,
 ): string {
   const parsed = safeParseDate(timestamp);
@@ -747,7 +764,7 @@ function formatDisplayTime(
   }
 
   const date = timezone ? new TZDate(parsed, timezone) : parsed;
-  const time = format(date, "h:mm a").toUpperCase();
+  const time = dateFormatter.time(date);
 
   if (precision === "time") {
     return time;
@@ -756,8 +773,8 @@ function formatDisplayTime(
   const now = timezone ? new TZDate(new Date(), timezone) : new Date();
   const sameYear = getYear(date) === getYear(now);
   const dateStr = sameYear
-    ? format(date, "MMM d")
-    : format(date, "MMM d, yyyy");
+    ? dateFormatter.dayMonth(date)
+    : dateFormatter.date(date);
 
   return `${dateStr}, ${time}`;
 }

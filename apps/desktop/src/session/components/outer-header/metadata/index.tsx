@@ -9,11 +9,12 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@anlg/ui/components/ui/popover";
-import { cn, safeFormat, safeParseDate, TZDate } from "@anlg/utils";
+import { cn, safeParseDate, TZDate } from "@anlg/utils";
 
 import { DateEditor } from "./date";
 import { ParticipantsDisplay } from "./participants";
 
+import { useDateFormatter } from "~/i18n/date-format";
 import { useSessionEvent } from "~/session/hooks/useSessionEvent";
 import { useConfigValue } from "~/shared/config";
 
@@ -109,6 +110,7 @@ export function EventDisplay({
   children?: React.ReactNode;
 }) {
   const tz = useConfigValue("timezone") || undefined;
+  const dateFormatter = useDateFormatter();
 
   const handleJoinMeeting = () => {
     if (event.meetingLink) {
@@ -133,15 +135,15 @@ export function EventDisplay({
     const startDate = toTz(rawStart);
     const endDate = rawEnd ? toTz(rawEnd) : null;
 
-    const startStr = safeFormat(startDate, "MMM d, yyyy h:mm a");
+    const startStr = dateFormatter.dateTime(startDate);
     if (!endDate) {
       return startStr;
     }
 
     const sameDay = startDate.toDateString() === endDate.toDateString();
     const endStr = sameDay
-      ? safeFormat(endDate, "h:mm a")
-      : safeFormat(endDate, "MMM d, yyyy h:mm a");
+      ? dateFormatter.time(endDate)
+      : dateFormatter.dateTime(endDate);
 
     return `${startStr} to ${endStr}`;
   };

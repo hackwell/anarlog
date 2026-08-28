@@ -1,6 +1,5 @@
 import { CircleNotch } from "@phosphor-icons/react";
 import { useMutation } from "@tanstack/react-query";
-import { format } from "date-fns";
 import { useCallback, useMemo } from "react";
 
 import { Button } from "@anlg/ui/components/ui/button";
@@ -14,6 +13,7 @@ import { cn } from "@anlg/utils";
 
 import { toTz, useTimezone } from "~/calendar/hooks";
 import { useIgnoredEvents } from "~/calendar/ignored-events";
+import { useDateFormatter } from "~/i18n/date-format";
 import { EventDisplay } from "~/session/components/outer-header/metadata";
 import { getOrCreateSessionForEventId } from "~/session/queries";
 import {
@@ -31,6 +31,7 @@ export function EventChip({
   event: TimelineEventRow | undefined;
 }) {
   const tz = useTimezone();
+  const dateFormatter = useDateFormatter();
   const { ignoreEvent, ignoreSeries } = useIgnoredEvents();
   const title = event?.title ?? undefined;
   const trackingId = event?.tracking_id_event ?? undefined;
@@ -39,7 +40,7 @@ export function EventChip({
   const color = event?.calendar_color || "#888";
 
   const startedAt = event?.started_at
-    ? format(toTz(event.started_at, tz), "h:mm a")
+    ? dateFormatter.time(toTz(event.started_at, tz))
     : null;
 
   const handleIgnore = useCallback(() => {
