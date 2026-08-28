@@ -55,12 +55,6 @@ on:
         required: false
       SELLER_ID:
         required: false
-      VITE_PRO_PRODUCT_ID:
-        required: false
-      VITE_SUPABASE_ANON_KEY:
-        required: false
-      VITE_SUPABASE_URL:
-        required: false
   workflow_dispatch:
     inputs:
       version:
@@ -424,9 +418,6 @@ jobs:
           VITE_API_URL: https://api.sessionecho.flagbit.de
           VITE_APP_URL: https://sessionecho.flagbit.de
           VITE_APP_VERSION: ${{ needs.validate.outputs.version }}
-          VITE_PRO_PRODUCT_ID: ${{ secrets.VITE_PRO_PRODUCT_ID }}
-          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
-          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
         run: |
           pnpm -F desktop tauri build \
             --ci \
