@@ -52,7 +52,7 @@ import {
 import { createTaskScheduler } from "~/services/task-scheduler";
 
 const ctx = {
-  provider: "google" as const,
+  provider: "apple" as const,
   connectionId: "conn-1",
   from: new Date("2026-06-01T00:00:00.000Z"),
   to: new Date("2026-06-08T00:00:00.000Z"),
@@ -69,7 +69,7 @@ describe("syncCalendarEventsForRange", () => {
       (_key: string, write: () => Promise<unknown>) => write(),
     );
     ctxMocks.getProviderConnections.mockResolvedValue([
-      { provider: "google", connection_ids: ["conn-1"] },
+      { provider: "apple", connection_ids: ["conn-1"] },
     ]);
     ctxMocks.syncCalendars.mockResolvedValue(undefined);
     ctxMocks.createCtx.mockResolvedValue(ctx);
@@ -109,12 +109,12 @@ describe("syncCalendarEventsForRange", () => {
 
   test("removes the exact disconnected calendar connection", async () => {
     await removeDisconnectedCalendarConnection(
-      "google-calendar",
+      "apple-calendar",
       "conn-personal",
     );
 
     expect(storageMocks.tombstoneCalendarConnection).toHaveBeenCalledWith(
-      "google",
+      "apple",
       "conn-personal",
     );
     expect(ctxMocks.getProviderConnections).not.toHaveBeenCalled();
@@ -135,12 +135,12 @@ describe("syncCalendarEventsForRange", () => {
     );
 
     await expect(
-      removeDisconnectedCalendarConnection("google-calendar", "conn-1"),
+      removeDisconnectedCalendarConnection("apple-calendar", "conn-1"),
     ).rejects.toThrow("write failed");
     await syncCalendarEventsForRange({ from: ctx.from, to: ctx.to });
 
     expect(ctxMocks.syncCalendars).toHaveBeenCalledWith(
-      [{ provider: "google", connection_ids: ["conn-1"] }],
+      [{ provider: "apple", connection_ids: ["conn-1"] }],
       undefined,
       expect.any(Function),
     );
@@ -241,15 +241,15 @@ describe("syncCalendarEventsForRange", () => {
     });
 
     await removeDisconnectedCalendarConnection(
-      "google-calendar",
+      "apple-calendar",
       "conn-removed",
     );
-    resolveFirst?.([{ provider: "google", connection_ids: ["conn-1"] }]);
+    resolveFirst?.([{ provider: "apple", connection_ids: ["conn-1"] }]);
     await Promise.all([first, second]);
 
     expect(ctxMocks.getProviderConnections).toHaveBeenCalledTimes(2);
     expect(ctxMocks.syncCalendars).toHaveBeenCalledWith(
-      [{ provider: "google", connection_ids: ["conn-1"] }],
+      [{ provider: "apple", connection_ids: ["conn-1"] }],
       undefined,
       expect.any(Function),
     );
@@ -272,12 +272,12 @@ describe("syncCalendarEventsForRange", () => {
       expect(ctxMocks.getProviderConnections).toHaveBeenCalledOnce();
     });
 
-    await removeDisconnectedCalendarConnection("google-calendar", "conn-1");
-    resolveConnections?.([{ provider: "google", connection_ids: ["conn-1"] }]);
+    await removeDisconnectedCalendarConnection("apple-calendar", "conn-1");
+    resolveConnections?.([{ provider: "apple", connection_ids: ["conn-1"] }]);
     await sync;
 
     expect(storageMocks.tombstoneCalendarConnection).toHaveBeenCalledWith(
-      "google",
+      "apple",
       "conn-1",
     );
     expect(ctxMocks.syncCalendars).not.toHaveBeenCalled();
@@ -289,19 +289,19 @@ describe("syncCalendarEventsForRange", () => {
     ctxMocks.syncCalendars.mockClear();
     await syncCalendarEventsForRange({ from: ctx.from, to: ctx.to });
     expect(ctxMocks.syncCalendars).toHaveBeenCalledWith(
-      [{ provider: "google", connection_ids: ["conn-1"] }],
+      [{ provider: "apple", connection_ids: ["conn-1"] }],
       undefined,
       expect.any(Function),
     );
     expect(ctxMocks.createCtx).toHaveBeenCalledWith(
-      "google",
+      "apple",
       "conn-1",
       expect.anything(),
     );
   });
 
   test("ignores a stale connection without syncing provider inventory", async () => {
-    await removeDisconnectedCalendarConnection("google-calendar", "conn-1");
+    await removeDisconnectedCalendarConnection("apple-calendar", "conn-1");
     ctxMocks.syncCalendars.mockClear();
 
     await syncCalendarEventsForRange({ from: ctx.from, to: ctx.to });
@@ -319,29 +319,29 @@ describe("syncCalendarEventsForRange", () => {
   });
 
   test("allows a calendar connection after the provider reconnects", async () => {
-    await removeDisconnectedCalendarConnection("google-calendar", "conn-1");
-    allowReconnectedCalendarConnections("google-calendar");
+    await removeDisconnectedCalendarConnection("apple-calendar", "conn-1");
+    allowReconnectedCalendarConnections("apple-calendar");
     ctxMocks.syncCalendars.mockClear();
 
     await syncCalendarEventsForRange({ from: ctx.from, to: ctx.to });
 
     expect(ctxMocks.syncCalendars).toHaveBeenCalledWith(
-      [{ provider: "google", connection_ids: ["conn-1"] }],
+      [{ provider: "apple", connection_ids: ["conn-1"] }],
       undefined,
       expect.any(Function),
     );
     expect(ctxMocks.createCtx).toHaveBeenCalledWith(
-      "google",
+      "apple",
       "conn-1",
       expect.anything(),
     );
   });
 
   test("reconnect invalidates a sync that filtered the disconnected connection", async () => {
-    await removeDisconnectedCalendarConnection("google-calendar", "conn-1");
+    await removeDisconnectedCalendarConnection("apple-calendar", "conn-1");
     ctxMocks.syncCalendars.mockImplementationOnce(
       async (_connections, _signal, shouldStop) => {
-        allowReconnectedCalendarConnections("google-calendar");
+        allowReconnectedCalendarConnections("apple-calendar");
         expect(shouldStop()).toBe(true);
       },
     );

@@ -2195,20 +2195,15 @@ dependencies = [
 name = "calendar"
 version = "0.1.0"
 dependencies = [
- "api-client",
  "apple-calendar",
  "calendar-interface",
  "chrono",
  "chrono-tz 0.10.4",
- "google-calendar",
- "outlook-calendar",
  "regex",
- "reqwest 0.13.2",
  "serde",
  "serde_json",
  "specta",
  "thiserror 2.0.18",
- "tracing",
 ]
 
 [[package]]
@@ -15675,7 +15670,6 @@ dependencies = [
  "specta-typescript",
  "tauri",
  "tauri-plugin",
- "tauri-plugin-auth",
  "tauri-plugin-permissions",
  "tauri-specta",
  "thiserror 2.0.18",

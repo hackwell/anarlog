@@ -1,8 +1,6 @@
 use anlg_calendar_interface::{
     CalendarEvent, CalendarListItem, CalendarProviderType, CreateEventInput, EventFilter,
 };
-use tauri::Manager;
-use tauri_plugin_auth::AuthPluginExt;
 use tauri_plugin_permissions::PermissionsPluginExt;
 
 use crate::error::Error;
@@ -19,15 +17,8 @@ pub async fn is_provider_enabled<R: tauri::Runtime>(
     app: tauri::AppHandle<R>,
     provider: CalendarProviderType,
 ) -> Result<bool, Error> {
-    let config = app.state::<crate::PluginConfig>();
-    let token = match provider {
-        CalendarProviderType::Apple => None,
-        _ => access_token(&app)?,
-    };
     let apple = is_apple_authorized(&app).await?;
-    anlg_calendar::is_provider_enabled(&config.api_base_url, token.as_deref(), apple, provider)
-        .await
-        .map_err(Into::into)
+    Ok(anlg_calendar::is_provider_enabled(apple, provider))
 }
 
 #[tauri::command]
@@ -35,53 +26,29 @@ pub async fn is_provider_enabled<R: tauri::Runtime>(
 pub async fn list_connection_ids<R: tauri::Runtime>(
     app: tauri::AppHandle<R>,
 ) -> Result<Vec<anlg_calendar::ProviderConnectionIds>, Error> {
-    let config = app.state::<crate::PluginConfig>();
-    let token = access_token(&app)?;
     let apple = is_apple_authorized(&app).await?;
-    anlg_calendar::list_connection_ids(&config.api_base_url, token.as_deref(), apple)
-        .await
-        .map_err(Into::into)
+    Ok(anlg_calendar::list_connection_ids(apple))
 }
 
 #[tauri::command]
 #[specta::specta]
 pub async fn list_calendars<R: tauri::Runtime>(
-    app: tauri::AppHandle<R>,
+    _app: tauri::AppHandle<R>,
     provider: CalendarProviderType,
-    connection_id: String,
+    _connection_id: String,
 ) -> Result<Vec<CalendarListItem>, Error> {
-    let config = app.state::<crate::PluginConfig>();
-    let token = match provider {
-        CalendarProviderType::Apple => String::new(),
-        _ => require_access_token(&app)?,
-    };
-    anlg_calendar::list_calendars(&config.api_base_url, &token, provider, &connection_id)
-        .await
-        .map_err(Into::into)
+    anlg_calendar::list_calendars(provider).map_err(Into::into)
 }
 
 #[tauri::command]
 #[specta::specta]
 pub async fn list_events<R: tauri::Runtime>(
-    app: tauri::AppHandle<R>,
+    _app: tauri::AppHandle<R>,
     provider: CalendarProviderType,
-    connection_id: String,
+    _connection_id: String,
     filter: EventFilter,
 ) -> Result<Vec<CalendarEvent>, Error> {
-    let config = app.state::<crate::PluginConfig>();
-    let token = match provider {
-        CalendarProviderType::Apple => String::new(),
-        _ => require_access_token(&app)?,
-    };
-    anlg_calendar::list_events(
-        &config.api_base_url,
-        &token,
-        provider,
-        &connection_id,
-        filter,
-    )
-    .await
-    .map_err(Into::into)
+    anlg_calendar::list_events(provider, filter).map_err(Into::into)
 }
 
 #[tauri::command]
@@ -103,20 +70,6 @@ pub fn create_event<R: tauri::Runtime>(
     anlg_calendar::create_event(provider, input).map_err(Into::into)
 }
 
-fn access_token<R: tauri::Runtime>(app: &tauri::AppHandle<R>) -> Result<Option<String>, Error> {
-    app.access_token()
-        .map(|token| token.filter(|token| !token.is_empty()))
-        .map_err(|error| Error::Auth(error.to_string()))
-}
-
-fn require_access_token<R: tauri::Runtime>(app: &tauri::AppHandle<R>) -> Result<String, Error> {
-    let token = access_token(app)?;
-    match token {
-        Some(t) if !t.is_empty() => Ok(t),
-        _ => Err(anlg_calendar::Error::NotAuthenticated.into()),
-    }
-}
-
 async fn is_apple_authorized<R: tauri::Runtime>(app: &tauri::AppHandle<R>) -> Result<bool, Error> {
     #[cfg(target_os = "macos")]
     {
@@ -124,7 +77,7 @@ async fn is_apple_authorized<R: tauri::Runtime>(app: &tauri::AppHandle<R>) -> Re
             .permissions()
             .check(tauri_plugin_permissions::Permission::Calendar)
             .await
-            .map_err(|e| anlg_calendar::Error::Api(e.to_string()))?;
+            .map_err(|e| Error::Permissions(e.to_string()))?;
         Ok(matches!(
             status,
             tauri_plugin_permissions::PermissionStatus::Authorized

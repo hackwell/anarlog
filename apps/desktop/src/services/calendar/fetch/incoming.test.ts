@@ -12,7 +12,7 @@ import type { Ctx } from "../ctx";
 import { fetchIncomingEvents } from "./incoming";
 
 const ctx: Ctx = {
-  provider: "google",
+  provider: "apple",
   connectionId: "conn-1",
   from: new Date("2026-06-01T00:00:00.000Z"),
   to: new Date("2026-06-02T00:00:00.000Z"),

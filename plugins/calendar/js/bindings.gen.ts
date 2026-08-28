@@ -79,7 +79,7 @@ export type AttendeeStatus = "pending" | "accepted" | "tentative" | "declined"
 export type CalendarChangedEvent = null
 export type CalendarEvent = { provider: CalendarProviderType; 
 /**
- * Unique between events. Synthesized for Apple events (eventIdentifier:YYYY-MM-DD for recurring).
+ * Unique between events. Synthesized from eventIdentifier:YYYY-MM-DD for recurring events.
  */
 id: string; 
 /**
@@ -87,39 +87,35 @@ id: string;
  */
 calendar_id: string; 
 /**
- * iCal identifier used for deduplication.
- * Apple: calendarItemExternalIdentifier, Google: iCalUID.
+ * iCal identifier used for deduplication (calendarItemExternalIdentifier).
  */
 external_id: string; title: string; description: string | null; location: string | null; url: string | null; 
 /**
- * Parsed from notes for Apple, Google provides url directly.
+ * Parsed from the event notes.
  */
 meeting_link: string | null; 
 /**
- * ISO 8601. For Google, start of day for all day events (Apple already does that).
+ * ISO 8601.
  */
 started_at: string; 
 /**
- * ISO 8601. For Google, end of day for all day events (Apple already does that).
+ * ISO 8601.
  */
 ended_at: string; timezone: string | null; is_all_day: boolean; 
 /**
  * Apple: None | Confirmed | Tentative | Canceled -> map None to Confirmed.
- * Google: confirmed | tentative | cancelled.
  */
 status: EventStatus; organizer: EventPerson | null; attendees: EventAttendee[]; has_recurrence_rules: boolean; 
 /**
- * Google's approach: for an instance of a recurring event, this is the id of the recurring
- * event to which this instance belongs. For Apple, this is the recurrence's series_identifier
- * (same across all occurrences of a recurring event).
+ * The recurrence's series_identifier, the same across all occurrences of a recurring event.
  */
 recurring_event_id: string | null; 
 /**
- * Raw data. JSON for both Apple and Google.
+ * Raw data, as JSON.
  */
 raw: string }
 export type CalendarListItem = { provider: CalendarProviderType; id: string; title: string; source: string | null; color: string | null; is_primary: boolean | null; can_edit: boolean | null; raw: string }
-export type CalendarProviderType = "apple" | "google" | "outlook"
+export type CalendarProviderType = "apple"
 export type CreateEventInput = { calendar_tracking_id: string; title: string; started_at: string; ended_at: string; is_all_day: boolean | null; location: string | null; notes: string | null; url: string | null }
 export type EventAttendee = { name: string | null; 
 /**
@@ -127,25 +123,22 @@ export type EventAttendee = { name: string | null;
  */
 email: string | null; 
 /**
- * Apple: participant.isCurrentUser, Google: attendee.self.
+ * Apple: participant.isCurrentUser.
  */
 is_current_user: boolean; 
 /**
  * Apple: EKParticipantStatus (Unknown | Pending | Accepted | Declined | Tentative | Delegated | Completed | InProgress).
- * Google: needsAction | declined | tentative | accepted.
- * Normalize: unknown/needsAction -> Pending, delegated/completed/inProgress -> Accepted.
+ * Normalize: unknown -> Pending, delegated/completed/inProgress -> Accepted.
  */
 status: AttendeeStatus; 
 /**
  * Apple: EKParticipantRole (Unknown | Required | Optional | Chair | NonParticipant).
- * Google: attendee.optional and attendee.organizer.
- * For Apple, normalize unknown as required (see RFC 5545 3.2.16).
- * For Google: organizer -> Chair, !organizer & !optional -> Required, !organizer & optional -> Optional.
+ * Normalize unknown as required (see RFC 5545 3.2.16).
  */
 role: AttendeeRole }
 export type EventFilter = { from: string; to: string; calendar_tracking_id: string }
 /**
- * Apple: {name, email, isCurrentUser, ...}, Google: {id, email, displayName, self}.
+ * Apple: {name, email, isCurrentUser, ...}.
  */
 export type EventPerson = { name: string | null; 
 /**
@@ -153,7 +146,7 @@ export type EventPerson = { name: string | null;
  */
 email: string | null; 
 /**
- * Apple: participant.isCurrentUser, Google: organizer.self.
+ * Apple: participant.isCurrentUser.
  */
 is_current_user: boolean }
 export type EventStatus = "confirmed" | "tentative" | "cancelled"

@@ -29,7 +29,7 @@ const calendar = {
   tracking_id_calendar: "primary",
   name: "Work",
   enabled: 1,
-  provider: "google",
+  provider: "apple",
   source: "work@example.com",
   color: "#4285f4",
   connection_id: "conn-work",
@@ -49,7 +49,7 @@ describe("calendar SQLite storage", () => {
     mocks.execute.mockResolvedValue([calendar]);
 
     await applyCalendarInventory({
-      provider: "google",
+      provider: "apple",
       requestedConnectionIds: [],
       successfulConnections: [],
     });
@@ -71,7 +71,7 @@ describe("calendar SQLite storage", () => {
   });
 
   test("tombstones only the disconnected provider connection", async () => {
-    await tombstoneCalendarConnection("google", "conn-personal");
+    await tombstoneCalendarConnection("apple", "conn-personal");
 
     expect(mocks.executeTransaction).toHaveBeenCalledTimes(1);
     const statements = mocks.executeTransaction.mock.calls[0][0] as Array<{
@@ -81,16 +81,16 @@ describe("calendar SQLite storage", () => {
     expect(statements).toHaveLength(2);
     expect(statements[0].sql).toContain("UPDATE events");
     expect(statements[0].sql).toContain("SELECT id");
-    expect(statements[0].params.slice(2)).toEqual(["google", "conn-personal"]);
+    expect(statements[0].params.slice(2)).toEqual(["apple", "conn-personal"]);
     expect(statements[1].sql).toContain("UPDATE calendars");
-    expect(statements[1].params.slice(2)).toEqual(["google", "conn-personal"]);
+    expect(statements[1].params.slice(2)).toEqual(["apple", "conn-personal"]);
   });
 
   test("preserves calendars when a requested connection fails to refresh", async () => {
     mocks.execute.mockResolvedValue([calendar]);
 
     await applyCalendarInventory({
-      provider: "google",
+      provider: "apple",
       requestedConnectionIds: ["conn-work"],
       successfulConnections: [],
     });
@@ -104,14 +104,14 @@ describe("calendar SQLite storage", () => {
     ]);
 
     await applyCalendarInventory({
-      provider: "google",
+      provider: "apple",
       requestedConnectionIds: ["conn-work"],
       successfulConnections: [
         {
           connectionId: "conn-work",
           calendars: [
             {
-              provider: "google",
+              provider: "apple",
               id: "primary",
               title: "Work restored",
               source: "work@example.com",
@@ -148,7 +148,7 @@ describe("calendar SQLite storage", () => {
         recurrence_series_id: "",
         has_recurrence_rules: 0,
         is_all_day: 0,
-        provider: "google",
+        provider: "apple",
         created_at: "2026-01-01T00:00:00.000Z",
         deleted_at: "2026-05-01T00:00:00.000Z",
       },
@@ -156,7 +156,7 @@ describe("calendar SQLite storage", () => {
 
     const rows = await loadEventsForSync(
       {
-        provider: "google",
+        provider: "apple",
         connectionId: "conn-work",
         from: new Date("2026-06-01T00:00:00.000Z"),
         to: new Date("2026-06-02T00:00:00.000Z"),
@@ -180,7 +180,7 @@ describe("calendar SQLite storage", () => {
   test("commits event, session, human, and participant writes together", async () => {
     await applyConnectionSync({
       ctx: {
-        provider: "google",
+        provider: "apple",
         connectionId: "conn-work",
         from: new Date("2026-06-01T00:00:00.000Z"),
         to: new Date("2026-06-02T00:00:00.000Z"),
@@ -251,7 +251,7 @@ describe("calendar SQLite storage", () => {
 
   test("normalizes missing optional fields when updating events", async () => {
     const ctx = {
-      provider: "google" as const,
+      provider: "apple" as const,
       connectionId: "conn-work",
       from: new Date("2026-06-01T00:00:00.000Z"),
       to: new Date("2026-06-02T00:00:00.000Z"),
@@ -289,7 +289,7 @@ describe("calendar SQLite storage", () => {
           recurrence_series_id: "series-1",
           has_recurrence_rules: false,
           is_all_day: false,
-          provider: "google",
+          provider: "apple",
           created_at: "2026-01-01T00:00:00.000Z",
           deleted_at: null,
         },

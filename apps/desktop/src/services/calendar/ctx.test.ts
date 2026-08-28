@@ -39,7 +39,7 @@ describe("calendar sync context", () => {
         tracking_id_calendar: "primary",
         name: "Work",
         enabled: true,
-        provider: "google",
+        provider: "apple",
         source: "work@example.com",
         color: "#4285f4",
         connection_id: "conn-work",
@@ -57,7 +57,7 @@ describe("calendar sync context", () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date(2026, 4, 29, 13, 30));
 
-    const ctx = await createCtx("google", "conn-work");
+    const ctx = await createCtx("apple", "conn-work");
 
     expect(ctx.from).toEqual(new Date(2026, 4, 23, 0, 0, 0, 0));
     expect(ctx.to).toEqual(new Date(2026, 4, 31, 0, 0, 0, 0));
@@ -70,7 +70,7 @@ describe("calendar sync context", () => {
       to: new Date("2026-07-01T00:00:00.000Z"),
     };
 
-    const ctx = await createCtx("google", "conn-work", range);
+    const ctx = await createCtx("apple", "conn-work", range);
 
     expect(ctx.from).toBe(range.from);
     expect(ctx.to).toBe(range.to);
@@ -102,13 +102,13 @@ describe("calendar sync context", () => {
 
     await syncCalendars([
       {
-        provider: "google",
+        provider: "apple",
         connection_ids: ["conn-work", "conn-personal"],
       },
     ]);
 
     expect(storage.applyCalendarInventory).toHaveBeenCalledWith({
-      provider: "google",
+      provider: "apple",
       requestedConnectionIds: ["conn-work", "conn-personal"],
       successfulConnections: [
         {
@@ -137,13 +137,13 @@ describe("calendar sync context", () => {
 
     await syncCalendars([
       {
-        provider: "google",
+        provider: "apple",
         connection_ids: ["conn-ok", "conn-failed"],
       },
     ]);
 
     expect(storage.applyCalendarInventory).toHaveBeenCalledWith({
-      provider: "google",
+      provider: "apple",
       requestedConnectionIds: ["conn-ok", "conn-failed"],
       successfulConnections: [{ connectionId: "conn-ok", calendars: [] }],
     });
@@ -157,7 +157,7 @@ describe("calendar sync context", () => {
     });
 
     await syncCalendars(
-      [{ provider: "google", connection_ids: ["conn-work"] }],
+      [{ provider: "apple", connection_ids: ["conn-work"] }],
       abortController.signal,
     );
 
