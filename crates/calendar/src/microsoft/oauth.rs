@@ -87,7 +87,7 @@ pub fn start_login() -> Result<String, Error> {
     url.query_pairs_mut()
         .append_pair("client_id", client_id)
         .append_pair("response_type", "code")
-        .append_pair("redirect_uri", config::REDIRECT_URI)
+        .append_pair("redirect_uri", &config::redirect_uri())
         .append_pair("response_mode", "query")
         .append_pair("scope", &config::scope_parameter())
         .append_pair("state", &state)
@@ -149,11 +149,12 @@ pub async fn complete_login(store: &dyn TokenStore, callback_url: &str) -> Resul
     }
 
     let client_id = config::client_id()?;
+    let redirect_uri = config::redirect_uri();
     let form = [
         ("client_id", client_id),
         ("grant_type", "authorization_code"),
         ("code", code.as_str()),
-        ("redirect_uri", config::REDIRECT_URI),
+        ("redirect_uri", redirect_uri.as_str()),
         ("code_verifier", pending.verifier.as_str()),
         ("scope", &config::scope_parameter()),
     ];

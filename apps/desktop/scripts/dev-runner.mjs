@@ -14,6 +14,12 @@ if (!command) {
 }
 
 if (command === "run" || command === "build") {
+  // `tauri dev` registers the sessionecho-dev scheme with the OS, so the
+  // redirect sent to Microsoft has to match it or the callback never
+  // arrives. Stable builds fall back to the default in the calendar crate.
+  if (command === "run" && !process.env.SESSIONECHO_DEEPLINK_SCHEME) {
+    process.env.SESSIONECHO_DEEPLINK_SCHEME = "sessionecho-dev";
+  }
   const cargoArgs = [];
   if (command === "run" && process.platform === "darwin") {
     cargoArgs.push(

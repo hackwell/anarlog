@@ -15,7 +15,19 @@ pub const TOKEN_URL: &str = "https://login.microsoftonline.com/common/oauth2/v2.
 /// Deliberately not `/auth/callback`: that path is already claimed by the local
 /// Claude Pro / ChatGPT Plus sign-in, and a collision would deliver Microsoft's
 /// authorization code to the wrong handler.
-pub const REDIRECT_URI: &str = "sessionecho://ms-calendar/callback";
+/// Default scheme. Dev and staging builds override it at build time so the
+/// redirect Microsoft is *sent* matches the scheme this build actually
+/// registers with the OS — matching the callback scheme-agnostically is not
+/// enough, because a stable redirect never reaches a dev app at all.
+pub const DEFAULT_SCHEME: &str = "sessionecho";
+
+pub fn redirect_uri() -> String {
+    let scheme = option_env!("SESSIONECHO_DEEPLINK_SCHEME")
+        .map(str::trim)
+        .filter(|value| !value.is_empty())
+        .unwrap_or(DEFAULT_SCHEME);
+    format!("{scheme}://{CALLBACK_HOST}{CALLBACK_PATH}")
+}
 
 /// Host and path of `REDIRECT_URI`, matched scheme-agnostically so dev builds
 /// (`sessionecho-dev://`) route the same way as stable ones.
@@ -56,8 +68,18 @@ mod tests {
 
     #[test]
     fn redirect_uri_does_not_collide_with_the_subscription_login() {
-        assert_eq!(REDIRECT_URI, "sessionecho://ms-calendar/callback");
-        assert!(!REDIRECT_URI.contains("/auth/callback"));
+        let uri = redirect_uri();
+        assert!(uri.ends_with("://ms-calendar/callback"), "{uri}");
+        assert!(!uri.contains("/auth/callback"), "{uri}");
+    }
+
+    #[test]
+    fn redirect_uri_uses_this_builds_own_scheme() {
+        let expected = option_env!("SESSIONECHO_DEEPLINK_SCHEME")
+            .map(str::trim)
+            .filter(|v| !v.is_empty())
+            .unwrap_or(DEFAULT_SCHEME);
+        assert_eq!(redirect_uri(), format!("{expected}://ms-calendar/callback"));
     }
 
     #[test]
