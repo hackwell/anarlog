@@ -6,22 +6,6 @@
 
 
 export const commands = {
-async setDockIcon(name: string) : Promise<Result<null, string>> {
-    try {
-    return { status: "ok", data: await TAURI_INVOKE("plugin:icon|set_dock_icon", { name }) };
-} catch (e) {
-    if(e instanceof Error) throw e;
-    else return { status: "error", error: e  as any };
-}
-},
-async resetDockIcon() : Promise<Result<null, string>> {
-    try {
-    return { status: "ok", data: await TAURI_INVOKE("plugin:icon|reset_dock_icon") };
-} catch (e) {
-    if(e instanceof Error) throw e;
-    else return { status: "error", error: e  as any };
-}
-},
 async getIcon() : Promise<Result<string | null, string>> {
     try {
     return { status: "ok", data: await TAURI_INVOKE("plugin:icon|get_icon") };
@@ -38,7 +22,7 @@ async setRecordingIndicator(show: boolean) : Promise<Result<null, string>> {
     else return { status: "error", error: e  as any };
 }
 },
-async setNotificationBadge(count?: number | null) : Promise<Result<null, string>> {
+async setNotificationBadge(count: number | null) : Promise<Result<null, string>> {
     try {
     return { status: "ok", data: await TAURI_INVOKE("plugin:icon|set_notification_badge", { count }) };
 } catch (e) {

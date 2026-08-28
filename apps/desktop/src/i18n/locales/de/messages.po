@@ -272,10 +272,6 @@ msgstr "Alle Notizen"
 msgid "An unexpected error occurred."
 msgstr "Ein unerwarteter Fehler ist aufgetreten."
 
-#: src/settings/appearance/app-icon.tsx
-msgid "Anagram"
-msgstr "Anagram"
-
 #: src/session/components/note-input/enhanced/streaming.tsx
 msgid "Analyzing structure..."
 msgstr "Struktur wird analysiert …"
@@ -295,10 +291,6 @@ msgstr "API-Schlüssel gespeichert"
 #: src/sidebar/settings.tsx
 msgid "App"
 msgstr "App"
-
-#: src/settings/appearance/app-icon.tsx
-msgid "App icon"
-msgstr "App-Symbol"
 
 #: src/settings/appearance/index.tsx
 #: src/sidebar/settings.tsx
@@ -432,10 +424,6 @@ msgstr "Am besten für diesen Mac"
 #: src/chat/components/body/empty.tsx
 msgid "Beta"
 msgstr "Beta"
-
-#: src/settings/appearance/app-icon.tsx
-msgid "Blueprint"
-msgstr "Blueprint"
 
 #: src/settings/general/notification.tsx
 msgid "Bounce app icon"
@@ -591,10 +579,6 @@ msgstr "Festlegen, wie lange Aufnahmen auf diesem Gerät bleiben."
 #: src/settings/general/summary-length.tsx
 msgid "Choose how much detail generated meeting summaries include."
 msgstr "Festlegen, wie detailliert generierte Meeting-Zusammenfassungen sind."
-
-#: src/settings/appearance/app-icon.tsx
-msgid "Choose how Session Echo appears in the Dock."
-msgstr "Festlegen, wie Session Echo im Dock erscheint."
 
 #: src/settings/appearance/theme.tsx
 msgid "Choose how Session Echo looks on this device."
@@ -958,10 +942,6 @@ msgstr "Datum und Uhrzeit sind erforderlich"
 msgid "Decline"
 msgstr "Ablehnen"
 
-#: src/settings/appearance/app-icon.tsx
-msgid "Default"
-msgstr "Standard"
-
 #: src/contacts/contact-page-header.tsx
 #: src/session/components/outer-header/overflow/delete.tsx
 #: src/sidebar/automations.tsx
@@ -1253,10 +1233,6 @@ msgstr "Pull Request konnte nicht geladen werden"
 #: src/templates/details.tsx
 msgid "Favorite template"
 msgstr "Vorlage favorisieren"
-
-#: src/settings/appearance/app-icon.tsx
-msgid "Field Journal"
-msgstr "Field Journal"
 
 #: src/main/windows-title-bar.tsx
 msgid "File"
@@ -1983,10 +1959,6 @@ msgstr "Notiz"
 msgid "Note is Locked"
 msgstr "Notiz ist gesperrt"
 
-#: src/settings/appearance/app-icon.tsx
-msgid "Notepad"
-msgstr "Notepad"
-
 #: src/sidebar/toast/undo-delete-toast.tsx
 msgid "notes"
 msgstr "Notizen"
@@ -2236,10 +2208,6 @@ msgstr "Datenschutz"
 #: src/settings/ai/stt/select.tsx
 msgid "Pro"
 msgstr "Pro"
-
-#: src/settings/appearance/app-icon.tsx
-msgid "Production"
-msgstr "Production"
 
 #: src/session/components/note-input/transcript/screens/empty.tsx
 msgid "Re-transcribe"
@@ -2784,10 +2752,6 @@ msgstr "Mit SuperGrok oder X Premium+ anmelden und den Code unten eingeben."
 msgid "Signing secret copied"
 msgstr "Signing-Secret kopiert"
 
-#: src/settings/appearance/app-icon.tsx
-msgid "Sketch"
-msgstr "Sketch"
-
 #: src/settings/developers/skills.tsx
 msgid "Skill installed"
 msgstr "Skill installiert"
@@ -2900,10 +2864,6 @@ msgstr "Aktuell bleiben: Updates werden beim nächsten Öffnen von Session Echo 
 #: src/settings/automations/index.tsx
 msgid "Steps run from top to bottom."
 msgstr "Schritte laufen von oben nach unten."
-
-#: src/settings/appearance/app-icon.tsx
-msgid "Stone"
-msgstr "Stone"
 
 #: src/composer/index.tsx
 #: src/session/components/outer-header/index.tsx
@@ -3198,10 +3158,6 @@ msgstr "Demo ausprobieren"
 msgid "Turn on Session Echo in System Settings → Privacy & Security → Calendars, then return here."
 msgstr "Session Echo unter Systemeinstellungen → Datenschutz & Sicherheit → Kalender aktivieren und dann hierher zurückkehren."
 
-#: src/settings/appearance/app-icon.tsx
-msgid "Typewriter Key"
-msgstr "Typewriter Key"
-
 #: src/settings/developers/cli.tsx
 msgid "Unavailable"
 msgstr "Nicht verfügbar"
@@ -3365,10 +3321,6 @@ msgstr "Warten auf Autorisierung in Ihrem Browser …"
 #: src/calendar/components/microsoft/status.tsx
 msgid "Waiting for the sign-in in your browser. Session Echo continues on its own once you are done."
 msgstr "Wartet auf die Anmeldung in Ihrem Browser. Session Echo macht von selbst weiter, sobald Sie fertig sind."
-
-#: src/settings/appearance/app-icon.tsx
-msgid "Walnut"
-msgstr "Walnut"
 
 #: src/settings/developers/webhooks.tsx
 msgid "Webhooks"

@@ -5,7 +5,6 @@ const mocks = vi.hoisted(() => ({
   setTheme: vi.fn(),
   applyThemePreference: vi.fn(),
   theme: "system",
-  appIcon: "default",
 }));
 
 vi.mock("~/settings/queries", () => ({
@@ -13,8 +12,7 @@ vi.mock("~/settings/queries", () => ({
 }));
 
 vi.mock("~/shared/config", () => ({
-  useConfigValue: (key: string) =>
-    key === "theme" ? mocks.theme : mocks.appIcon,
+  useConfigValue: () => mocks.theme,
 }));
 
 vi.mock("~/shared/theme/provider", () => ({
@@ -28,7 +26,6 @@ describe("ThemeSelector", () => {
     cleanup();
     vi.clearAllMocks();
     mocks.theme = "system";
-    mocks.appIcon = "default";
   });
 
   it("shows visual choices and applies the selected theme immediately", () => {
@@ -46,17 +43,7 @@ describe("ThemeSelector", () => {
 
     fireEvent.click(screen.getByRole("radio", { name: /Dark/ }));
 
-    expect(mocks.applyThemePreference).toHaveBeenCalledWith("dark", "default");
+    expect(mocks.applyThemePreference).toHaveBeenCalledWith("dark");
     expect(mocks.setTheme).toHaveBeenCalledWith("dark");
-  });
-
-  it("carries the selected icon into the theme change", () => {
-    mocks.appIcon = "anagram";
-
-    render(<ThemeSelector />);
-
-    fireEvent.click(screen.getByRole("radio", { name: /Light/ }));
-
-    expect(mocks.applyThemePreference).toHaveBeenCalledWith("light", "anagram");
   });
 });

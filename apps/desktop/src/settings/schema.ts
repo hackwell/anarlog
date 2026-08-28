@@ -75,12 +75,6 @@ export const SETTING_DEFINITIONS = {
     default: "system" as string,
     synced: true,
   },
-  app_icon: {
-    type: "string",
-    path: ["general", "app_icon"],
-    default: "default" as string,
-    synced: true,
-  },
   save_recordings: {
     type: "boolean",
     path: ["general", "save_recordings"],

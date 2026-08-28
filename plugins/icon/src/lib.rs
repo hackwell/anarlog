@@ -15,8 +15,6 @@ fn make_specta_builder<R: tauri::Runtime>() -> tauri_specta::Builder<R> {
     tauri_specta::Builder::<R>::new()
         .plugin_name(PLUGIN_NAME)
         .commands(tauri_specta::collect_commands![
-            commands::set_dock_icon::<tauri::Wry>,
-            commands::reset_dock_icon::<tauri::Wry>,
             commands::get_icon::<tauri::Wry>,
             commands::set_recording_indicator::<tauri::Wry>,
             commands::set_notification_badge::<tauri::Wry>,

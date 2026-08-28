@@ -272,10 +272,6 @@ msgstr "All Notes"
 msgid "An unexpected error occurred."
 msgstr "An unexpected error occurred."
 
-#: src/settings/appearance/app-icon.tsx
-msgid "Anagram"
-msgstr "Anagram"
-
 #: src/session/components/note-input/enhanced/streaming.tsx
 msgid "Analyzing structure..."
 msgstr "Analyzing structure..."
@@ -295,10 +291,6 @@ msgstr "API key saved"
 #: src/sidebar/settings.tsx
 msgid "App"
 msgstr "App"
-
-#: src/settings/appearance/app-icon.tsx
-msgid "App icon"
-msgstr "App icon"
 
 #: src/settings/appearance/index.tsx
 #: src/sidebar/settings.tsx
@@ -432,10 +424,6 @@ msgstr "Best for this Mac"
 #: src/chat/components/body/empty.tsx
 msgid "Beta"
 msgstr "Beta"
-
-#: src/settings/appearance/app-icon.tsx
-msgid "Blueprint"
-msgstr "Blueprint"
 
 #: src/settings/general/notification.tsx
 msgid "Bounce app icon"
@@ -591,10 +579,6 @@ msgstr "Choose how long recordings stay on this device."
 #: src/settings/general/summary-length.tsx
 msgid "Choose how much detail generated meeting summaries include."
 msgstr "Choose how much detail generated meeting summaries include."
-
-#: src/settings/appearance/app-icon.tsx
-msgid "Choose how Session Echo appears in the Dock."
-msgstr "Choose how Session Echo appears in the Dock."
 
 #: src/settings/appearance/theme.tsx
 msgid "Choose how Session Echo looks on this device."
@@ -958,10 +942,6 @@ msgstr "Date and time are required"
 msgid "Decline"
 msgstr "Decline"
 
-#: src/settings/appearance/app-icon.tsx
-msgid "Default"
-msgstr "Default"
-
 #: src/contacts/contact-page-header.tsx
 #: src/session/components/outer-header/overflow/delete.tsx
 #: src/sidebar/automations.tsx
@@ -1253,10 +1233,6 @@ msgstr "Failed to load pull request"
 #: src/templates/details.tsx
 msgid "Favorite template"
 msgstr "Favorite template"
-
-#: src/settings/appearance/app-icon.tsx
-msgid "Field Journal"
-msgstr "Field Journal"
 
 #: src/main/windows-title-bar.tsx
 msgid "File"
@@ -1983,10 +1959,6 @@ msgstr "note"
 msgid "Note is Locked"
 msgstr "Note is Locked"
 
-#: src/settings/appearance/app-icon.tsx
-msgid "Notepad"
-msgstr "Notepad"
-
 #: src/sidebar/toast/undo-delete-toast.tsx
 msgid "notes"
 msgstr "notes"
@@ -2236,10 +2208,6 @@ msgstr "Privacy"
 #: src/settings/ai/stt/select.tsx
 msgid "Pro"
 msgstr "Pro"
-
-#: src/settings/appearance/app-icon.tsx
-msgid "Production"
-msgstr "Production"
 
 #: src/session/components/note-input/transcript/screens/empty.tsx
 msgid "Re-transcribe"
@@ -2784,10 +2752,6 @@ msgstr "Sign in with SuperGrok or X Premium+ and enter the code below."
 msgid "Signing secret copied"
 msgstr "Signing secret copied"
 
-#: src/settings/appearance/app-icon.tsx
-msgid "Sketch"
-msgstr "Sketch"
-
 #: src/settings/developers/skills.tsx
 msgid "Skill installed"
 msgstr "Skill installed"
@@ -2900,10 +2864,6 @@ msgstr "Stay current with updates installed the next time Session Echo opens."
 #: src/settings/automations/index.tsx
 msgid "Steps run from top to bottom."
 msgstr "Steps run from top to bottom."
-
-#: src/settings/appearance/app-icon.tsx
-msgid "Stone"
-msgstr "Stone"
 
 #: src/composer/index.tsx
 #: src/session/components/outer-header/index.tsx
@@ -3198,10 +3158,6 @@ msgstr "Try the demo"
 msgid "Turn on Session Echo in System Settings → Privacy & Security → Calendars, then return here."
 msgstr "Turn on Session Echo in System Settings → Privacy & Security → Calendars, then return here."
 
-#: src/settings/appearance/app-icon.tsx
-msgid "Typewriter Key"
-msgstr "Typewriter Key"
-
 #: src/settings/developers/cli.tsx
 msgid "Unavailable"
 msgstr "Unavailable"
@@ -3365,10 +3321,6 @@ msgstr "Waiting for authorization in your browser…"
 #: src/calendar/components/microsoft/status.tsx
 msgid "Waiting for the sign-in in your browser. Session Echo continues on its own once you are done."
 msgstr "Waiting for the sign-in in your browser. Session Echo continues on its own once you are done."
-
-#: src/settings/appearance/app-icon.tsx
-msgid "Walnut"
-msgstr "Walnut"
 
 #: src/settings/developers/webhooks.tsx
 msgid "Webhooks"

@@ -4,7 +4,7 @@
 #
 # The Assets.car actool also emits is intentionally discarded: shipping it makes
 # macOS 26 re-render the iconstack with the Liquid Glass material, which does not
-# match the flat icon the app sets on the Dock at runtime (plugins/icon).
+# match the flat AppIcon.icns the bundle ships.
 
 set -euo pipefail
 
