@@ -104,7 +104,6 @@ anlg-screen-core = { path = "crates/screen-core", package = "screen-core" }
 anlg-session-ingest = { path = "crates/session-ingest", package = "session-ingest" }
 anlg-shortcut-macos = { path = "crates/shortcut-macos", package = "shortcut-macos" }
 anlg-storage = { path = "crates/storage", package = "storage" }
-anlg-supabase-auth = { path = "crates/supabase-auth", package = "supabase-auth" }
 anlg-tantivy-core = { path = "crates/tantivy", package = "tantivy-core" }
 anlg-tcc = { path = "crates/tcc", package = "tcc" }
 anlg-template-app = { path = "crates/template-app", package = "template-app" }
@@ -157,7 +156,6 @@ tauri-plugin-window-state = "2.4"
 
 tauri-plugin-agent = { path = "plugins/agent" }
 tauri-plugin-audio-priority = { path = "plugins/audio-priority" }
-tauri-plugin-auth = { path = "plugins/auth" }
 tauri-plugin-bedrock = { path = "plugins/bedrock" }
 tauri-plugin-calendar = { path = "plugins/calendar" }
 tauri-plugin-db = { path = "plugins/db" }

@@ -33,7 +33,6 @@
     "@anlg/db-react": "workspace:*",
     "@anlg/db-tauri": "workspace:*",
     "@anlg/editor": "workspace:^",
-    "@anlg/plugin-auth": "workspace:*",
     "@anlg/plugin-calendar": "workspace:*",
     "@anlg/plugin-db": "workspace:*",
     "@anlg/plugin-deeplink2": "workspace:*",
