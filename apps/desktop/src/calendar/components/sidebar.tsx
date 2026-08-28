@@ -6,7 +6,13 @@ import {
   Plus,
 } from "@phosphor-icons/react";
 import { platform } from "@tauri-apps/plugin-os";
-import { useCallback, useMemo, useState, type MouseEvent } from "react";
+import {
+  useCallback,
+  useMemo,
+  useState,
+  type MouseEvent,
+  type ReactNode,
+} from "react";
 
 import {
   Accordion,
@@ -53,7 +59,6 @@ function ProviderIcon({ provider }: { provider: CalendarProvider }) {
 
 export function CalendarSidebarContent() {
   const isMacos = platform() === "macos";
-  const calendar = usePermission("calendar");
 
   const visibleProviders = useMemo(
     () => PROVIDERS.filter((p) => p.platform !== "macos" || isMacos),
@@ -80,33 +85,22 @@ export function CalendarSidebarContent() {
               </span>
             )}
           </div>
-        ) : (
-          <ProviderAccordionItem
-            key={provider.id}
-            provider={provider}
-            calendar={calendar}
-          />
-        ),
+        ) : provider.id === "apple" ? (
+          <AppleProviderItem key={provider.id} provider={provider} />
+        ) : null,
       )}
     </Accordion>
   );
 }
 
-function ProviderAccordionItem({
-  provider,
-  calendar,
-}: {
-  provider: CalendarProvider;
-  calendar: ReturnType<typeof usePermission>;
-}) {
+function AppleProviderItem({ provider }: { provider: CalendarProvider }) {
   const { t } = useLingui();
+  const calendar = usePermission("calendar");
   const [isApplePermissionDialogOpen, setIsApplePermissionDialogOpen] =
     useState(false);
 
-  const appleNeedsPermission =
-    provider.id === "apple" && calendar.status !== "authorized";
-  const canDisconnectApple =
-    provider.id === "apple" && calendar.status === "authorized";
+  const appleNeedsPermission = calendar.status !== "authorized";
+  const canDisconnectApple = calendar.status === "authorized";
 
   const handleAppleConnect = useCallback((): void => {
     if (calendar.isPending) return;
@@ -133,15 +127,6 @@ function ProviderAccordionItem({
         console.error("[calendar] failed to sync after disconnect", error);
       });
   }, [calendar]);
-  const handleTriggerClick = useCallback(
-    (event: MouseEvent<HTMLButtonElement>) => {
-      if (appleNeedsPermission) {
-        event.preventDefault();
-        handleAppleConnect();
-      }
-    },
-    [appleNeedsPermission, handleAppleConnect],
-  );
   const providerMenuItems = useMemo(
     (): MenuItemDef[] =>
       canDisconnectApple
@@ -172,15 +157,72 @@ function ProviderAccordionItem({
       t,
     ],
   );
-  const showProviderMenu = useNativeContextMenu(providerMenuItems);
-  const hasProviderMenuButton = canDisconnectApple;
+
+  return (
+    <ProviderAccordionItem
+      provider={provider}
+      needsConnect={appleNeedsPermission}
+      isConnecting={calendar.isPending}
+      onConnect={handleAppleConnect}
+      menuItems={providerMenuItems}
+      after={
+        <AppleCalendarPermissionDialog
+          open={isApplePermissionDialogOpen}
+          onOpenChange={setIsApplePermissionDialogOpen}
+          onOpenSettings={() => void calendar.open()}
+        />
+      }
+    >
+      <div className="flex flex-col gap-3">
+        <AppleCalendarSelection
+          leftAction={
+            <TroubleShootingLink
+              isPending={calendar.isPending}
+              onOpen={calendar.open}
+              onRequest={calendar.request}
+              onReset={calendar.reset}
+            />
+          }
+        />
+      </div>
+    </ProviderAccordionItem>
+  );
+}
+
+function ProviderAccordionItem({
+  provider,
+  needsConnect,
+  isConnecting,
+  onConnect,
+  menuItems,
+  children,
+  after,
+}: {
+  provider: CalendarProvider;
+  needsConnect: boolean;
+  isConnecting: boolean;
+  onConnect: () => void;
+  menuItems: MenuItemDef[];
+  children?: ReactNode;
+  after?: ReactNode;
+}) {
+  const { t } = useLingui();
+  const handleTriggerClick = useCallback(
+    (event: MouseEvent<HTMLButtonElement>) => {
+      if (needsConnect) {
+        event.preventDefault();
+        onConnect();
+      }
+    },
+    [needsConnect, onConnect],
+  );
+  const showProviderMenu = useNativeContextMenu(menuItems);
+  const hasProviderMenuButton = menuItems.length > 0;
 
   return (
     <AccordionItem value={provider.id} className="group/provider border-none">
       <div
-        onContextMenu={
-          providerMenuItems.length > 0 ? showProviderMenu : undefined
-        }
+        onContextMenu={menuItems.length > 0 ? showProviderMenu : undefined}
         className={cn([
           "group/row hover:bg-accent relative -mx-2 grid items-center gap-1 rounded-full px-2",
           hasProviderMenuButton
@@ -209,15 +251,15 @@ function ProviderAccordionItem({
           </AccordionTriggerPrimitive>
         </AccordionHeader>
 
-        {appleNeedsPermission ? (
+        {needsConnect ? (
           <button
             type="button"
-            onClick={handleAppleConnect}
-            disabled={calendar.isPending}
+            onClick={onConnect}
+            disabled={isConnecting}
             className="text-muted-foreground hover:bg-accent hover:text-foreground shrink-0 rounded-full p-1 transition-colors disabled:opacity-50"
             aria-label={t`Connect ${provider.displayName}`}
           >
-            {calendar.isPending ? (
+            {isConnecting ? (
               <CircleNotch className="size-4 animate-spin" />
             ) : (
               <Plus className="size-4" />
@@ -238,7 +280,7 @@ function ProviderAccordionItem({
           </button>
         ) : null}
 
-        {!appleNeedsPermission && (
+        {!needsConnect && (
           <CaretRight
             className={cn([
               "text-muted-foreground size-4 shrink-0 transition-transform duration-200",
@@ -247,31 +289,10 @@ function ProviderAccordionItem({
           />
         )}
       </div>
-      {!appleNeedsPermission && (
-        <AccordionContent className="pb-3">
-          {provider.id === "apple" && (
-            <div className="flex flex-col gap-3">
-              <AppleCalendarSelection
-                leftAction={
-                  <TroubleShootingLink
-                    isPending={calendar.isPending}
-                    onOpen={calendar.open}
-                    onRequest={calendar.request}
-                    onReset={calendar.reset}
-                  />
-                }
-              />
-            </div>
-          )}
-        </AccordionContent>
+      {!needsConnect && (
+        <AccordionContent className="pb-3">{children}</AccordionContent>
       )}
-      {provider.id === "apple" && (
-        <AppleCalendarPermissionDialog
-          open={isApplePermissionDialogOpen}
-          onOpenChange={setIsApplePermissionDialogOpen}
-          onOpenSettings={() => void calendar.open()}
-        />
-      )}
+      {after}
     </AccordionItem>
   );
 }
