@@ -473,6 +473,7 @@ msgid "Can transcribe while the meeting is happening."
 msgstr "Kann transkribieren, während das Meeting läuft."
 
 #: src/calendar/components/apple/permission.tsx
+#: src/calendar/components/microsoft/status.tsx
 #: src/imports/screen.tsx
 #: src/settings/ai/llm/subscriptions/connect.tsx
 #: src/settings/general/storage/legacy-cleanup.tsx
@@ -704,6 +705,10 @@ msgstr "Kommentare"
 msgid "Company"
 msgstr "Unternehmen"
 
+#: src/calendar/components/microsoft/status.tsx
+msgid "Complete sign-in"
+msgstr "Anmeldung abschließen"
+
 #: src/composer/index.tsx
 msgid "Composer"
 msgstr "Composer"
@@ -752,6 +757,10 @@ msgstr "Verbinden & importieren"
 msgid "Connect calendar"
 msgstr "Kalender verbinden"
 
+#: src/onboarding/calendar.tsx
+msgid "Connect Microsoft 365"
+msgstr "Microsoft 365 verbinden"
+
 #. placeholder {0}: provider.name
 #: src/imports/screen.tsx
 msgid "Connect once to bring over your {0} history and keep new meetings coming in while you switch."
@@ -769,6 +778,10 @@ msgstr "Verbunden mit Ihrem {0}-Abonnement."
 #: src/settings/ai/shared/index.tsx
 msgid "Connected with your existing subscription."
 msgstr "Verbunden mit Ihrem bestehenden Abonnement."
+
+#: src/calendar/components/microsoft/status.tsx
+msgid "Connected. Microsoft reports no calendars for this account yet."
+msgstr "Verbunden. Microsoft meldet für dieses Konto noch keine Kalender."
 
 #: src/contacts/contact-page-header.tsx
 msgid "Contact options"
@@ -801,6 +814,10 @@ msgstr "Konfiguration kopieren"
 #: src/chat/components/message/normal.tsx
 msgid "Copy message"
 msgstr "Nachricht kopieren"
+
+#: src/calendar/components/microsoft/status.tsx
+msgid "Copy the address your browser ended up on and paste it here. It starts with sessionecho:// and carries the sign-in code."
+msgstr "Kopieren Sie die Adresse, auf der Ihr Browser gelandet ist, und fügen Sie sie hier ein. Sie beginnt mit sessionecho:// und enthält den Anmeldecode."
 
 #: src/settings/developers/webhooks.tsx
 msgid "Copy this signing secret now — it is only shown once."
@@ -1716,6 +1733,18 @@ msgstr "Mikrofonzugriff aktiviert"
 msgid "Microphone detection"
 msgstr "Mikrofonerkennung"
 
+#: src/calendar/components/microsoft/status.tsx
+msgid "Microsoft 365 is not set up in this build"
+msgstr "Microsoft 365 ist in dieser Version nicht eingerichtet"
+
+#: src/calendar/components/microsoft/status.tsx
+msgid "Microsoft callback address"
+msgstr "Microsoft-Callback-Adresse"
+
+#: src/calendar/components/microsoft/status.tsx
+msgid "Microsoft could not be reached. Check your internet connection and try again."
+msgstr "Microsoft war nicht erreichbar. Prüfen Sie Ihre Internetverbindung und versuchen Sie es erneut."
+
 #: src/settings/general/storage/legacy-cleanup.tsx
 msgid "Migration complete"
 msgstr "Migration abgeschlossen"
@@ -2121,6 +2150,10 @@ msgstr "API-Schlüssel Ihrer Kimi-Code-Mitgliedschaft einfügen."
 #: src/settings/ai/llm/subscriptions/connect.tsx
 msgid "Paste the authorization code"
 msgstr "Autorisierungscode einfügen"
+
+#: src/calendar/components/microsoft/status.tsx
+msgid "Paste the callback address instead"
+msgstr "Stattdessen Callback-Adresse einfügen"
 
 #: src/settings/ai/llm/subscriptions/connect.tsx
 msgid "Paste the localhost redirect URL"
@@ -2723,6 +2756,10 @@ msgstr "Diesen Termin anzeigen"
 msgid "Show tray icon"
 msgstr "Symbol in der Taskleiste anzeigen"
 
+#: src/calendar/components/microsoft/status.tsx
+msgid "Sign in again"
+msgstr "Erneut anmelden"
+
 #: src/settings/ai/llm/subscriptions/connect.tsx
 msgid "Sign in with ChatGPT Plus or Pro, then paste the redirect URL from your browser."
 msgstr "Mit ChatGPT Plus oder Pro anmelden, dann die Redirect-URL aus Ihrem Browser einfügen."
@@ -2799,6 +2836,10 @@ msgstr "Ein weiteres Ziel hinzufügen. Schritte laufen von oben nach unten."
 #: src/settings/general/meeting-settings.tsx
 msgid "Start listening when a scheduled meeting begins."
 msgstr "Zuhören starten, wenn ein geplantes Meeting beginnt."
+
+#: src/calendar/components/microsoft/status.tsx
+msgid "Start over"
+msgstr "Neu beginnen"
 
 #: src/main/empty.tsx
 msgid "Start Recording"
@@ -3017,9 +3058,17 @@ msgstr "Testläufe sind noch nicht verfügbar."
 msgid "The app will restart after onboarding to apply your storage changes"
 msgstr "Die App wird nach dem Onboarding neu gestartet, um Ihre Speicheränderungen anzuwenden."
 
+#: src/calendar/components/microsoft/status.tsx
+msgid "The Microsoft sign-in failed."
+msgstr "Die Microsoft-Anmeldung ist fehlgeschlagen."
+
 #: src/shared/control.tsx
 msgid "The page you're looking for doesn't exist."
 msgstr "Die gesuchte Seite existiert nicht."
+
+#: src/calendar/components/microsoft/status.tsx
+msgid "The sign-in was cancelled. No Microsoft account was connected."
+msgstr "Die Anmeldung wurde abgebrochen. Es wurde kein Microsoft-Konto verbunden."
 
 #: src/sidebar/toast/registry.tsx
 msgid "The update download failed"
@@ -3036,6 +3085,10 @@ msgstr "Dann"
 #: src/chat/components/message/loading.tsx
 msgid "Thinking..."
 msgstr "Denkt nach …"
+
+#: src/calendar/components/microsoft/status.tsx
+msgid "This copy of Session Echo was built without the MICROSOFT_CLIENT_ID variable, so it carries no Microsoft app credentials. A build with that variable set can connect; nothing you do here will change it."
+msgstr "Diese Version von Session Echo wurde ohne die Variable MICROSOFT_CLIENT_ID erstellt und enthält daher keine Microsoft-App-Zugangsdaten. Eine Version mit gesetzter Variable kann sich verbinden; hier lässt sich daran nichts ändern."
 
 #: src/edit/tab-content.tsx
 msgid "This edit is no longer pending."
@@ -3126,6 +3179,7 @@ msgstr "Reisen & Orte"
 msgid "Trigger"
 msgstr "Trigger"
 
+#: src/calendar/components/microsoft/status.tsx
 #: src/contacts/details.tsx
 #: src/onboarding/permissions.tsx
 #: src/settings/general/permissions.tsx
@@ -3308,6 +3362,10 @@ msgstr "Warten, bis Transkript und Notiz vollständig sind."
 msgid "Waiting for authorization in your browser…"
 msgstr "Warten auf Autorisierung in Ihrem Browser …"
 
+#: src/calendar/components/microsoft/status.tsx
+msgid "Waiting for the sign-in in your browser. Session Echo continues on its own once you are done."
+msgstr "Wartet auf die Anmeldung in Ihrem Browser. Session Echo macht von selbst weiter, sobald Sie fertig sind."
+
 #: src/settings/appearance/app-icon.tsx
 msgid "Walnut"
 msgstr "Walnut"
@@ -3372,9 +3430,17 @@ msgstr "Sie können diese Aktion für kurze Zeit rückgängig machen."
 msgid "You can use up to three example summaries."
 msgstr "Sie können bis zu drei Beispielzusammenfassungen verwenden."
 
+#: src/calendar/components/microsoft/status.tsx
+msgid "Your browser has not come back yet. Finish the sign-in there, or start over."
+msgstr "Ihr Browser hat sich noch nicht zurückgemeldet. Schließen Sie die Anmeldung dort ab oder beginnen Sie neu."
+
 #: src/settings/dictionary/index.tsx
 msgid "Your dictionary is empty"
 msgstr "Ihr Wörterbuch ist leer"
+
+#: src/calendar/components/microsoft/status.tsx
+msgid "Your Microsoft session has expired. Sign in again to keep reading this calendar."
+msgstr "Ihre Microsoft-Sitzung ist abgelaufen. Melden Sie sich erneut an, um diesen Kalender weiter zu lesen."
 
 #: src/services/enhancer/summary-notification.ts
 msgid "Your summary is ready."
