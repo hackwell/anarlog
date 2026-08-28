@@ -17,7 +17,6 @@ import { BillingProvider } from "~/auth/billing";
 import { DevtoolsFloatingPanelHost } from "~/devtools-panel/host";
 import { MeetingImportSync } from "~/services/meeting-import-sync";
 import { getOrCreateSessionForEventId } from "~/session/queries";
-import { useMyWorkspacesWithMirror } from "~/settings/team/mirror";
 import { useMountEffect } from "~/shared/hooks/useMountEffect";
 import { UndoDeleteToast } from "~/sidebar/toast/undo-delete-toast";
 import { isTabInputSupported, useTabs } from "~/store/zustand/tabs";
@@ -28,7 +27,6 @@ export default function MainAppLayout() {
   return (
     <AuthProvider>
       <BillingProvider>
-        <SharedWorkspaceMirror />
         <MainAppContent />
       </BillingProvider>
     </AuthProvider>
@@ -162,10 +160,3 @@ const useNavigationEvents = () => {
     };
   });
 };
-
-// Renders nothing; keeps the local workspace mirror fresh so sharing scopes are
-// available before any workspace-backed view is opened.
-function SharedWorkspaceMirror() {
-  useMyWorkspacesWithMirror();
-  return null;
-}

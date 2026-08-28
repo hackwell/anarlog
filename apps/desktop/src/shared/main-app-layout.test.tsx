@@ -47,10 +47,6 @@ vi.mock("~/services/meeting-import-sync", () => ({
   MeetingImportSync: () => <div data-testid="meeting-import-sync" />,
 }));
 
-vi.mock("~/settings/team/mirror", () => ({
-  useMyWorkspacesWithMirror: vi.fn(),
-}));
-
 vi.mock("~/shared/hooks/useMountEffect", () => ({
   useMountEffect: vi.fn(),
 }));
