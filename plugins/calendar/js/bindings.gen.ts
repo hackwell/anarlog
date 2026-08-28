@@ -56,6 +56,46 @@ async createEvent(provider: CalendarProviderType, input: CreateEventInput) : Pro
     if(e instanceof Error) throw e;
     else return { status: "error", error: e  as any };
 }
+},
+/**
+ * Start the browser-based Microsoft sign-in and return the authorize URL for
+ * the caller to open. PKCE is handled entirely in Rust.
+ */
+async microsoftStartLogin() : Promise<Result<string, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("plugin:calendar|microsoft_start_login") };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+/**
+ * Redeem an OAuth callback URL by hand. The deep link normally completes the
+ * flow on its own; this exists for builds where the custom scheme is not
+ * registered, and for tests.
+ */
+async microsoftCompleteLogin(callbackUrl: string) : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("plugin:calendar|microsoft_complete_login", { callbackUrl }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+/**
+ * Forget the locally stored refresh token. Access on Microsoft's side stays
+ * until the user revokes it in their account settings.
+ */
+async microsoftDisconnect() : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("plugin:calendar|microsoft_disconnect") };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+async microsoftIsConnected() : Promise<boolean> {
+    return await TAURI_INVOKE("plugin:calendar|microsoft_is_connected");
 }
 }
 
@@ -63,9 +103,11 @@ async createEvent(provider: CalendarProviderType, input: CreateEventInput) : Pro
 
 
 export const events = __makeEvents__<{
-calendarChangedEvent: CalendarChangedEvent
+calendarChangedEvent: CalendarChangedEvent,
+microsoftConnectionChangedEvent: MicrosoftConnectionChangedEvent
 }>({
-calendarChangedEvent: "plugin:calendar:calendar-changed-event"
+calendarChangedEvent: "plugin:calendar:calendar-changed-event",
+microsoftConnectionChangedEvent: "plugin:calendar:microsoft-connection-changed-event"
 })
 
 /** user-defined constants **/
@@ -154,6 +196,11 @@ email: string | null;
  */
 is_current_user: boolean }
 export type EventStatus = "confirmed" | "tentative" | "cancelled"
+/**
+ * Emitted when a Microsoft sign-in finishes, since the OAuth callback arrives
+ * over the OS deep link rather than as the reply to a command.
+ */
+export type MicrosoftConnectionChangedEvent = { connected: boolean; error: string | null }
 export type ProviderConnectionIds = { provider: CalendarProviderType; connection_ids: string[] }
 
 /** tauri-specta globals **/

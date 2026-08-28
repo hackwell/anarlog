@@ -8,4 +8,8 @@ permissions = [
     "allow-list-events",
     "allow-open-calendar",
     "allow-create-event",
+    "allow-microsoft-start-login",
+    "allow-microsoft-complete-login",
+    "allow-microsoft-disconnect",
+    "allow-microsoft-is-connected",
 ]

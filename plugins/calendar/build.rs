@@ -6,6 +6,10 @@ const COMMANDS: &[&str] = &[
     "list_events",
     "open_calendar",
     "create_event",
+    "microsoft_start_login",
+    "microsoft_complete_login",
+    "microsoft_disconnect",
+    "microsoft_is_connected",
 ];
 
 fn main() {

@@ -1,0 +1,13 @@
+# Automatically generated - DO NOT EDIT!
+
+"$schema" = "../../schemas/schema.json"
+
+[[permission]]
+identifier = "allow-microsoft-start-login"
+description = "Enables the microsoft_start_login command without any pre-configured scope."
+commands.allow = ["microsoft_start_login"]
+
+[[permission]]
+identifier = "deny-microsoft-start-login"
+description = "Denies the microsoft_start_login command without any pre-configured scope."
+commands.deny = ["microsoft_start_login"]

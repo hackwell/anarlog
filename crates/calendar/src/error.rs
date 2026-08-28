@@ -13,4 +13,14 @@ pub enum Error {
     InvalidDateTime { field: &'static str, value: String },
     #[error("apple calendar error: {0}")]
     Apple(String),
+    #[error(
+        "Microsoft calendar is unavailable in this build: MICROSOFT_CLIENT_ID was not set at build time"
+    )]
+    MicrosoftNotConfigured,
+    #[error("not connected to Microsoft")]
+    MicrosoftNotConnected,
+    #[error("microsoft sign-in error: {0}")]
+    MicrosoftAuth(String),
+    #[error("token store error: {0}")]
+    TokenStore(String),
 }

@@ -11,6 +11,10 @@ Default permissions for the plugin
 - `allow-list-events`
 - `allow-open-calendar`
 - `allow-create-event`
+- `allow-microsoft-start-login`
+- `allow-microsoft-complete-login`
+- `allow-microsoft-disconnect`
+- `allow-microsoft-is-connected`
 
 ## Permission Table
 
@@ -173,6 +177,110 @@ Enables the list_events command without any pre-configured scope.
 <td>
 
 Denies the list_events command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`calendar:allow-microsoft-complete-login`
+
+</td>
+<td>
+
+Enables the microsoft_complete_login command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`calendar:deny-microsoft-complete-login`
+
+</td>
+<td>
+
+Denies the microsoft_complete_login command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`calendar:allow-microsoft-disconnect`
+
+</td>
+<td>
+
+Enables the microsoft_disconnect command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`calendar:deny-microsoft-disconnect`
+
+</td>
+<td>
+
+Denies the microsoft_disconnect command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`calendar:allow-microsoft-is-connected`
+
+</td>
+<td>
+
+Enables the microsoft_is_connected command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`calendar:deny-microsoft-is-connected`
+
+</td>
+<td>
+
+Denies the microsoft_is_connected command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`calendar:allow-microsoft-start-login`
+
+</td>
+<td>
+
+Enables the microsoft_start_login command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`calendar:deny-microsoft-start-login`
+
+</td>
+<td>
+
+Denies the microsoft_start_login command without any pre-configured scope.
 
 </td>
 </tr>

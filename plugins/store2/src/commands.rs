@@ -1,7 +1,7 @@
 use crate::Store2PluginExt;
 
 const SECURE_STORE_SUFFIX: &str = "secure-store";
-const NATIVE_SECRET_ACCOUNT_PREFIXES: &[&str] = &["e2ee:"];
+const NATIVE_SECRET_ACCOUNT_PREFIXES: &[&str] = &["e2ee:", "ms-calendar:"];
 #[cfg(target_os = "macos")]
 const MACOS_KEYCHAIN_ACCESS_ERROR_PREFIX: &str = "macOS couldn't access your login Keychain.";
 #[cfg(target_os = "linux")]
@@ -535,6 +535,18 @@ mod tests {
     fn finds_nothing_for_the_stable_identifier() {
         assert!(
             pre_v2_dev_secret_location("de.flagbit.sessionecho", "provider", "deepgram").is_empty()
+        );
+    }
+
+    #[test]
+    fn keeps_the_microsoft_refresh_token_out_of_the_renderer() {
+        assert!(
+            validate_secret_coordinate(SecretCaller::Renderer, "ms-calendar", "refresh_token")
+                .is_err()
+        );
+        assert!(
+            validate_secret_coordinate(SecretCaller::Native, "ms-calendar", "refresh_token")
+                .is_ok()
         );
     }
 

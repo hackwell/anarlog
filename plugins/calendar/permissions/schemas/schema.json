@@ -367,6 +367,54 @@
           "markdownDescription": "Denies the list_events command without any pre-configured scope."
         },
         {
+          "description": "Enables the microsoft_complete_login command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-microsoft-complete-login",
+          "markdownDescription": "Enables the microsoft_complete_login command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the microsoft_complete_login command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-microsoft-complete-login",
+          "markdownDescription": "Denies the microsoft_complete_login command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the microsoft_disconnect command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-microsoft-disconnect",
+          "markdownDescription": "Enables the microsoft_disconnect command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the microsoft_disconnect command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-microsoft-disconnect",
+          "markdownDescription": "Denies the microsoft_disconnect command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the microsoft_is_connected command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-microsoft-is-connected",
+          "markdownDescription": "Enables the microsoft_is_connected command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the microsoft_is_connected command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-microsoft-is-connected",
+          "markdownDescription": "Denies the microsoft_is_connected command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the microsoft_start_login command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-microsoft-start-login",
+          "markdownDescription": "Enables the microsoft_start_login command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the microsoft_start_login command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-microsoft-start-login",
+          "markdownDescription": "Denies the microsoft_start_login command without any pre-configured scope."
+        },
+        {
           "description": "Enables the open_calendar command without any pre-configured scope.",
           "type": "string",
           "const": "allow-open-calendar",
@@ -379,10 +427,10 @@
           "markdownDescription": "Denies the open_calendar command without any pre-configured scope."
         },
         {
-          "description": "Default permissions for the plugin\n#### This default permission set includes:\n\n- `allow-available-providers`\n- `allow-is-provider-enabled`\n- `allow-list-connection-ids`\n- `allow-list-calendars`\n- `allow-list-events`\n- `allow-open-calendar`\n- `allow-create-event`",
+          "description": "Default permissions for the plugin\n#### This default permission set includes:\n\n- `allow-available-providers`\n- `allow-is-provider-enabled`\n- `allow-list-connection-ids`\n- `allow-list-calendars`\n- `allow-list-events`\n- `allow-open-calendar`\n- `allow-create-event`\n- `allow-microsoft-start-login`\n- `allow-microsoft-complete-login`\n- `allow-microsoft-disconnect`\n- `allow-microsoft-is-connected`",
           "type": "string",
           "const": "default",
-          "markdownDescription": "Default permissions for the plugin\n#### This default permission set includes:\n\n- `allow-available-providers`\n- `allow-is-provider-enabled`\n- `allow-list-connection-ids`\n- `allow-list-calendars`\n- `allow-list-events`\n- `allow-open-calendar`\n- `allow-create-event`"
+          "markdownDescription": "Default permissions for the plugin\n#### This default permission set includes:\n\n- `allow-available-providers`\n- `allow-is-provider-enabled`\n- `allow-list-connection-ids`\n- `allow-list-calendars`\n- `allow-list-events`\n- `allow-open-calendar`\n- `allow-create-event`\n- `allow-microsoft-start-login`\n- `allow-microsoft-complete-login`\n- `allow-microsoft-disconnect`\n- `allow-microsoft-is-connected`"
         }
       ]
     }

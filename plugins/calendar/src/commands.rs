@@ -78,9 +78,46 @@ pub fn create_event<R: tauri::Runtime>(
     anlg_calendar::create_event(provider, input).map_err(Into::into)
 }
 
+/// Start the browser-based Microsoft sign-in and return the authorize URL for
+/// the caller to open. PKCE is handled entirely in Rust.
+#[tauri::command]
+#[specta::specta]
+pub async fn microsoft_start_login() -> Result<String, Error> {
+    anlg_calendar::microsoft::start_login().map_err(Into::into)
+}
+
+/// Redeem an OAuth callback URL by hand. The deep link normally completes the
+/// flow on its own; this exists for builds where the custom scheme is not
+/// registered, and for tests.
+#[tauri::command]
+#[specta::specta]
+pub async fn microsoft_complete_login<R: tauri::Runtime>(
+    app: tauri::AppHandle<R>,
+    callback_url: String,
+) -> Result<(), Error> {
+    anlg_calendar::microsoft::complete_login(&crate::microsoft::tokens(&app), &callback_url)
+        .await
+        .map_err(Into::into)
+}
+
+/// Forget the locally stored refresh token. Access on Microsoft's side stays
+/// until the user revokes it in their account settings.
+#[tauri::command]
+#[specta::specta]
+pub async fn microsoft_disconnect<R: tauri::Runtime>(
+    app: tauri::AppHandle<R>,
+) -> Result<(), Error> {
+    anlg_calendar::microsoft::disconnect(&crate::microsoft::tokens(&app)).map_err(Into::into)
+}
+
+#[tauri::command]
+#[specta::specta]
+pub async fn microsoft_is_connected<R: tauri::Runtime>(app: tauri::AppHandle<R>) -> bool {
+    is_microsoft_connected(&app)
+}
+
 fn is_microsoft_connected<R: tauri::Runtime>(app: &tauri::AppHandle<R>) -> bool {
-    let _ = app;
-    false
+    anlg_calendar::microsoft::is_connected(&crate::microsoft::tokens(app))
 }
 
 async fn is_apple_authorized<R: tauri::Runtime>(app: &tauri::AppHandle<R>) -> Result<bool, Error> {

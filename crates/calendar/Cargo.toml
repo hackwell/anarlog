@@ -10,10 +10,19 @@ specta = ["dep:specta"]
 anlg-apple-calendar = { workspace = true, features = ["specta"] }
 anlg-calendar-interface = { workspace = true }
 
+base64 = { workspace = true }
 chrono = { workspace = true, features = ["serde"] }
 chrono-tz = { workspace = true }
 regex = { workspace = true }
+reqwest = { workspace = true, features = ["form", "json"] }
 serde = { workspace = true, features = ["derive"] }
 serde_json = { workspace = true }
+sha2 = { workspace = true }
 specta = { workspace = true, features = ["chrono"], optional = true }
 thiserror = { workspace = true }
+tracing = { workspace = true }
+url = { workspace = true }
+uuid = { workspace = true, features = ["v4"] }
+
+[dev-dependencies]
+tokio = { workspace = true, features = ["macros", "rt"] }

@@ -1,0 +1,13 @@
+# Automatically generated - DO NOT EDIT!
+
+"$schema" = "../../schemas/schema.json"
+
+[[permission]]
+identifier = "allow-microsoft-complete-login"
+description = "Enables the microsoft_complete_login command without any pre-configured scope."
+commands.allow = ["microsoft_complete_login"]
+
+[[permission]]
+identifier = "deny-microsoft-complete-login"
+description = "Denies the microsoft_complete_login command without any pre-configured scope."
+commands.deny = ["microsoft_complete_login"]
