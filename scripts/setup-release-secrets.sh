@@ -108,8 +108,19 @@ ok "Passwort korrekt"
 
 SUBJECT="$(printf '%s' "$CERTS" | openssl x509 -noout -subject 2>/dev/null || true)"
 if [[ "$SUBJECT" != *"$IDENTITY_PREFIX"* ]]; then
-  printf '\n  Enthalten ist:\n    %s\n' "${SUBJECT#subject=}"
-  die "Kein '$IDENTITY_PREFIX'. Ein '3rd Party Mac Developer'-Zertifikat gehoert zum App Store, nicht zum Direktvertrieb."
+  FOUND_CN="$(sed -E 's/.*CN=([^,\/]+).*/\1/' <<<"$SUBJECT")"
+  printf '\n  Enthalten ist:\n    %s\n\n' "$FOUND_CN"
+  case "$FOUND_CN" in
+    "Apple Development"*)
+      HINT="Das ist ein Entwicklungszertifikat fuer lokales Testen." ;;
+    "3rd Party Mac Developer"*|"Apple Distribution"*)
+      HINT="Das gehoert zur App-Store-Einreichung, nicht zum Direktvertrieb." ;;
+    *)
+      HINT="Erwartet wird die Zeile, die mit '$IDENTITY_PREFIX' beginnt." ;;
+  esac
+  printf '  %s\n' "$HINT"
+  printf '  Gebraucht wird:\n    %s\n' "$SIGNING_IDENTITY"
+  die "Falsches Zertifikat. Am einfachsten ohne Argument starten - dann fuehrt das Skript zur richtigen Zeile."
 fi
 ok "Developer ID Application enthalten"
 
