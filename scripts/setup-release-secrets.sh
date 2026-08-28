@@ -29,6 +29,25 @@ ok() { printf '  \033[32m+\033[0m %s\n' "$1"; }
 warn() { printf '  \033[33m!\033[0m %s\n' "$1"; }
 die() { printf '\n\033[31mAbbruch:\033[0m %s\n\n' "$1" >&2; exit 1; }
 
+# macOS exportiert .p12 mit Verfahren, die OpenSSL 3 in den Legacy-Provider
+# verschoben hat. Ohne -legacy verifiziert der MAC zwar, aber die Zertifikate
+# bleiben unlesbar - was wie ein falsches Passwort aussieht und keins ist.
+p12_run() {
+  local out
+  if out="$(openssl pkcs12 "$@" 2>/dev/null)" && [[ -n "$out" ]]; then
+    printf '%s' "$out"; return 0
+  fi
+  if out="$(openssl pkcs12 -legacy "$@" 2>/dev/null)" && [[ -n "$out" ]]; then
+    printf '%s' "$out"; return 0
+  fi
+  return 1
+}
+
+p12_has_key() {
+  openssl pkcs12 -in "$1" -passin "pass:$2" -nocerts -noout >/dev/null 2>&1 \
+    || openssl pkcs12 -legacy -in "$1" -passin "pass:$2" -nocerts -noout >/dev/null 2>&1
+}
+
 say "Vorbedingungen"
 
 [[ "$(uname -s)" == "Darwin" ]] || die "Nur auf macOS."
@@ -83,7 +102,7 @@ GUIDE
 fi
 
 # Drei Pruefungen, die sonst erst der Release-Lauf nach dem Build meldet.
-CERTS="$(openssl pkcs12 -in "$P12_PATH" -passin "pass:$P12_PASSWORD" -nokeys -clcerts 2>/dev/null || true)"
+CERTS="$(p12_run -in "$P12_PATH" -passin "pass:$P12_PASSWORD" -nokeys -clcerts || true)"
 [[ -n "$CERTS" ]] || die "Die .p12 laesst sich mit diesem Passwort nicht oeffnen."
 ok "Passwort korrekt"
 
@@ -94,7 +113,7 @@ if [[ "$SUBJECT" != *"$IDENTITY_PREFIX"* ]]; then
 fi
 ok "Developer ID Application enthalten"
 
-openssl pkcs12 -in "$P12_PATH" -passin "pass:$P12_PASSWORD" -nocerts -noout >/dev/null 2>&1 \
+p12_has_key "$P12_PATH" "$P12_PASSWORD" \
   || die "Kein privater Schluessel - beim Export war nur das Zertifikat markiert, nicht die Identitaet."
 ok "Privater Schluessel enthalten"
 
