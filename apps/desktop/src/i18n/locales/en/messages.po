@@ -2271,10 +2271,6 @@ msgstr "Privacy"
 msgid "Pro"
 msgstr "Pro"
 
-#: src/sidebar/toast/registry.tsx
-msgid "Pro features available"
-msgstr "Pro features available"
-
 #: src/settings/appearance/app-icon.tsx
 msgid "Production"
 msgstr "Production"
@@ -2820,17 +2816,12 @@ msgid "Show tray icon"
 msgstr "Show tray icon"
 
 #: src/session/components/note-input/enhanced/enhance-error.tsx
-#: src/sidebar/toast/registry.tsx
 msgid "Sign in"
 msgstr "Sign in"
 
 #: src/session/components/note-input/enhanced/enhance-error.tsx
 msgid "Sign in to generate this summary"
 msgstr "Sign in to generate this summary"
-
-#: src/sidebar/toast/registry.tsx
-msgid "Sign in to get the most out of Session Echo"
-msgstr "Sign in to get the most out of Session Echo"
 
 #: src/instruction/index.tsx
 msgid "Sign in to your account"
@@ -3336,10 +3327,6 @@ msgstr "Untitled session"
 #: src/services/event-notification/index.ts
 msgid "Upcoming Event"
 msgstr "Upcoming Event"
-
-#: src/sidebar/toast/registry.tsx
-msgid "Upgrade"
-msgstr "Upgrade"
 
 #: src/billing/trial-ended-dialog.tsx
 msgid "Upgrade to Pro"

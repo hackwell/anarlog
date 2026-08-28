@@ -7,7 +7,6 @@ import type { DownloadProgress, ToastCondition, ToastType } from "./types";
 import type { DesktopUpdateControl } from "~/main/update-banner";
 import type { DevtoolsToastPreview } from "~/store/zustand/devtools-toast-preview";
 
-const SESSION_ECHO_ICON_SRC = "/assets/sessionecho-icon.png";
 const DESKTOP_UPDATE_TOAST_PREFIX = "desktop-update:";
 
 type ToastRegistryEntry = {
@@ -16,8 +15,6 @@ type ToastRegistryEntry = {
 };
 
 type ToastRegistryParams = {
-  isAuthenticated: boolean;
-  isAuthLoading: boolean;
   hasLLMConfigured: boolean;
   hasSttConfigured: boolean;
   hasProSttConfigured: boolean;
@@ -32,21 +29,17 @@ type ToastRegistryParams = {
   localSttStatus: ServerStatus | null;
   isLocalSttModel: boolean;
   update: DesktopUpdateControl;
-  onSignIn: () => void | Promise<void>;
   onOpenLLMSettings: () => void;
   onOpenSTTSettings: () => void;
 };
 
 type DevtoolsToastPreviewParams = {
   preview: DevtoolsToastPreview;
-  onSignIn: () => void | Promise<void>;
   onOpenLLMSettings: () => void;
   onOpenSTTSettings: () => void;
 };
 
 export function createToastRegistry({
-  isAuthenticated,
-  isAuthLoading,
   hasLLMConfigured,
   hasSttConfigured,
   hasProSttConfigured,
@@ -61,7 +54,6 @@ export function createToastRegistry({
   localSttStatus,
   isLocalSttModel,
   update,
-  onSignIn,
   onOpenLLMSettings,
   onOpenSTTSettings,
 }: ToastRegistryParams): ToastRegistryEntry[] {
@@ -69,12 +61,8 @@ export function createToastRegistry({
     activeDownloads.length === 1 && downloadingModel
       ? t`Downloading ${downloadingModel}`
       : t`Downloading ${activeDownloads.length} models`;
-  const hasUsableSttConfigured =
-    hasSttConfigured &&
-    (isAuthLoading || isAuthenticated || !hasProSttConfigured);
-  const hasUsableLlmConfigured =
-    hasLLMConfigured &&
-    (isAuthLoading || isAuthenticated || !hasProLlmConfigured);
+  const hasUsableSttConfigured = hasSttConfigured && !hasProSttConfigured;
+  const hasUsableLlmConfigured = hasLLMConfigured && !hasProLlmConfigured;
   const updateToast = createDesktopUpdateToast(update);
 
   // order matters
@@ -129,29 +117,6 @@ export function createToastRegistry({
     },
     {
       toast: {
-        id: "sign-in-benefits",
-        icon: (
-          <img
-            src={SESSION_ECHO_ICON_SRC}
-            alt="Session Echo"
-            className="size-5 object-contain object-center"
-          />
-        ),
-        description: t`Sign in to get the most out of Session Echo`,
-        primaryAction: {
-          label: t`Sign in`,
-          onClick: onSignIn,
-        },
-        lifecycle: {
-          type: "persistent",
-          dismissal: "permanent",
-          dismissalId: "auth-promotion",
-        },
-      },
-      condition: () => !isAuthLoading && !isAuthenticated,
-    },
-    {
-      toast: {
         id: "missing-stt",
         description: t`Transcription provider needed`,
         primaryAction: {
@@ -176,29 +141,6 @@ export function createToastRegistry({
         hasUsableSttConfigured &&
         !hasUsableLlmConfigured &&
         !isAiIntelligenceTabActive,
-    },
-    {
-      toast: {
-        id: "upgrade-to-pro",
-        description: t`Pro features available`,
-        primaryAction: {
-          label: t`Upgrade`,
-          onClick: onSignIn,
-        },
-        lifecycle: {
-          type: "persistent",
-          dismissal: "permanent",
-          dismissalId: "auth-promotion",
-        },
-      },
-      // suppress until auth resolves to avoid flash on startup
-      condition: () =>
-        !isAuthLoading &&
-        !isAuthenticated &&
-        hasLLMConfigured &&
-        hasSttConfigured &&
-        !hasProSttConfigured &&
-        !hasProLlmConfigured,
     },
   ];
 }
@@ -282,7 +224,6 @@ export function getToastToShow(
 
 export function createDevtoolsToastPreview({
   preview,
-  onSignIn,
   onOpenLLMSettings,
   onOpenSTTSettings,
 }: DevtoolsToastPreviewParams): ToastType {
@@ -324,16 +265,6 @@ export function createDevtoolsToastPreview({
         description: t`Downloading model`,
         lifecycle: { type: "persistent", dismissal: "session" },
         loading: true,
-      };
-    case "pro":
-      return {
-        id: "devtools-upgrade-to-pro",
-        description: t`Pro features available`,
-        primaryAction: {
-          label: t`Upgrade`,
-          onClick: onSignIn,
-        },
-        lifecycle: { type: "persistent", dismissal: "session" },
       };
   }
 }
