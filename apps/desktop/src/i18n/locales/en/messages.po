@@ -2039,10 +2039,6 @@ msgstr "Open {0} settings"
 msgid "Open AI Settings"
 msgstr "Open AI Settings"
 
-#: src/sidebar/timeline/index.tsx
-msgid "Open calendar"
-msgstr "Open calendar"
-
 #: src/calendar/components/calendar-selection.tsx
 #: src/calendar/components/sidebar.tsx
 msgid "Open calendar account actions"

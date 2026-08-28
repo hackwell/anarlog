@@ -1,5 +1,4 @@
 import { Trans, useLingui } from "@lingui/react/macro";
-import { CalendarDots } from "@phosphor-icons/react";
 import {
   memo,
   type RefCallback,
@@ -15,7 +14,7 @@ import { cn } from "@anlg/utils";
 
 import { useAnchor, useAutoScrollToAnchor } from "./anchor";
 import { TimelineBuckets } from "./buckets";
-import { TimelineNowChip, TimelineTopChip, UpcomingMeetingChip } from "./chips";
+import { TimelineNowChip, UpcomingMeetingChip } from "./chips";
 import { getFallbackIndicatorIndex, useTimelineData } from "./data";
 import {
   hasSidebarNoteSelectionContext,
@@ -47,13 +46,11 @@ import { useTimelineSelection } from "~/store/zustand/timeline-selection";
 import { useListener } from "~/stt/contexts";
 
 export const TimelineView = memo(function TimelineView({
-  showOpenCalendarButton = true,
   showIgnoredEvents,
   onShowIgnoredEventsChange,
   topChipsOverlapHeader = false,
   topChromeInset = false,
 }: {
-  showOpenCalendarButton?: boolean;
   showIgnoredEvents?: boolean;
   onShowIgnoredEventsChange?: (showIgnored: boolean) => void;
   topChipsOverlapHeader?: boolean;
@@ -64,7 +61,6 @@ export const TimelineView = memo(function TimelineView({
   const { timelineEventsTable, timelineSessionsTable } = useTimelineTables();
   const [uncontrolledShowIgnored, setUncontrolledShowIgnored] = useState(false);
   const showIgnored = showIgnoredEvents ?? uncontrolledShowIgnored;
-  const [isScrolledToTop, setIsScrolledToTop] = useState(true);
   const [isScrolledToBottom, setIsScrolledToBottom] = useState(true);
 
   const { isIgnored } = useIgnoredEvents();
@@ -81,12 +77,6 @@ export const TimelineView = memo(function TimelineView({
     () => filterTimelineBuckets(buckets, searchQuery),
     [buckets, searchQuery],
   );
-  const openNew = useTabs((state) => state.openNew);
-
-  const showOpenCalendarChip =
-    showOpenCalendarButton && isScrolledToTop && hasMoreFutureItems;
-  const reserveOpenCalendarChipSpace =
-    showOpenCalendarButton && hasMoreFutureItems;
 
   const hasToday = useMemo(
     () => visibleBuckets.some((bucket) => bucket.label === "Today"),
@@ -222,17 +212,11 @@ export const TimelineView = memo(function TimelineView({
   const showTopNowChip =
     !showUpcomingMeetingChip && !isTodayVisible && isScrolledPastToday;
   const topSpacerClassName = topChromeInset
-    ? reserveOpenCalendarChipSpace
-      ? "h-14"
-      : "h-12"
+    ? "h-12"
     : topChipsOverlapHeader
       ? "h-9"
       : "h-8";
-  const bucketHeaderTopClassName = topChromeInset
-    ? showOpenCalendarChip
-      ? "top-14"
-      : "top-12"
-    : "top-0";
+  const bucketHeaderTopClassName = topChromeInset ? "top-12" : "top-0";
   const topChipStackTopClassName = topChromeInset
     ? "top-4"
     : topChipsOverlapHeader
@@ -280,9 +264,7 @@ export const TimelineView = memo(function TimelineView({
         container.scrollHeight - container.clientHeight,
       );
       const nextScrollTop = container.scrollTop;
-      const scrolledToTop = nextScrollTop <= 12;
 
-      setIsScrolledToTop(scrolledToTop);
       setIsScrolledToBottom(maxScrollTop - nextScrollTop <= 12);
       setIsUpcomingMeetingVisible(
         isTimelineItemVisible(container, upcomingMeetingNodeRef.current),
@@ -410,10 +392,6 @@ export const TimelineView = memo(function TimelineView({
 
     setUncontrolledShowIgnored(nextShowIgnored);
   }, [onShowIgnoredEventsChange, showIgnored]);
-
-  const handleOpenCalendar = useCallback(() => {
-    openNew({ type: "calendar" });
-  }, [openNew]);
 
   const contextMenuItems = useMemo(
     () =>
@@ -550,9 +528,7 @@ export const TimelineView = memo(function TimelineView({
             />
           )}
 
-          {(showOpenCalendarChip ||
-            showUpcomingMeetingChip ||
-            showTopNowChip) && (
+          {(showUpcomingMeetingChip || showTopNowChip) && (
             <div
               data-sidebar-timeline-top-chip-stack
               className={cn([
@@ -560,15 +536,6 @@ export const TimelineView = memo(function TimelineView({
                 topChipStackTopClassName,
               ])}
             >
-              {showOpenCalendarChip && (
-                <TimelineTopChip
-                  ariaLabel={t`Open calendar`}
-                  icon={<CalendarDots size={12} />}
-                  onClick={handleOpenCalendar}
-                >
-                  <Trans>Open calendar</Trans>
-                </TimelineTopChip>
-              )}
               {upcomingMeetingStatus && showUpcomingMeetingChip && (
                 <UpcomingMeetingChip
                   ariaLabel={`${

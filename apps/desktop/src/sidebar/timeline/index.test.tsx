@@ -285,111 +285,6 @@ describe("TimelineView", () => {
     expect(getSidebarActionTabsOrNull()).toBeNull();
   });
 
-  it("shows the open calendar chip in top chrome without action tabs", () => {
-    vi.useFakeTimers();
-    vi.setSystemTime(new Date("2024-01-15T12:00:00.000Z"));
-    mocks.currentTimeMs = Date.now();
-    mocks.smartCurrentTimeMs = Date.now();
-    mocks.timelineSessionsTable = {
-      later: {
-        title: "Quarterly planning",
-        created_at: "2024-01-17T12:00:00.000Z",
-      },
-    };
-
-    const { container } = render(<TimelineView topChromeInset />);
-    const calendarButton = screen.getByRole("button", {
-      name: "Open calendar",
-    });
-
-    expect(getSidebarActionTabsOrNull()).toBeNull();
-    expect(calendarButton.className).toContain("rounded-full");
-    expect(
-      container.querySelector("[data-sidebar-timeline-top-chip-stack]")
-        ?.className,
-    ).toContain("top-4");
-    expect(
-      container.querySelector("[data-sidebar-timeline-top-spacer]")?.className,
-    ).toContain("h-14");
-    expect(queryTopOccluder(container)?.className).toContain("h-12");
-
-    fireEvent.click(calendarButton);
-
-    expect(mocks.openNew).toHaveBeenCalledWith({ type: "calendar" });
-  });
-
-  it("keeps the open calendar spacer stable when leaving the top edge", () => {
-    vi.useFakeTimers();
-    vi.setSystemTime(new Date("2024-01-15T12:00:00.000Z"));
-    mocks.currentTimeMs = Date.now();
-    mocks.smartCurrentTimeMs = Date.now();
-    mocks.timelineSessionsTable = {
-      later: {
-        title: "Quarterly planning",
-        created_at: "2024-01-17T12:00:00.000Z",
-      },
-    };
-
-    const { container } = render(<TimelineView topChromeInset />);
-    const scroller = container.querySelector("[data-sidebar-timeline-scroll]");
-    const topSpacer = container.querySelector(
-      "[data-sidebar-timeline-top-spacer]",
-    );
-
-    expect(scroller).toBeInstanceOf(HTMLDivElement);
-    expect(topSpacer?.className).toContain("h-14");
-
-    Object.defineProperty(scroller, "clientHeight", {
-      configurable: true,
-      value: 200,
-    });
-    Object.defineProperty(scroller, "scrollHeight", {
-      configurable: true,
-      value: 1200,
-    });
-    scroller!.scrollTop = 120;
-    fireEvent.scroll(scroller!);
-
-    expect(screen.queryByRole("button", { name: "Open calendar" })).toBeNull();
-    expect(topSpacer?.className).toContain("h-14");
-    expect(queryTopFade(container)).toBeNull();
-    expect(queryTopOccluder(container)?.className).toContain("bg-background");
-  });
-
-  it("routes wheel gestures from the open calendar chip into the timeline scroller", () => {
-    vi.useFakeTimers();
-    vi.setSystemTime(new Date("2024-01-15T12:00:00.000Z"));
-    mocks.currentTimeMs = Date.now();
-    mocks.smartCurrentTimeMs = Date.now();
-    mocks.timelineSessionsTable = {
-      later: {
-        title: "Quarterly planning",
-        created_at: "2024-01-17T12:00:00.000Z",
-      },
-    };
-
-    const { container } = render(<TimelineView topChromeInset />);
-    const scroller = container.querySelector("[data-sidebar-timeline-scroll]");
-    const calendarButton = screen.getByRole("button", {
-      name: "Open calendar",
-    });
-
-    expect(scroller).toBeInstanceOf(HTMLDivElement);
-
-    Object.defineProperty(scroller, "clientHeight", {
-      configurable: true,
-      value: 200,
-    });
-    Object.defineProperty(scroller, "scrollHeight", {
-      configurable: true,
-      value: 1200,
-    });
-
-    fireEvent.wheel(calendarButton, { deltaY: 80 });
-
-    expect(scroller!.scrollTop).toBe(80);
-  });
-
   it("keeps the first bucket below the sidebar action chrome", () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date("2024-01-15T12:00:00.000Z"));
@@ -458,37 +353,6 @@ describe("TimelineView", () => {
     expect(queryTopOccluder(container)?.className).toContain("z-10");
   });
 
-  it("shows the open calendar chip without top chrome", () => {
-    vi.useFakeTimers();
-    vi.setSystemTime(new Date("2024-01-15T12:00:00.000Z"));
-    mocks.currentTimeMs = Date.now();
-    mocks.smartCurrentTimeMs = Date.now();
-    mocks.timelineSessionsTable = {
-      later: {
-        title: "Quarterly planning",
-        created_at: "2024-01-17T12:00:00.000Z",
-      },
-    };
-
-    const { container } = render(<TimelineView />);
-    const calendarButton = screen.getByRole("button", {
-      name: "Open calendar",
-    });
-
-    expect(getSidebarActionTabsOrNull()).toBeNull();
-    expect(
-      container.querySelector("[data-sidebar-timeline-top-chip-stack]")
-        ?.className,
-    ).toContain("top-2");
-    expect(
-      container.querySelector("[data-sidebar-timeline-top-spacer]")?.className,
-    ).toContain("h-8");
-
-    fireEvent.click(calendarButton);
-
-    expect(mocks.openNew).toHaveBeenCalledWith({ type: "calendar" });
-  });
-
   it("keeps overlapping header chips inside the visible timeline", () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date("2024-01-15T12:00:00.000Z"));
@@ -507,9 +371,8 @@ describe("TimelineView", () => {
       container.querySelector("[data-sidebar-timeline-root]")?.className,
     ).not.toContain("-mt-3");
     expect(
-      container.querySelector("[data-sidebar-timeline-top-chip-stack]")
-        ?.className,
-    ).toContain("top-1");
+      container.querySelector("[data-sidebar-timeline-top-chip-stack]"),
+    ).toBeNull();
     expect(
       container.querySelector("[data-sidebar-timeline-top-spacer]")?.className,
     ).toContain("h-9");
@@ -1269,7 +1132,7 @@ describe("TimelineView", () => {
     vi.setSystemTime(new Date("2024-01-15T12:01:00.000Z"));
     mocks.currentTimeMs = Date.now();
     fireEvent.focus(window);
-    rerender(<TimelineView topChromeInset showOpenCalendarButton />);
+    rerender(<TimelineView topChromeInset />);
 
     expect(
       container.querySelector("[data-sidebar-upcoming-meeting-status]")
@@ -1289,13 +1152,7 @@ describe("TimelineView", () => {
     vi.setSystemTime(new Date("2024-01-15T12:30:01.000Z"));
     mocks.currentTimeMs = Date.now();
     fireEvent.focus(window);
-    rerender(
-      <TimelineView
-        topChromeInset
-        showOpenCalendarButton
-        showIgnoredEvents={false}
-      />,
-    );
+    rerender(<TimelineView topChromeInset showIgnoredEvents={false} />);
 
     expect(
       container.querySelector("[data-sidebar-upcoming-meeting-status]"),

@@ -41,13 +41,13 @@ export function TimelineSearchField({
     <div
       data-sidebar-timeline-search
       className={cn([
-        "border-border bg-accent/50 flex h-8 w-full shrink-0 items-center gap-2 rounded-lg border px-3",
-        "focus-within:bg-accent transition-colors",
+        "flex h-8 w-full shrink-0 items-center gap-2 rounded-lg px-2",
+        "hover:bg-accent/40 focus-within:bg-accent/60 bg-transparent transition-colors",
       ])}
     >
       <MagnifyingGlass
         aria-hidden
-        className="text-muted-foreground size-4 shrink-0"
+        className="text-muted-foreground/70 size-3.5 shrink-0"
       />
       <input
         type="text"
@@ -60,7 +60,7 @@ export function TimelineSearchField({
           }
         }}
         placeholder={t`Search notes and meetings...`}
-        className="placeholder:text-muted-foreground min-w-0 flex-1 bg-transparent text-sm placeholder:text-sm focus:outline-hidden"
+        className="placeholder:text-muted-foreground/70 min-w-0 flex-1 bg-transparent text-[13px] placeholder:text-[13px] focus:outline-hidden"
       />
       {value ? (
         <button
