@@ -122,8 +122,56 @@ Use actual IDs from `but diff` / `but status -fv`; do not invent IDs.
 
 ## Trigger Stable Release
 
-After the changelog merge, verify `main` has not moved, then build the stable
-candidate without publishing:
+After the changelog merge, verify `main` has not moved, then push the release
+tag. The pushed tag is the whole release: `desktop_cd.yaml` builds, signs and
+notarizes every platform, verifies the candidate, and then calls
+`desktop_publish.yaml` in the same run to create the GitHub release in
+`flagbit/session-echo-releases`. There is no second workflow to start and no
+SHA to copy.
+
+```bash
+git fetch origin main --no-tags
+git tag "v<version>" origin/main
+git push origin "refs/tags/v<version>"
+```
+
+The tag name is the version: `v1.5.0` releases `1.5.0`. A tag whose version has
+no `packages/changelog/content/<version>.md` fails in `compute-version`, before
+the build matrix starts, as does a tag that is not `v<major>.<minor>.<patch>`.
+
+Watch the single run:
+
+```bash
+gh run list --workflow desktop_cd.yaml --limit 5
+gh run view <run-id> --json headSha,url,event
+gh run watch <run-id>
+```
+
+The run's `event` must be `push` and its `headSha` must equal the recorded
+release-candidate SHA. A mismatch blocks acceptance even if the workflow
+succeeds.
+
+Do not use GitHub's rerun button for a failed release run. Publication only
+accepts first-attempt run IDs, so evidence cannot be mixed across attempts.
+
+The run must:
+
+- take the version from the tag and find the matching changelog entry
+- pass the `RELEASES_TOKEN` preflight before the build matrix starts
+- build both Apple Silicon and Intel macOS artifacts
+- build the signed Windows and Linux artifacts for the same version and commit
+- stage every planned release asset as `desktop-release-assets-<target>`
+  artifacts, each updater artifact with the `.sig` tauri build wrote beside it
+- upload `desktop-release-provenance-<version>-<sha>`, including the exact
+  artifact hashes for every staged release asset
+- create the `desktop_v<version>` tag and publish the release, verifying every
+  uploaded file against the provenance manifest and confirming the published
+  `latest.json` matches the one the run generated
+
+### Testing a stable build without releasing
+
+`workflow_dispatch` still builds and verifies a stable candidate but never
+publishes: publication is gated on the push event, which a dispatch cannot set.
 
 ```bash
 gh workflow run desktop_cd.yaml \
@@ -132,58 +180,32 @@ gh workflow run desktop_cd.yaml \
   -f version=<version>
 ```
 
-Watch the dry-run build:
+Do not run `desktop_linux_audio_qa` as a publish gate; Linux is covered by the
+same provenance as macOS and Windows. That workflow consumes a dispatched
+candidate run and remains available for optional debugging.
 
-```bash
-gh run list --workflow desktop_cd.yaml --branch main --limit 5
-gh run view <run-id> --json headSha,url
-gh run watch <run-id>
-```
+### Republishing an existing candidate
 
-The run's `headSha` must equal the recorded release-candidate SHA. A mismatch
-blocks acceptance even if the workflow succeeds.
-
-Do not use GitHub's rerun button for a failed stable candidate or optional
-Linux audio QA run. Dispatch a fresh run instead; publication only accepts
-first-attempt run IDs so evidence cannot be mixed across attempts.
-
-The dry-run workflow must:
-
-- use the exact explicit stable version
-- build both Apple Silicon and Intel macOS artifacts
-- build the signed Windows and Linux artifacts for the same version and commit
-- stage every planned release asset as `desktop-release-assets-<target>`
-  artifacts, each updater artifact with the `.sig` tauri build wrote beside it
-- upload `desktop-release-provenance-<version>-<sha>`, including the exact
-  artifact hashes for every staged release asset
-
-After the exact dry-run artifacts pass the required platform gates and `main`
-still points to the candidate SHA, publish only through the provenance
-workflow. Do not run `desktop_linux_audio_qa` as a publish gate; Linux is
-covered by the same dry-run provenance as macOS and Windows. That workflow
-remains available for optional debugging.
+Only if the release stage of a run failed after the build succeeded, publish
+that run's artifacts by hand from `main`:
 
 ```bash
 gh workflow run desktop_publish.yaml \
   --ref main \
   -f version=<version> \
   -f candidate_sha=<40-character-main-sha> \
-  -f dry_run_id=<dry-run-id>
+  -f source_run_id=<desktop_cd-run-id>
 ```
 
-Watch that workflow to completion. It must verify the dry-run run identity,
-artifact hashes, current `main`, and the immutable tag before publishing. It
-must also verify every file uploaded to the public releases repository against
-the provenance manifest, and confirm the published `latest.json` matches the
-one the run generated.
+This path requires `main` to still point at the candidate.
 
 ## Final Checks
 
 Before reporting success, capture:
 
-- computed stable version
-- dry-run workflow URL and head SHA
-- publish workflow URL and head SHA
+- released stable version
+- pushed `v<version>` tag
+- release run URL, event, and head SHA
 - `desktop_v<version>` tag
 - GitHub release URL in `flagbit/session-echo-releases`
 - the updater platform keys listed in the published `latest.json`

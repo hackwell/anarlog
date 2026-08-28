@@ -31,8 +31,9 @@ Run these before publishing a stable desktop release.
      candidate (or confirm the latest nightly on `main` passed).
    - `pro_api_e2e` — nightly/dispatch (live provider APIs).
 
-3. **Build + sign all platforms** via `desktop_cd` (`staging` first, then
-   `stable`). This produces the signed macOS/Windows/Linux artifacts.
+3. **Build + sign all platforms** via `desktop_cd`. Dispatch `staging`, then
+   dispatch `stable` if you want a candidate without releasing; a dispatch
+   never publishes. This produces the signed macOS/Windows/Linux artifacts.
 
 4. **Real-hardware QA** (cannot run in CI/Cloud Agent):
    - Critical Pro user journey on a Mac — follow `.agents/skills/qa-critical-ux`.
@@ -41,7 +42,9 @@ Run these before publishing a stable desktop release.
 
 5. **Changelog** — add the entry via `.agents/skills/new-changelog`.
 
-6. **Cut the release** — follow `.agents/skills/release-new-version`.
+6. **Cut the release** — push the `v<version>` tag; `desktop_cd` builds, signs
+   and publishes it to `flagbit/session-echo-releases` in one run. Follow
+   `.agents/skills/release-new-version`.
 
 ## Notes
 
