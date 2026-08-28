@@ -10,11 +10,8 @@ import { useRef, useState } from "react";
 
 import { commands as openerCommands } from "@anlg/plugin-opener2";
 
+import { setPendingOnboardingSession } from "./pending-session";
 import { OnboardingButton } from "./shared";
-import {
-  getOrCreateWelcomeSession,
-  setPendingWelcomeSession,
-} from "./welcome-note";
 
 import { createSession } from "~/session/queries";
 import { flushAutomaticRelaunch } from "~/shared/relaunch";
@@ -77,13 +74,13 @@ export function FinalSection({
   const translate = i18n._.bind(i18n);
   const [status, setStatus] = useState<"idle" | "loading" | "error">("idle");
   const finishPromiseRef = useRef<Promise<void> | null>(null);
-  const welcomeSessionRef = useRef<string | null>(null);
+  const sessionRef = useRef<string | null>(null);
 
   const handleContinue = async () => {
     if (finishPromiseRef.current) return;
 
     setStatus("loading");
-    const finishPromise = finishOnboarding(onContinue, welcomeSessionRef);
+    const finishPromise = finishOnboarding(onContinue, sessionRef);
     finishPromiseRef.current = finishPromise;
     try {
       await finishPromise;
@@ -125,16 +122,11 @@ export function FinalSection({
 
 export async function finishOnboarding(
   onContinue?: (sessionId: string) => void,
-  welcomeSessionRef?: { current: string | null },
+  sessionRef?: { current: string | null },
 ) {
-  const welcomeSessionId =
-    welcomeSessionRef?.current ??
-    (await getOrCreateWelcomeSession().catch((error) => {
-      console.error("Failed to create welcome note", error);
-      return createSession();
-    }));
-  if (welcomeSessionRef) {
-    welcomeSessionRef.current = welcomeSessionId;
+  const sessionId = sessionRef?.current ?? (await createSession());
+  if (sessionRef) {
+    sessionRef.current = sessionId;
   }
   await new Promise((resolve) => setTimeout(resolve, 100));
   const result = await commands.setOnboardingNeeded(false);
@@ -142,10 +134,10 @@ export async function finishOnboarding(
     throw new Error(result.error);
   }
   await new Promise((resolve) => setTimeout(resolve, 100));
-  setPendingWelcomeSession(welcomeSessionId);
+  setPendingOnboardingSession(sessionId);
   if (await flushAutomaticRelaunch()) {
     return;
   }
-  setPendingWelcomeSession(null);
-  onContinue?.(welcomeSessionId);
+  setPendingOnboardingSession(null);
+  onContinue?.(sessionId);
 }

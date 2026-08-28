@@ -10,18 +10,16 @@ import { afterEach, beforeEach, expect, it, vi } from "vitest";
 const mocks = vi.hoisted(() => ({
   createSession: vi.fn(),
   flushAutomaticRelaunch: vi.fn(),
-  getOrCreateWelcomeSession: vi.fn(),
   setOnboardingNeeded: vi.fn(),
-  setPendingWelcomeSession: vi.fn(),
+  setPendingOnboardingSession: vi.fn(),
 }));
 
 vi.mock("@anlg/plugin-opener2", () => ({
   commands: { openUrl: vi.fn() },
 }));
 
-vi.mock("./welcome-note", () => ({
-  getOrCreateWelcomeSession: mocks.getOrCreateWelcomeSession,
-  setPendingWelcomeSession: mocks.setPendingWelcomeSession,
+vi.mock("./pending-session", () => ({
+  setPendingOnboardingSession: mocks.setPendingOnboardingSession,
 }));
 
 vi.mock("~/session/queries", () => ({
@@ -41,25 +39,20 @@ import { FinalSection, finishOnboarding } from "./final";
 beforeEach(() => {
   vi.clearAllMocks();
   mocks.flushAutomaticRelaunch.mockResolvedValue(false);
-  mocks.getOrCreateWelcomeSession.mockResolvedValue("welcome-session");
+  mocks.createSession.mockResolvedValue("new-session");
   mocks.setOnboardingNeeded.mockResolvedValue({ status: "ok", data: null });
 });
 
 afterEach(cleanup);
 
-it("opens a blank note when welcome-note creation fails", async () => {
+it("opens the blank note it created for the finished onboarding", async () => {
   const onContinue = vi.fn();
-  const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
-  mocks.getOrCreateWelcomeSession.mockRejectedValueOnce(
-    new Error("malformed JSON"),
-  );
   mocks.createSession.mockResolvedValueOnce("blank-session");
 
   await finishOnboarding(onContinue);
 
   expect(mocks.createSession).toHaveBeenCalledTimes(1);
   expect(onContinue).toHaveBeenCalledWith("blank-session");
-  consoleError.mockRestore();
 });
 
 it("shows a retryable error when onboarding cannot be persisted", async () => {
@@ -96,12 +89,9 @@ it("shows a retryable error when onboarding cannot be persisted", async () => {
   consoleError.mockRestore();
 });
 
-it("reuses the blank fallback session when persistence is retried", async () => {
+it("reuses the created session when persistence is retried", async () => {
   const onContinue = vi.fn();
   const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
-  mocks.getOrCreateWelcomeSession.mockRejectedValue(
-    new Error("malformed JSON"),
-  );
   mocks.createSession.mockResolvedValue("blank-session");
   mocks.setOnboardingNeeded
     .mockResolvedValueOnce({ status: "error", error: "settings unavailable" })
@@ -121,10 +111,10 @@ it("reuses the blank fallback session when persistence is retried", async () => 
 
 it("ignores concurrent finish attempts", async () => {
   const onContinue = vi.fn();
-  let resolveWelcomeSession: (sessionId: string) => void = () => {};
-  mocks.getOrCreateWelcomeSession.mockReturnValue(
+  let resolveSession: (sessionId: string) => void = () => {};
+  mocks.createSession.mockReturnValue(
     new Promise((resolve) => {
-      resolveWelcomeSession = resolve;
+      resolveSession = resolve;
     }),
   );
 
@@ -132,11 +122,11 @@ it("ignores concurrent finish attempts", async () => {
   const button = screen.getByRole("button", { name: "Open Session Echo" });
   fireEvent.click(button);
   fireEvent.click(button);
-  resolveWelcomeSession("welcome-session");
+  resolveSession("new-session");
 
   await waitFor(() => {
-    expect(onContinue).toHaveBeenCalledWith("welcome-session");
+    expect(onContinue).toHaveBeenCalledWith("new-session");
   });
-  expect(mocks.getOrCreateWelcomeSession).toHaveBeenCalledTimes(1);
+  expect(mocks.createSession).toHaveBeenCalledTimes(1);
   expect(onContinue).toHaveBeenCalledTimes(1);
 });

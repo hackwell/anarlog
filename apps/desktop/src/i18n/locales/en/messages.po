@@ -3054,10 +3054,6 @@ msgstr "This copy of Session Echo was built without the MICROSOFT_CLIENT_ID vari
 msgid "This edit is no longer pending."
 msgstr "This edit is no longer pending."
 
-#: src/session/components/outer-header/index.tsx
-msgid "This is a prerecorded demo, so your camera stays off. Click Join & record to see Session Echo in action."
-msgstr "This is a prerecorded demo, so your camera stays off. Click Join & record to see Session Echo in action."
-
 #: src/chat/components/session-provider.tsx
 msgid "This recording is using batch transcription, so the transcript isn't available to chat yet. Ask again after transcription finishes, or switch to a Pro model for live transcription."
 msgstr "This recording is using batch transcription, so the transcript isn't available to chat yet. Ask again after transcription finishes, or switch to a Pro model for live transcription."
@@ -3149,10 +3145,6 @@ msgstr "Try again"
 #: src/chat/components/input/use-dictation.ts
 msgid "Try speaking a little closer to the microphone."
 msgstr "Try speaking a little closer to the microphone."
-
-#: src/session/components/outer-header/index.tsx
-msgid "Try the demo"
-msgstr "Try the demo"
 
 #: src/calendar/components/apple/permission.tsx
 msgid "Turn on Session Echo in System Settings → Privacy & Security → Calendars, then return here."

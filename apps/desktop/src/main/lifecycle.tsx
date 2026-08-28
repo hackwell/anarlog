@@ -7,7 +7,7 @@ import { useSessionTab } from "~/chat/components/use-session-tab";
 import { buildChatTools } from "~/chat/tools";
 import { searchContacts } from "~/contacts/queries";
 import { useRegisterTools } from "~/contexts/tool";
-import { takePendingWelcomeSession } from "~/onboarding/welcome-note";
+import { takePendingOnboardingSession } from "~/onboarding/pending-session";
 import { useSearchEngine } from "~/search/contexts/engine";
 import { initEnhancerService } from "~/services/enhancer";
 import { useConfigValue } from "~/shared/config";
@@ -24,16 +24,16 @@ export function useClassicMainLifecycle() {
     openNew({ type: "empty" });
   }, [openNew]);
 
-  const openPendingWelcomeTab = useCallback(() => {
-    const welcomeSessionId = takePendingWelcomeSession();
-    if (welcomeSessionId) {
-      openNew({ type: "sessions", id: welcomeSessionId });
+  const openPendingOnboardingTab = useCallback(() => {
+    const sessionId = takePendingOnboardingSession();
+    if (sessionId) {
+      openNew({ type: "sessions", id: sessionId });
     }
   }, [openNew]);
 
   useDesktopTabLifecycle({
     onEmpty: openDefaultEmptyTab,
-    onInitialized: openPendingWelcomeTab,
+    onInitialized: openPendingOnboardingTab,
     onZeroTabs: openDefaultEmptyTab,
   });
 }

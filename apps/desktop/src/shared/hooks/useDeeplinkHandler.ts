@@ -7,7 +7,6 @@ import {
 } from "@anlg/plugin-deeplink2";
 import { dismissInstruction } from "@anlg/plugin-windows";
 
-import { stopActiveWelcomeDemo } from "~/onboarding/welcome-note";
 import {
   allowReconnectedCalendarConnections,
   CALENDAR_SYNC_TASK_ID,
@@ -37,11 +36,7 @@ export function useDeeplinkHandler() {
 
     const timeoutIds = new Set<number>();
     const handleDeepLink = (payload: DeepLink) => {
-      if (payload.to === "/onboarding-demo/complete") {
-        void stopActiveWelcomeDemo().catch((error) => {
-          console.error("[onboarding] failed to complete welcome demo", error);
-        });
-      } else if (payload.to === "/integration/callback") {
+      if (payload.to === "/integration/callback") {
         const {
           disconnected_connection_id,
           integration_id,

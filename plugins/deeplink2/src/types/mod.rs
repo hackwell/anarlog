@@ -1,12 +1,10 @@
 mod auth_callback;
 mod billing_refresh;
 mod integration_callback;
-mod onboarding_demo_complete;
 
 pub use auth_callback::*;
 pub use billing_refresh::*;
 pub use integration_callback::*;
-pub use onboarding_demo_complete::*;
 
 use serde::{Deserialize, Serialize};
 use specta::Type;
@@ -24,8 +22,6 @@ pub enum DeepLink {
     BillingRefresh(BillingRefreshSearch),
     #[serde(rename = "/integration/callback")]
     IntegrationCallback(IntegrationCallbackSearch),
-    #[serde(rename = "/onboarding-demo/complete")]
-    OnboardingDemoComplete(OnboardingDemoCompleteSearch),
 }
 
 impl DeepLink {
@@ -34,7 +30,6 @@ impl DeepLink {
             DeepLink::AuthCallback(_) => "/auth/callback",
             DeepLink::BillingRefresh(_) => "/billing/refresh",
             DeepLink::IntegrationCallback(_) => "/integration/callback",
-            DeepLink::OnboardingDemoComplete(_) => "/onboarding-demo/complete",
         }
     }
 }
@@ -59,9 +54,6 @@ impl FromStr for DeepLink {
             "auth/callback" => Ok(DeepLink::AuthCallback(serde_qs::from_str(query)?)),
             "billing/refresh" => Ok(DeepLink::BillingRefresh(serde_qs::from_str(query)?)),
             "integration/callback" => Ok(DeepLink::IntegrationCallback(serde_qs::from_str(query)?)),
-            "onboarding-demo/complete" => {
-                Ok(DeepLink::OnboardingDemoComplete(serde_qs::from_str(query)?))
-            }
             _ => Err(crate::Error::UnknownPath(full_path)),
         }
     }
@@ -70,14 +62,6 @@ impl FromStr for DeepLink {
 #[cfg(test)]
 mod tests {
     use super::*;
-
-    #[test]
-    fn parses_onboarding_demo_completion() {
-        assert!(matches!(
-            DeepLink::from_str("anarlog://onboarding-demo/complete").unwrap(),
-            DeepLink::OnboardingDemoComplete(_)
-        ));
-    }
 
     #[test]
     fn parses_chatgpt_loopback_authorization_code() {
