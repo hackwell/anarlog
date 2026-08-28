@@ -8,7 +8,7 @@ describe("desktop deep links", () => {
     const handle = vi.fn(() => {
       order.push("handle");
     });
-    const deepLink = { to: "/billing/refresh", search: {} } as const;
+    const deepLink = { to: "/onboarding-demo/complete", search: {} } as const;
 
     const unlisten = await subscribeThenDrainDeepLinks({
       listen: async () => {
