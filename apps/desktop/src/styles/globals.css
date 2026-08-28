@@ -56,7 +56,20 @@ html[data-live-caption] #root {
   --color-popover: hsl(var(--popover));
   --color-popover-foreground: hsl(var(--popover-foreground));
 
+  --color-sidebar: hsl(var(--sidebar-background));
+  --color-sidebar-foreground: hsl(var(--sidebar-foreground));
+  --color-sidebar-muted-foreground: hsl(var(--sidebar-muted-foreground));
   --color-sidebar-accent: hsl(var(--sidebar-accent));
+  --color-sidebar-accent-foreground: hsl(var(--sidebar-accent-foreground));
+  --color-sidebar-selected: hsl(var(--sidebar-selected));
+  --color-sidebar-selected-foreground: hsl(var(--sidebar-selected-foreground));
+  --color-sidebar-selected-marker: hsl(var(--sidebar-selected-marker));
+  --color-sidebar-border: hsl(var(--sidebar-border));
+  --color-sidebar-ring: hsl(var(--sidebar-ring));
+
+  --color-recording: hsl(var(--recording));
+  --color-recording-surface: hsl(var(--recording-surface));
+  --color-recording-foreground: hsl(var(--recording-foreground));
 
   --kbd-press-shadow-outer: rgba(0, 0, 0, 0.1);
   --kbd-press-shadow-inset: rgba(255, 255, 255, 0.8);
