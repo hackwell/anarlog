@@ -1,7 +1,14 @@
-# Builds the stable/staging desktop candidate. Stable candidates stage every
-# release asset the plan expects as a workflow artifact; desktop_publish.yaml
-# turns that exact run into the GitHub Release.
+# Builds the stable/staging desktop candidate and, for a pushed release tag,
+# releases it. Pushing `v<major>.<minor>.<patch>` builds, signs and notarizes
+# every platform, then hands this exact run to desktop_publish.yaml, which turns
+# it into the GitHub Release in the public releases repository. No second run
+# and no copied SHA. workflow_dispatch remains available for staging and for
+# stable test runs; a dispatch builds and verifies but never publishes, because
+# publication is gated on the push event alone.
 on:
+  push:
+    tags:
+      - "v*.*.*"
   workflow_dispatch:
     inputs:
       channel:
@@ -31,11 +38,13 @@ on:
         default: ""
 
 concurrency:
-  group: ${{ inputs.channel == 'stable' && 'desktop-stable-release' || format('{0}-{1}-{2}', github.workflow, github.ref, inputs.channel) }}
-  cancel-in-progress: ${{ inputs.channel != 'stable' }}
+  group: ${{ (github.event_name == 'push' || inputs.channel == 'stable') && 'desktop-stable-release' || format('{0}-{1}-{2}', github.workflow, github.ref, inputs.channel) }}
+  cancel-in-progress: ${{ github.event_name != 'push' && inputs.channel != 'stable' }}
 env:
-  RELEASE_CHANNEL: ${{ inputs.channel }}
-  TAURI_CONF_PATH: ./src-tauri/tauri.conf.${{ inputs.channel }}.json
+  # A pushed tag is always stable. `inputs` is empty for the push event, so no
+  # dispatch input can steer the channel on the tag path.
+  RELEASE_CHANNEL: ${{ github.event_name == 'push' && 'stable' || inputs.channel }}
+  TAURI_CONF_PATH: ./src-tauri/tauri.conf.${{ github.event_name == 'push' && 'stable' || inputs.channel }}.json
   NODE_OPTIONS: "--max-old-space-size=4096"
 
 jobs:
@@ -43,24 +52,75 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.version.outputs.version }}
+      channel: ${{ steps.resolve.outputs.channel }}
+      candidate_sha: ${{ steps.resolve.outputs.candidate_sha }}
+      include_linux: ${{ steps.resolve.outputs.include_linux }}
+      include_windows: ${{ steps.resolve.outputs.include_windows }}
+      publish: ${{ steps.resolve.outputs.publish }}
     steps:
+      # Resolves every knob the rest of the run reads, so no later job has to
+      # re-derive the channel. `publish` is the single gate on publication and
+      # comes from the event alone: a workflow_dispatch cannot set it, so a
+      # dispatch can never impersonate a pushed release tag.
+      - id: resolve
+        name: Resolve the release channel and candidate
+        env:
+          INPUT_CANDIDATE_SHA: ${{ inputs.candidate_sha }}
+          INPUT_CHANNEL: ${{ inputs.channel }}
+          INPUT_INCLUDE_LINUX: ${{ inputs.include_linux }}
+          INPUT_INCLUDE_WINDOWS: ${{ inputs.include_windows }}
+        run: |
+          if [[ "$GITHUB_EVENT_NAME" == "push" ]]; then
+            if [[ "$GITHUB_REF_TYPE" != "tag" ]]; then
+              echo "::error::Only pushed tags release; got ref type $GITHUB_REF_TYPE"
+              exit 1
+            fi
+            CHANNEL="stable"
+            CANDIDATE_SHA="$GITHUB_SHA"
+            INCLUDE_LINUX="true"
+            INCLUDE_WINDOWS="true"
+            PUBLISH="true"
+          else
+            CHANNEL="$INPUT_CHANNEL"
+            CANDIDATE_SHA="${INPUT_CANDIDATE_SHA:-$GITHUB_SHA}"
+            INCLUDE_LINUX="$INPUT_INCLUDE_LINUX"
+            INCLUDE_WINDOWS="$INPUT_INCLUDE_WINDOWS"
+            PUBLISH="false"
+          fi
+
+          {
+            echo "channel=$CHANNEL"
+            echo "candidate_sha=$CANDIDATE_SHA"
+            echo "include_linux=$INCLUDE_LINUX"
+            echo "include_windows=$INCLUDE_WINDOWS"
+            echo "publish=$PUBLISH"
+          } >> "$GITHUB_OUTPUT"
       - uses: actions/checkout@v4
         with:
-          ref: ${{ inputs.candidate_sha || github.sha }}
+          ref: ${{ steps.resolve.outputs.candidate_sha }}
           lfs: true
           fetch-depth: 0
           fetch-tags: true
       - run: |
           git remote set-url origin "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git"
           git fetch --tags --force
-      - if: ${{ inputs.channel == 'stable' }}
+      - if: ${{ steps.resolve.outputs.channel == 'stable' }}
+        name: Verify the candidate is on main
         run: |
           git fetch origin main --no-tags
 
           TARGET=$(git rev-parse HEAD)
           MAIN=$(git rev-parse origin/main)
 
-          if [[ "$TARGET" != "$MAIN" ]]; then
+          if [[ "$GITHUB_EVENT_NAME" == "push" ]]; then
+            # main moves while a multi-platform build runs, so a tagged
+            # candidate is anchored by its immutable tag and only has to be
+            # contained in main rather than equal to its tip.
+            if ! git merge-base --is-ancestor "$TARGET" "$MAIN"; then
+              echo "::error::Tagged commit $TARGET is not contained in main ($MAIN)"
+              exit 1
+            fi
+          elif [[ "$TARGET" != "$MAIN" ]]; then
             echo "::error::Stable releases must run from the current main commit ($MAIN), got $TARGET"
             exit 1
           fi
@@ -68,40 +128,54 @@ jobs:
       - id: version
         env:
           INPUT_VERSION: ${{ inputs.version }}
-          RELEASE_CHANNEL: ${{ inputs.channel }}
+          RELEASE_CHANNEL: ${{ steps.resolve.outputs.channel }}
         run: |
-          if [[ "$RELEASE_CHANNEL" == "stable" ]]; then
-            if [[ ! "$INPUT_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-              echo "::error::Stable releases require an explicit semantic version such as 1.4.0"
+          if [[ "$GITHUB_EVENT_NAME" == "push" ]]; then
+            # The pushed tag is the only source of a released version.
+            if [[ ! "$GITHUB_REF_NAME" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+              echo "::error::Release tags must look like v1.4.0, got $GITHUB_REF_NAME"
               exit 1
             fi
-            VERSION="$INPUT_VERSION"
-            if [[ ! -f "packages/changelog/content/$VERSION.md" ]]; then
-              echo "::error::Missing changelog for stable version $VERSION"
-              exit 1
-            fi
+            VERSION="${GITHUB_REF_NAME#v}"
           elif [[ -n "$INPUT_VERSION" ]]; then
             VERSION="$INPUT_VERSION"
           elif [[ "$RELEASE_CHANNEL" == "staging" ]]; then
             VERSION=$(doxxer --config doxxer.desktop.toml next dev)
           fi
+
+          if [[ "$RELEASE_CHANNEL" == "stable" ]]; then
+            if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+              echo "::error::Stable releases require an explicit semantic version such as 1.4.0"
+              exit 1
+            fi
+            # No committed file carries the app version: scripts/version.sh
+            # stamps this one into tauri.conf.json for every build, and the
+            # build jobs then verify the produced artifacts report it back. The
+            # changelog entry is the committed record a release version must
+            # agree with, so a tag with no entry fails here, before the matrix.
+            if [[ ! -f "packages/changelog/content/$VERSION.md" ]]; then
+              echo "::error::Missing changelog for stable version $VERSION"
+              exit 1
+            fi
+          fi
+
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "Computed version: $VERSION"
 
   preflight:
-    if: ${{ inputs.channel != 'staging' }}
+    if: ${{ needs.compute-version.outputs.channel != 'staging' }}
     needs: compute-version
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ inputs.candidate_sha || github.sha }}
+          ref: ${{ needs.compute-version.outputs.candidate_sha }}
       - name: Verify the releases repository is writable
         uses: ./.github/actions/releases_preflight
         with:
           token: ${{ secrets.RELEASES_TOKEN }}
       - run: ./scripts/version.sh "./apps/desktop/src-tauri/tauri.conf.json" "${{ needs.compute-version.outputs.version }}"
-      - if: ${{ inputs.include_windows }}
+      - if: ${{ needs.compute-version.outputs.include_windows == 'true' }}
         name: Verify stable signing configuration
         env:
           AZURE_CLIENT_ID: ${{ vars.AZURE_CLIENT_ID }}
@@ -134,14 +208,14 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        include: ${{ inputs.channel == 'staging' && fromJSON('[{"target":"aarch64-apple-darwin","arch":"aarch64","artifact_name":"silicon"}]') || fromJSON('[{"target":"aarch64-apple-darwin","arch":"aarch64","artifact_name":"silicon"},{"target":"x86_64-apple-darwin","arch":"x86_64","artifact_name":"intel"}]') }}
+        include: ${{ needs.compute-version.outputs.channel == 'staging' && fromJSON('[{"target":"aarch64-apple-darwin","arch":"aarch64","artifact_name":"silicon"}]') || fromJSON('[{"target":"aarch64-apple-darwin","arch":"aarch64","artifact_name":"silicon"},{"target":"x86_64-apple-darwin","arch":"x86_64","artifact_name":"intel"}]') }}
     defaults:
       run:
         shell: bash
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ inputs.candidate_sha || github.sha }}
+          ref: ${{ needs.compute-version.outputs.candidate_sha }}
           lfs: true
           fetch-depth: 0
           fetch-tags: true
@@ -181,7 +255,7 @@ jobs:
           if [[ "${{ matrix.target }}" == "x86_64-apple-darwin" ]]; then
             BUILD_ARGS+=(--config ./src-tauri/tauri.conf.macos-intel.json)
           fi
-          if [[ "${{ inputs.channel }}" == "staging" ]]; then
+          if [[ "${{ needs.compute-version.outputs.channel }}" == "staging" ]]; then
             BUILD_ARGS+=(--features devtools)
           fi
           pnpm -F desktop tauri build "${BUILD_ARGS[@]}"
@@ -202,7 +276,7 @@ jobs:
           VITE_APP_URL: "https://sessionecho.flagbit.de"
           VITE_API_URL: "https://api.sessionecho.flagbit.de"
           VITE_APP_VERSION: ${{ needs.compute-version.outputs.version }}
-      - if: ${{ inputs.channel == 'stable' }}
+      - if: ${{ needs.compute-version.outputs.channel == 'stable' }}
         name: Verify macOS updater signature
         run: |
           shopt -s nullglob
@@ -239,7 +313,7 @@ jobs:
           apple-id: ${{ secrets.APPLE_ID }}
           apple-password: ${{ secrets.APPLE_PASSWORD }}
           apple-team-id: ${{ secrets.APPLE_TEAM_ID }}
-      - if: ${{ inputs.channel != 'staging' }}
+      - if: ${{ needs.compute-version.outputs.channel != 'staging' }}
         name: Stage release assets
         shell: bash
         run: |
@@ -248,20 +322,20 @@ jobs:
             --bundle-root apps/desktop/src-tauri/target \
             --build-target "${{ matrix.target }}" \
             --output-dir release-assets
-      - if: ${{ inputs.channel != 'staging' }}
+      - if: ${{ needs.compute-version.outputs.channel != 'staging' }}
         uses: actions/upload-artifact@v4
         with:
           name: desktop-release-assets-${{ matrix.target }}
           path: release-assets/*
           if-no-files-found: error
           retention-days: 7
-      - if: ${{ inputs.channel == 'staging' }}
+      - if: ${{ needs.compute-version.outputs.channel == 'staging' }}
         uses: actions/upload-artifact@v4
         with:
           name: hyprnote-staging-macos-${{ matrix.artifact_name }}
           path: apps/desktop/src-tauri/target/${{ matrix.target }}/release/bundle/dmg/*.dmg
           retention-days: 3
-      - if: ${{ inputs.channel == 'staging' }}
+      - if: ${{ needs.compute-version.outputs.channel == 'staging' }}
         run: |
           TIMESTAMP=$(date -u +"%Y%m%d%H%M%S")
           COMMIT_HASH=$(git rev-parse --short HEAD)
@@ -278,7 +352,7 @@ jobs:
 
   build-linux:
     needs: [compute-version, preflight]
-    if: ${{ inputs.include_linux && !cancelled() && (needs.preflight.result == 'success' || needs.preflight.result == 'skipped') }}
+    if: ${{ needs.compute-version.outputs.include_linux == 'true' && !cancelled() && (needs.preflight.result == 'success' || needs.preflight.result == 'skipped') }}
     strategy:
       fail-fast: true
       matrix:
@@ -304,7 +378,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ inputs.candidate_sha || github.sha }}
+          ref: ${{ needs.compute-version.outputs.candidate_sha }}
           lfs: true
           fetch-depth: 0
           fetch-tags: true
@@ -330,7 +404,7 @@ jobs:
             --config "${{ env.TAURI_CONF_PATH }}"
             --verbose
           )
-          if [[ "${{ inputs.channel }}" == "staging" ]]; then
+          if [[ "${{ needs.compute-version.outputs.channel }}" == "staging" ]]; then
             BUILD_ARGS+=(--features devtools)
           fi
           pnpm -F desktop tauri build "${BUILD_ARGS[@]}"
@@ -384,7 +458,7 @@ jobs:
             echo "AppImage architecture does not match ${{ matrix.target }}"
             exit 1
           fi
-          if [[ "${{ inputs.channel }}" == "stable" ]]; then
+          if [[ "${{ needs.compute-version.outputs.channel }}" == "stable" ]]; then
             cargo run --locked -p updater-core --bin verify-updater-signature -- \
               "${appimages[0]}" \
               "${appimage_signatures[0]}" \
@@ -405,7 +479,7 @@ jobs:
           done
       - run: |
           deb=$(find "apps/desktop/src-tauri/target/${{ matrix.target }}/release/bundle/deb" -maxdepth 1 -name '*.deb' -type f -print -quit)
-          binary_name="${{ inputs.channel == 'staging' && 'anarlog-staging' || 'anarlog' }}"
+          binary_name="${{ needs.compute-version.outputs.channel == 'staging' && 'anarlog-staging' || 'anarlog' }}"
           docker run --rm \
             --platform linux/${{ matrix.docker_arch }} \
             --volume "$PWD:/workspace:ro" \
@@ -430,13 +504,13 @@ jobs:
             '
       - uses: actions/upload-artifact@v4
         with:
-          name: anarlog-${{ inputs.channel }}-linux-${{ matrix.artifact_name }}
+          name: anarlog-${{ needs.compute-version.outputs.channel }}-linux-${{ matrix.artifact_name }}
           path: |
             apps/desktop/src-tauri/target/${{ matrix.target }}/release/bundle/appimage/*
             apps/desktop/src-tauri/target/${{ matrix.target }}/release/bundle/deb/*
           if-no-files-found: error
           retention-days: 7
-      - if: ${{ inputs.channel != 'staging' }}
+      - if: ${{ needs.compute-version.outputs.channel != 'staging' }}
         name: Stage release assets
         shell: bash
         run: |
@@ -445,14 +519,14 @@ jobs:
             --bundle-root apps/desktop/src-tauri/target \
             --build-target "${{ matrix.target }}" \
             --output-dir release-assets
-      - if: ${{ inputs.channel != 'staging' }}
+      - if: ${{ needs.compute-version.outputs.channel != 'staging' }}
         uses: actions/upload-artifact@v4
         with:
           name: desktop-release-assets-${{ matrix.target }}
           path: release-assets/*
           if-no-files-found: error
           retention-days: 7
-      - if: ${{ inputs.channel == 'staging' }}
+      - if: ${{ needs.compute-version.outputs.channel == 'staging' }}
         run: |
           timestamp=$(date -u +"%Y%m%d%H%M%S")
           commit_hash=$(git rev-parse --short HEAD)
@@ -475,7 +549,7 @@ jobs:
 
   build-windows:
     needs: [compute-version, preflight]
-    if: ${{ inputs.include_windows && !cancelled() && (needs.preflight.result == 'success' || needs.preflight.result == 'skipped') }}
+    if: ${{ needs.compute-version.outputs.include_windows == 'true' && !cancelled() && (needs.preflight.result == 'success' || needs.preflight.result == 'skipped') }}
     permissions:
       contents: read
       id-token: write
@@ -483,7 +557,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ inputs.candidate_sha || github.sha }}
+          ref: ${{ needs.compute-version.outputs.candidate_sha }}
           lfs: true
           fetch-depth: 0
           fetch-tags: true
@@ -513,7 +587,7 @@ jobs:
             --config "${{ env.TAURI_CONF_PATH }}"
             --verbose
           )
-          if [[ "${{ inputs.channel }}" == "staging" ]]; then
+          if [[ "${{ needs.compute-version.outputs.channel }}" == "staging" ]]; then
             BUILD_ARGS+=(--bundles nsis --features devtools --no-sign)
           else
             BUILD_ARGS+=(--no-bundle --no-sign)
@@ -528,14 +602,14 @@ jobs:
           VITE_APP_URL: https://sessionecho.flagbit.de
           VITE_API_URL: https://api.sessionecho.flagbit.de
           VITE_APP_VERSION: ${{ needs.compute-version.outputs.version }}
-      - if: ${{ inputs.channel == 'stable' }}
+      - if: ${{ needs.compute-version.outputs.channel == 'stable' }}
         name: Sign in to Azure
         uses: azure/login@v3
         with:
           client-id: ${{ vars.AZURE_CLIENT_ID }}
           tenant-id: ${{ vars.AZURE_TENANT_ID }}
           subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
-      - if: ${{ inputs.channel == 'stable' }}
+      - if: ${{ needs.compute-version.outputs.channel == 'stable' }}
         name: Sign Windows binaries
         uses: azure/artifact-signing-action@v2
         with:
@@ -548,7 +622,7 @@ jobs:
           file-digest: SHA256
           timestamp-rfc3161: http://timestamp.acs.microsoft.com
           timestamp-digest: SHA256
-      - if: ${{ inputs.channel == 'stable' }}
+      - if: ${{ needs.compute-version.outputs.channel == 'stable' }}
         name: Bundle signed Windows app
         shell: bash
         env:
@@ -562,7 +636,7 @@ jobs:
             --config "${{ env.TAURI_CONF_PATH }}" \
             --verbose \
             --no-sign
-      - if: ${{ inputs.channel == 'stable' }}
+      - if: ${{ needs.compute-version.outputs.channel == 'stable' }}
         id: windows-installer
         name: Locate Windows installer
         shell: pwsh
@@ -574,7 +648,7 @@ jobs:
           }
           "path=$($installers[0].FullName)" |
             Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
-      - if: ${{ inputs.channel == 'stable' }}
+      - if: ${{ needs.compute-version.outputs.channel == 'stable' }}
         name: Sign Windows installer
         uses: azure/artifact-signing-action@v2
         with:
@@ -585,7 +659,7 @@ jobs:
           file-digest: SHA256
           timestamp-rfc3161: http://timestamp.acs.microsoft.com
           timestamp-digest: SHA256
-      - if: ${{ inputs.channel == 'stable' }}
+      - if: ${{ needs.compute-version.outputs.channel == 'stable' }}
         name: Sign Windows updater artifact
         shell: pwsh
         env:
@@ -602,7 +676,7 @@ jobs:
       - shell: pwsh
         env:
           EXPECTED_VERSION: ${{ needs.compute-version.outputs.version }}
-          RELEASE_CHANNEL: ${{ inputs.channel }}
+          RELEASE_CHANNEL: ${{ needs.compute-version.outputs.channel }}
           WINDOWS_SIGNER_ORGANIZATION: ${{ vars.WINDOWS_SIGNER_ORGANIZATION }}
         run: |
           $config = Get-Content "apps/desktop/src-tauri/tauri.conf.json" | ConvertFrom-Json
@@ -662,7 +736,7 @@ jobs:
           $hash = (Get-FileHash -Algorithm SHA256 $installers[0].FullName).Hash.ToLowerInvariant()
           "$hash  $($installers[0].Name)" |
             Out-File "$($installers[0].FullName).sha256" -Encoding ascii -NoNewline
-      - if: ${{ inputs.channel == 'stable' }}
+      - if: ${{ needs.compute-version.outputs.channel == 'stable' }}
         name: Verify Windows updater signature
         shell: bash
         run: |
@@ -675,11 +749,11 @@ jobs:
             apps/desktop/src-tauri/tauri.conf.json
       - uses: actions/upload-artifact@v4
         with:
-          name: anarlog-${{ inputs.channel }}-windows-x64
+          name: anarlog-${{ needs.compute-version.outputs.channel }}-windows-x64
           path: apps/desktop/src-tauri/target/x86_64-pc-windows-msvc/release/bundle/nsis/*
           if-no-files-found: error
           retention-days: 7
-      - if: ${{ inputs.channel != 'staging' }}
+      - if: ${{ needs.compute-version.outputs.channel != 'staging' }}
         name: Stage release assets
         shell: bash
         run: |
@@ -688,7 +762,7 @@ jobs:
             --bundle-root apps/desktop/src-tauri/target \
             --build-target "x86_64-pc-windows-msvc" \
             --output-dir release-assets
-      - if: ${{ inputs.channel != 'staging' }}
+      - if: ${{ needs.compute-version.outputs.channel != 'staging' }}
         uses: actions/upload-artifact@v4
         with:
           name: desktop-release-assets-x86_64-pc-windows-msvc
@@ -697,13 +771,13 @@ jobs:
           retention-days: 7
 
   verify-release:
-    if: ${{ inputs.channel != 'staging' && !cancelled() && needs.build-macos.result == 'success' && (!inputs.include_linux || needs.build-linux.result == 'success') && (!inputs.include_windows || needs.build-windows.result == 'success') }}
+    if: ${{ needs.compute-version.outputs.channel != 'staging' && !cancelled() && needs.build-macos.result == 'success' && (needs.compute-version.outputs.include_linux != 'true' || needs.build-linux.result == 'success') && (needs.compute-version.outputs.include_windows != 'true' || needs.build-windows.result == 'success') }}
     needs: [compute-version, build-macos, build-windows, build-linux]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ inputs.candidate_sha || github.sha }}
+          ref: ${{ needs.compute-version.outputs.candidate_sha }}
       - uses: actions/download-artifact@v4
         with:
           pattern: desktop-release-assets-*
@@ -711,8 +785,8 @@ jobs:
           merge-multiple: true
       - name: Merge the staged release assets
         env:
-          INCLUDE_LINUX: ${{ inputs.include_linux }}
-          INCLUDE_WINDOWS: ${{ inputs.include_windows }}
+          INCLUDE_LINUX: ${{ needs.compute-version.outputs.include_linux }}
+          INCLUDE_WINDOWS: ${{ needs.compute-version.outputs.include_windows }}
           VERSION: ${{ needs.compute-version.outputs.version }}
         run: |
           node scripts/desktop-release-assets.mjs merge \
@@ -723,8 +797,8 @@ jobs:
             --include-windows "$INCLUDE_WINDOWS"
       - name: Verify the release covers every selected platform
         env:
-          INCLUDE_LINUX: ${{ inputs.include_linux }}
-          INCLUDE_WINDOWS: ${{ inputs.include_windows }}
+          INCLUDE_LINUX: ${{ needs.compute-version.outputs.include_linux }}
+          INCLUDE_WINDOWS: ${{ needs.compute-version.outputs.include_windows }}
         run: |
           node scripts/desktop-release-provenance.mjs verify-platforms \
             --release "$RUNNER_TEMP/release.json" \
@@ -732,8 +806,8 @@ jobs:
             --include-windows "$INCLUDE_WINDOWS"
       - name: Verify the updater metadata this release will publish
         env:
-          INCLUDE_LINUX: ${{ inputs.include_linux }}
-          INCLUDE_WINDOWS: ${{ inputs.include_windows }}
+          INCLUDE_LINUX: ${{ needs.compute-version.outputs.include_linux }}
+          INCLUDE_WINDOWS: ${{ needs.compute-version.outputs.include_windows }}
           VERSION: ${{ needs.compute-version.outputs.version }}
         run: |
           node scripts/desktop-latest-json.mjs \
@@ -746,6 +820,7 @@ jobs:
           jq -r '.platforms | keys[]' "$RUNNER_TEMP/latest.json"
       - name: Record release provenance
         env:
+          CANDIDATE_SHA: ${{ needs.compute-version.outputs.candidate_sha }}
           VERSION: ${{ needs.compute-version.outputs.version }}
         run: |
           mkdir -p release-provenance
@@ -753,12 +828,32 @@ jobs:
             --release "$RUNNER_TEMP/release.json" \
             --output release-provenance/manifest.json \
             --version "$VERSION" \
-            --candidate-sha "$GITHUB_SHA" \
+            --candidate-sha "$CANDIDATE_SHA" \
             --run-id "$GITHUB_RUN_ID" \
             --asset-dir "$RUNNER_TEMP/release-assets"
       - uses: actions/upload-artifact@v4
         with:
-          name: desktop-release-provenance-${{ needs.compute-version.outputs.version }}-${{ github.sha }}
+          name: desktop-release-provenance-${{ needs.compute-version.outputs.version }}-${{ needs.compute-version.outputs.candidate_sha }}
           path: release-provenance/manifest.json
           if-no-files-found: error
           retention-days: 30
+
+  # Turns this run into the release. Gated on `github.event_name == 'push'` as
+  # well as the resolved `publish` output, so a stable workflow_dispatch builds
+  # and verifies the candidate but stops here: only a pushed tag publishes.
+  publish:
+    needs: [compute-version, verify-release]
+    if: ${{ github.event_name == 'push' && needs.compute-version.outputs.publish == 'true' && !cancelled() && needs.verify-release.result == 'success' }}
+    permissions:
+      actions: read
+      contents: write
+      pull-requests: write
+    uses: ./.github/workflows/desktop_publish.yaml
+    with:
+      version: ${{ needs.compute-version.outputs.version }}
+      candidate_sha: ${{ needs.compute-version.outputs.candidate_sha }}
+      source_run_id: ${{ github.run_id }}
+      tag_release: true
+      include_linux: ${{ needs.compute-version.outputs.include_linux == 'true' }}
+      include_windows: ${{ needs.compute-version.outputs.include_windows == 'true' }}
+    secrets: inherit
