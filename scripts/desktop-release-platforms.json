@@ -1,10 +1,46 @@
 {
-  "$comment": "Single source of truth for desktop release platform coverage. Provenance verification (scripts/desktop-release-provenance.mjs) reads this plan directly, and its tests validate the desktop_cd/desktop_publish workflows against it, so any drift fails CI before publishing. Linux and Windows are optional release modes selected at publish time.",
+  "$comment": "Single source of truth for desktop release platform coverage. The release scripts (scripts/desktop-release-assets.mjs, scripts/desktop-latest-json.mjs, scripts/desktop-release-provenance.mjs) read this plan directly, and their tests validate the desktop_cd/desktop_publish workflows against it, so any drift fails CI before publishing. Linux and Windows are optional release modes selected at publish time. `updatePlatform` keys are the keys tauri-plugin-updater looks up in latest.json: it tries `{os}-{arch}-{installer}` first and falls back to `{os}-{arch}`, so a macOS .app bundle resolves `darwin-aarch64` while an AppImage resolves `linux-x86_64-appimage`.",
+  "releaseRepository": "flagbit/session-echo-releases",
+  "tagPrefix": "desktop_v",
   "macos": {
     "optional": false,
     "publicPlatforms": ["dmg-aarch64", "dmg-x86_64"],
     "updatePlatforms": ["darwin-aarch64", "darwin-x86_64"],
-    "buildTargets": ["aarch64-apple-darwin", "x86_64-apple-darwin"]
+    "buildTargets": ["aarch64-apple-darwin", "x86_64-apple-darwin"],
+    "assets": [
+      {
+        "file": "anarlog-macos-aarch64.dmg",
+        "buildTarget": "aarch64-apple-darwin",
+        "bundle": "dmg",
+        "extension": ".dmg",
+        "publicPlatform": "dmg-aarch64",
+        "updatePlatform": null
+      },
+      {
+        "file": "anarlog-macos-aarch64.app.tar.gz",
+        "buildTarget": "aarch64-apple-darwin",
+        "bundle": "macos",
+        "extension": ".app.tar.gz",
+        "publicPlatform": null,
+        "updatePlatform": "darwin-aarch64"
+      },
+      {
+        "file": "anarlog-macos-x86_64.dmg",
+        "buildTarget": "x86_64-apple-darwin",
+        "bundle": "dmg",
+        "extension": ".dmg",
+        "publicPlatform": "dmg-x86_64",
+        "updatePlatform": null
+      },
+      {
+        "file": "anarlog-macos-x86_64.app.tar.gz",
+        "buildTarget": "x86_64-apple-darwin",
+        "bundle": "macos",
+        "extension": ".app.tar.gz",
+        "publicPlatform": null,
+        "updatePlatform": "darwin-x86_64"
+      }
+    ]
   },
   "linux": {
     "optional": true,
@@ -20,12 +56,56 @@
       "linux-x86_64-appimage",
       "linux-x86_64-deb"
     ],
-    "buildTargets": ["aarch64-unknown-linux-gnu", "x86_64-unknown-linux-gnu"]
+    "buildTargets": ["aarch64-unknown-linux-gnu", "x86_64-unknown-linux-gnu"],
+    "assets": [
+      {
+        "file": "anarlog-linux-aarch64.AppImage",
+        "buildTarget": "aarch64-unknown-linux-gnu",
+        "bundle": "appimage",
+        "extension": ".AppImage",
+        "publicPlatform": "appimage-aarch64",
+        "updatePlatform": "linux-aarch64-appimage"
+      },
+      {
+        "file": "anarlog-linux-aarch64.deb",
+        "buildTarget": "aarch64-unknown-linux-gnu",
+        "bundle": "deb",
+        "extension": ".deb",
+        "publicPlatform": "debian-aarch64",
+        "updatePlatform": "linux-aarch64-deb"
+      },
+      {
+        "file": "anarlog-linux-x86_64.AppImage",
+        "buildTarget": "x86_64-unknown-linux-gnu",
+        "bundle": "appimage",
+        "extension": ".AppImage",
+        "publicPlatform": "appimage-x86_64",
+        "updatePlatform": "linux-x86_64-appimage"
+      },
+      {
+        "file": "anarlog-linux-x86_64.deb",
+        "buildTarget": "x86_64-unknown-linux-gnu",
+        "bundle": "deb",
+        "extension": ".deb",
+        "publicPlatform": "debian-x86_64",
+        "updatePlatform": "linux-x86_64-deb"
+      }
+    ]
   },
   "windows": {
     "optional": true,
     "publicPlatforms": ["nsis-x86_64"],
     "updatePlatforms": ["windows-x86_64-nsis"],
-    "buildTargets": ["x86_64-pc-windows-msvc"]
+    "buildTargets": ["x86_64-pc-windows-msvc"],
+    "assets": [
+      {
+        "file": "anarlog-windows-x86_64-setup.exe",
+        "buildTarget": "x86_64-pc-windows-msvc",
+        "bundle": "nsis",
+        "extension": ".exe",
+        "publicPlatform": "nsis-x86_64",
+        "updatePlatform": "windows-x86_64-nsis"
+      }
+    ]
   }
 }
