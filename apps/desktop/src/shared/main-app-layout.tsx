@@ -13,7 +13,6 @@ import {
 } from "./useNewNote";
 
 import { AuthProvider } from "~/auth";
-import { BillingProvider } from "~/auth/billing";
 import { DevtoolsFloatingPanelHost } from "~/devtools-panel/host";
 import { MeetingImportSync } from "~/services/meeting-import-sync";
 import { getOrCreateSessionForEventId } from "~/session/queries";
@@ -26,9 +25,7 @@ export default function MainAppLayout() {
 
   return (
     <AuthProvider>
-      <BillingProvider>
-        <MainAppContent />
-      </BillingProvider>
+      <MainAppContent />
     </AuthProvider>
   );
 }

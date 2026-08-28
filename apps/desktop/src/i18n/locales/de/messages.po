@@ -154,10 +154,6 @@ msgstr "\"{0}\" hinzufügen"
 msgid "Add {0} in System Settings > General > Language & Region to transcribe with {model}, or choose another model."
 msgstr "{0} unter Systemeinstellungen > Allgemein > Sprache & Region hinzufügen, um mit {model} zu transkribieren, oder ein anderes Modell wählen."
 
-#: src/billing/trial-payment-reminder-dialog.tsx
-msgid "Add a payment method before it ends to keep using Pro without an interruption."
-msgstr "Fügen Sie vor Ablauf der Testphase eine Zahlungsmethode hinzu, um Pro ohne Unterbrechung weiter zu nutzen."
-
 #: src/settings/automations/index.tsx
 msgid "Add a trigger and actions. Chat on the right can help you refine the workflow."
 msgstr "Trigger und Aktionen hinzufügen. Der Chat rechts hilft Ihnen, den Workflow zu verfeinern."
@@ -205,10 +201,6 @@ msgstr "Notizen zu diesem Kontakt hinzufügen …"
 #: src/contacts/details.tsx
 msgid "Add organization"
 msgstr "Organisation hinzufügen"
-
-#: src/billing/trial-payment-reminder-dialog.tsx
-msgid "Add payment method"
-msgstr "Zahlungsmethode hinzufügen"
 
 #: src/contacts/new-person-form.tsx
 msgid "Add person"
@@ -1373,7 +1365,6 @@ msgstr "Zum vorherigen Abschnitt"
 msgid "Go to recent"
 msgstr "Zu den letzten"
 
-#: src/billing/trial-started-dialog.tsx
 #: src/settings/ai/stt/select.tsx
 msgid "Got it"
 msgstr "Verstanden"
@@ -1670,10 +1661,6 @@ msgstr "Geräteeinstellung übernehmen"
 #: src/main/windows-title-bar.tsx
 msgid "Maximize"
 msgstr "Maximieren"
-
-#: src/billing/trial-ended-dialog.tsx
-msgid "Maybe later"
-msgstr "Vielleicht später"
 
 #: src/settings/developers/cli.tsx
 msgid "MCP configuration copied"
@@ -1984,10 +1971,6 @@ msgstr "Kein Transkript verfügbar"
 #: src/settings/developers/cli.tsx
 msgid "Not installed"
 msgstr "Nicht installiert"
-
-#: src/billing/trial-payment-reminder-dialog.tsx
-msgid "Not now"
-msgstr "Nicht jetzt"
 
 #: src/settings/developers/webhooks.tsx
 msgid "not receiving events"
@@ -3287,10 +3270,6 @@ msgstr "Unbenannte Session"
 msgid "Upcoming Event"
 msgstr "Bevorstehender Termin"
 
-#: src/billing/trial-ended-dialog.tsx
-msgid "Upgrade to Pro"
-msgstr "Auf Pro upgraden"
-
 #: src/settings/ai/stt/select.tsx
 msgid "Upgrade to Pro to use this provider."
 msgstr "Auf Pro upgraden, um diesen Anbieter zu nutzen."
@@ -3447,41 +3426,9 @@ msgstr "Sie können diese Aktion für kurze Zeit rückgängig machen."
 msgid "You can use up to three example summaries."
 msgstr "Sie können bis zu drei Beispielzusammenfassungen verwenden."
 
-#: src/billing/trial-started-dialog.tsx
-msgid "Your {days}-day Pro trial starts now. Add a payment method before it ends to keep Pro."
-msgstr "Ihre {days}-tägige Pro-Testphase beginnt jetzt. Fügen Sie vor Ablauf eine Zahlungsmethode hinzu, um Pro zu behalten."
-
-#: src/billing/trial-started-dialog.tsx
-msgid "Your {days}-day Pro trial starts now. Pro will continue automatically when it ends."
-msgstr "Ihre {days}-tägige Pro-Testphase beginnt jetzt. Pro wird nach Ablauf automatisch fortgesetzt."
-
 #: src/settings/dictionary/index.tsx
 msgid "Your dictionary is empty"
 msgstr "Ihr Wörterbuch ist leer"
-
-#: src/billing/trial-ended-dialog.tsx
-msgid "Your notes and recordings are safe. Free local transcription still works. Upgrade anytime to keep Pro features."
-msgstr "Ihre Notizen und Aufnahmen sind sicher. Kostenlose lokale Transkription funktioniert weiterhin. Jederzeit upgraden, um Pro-Funktionen zu behalten."
-
-#: src/billing/trial-ended-dialog.tsx
-msgid "Your notes and recordings are safe. Upgrade anytime to keep cloud transcription and Pro features, or configure your own transcription provider."
-msgstr "Ihre Notizen und Aufnahmen sind sicher. Jederzeit upgraden, um Cloud-Transkription und Pro-Funktionen zu behalten, oder eigenen Transkriptionsanbieter konfigurieren."
-
-#: src/billing/trial-payment-reminder-dialog.tsx
-msgid "Your Pro trial ends in {daysRemaining} days"
-msgstr "Ihre Pro-Testphase endet in {daysRemaining} Tagen"
-
-#: src/billing/trial-payment-reminder-dialog.tsx
-msgid "Your Pro trial ends in 1 day"
-msgstr "Ihre Pro-Testphase endet in 1 Tag"
-
-#: src/billing/trial-ended-dialog.tsx
-msgid "Your Pro trial has ended"
-msgstr "Ihre Pro-Testphase ist abgelaufen"
-
-#: src/billing/trial-started-dialog.tsx
-msgid "Your Pro trial just started"
-msgstr "Ihre Pro-Testphase hat gerade begonnen"
 
 #: src/services/enhancer/summary-notification.ts
 msgid "Your summary is ready."

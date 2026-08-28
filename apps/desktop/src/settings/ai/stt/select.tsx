@@ -56,7 +56,7 @@ import {
   sttModelQueries,
 } from "./shared";
 
-import { useBillingAccess } from "~/auth/billing-context";
+import { useBillingAccess } from "~/billing/access";
 import { useNotifications } from "~/contexts/notifications";
 import { providerRowId, ProviderIconSlot } from "~/settings/ai/shared";
 import {

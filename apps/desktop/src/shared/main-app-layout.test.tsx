@@ -31,10 +31,6 @@ vi.mock("~/auth", () => ({
   ),
 }));
 
-vi.mock("~/auth/billing", () => ({
-  BillingProvider: ({ children }: { children: React.ReactNode }) => children,
-}));
-
 vi.mock("~/devtools-panel/host", () => ({
   DevtoolsFloatingPanelHost: () => null,
 }));

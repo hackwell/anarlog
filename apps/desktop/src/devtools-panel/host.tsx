@@ -9,8 +9,6 @@ import {
   openUrlWithInstruction,
 } from "@anlg/plugin-windows";
 
-import { useBillingAccess } from "~/auth/billing-context";
-import { TrialEndedDialog } from "~/billing/trial-ended-dialog";
 import { executeTransaction } from "~/db";
 import { useDevtoolsUserId } from "~/devtools-panel/hooks";
 import { createSession, updateSession } from "~/session/queries";
@@ -51,7 +49,6 @@ type DevtoolsPanelAction =
   | "notifications:auto-stop"
   | "notifications:batch-done"
   | "notifications:clear"
-  | "billing:trial-ended"
   | "countdown:note-60"
   | "countdown:note-300"
   | "countdown:zoom-60"
@@ -95,7 +92,7 @@ function DevtoolsFloatingPanelDisabled() {
 }
 
 function DevtoolsFloatingPanelSync() {
-  const { dialogs, handleAction, shouldThrow } = useDevtoolsPanelActions();
+  const { handleAction, shouldThrow } = useDevtoolsPanelActions();
   const actionHandlerRef = useRef(handleAction);
   actionHandlerRef.current = handleAction;
 
@@ -127,13 +124,12 @@ function DevtoolsFloatingPanelSync() {
     throw new Error("Test error triggered from devtools");
   }
 
-  return dialogs;
+  return null;
 }
 
 function useDevtoolsPanelActions() {
   const openNew = useTabs((s) => s.openNew);
   const user_id = useDevtoolsUserId();
-  const { upgradeToPro } = useBillingAccess();
   const showToastPreview = useDevtoolsToastPreview(
     (state) => state.showPreview,
   );
@@ -142,7 +138,6 @@ function useDevtoolsPanelActions() {
   );
   const showOtaPreview = useDevtoolsOtaPreview((state) => state.showPreview);
   const clearOtaPreview = useDevtoolsOtaPreview((state) => state.clearPreview);
-  const [trialEndedOpen, setTrialEndedOpen] = useState(false);
   const [shouldThrow, setShouldThrow] = useState(false);
 
   const showMainWindow = useCallback(async () => {
@@ -419,9 +414,6 @@ function useDevtoolsPanelActions() {
         case "notifications:clear":
           void clearNotifications();
           return;
-        case "billing:trial-ended":
-          setTrialEndedOpen(true);
-          return;
         case "countdown:note-60":
           void createWithCountdown(60);
           return;
@@ -461,13 +453,6 @@ function useDevtoolsPanelActions() {
   );
 
   return {
-    dialogs: (
-      <TrialEndedDialog
-        open={trialEndedOpen}
-        onOpenChange={setTrialEndedOpen}
-        onUpgrade={upgradeToPro}
-      />
-    ),
     handleAction,
     shouldThrow,
   };

@@ -37,7 +37,7 @@ import {
 } from "./eligibility";
 import { useProviderSelectionPrompt } from "./provider-selection-prompt";
 
-import { useBillingAccess } from "~/auth/billing-context";
+import { useBillingAccess } from "~/billing/access";
 import {
   isKeychainAccessError,
   repairKeychainAccess,

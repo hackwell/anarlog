@@ -154,10 +154,6 @@ msgstr "Add \"{0}\""
 msgid "Add {0} in System Settings > General > Language & Region to transcribe with {model}, or choose another model."
 msgstr "Add {0} in System Settings > General > Language & Region to transcribe with {model}, or choose another model."
 
-#: src/billing/trial-payment-reminder-dialog.tsx
-msgid "Add a payment method before it ends to keep using Pro without an interruption."
-msgstr "Add a payment method before it ends to keep using Pro without an interruption."
-
 #: src/settings/automations/index.tsx
 msgid "Add a trigger and actions. Chat on the right can help you refine the workflow."
 msgstr "Add a trigger and actions. Chat on the right can help you refine the workflow."
@@ -205,10 +201,6 @@ msgstr "Add notes about this contact..."
 #: src/contacts/details.tsx
 msgid "Add organization"
 msgstr "Add organization"
-
-#: src/billing/trial-payment-reminder-dialog.tsx
-msgid "Add payment method"
-msgstr "Add payment method"
 
 #: src/contacts/new-person-form.tsx
 msgid "Add person"
@@ -1373,7 +1365,6 @@ msgstr "Go to previous section"
 msgid "Go to recent"
 msgstr "Go to recent"
 
-#: src/billing/trial-started-dialog.tsx
 #: src/settings/ai/stt/select.tsx
 msgid "Got it"
 msgstr "Got it"
@@ -1670,10 +1661,6 @@ msgstr "Match your device"
 #: src/main/windows-title-bar.tsx
 msgid "Maximize"
 msgstr "Maximize"
-
-#: src/billing/trial-ended-dialog.tsx
-msgid "Maybe later"
-msgstr "Maybe later"
 
 #: src/settings/developers/cli.tsx
 msgid "MCP configuration copied"
@@ -1984,10 +1971,6 @@ msgstr "No transcript available"
 #: src/settings/developers/cli.tsx
 msgid "Not installed"
 msgstr "Not installed"
-
-#: src/billing/trial-payment-reminder-dialog.tsx
-msgid "Not now"
-msgstr "Not now"
 
 #: src/settings/developers/webhooks.tsx
 msgid "not receiving events"
@@ -3287,10 +3270,6 @@ msgstr "Untitled session"
 msgid "Upcoming Event"
 msgstr "Upcoming Event"
 
-#: src/billing/trial-ended-dialog.tsx
-msgid "Upgrade to Pro"
-msgstr "Upgrade to Pro"
-
 #: src/settings/ai/stt/select.tsx
 msgid "Upgrade to Pro to use this provider."
 msgstr "Upgrade to Pro to use this provider."
@@ -3447,41 +3426,9 @@ msgstr "You can undo this action for a short time."
 msgid "You can use up to three example summaries."
 msgstr "You can use up to three example summaries."
 
-#: src/billing/trial-started-dialog.tsx
-msgid "Your {days}-day Pro trial starts now. Add a payment method before it ends to keep Pro."
-msgstr "Your {days}-day Pro trial starts now. Add a payment method before it ends to keep Pro."
-
-#: src/billing/trial-started-dialog.tsx
-msgid "Your {days}-day Pro trial starts now. Pro will continue automatically when it ends."
-msgstr "Your {days}-day Pro trial starts now. Pro will continue automatically when it ends."
-
 #: src/settings/dictionary/index.tsx
 msgid "Your dictionary is empty"
 msgstr "Your dictionary is empty"
-
-#: src/billing/trial-ended-dialog.tsx
-msgid "Your notes and recordings are safe. Free local transcription still works. Upgrade anytime to keep Pro features."
-msgstr "Your notes and recordings are safe. Free local transcription still works. Upgrade anytime to keep Pro features."
-
-#: src/billing/trial-ended-dialog.tsx
-msgid "Your notes and recordings are safe. Upgrade anytime to keep cloud transcription and Pro features, or configure your own transcription provider."
-msgstr "Your notes and recordings are safe. Upgrade anytime to keep cloud transcription and Pro features, or configure your own transcription provider."
-
-#: src/billing/trial-payment-reminder-dialog.tsx
-msgid "Your Pro trial ends in {daysRemaining} days"
-msgstr "Your Pro trial ends in {daysRemaining} days"
-
-#: src/billing/trial-payment-reminder-dialog.tsx
-msgid "Your Pro trial ends in 1 day"
-msgstr "Your Pro trial ends in 1 day"
-
-#: src/billing/trial-ended-dialog.tsx
-msgid "Your Pro trial has ended"
-msgstr "Your Pro trial has ended"
-
-#: src/billing/trial-started-dialog.tsx
-msgid "Your Pro trial just started"
-msgstr "Your Pro trial just started"
 
 #: src/services/enhancer/summary-notification.ts
 msgid "Your summary is ready."

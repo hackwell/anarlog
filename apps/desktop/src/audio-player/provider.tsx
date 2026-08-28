@@ -16,7 +16,7 @@ import { commands as fsSyncCommands } from "@anlg/plugin-fs-sync";
 
 import { configureCenteredPlayback } from "./playback";
 
-import { useBillingAccess } from "~/auth/billing-context";
+import { useBillingAccess } from "~/billing/access";
 import {
   isSessionAudioIdle,
   subscribeToSessionAudioRetention,
