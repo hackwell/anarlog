@@ -102,10 +102,6 @@ jobs:
       - run: |
           cargo test --workspace \
             --exclude desktop \
-            --exclude control-tauri \
-            --exclude ai \
-            --exclude lago \
-            --exclude notch \
             --exclude notification-macos \
             --exclude tcc \
             --exclude notification-linux \
@@ -114,15 +110,10 @@ jobs:
             --exclude whisper \
             --exclude whisper-local \
             --exclude whisper-local-model \
-            --exclude vad2 \
             --exclude vad \
-            --exclude vvad \
             --exclude vad-masking \
-            --exclude vad-chunking \
             --exclude onnx \
             --exclude pyannote-local \
-            --exclude llama \
-            --exclude tools \
             --exclude docs \
             --exclude bundle \
             --exclude host \
@@ -134,22 +125,17 @@ jobs:
             --exclude device-monitor \
             --exclude local-llm-core \
             --exclude tauri-plugin-analytics\
-            --exclude tauri-plugin-apple-calendar \
             --exclude tauri-plugin-audio-priority \
             --exclude tauri-plugin-auth \
             --exclude tauri-plugin-bedrock \
-            --exclude tauri-plugin-db2 \
             --exclude tauri-plugin-deeplink2 \
             --exclude tauri-plugin-detect \
-            --exclude tauri-plugin-fs-db \
             --exclude tauri-plugin-fs-sync \
             --exclude tauri-plugin-fs2 \
             --exclude tauri-plugin-hooks \
             --exclude tauri-plugin-icon \
             --exclude tauri-plugin-importer \
             --exclude tauri-plugin-js \
-            --exclude tauri-plugin-listener \
-            --exclude tauri-plugin-listener2 \
             --exclude tauri-plugin-local-auth \
             --exclude tauri-plugin-local-llm \
             --exclude tauri-plugin-local-stt \
@@ -159,7 +145,6 @@ jobs:
             --exclude tauri-plugin-opener2 \
             --exclude tauri-plugin-overlay \
             --exclude tauri-plugin-path2 \
-            --exclude tauri-plugin-pdf \
             --exclude tauri-plugin-permissions \
             --exclude tauri-plugin-screen \
             --exclude tauri-plugin-settings \
@@ -169,13 +154,9 @@ jobs:
             --exclude tauri-plugin-tantivy \
             --exclude tauri-plugin-template \
             --exclude tauri-plugin-tracing \
-            --exclude tauri-plugin-tray \
             --exclude tauri-plugin-updater2 \
             --exclude tauri-plugin-windows \
-            --exclude db3 \
-            --exclude db-core \
-            --exclude activity-capture-macos \
-            --exclude tauri-plugin-activity-capture
+            --exclude db-core
       - run: |
           git diff --exit-code -- \
             plugins/db/js/bindings.gen.ts \

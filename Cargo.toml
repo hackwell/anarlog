@@ -16,8 +16,6 @@ members = [
   "plugins/*",
 ]
 exclude = [
-  "plugins/apple-calendar",
-  "plugins/extensions",
   "crates/vad-ext",
 ]
 
