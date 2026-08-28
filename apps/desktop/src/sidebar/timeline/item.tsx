@@ -175,6 +175,7 @@ const ItemBase = memo(function ItemBase({
   const durationLabel = useDurationLabel(durationMinutes);
   const hasMetadata = Boolean(isLive || durationLabel);
   const showLiveStop = isLive && onStop;
+  const showSelectedMarker = !isLive && (selected || multiSelected);
   const showUpcomingGauge =
     typeof upcomingProgress === "number" &&
     Boolean(isUpcoming) &&
@@ -216,7 +217,6 @@ const ItemBase = memo(function ItemBase({
           multiSelected && "bg-accent",
           !multiSelected && selected && "bg-accent",
           !multiSelected && !selected && "hover:bg-accent/50",
-          !isLive && (selected || multiSelected) && "border-border shadow-xs",
           isUpcoming &&
             !isLive && [
               "bg-destructive/8 text-foreground",
@@ -305,6 +305,13 @@ const ItemBase = memo(function ItemBase({
           ) : null}
         </div>
       </InteractiveButton>
+      {showSelectedMarker ? (
+        <span
+          aria-hidden
+          data-sidebar-timeline-selected-marker
+          className="bg-sidebar-selected-marker pointer-events-none absolute top-1.5 bottom-1.5 left-0 w-0.5 rounded-full"
+        />
+      ) : null}
       {showUpcomingGauge ? (
         <div
           aria-hidden

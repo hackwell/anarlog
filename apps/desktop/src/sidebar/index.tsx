@@ -42,8 +42,10 @@ export function LeftSidebar({
     isSpecialMode && !hasOwnSidebarHeaderTab(currentTab);
   return (
     <div
+      data-sidebar-surface
       className={cn([
         "flex h-full w-full shrink-0 flex-col gap-1 overflow-hidden",
+        "border-sidebar-border border-r",
         needsChromeRowGutter ? "pt-11" : "pt-0",
         !isTimelineSidebarLayout && "pr-1",
       ])}

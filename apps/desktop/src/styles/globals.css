@@ -278,6 +278,30 @@ html[data-live-caption] #root {
 }
 
 @layer components {
+  /* The left sidebar is a self-contained brand-blue surface: it re-points the
+     app-level palette variables at the sidebar palette so every control inside
+     it (rows, chips, search, dividers) picks up the surface without each one
+     having to opt in. Declared outside any theme selector so it resolves in the
+     un-stamped "system" state too - the sidebar-* tokens carry the theming. */
+  [data-sidebar-surface] {
+    --background: var(--sidebar-background);
+    --foreground: var(--sidebar-foreground);
+    --card: var(--sidebar-accent);
+    --card-foreground: var(--sidebar-foreground);
+    --muted: var(--sidebar-accent);
+    --muted-foreground: var(--sidebar-muted-foreground);
+    --accent: var(--sidebar-selected);
+    --accent-foreground: var(--sidebar-selected-foreground);
+    --secondary: var(--sidebar-accent);
+    --secondary-foreground: var(--sidebar-foreground);
+    --border: var(--sidebar-border);
+    --input: var(--sidebar-border);
+    --ring: var(--sidebar-ring);
+
+    background-color: hsl(var(--sidebar-background));
+    color: hsl(var(--sidebar-foreground));
+  }
+
   [data-settings-content] button,
   [data-settings-content] button:hover,
   [data-settings-content] [role="combobox"],

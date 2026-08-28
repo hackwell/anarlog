@@ -369,8 +369,9 @@ describe("TimelineItemComponent", () => {
     const rowButton = screen.getByText("Open Note").closest("button");
 
     expect(rowButton?.className).toContain("bg-accent");
-    expect(rowButton?.className).toContain("border-border");
-    expect(rowButton?.className).toContain("shadow-xs");
+    expect(
+      document.querySelector("[data-sidebar-timeline-selected-marker]"),
+    ).not.toBeNull();
   });
 
   it("exposes the selected session row for sidebar scroll anchoring", () => {

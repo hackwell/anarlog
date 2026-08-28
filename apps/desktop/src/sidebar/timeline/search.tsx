@@ -42,7 +42,7 @@ export function TimelineSearchField({
       data-sidebar-timeline-search
       className={cn([
         "flex h-8 w-full shrink-0 items-center gap-2 rounded-lg px-2",
-        "hover:bg-accent/40 focus-within:bg-accent/60 bg-transparent transition-colors",
+        "bg-sidebar-accent hover:bg-sidebar-selected focus-within:bg-sidebar-selected transition-colors",
       ])}
     >
       <MagnifyingGlass
