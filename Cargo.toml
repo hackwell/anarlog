@@ -30,8 +30,6 @@ anlg-am = { path = "crates/am", package = "am" }
 anlg-analytics = { path = "crates/analytics", package = "analytics" }
 anlg-api-client = { path = "crates/api-client", package = "api-client" }
 anlg-apple-calendar = { path = "crates/apple-calendar", package = "apple-calendar" }
-anlg-apple-note = { path = "crates/apple-note", package = "apple-note" }
-anlg-apple-todo = { path = "crates/apple-todo", package = "apple-todo" }
 anlg-askama-utils = { path = "crates/askama-utils", package = "askama-utils" }
 anlg-audacity = { path = "crates/audacity", package = "audacity" }
 anlg-audio = { path = "crates/audio", package = "audio" }
@@ -89,15 +87,12 @@ anlg-lmstudio = { path = "crates/lmstudio", package = "lmstudio" }
 anlg-local-llm-core = { path = "crates/local-llm-core", package = "local-llm-core" }
 anlg-local-model = { path = "crates/local-model", package = "local-model" }
 anlg-local-stt-core = { path = "crates/local-stt-core", package = "local-stt-core" }
-anlg-mac = { path = "crates/mac", package = "mac" }
-anlg-meeting-capture = { path = "crates/meeting-capture", package = "meeting-capture" }
 anlg-meeting-import = { path = "crates/meeting-import", package = "meeting-import" }
 anlg-model-downloader = { path = "crates/model-downloader", package = "model-downloader" }
 anlg-model-manager = { path = "crates/model-manager", package = "model-manager" }
 anlg-mp3 = { path = "crates/mp3", package = "mp3" }
 anlg-notification = { path = "crates/notification", package = "notification" }
 anlg-notification-interface = { path = "crates/notification-interface", package = "notification-interface" }
-anlg-notification-macos2 = { path = "crates/notification-macos2", package = "notification-macos2" }
 anlg-notion = { path = "crates/notion", package = "notion" }
 anlg-observability = { path = "crates/observability", package = "observability" }
 anlg-onnx = { path = "crates/onnx", package = "onnx" }
@@ -105,7 +100,6 @@ anlg-opencode = { path = "crates/opencode", package = "opencode" }
 anlg-openrouter = { path = "crates/openrouter", package = "openrouter" }
 anlg-outlook-calendar = { path = "crates/outlook-calendar", package = "outlook-calendar" }
 anlg-overlay-kit = { path = "crates/overlay-kit", package = "overlay-kit" }
-anlg-power = { path = "crates/power", package = "power" }
 anlg-pyannote-local = { path = "crates/pyannote-local", package = "pyannote-local" }
 anlg-resampler = { path = "crates/resampler", package = "resampler" }
 anlg-s3 = { path = "crates/s3", package = "s3" }
