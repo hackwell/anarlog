@@ -1,4 +1,35 @@
+# Turns a verified desktop CD candidate into the public GitHub Release.
+# desktop_cd.yaml calls this at the end of a tag build with source_run_id set to
+# its own run, so a pushed tag releases in one action. The workflow_dispatch
+# trigger remains for republishing an earlier candidate run by hand.
 on:
+  workflow_call:
+    inputs:
+      version:
+        description: "Version to publish (e.g., 1.0.2)"
+        required: true
+        type: string
+      candidate_sha:
+        description: "Exact 40-character commit used to build the candidate"
+        required: true
+        type: string
+      source_run_id:
+        description: "Desktop CD run that staged the candidate assets"
+        required: true
+        type: string
+      tag_release:
+        description: "The candidate came from a pushed release tag"
+        required: false
+        type: boolean
+        default: false
+      include_linux:
+        description: "Publish Linux beta artifacts from the candidate"
+        type: boolean
+        default: true
+      include_windows:
+        description: "Publish Windows artifacts from the candidate"
+        type: boolean
+        default: true
   workflow_dispatch:
     inputs:
       version:
@@ -9,10 +40,15 @@ on:
         description: "Exact 40-character main commit used to build the candidate"
         required: true
         type: string
-      dry_run_id:
+      source_run_id:
         description: "Successful publish=false desktop CD run that built the candidate"
         required: true
         type: string
+      tag_release:
+        description: "Leave false: only desktop_cd sets this for a tag build"
+        required: false
+        type: boolean
+        default: false
       include_linux:
         description: "Publish Linux beta artifacts from the candidate"
         type: boolean
@@ -23,7 +59,11 @@ on:
         default: true
 
 concurrency:
-  group: desktop-stable-release
+  # desktop_cd already holds `desktop-stable-release` for the whole tag run, and
+  # a called workflow that requested the group its own caller holds would wait
+  # for a slot that can never free. The in-run call therefore takes a run-scoped
+  # group; a standalone dispatch keeps the shared lock that serialises releases.
+  group: ${{ inputs.source_run_id == format('{0}', github.run_id) && format('desktop-stable-release-{0}', github.run_id) || 'desktop-stable-release' }}
   cancel-in-progress: false
 
 jobs:
@@ -33,7 +73,9 @@ jobs:
       version: ${{ steps.parse.outputs.version }}
       channel: ${{ steps.parse.outputs.channel }}
       candidate_sha: ${{ steps.parse.outputs.candidate_sha }}
-      dry_run_id: ${{ steps.parse.outputs.dry_run_id }}
+      source_run_id: ${{ steps.parse.outputs.source_run_id }}
+      same_run: ${{ steps.parse.outputs.same_run }}
+      tag_release: ${{ steps.parse.outputs.tag_release }}
       include_linux: ${{ steps.parse.outputs.include_linux }}
       include_windows: ${{ steps.parse.outputs.include_windows }}
     steps:
@@ -42,7 +84,8 @@ jobs:
           EXECUTION_REF: ${{ github.ref }}
           EXECUTION_SHA: ${{ github.sha }}
           INPUT_CANDIDATE_SHA: ${{ inputs.candidate_sha }}
-          INPUT_DRY_RUN_ID: ${{ inputs.dry_run_id }}
+          INPUT_SOURCE_RUN_ID: ${{ inputs.source_run_id }}
+          INPUT_TAG_RELEASE: ${{ inputs.tag_release }}
           INPUT_INCLUDE_LINUX: ${{ inputs.include_linux }}
           INPUT_INCLUDE_WINDOWS: ${{ inputs.include_windows }}
           INPUT_VERSION: ${{ inputs.version }}
@@ -56,8 +99,8 @@ jobs:
             echo "::error::Candidate SHA must be a full 40-character commit SHA"
             exit 1
           fi
-          if [[ ! "$INPUT_DRY_RUN_ID" =~ ^[1-9][0-9]*$ ]]; then
-            echo "::error::Dry-run workflow ID must be a positive integer"
+          if [[ ! "$INPUT_SOURCE_RUN_ID" =~ ^[1-9][0-9]*$ ]]; then
+            echo "::error::Source workflow run ID must be a positive integer"
             exit 1
           fi
           if [[ "$INPUT_INCLUDE_WINDOWS" != "true" ]]; then
@@ -67,7 +110,23 @@ jobs:
 
           VERSION="$INPUT_VERSION"
           CANDIDATE_SHA="${INPUT_CANDIDATE_SHA,,}"
-          if [[ "$EXECUTION_REF" != "refs/heads/main" ]]; then
+
+          # desktop_cd calls this workflow from inside the tag build, so the
+          # staged assets live in the run that is still executing. Everything
+          # that reads them branches on this flag.
+          SAME_RUN="false"
+          if [[ "$INPUT_SOURCE_RUN_ID" == "$GITHUB_RUN_ID" ]]; then
+            SAME_RUN="true"
+          fi
+
+          if [[ "$INPUT_TAG_RELEASE" == "true" ]]; then
+            # The pushed tag is the version of record; it must spell out
+            # exactly the version this run is about to publish.
+            if [[ "$EXECUTION_REF" != "refs/tags/v$VERSION" ]]; then
+              echo "::error::Tagged publication must run from refs/tags/v$VERSION, not $EXECUTION_REF"
+              exit 1
+            fi
+          elif [[ "$EXECUTION_REF" != "refs/heads/main" ]]; then
             echo "::error::Stable publication must run from refs/heads/main, not $EXECUTION_REF"
             exit 1
           fi
@@ -79,7 +138,9 @@ jobs:
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "channel=stable" >> $GITHUB_OUTPUT
           echo "candidate_sha=$CANDIDATE_SHA" >> $GITHUB_OUTPUT
-          echo "dry_run_id=$INPUT_DRY_RUN_ID" >> $GITHUB_OUTPUT
+          echo "source_run_id=$INPUT_SOURCE_RUN_ID" >> $GITHUB_OUTPUT
+          echo "same_run=$SAME_RUN" >> $GITHUB_OUTPUT
+          echo "tag_release=$INPUT_TAG_RELEASE" >> $GITHUB_OUTPUT
           echo "include_linux=$INPUT_INCLUDE_LINUX" >> $GITHUB_OUTPUT
           echo "include_windows=$INPUT_INCLUDE_WINDOWS" >> $GITHUB_OUTPUT
 
@@ -94,6 +155,7 @@ jobs:
           fetch-tags: true
       - env:
           EXPECTED_SHA: ${{ needs.parse.outputs.candidate_sha }}
+          TAG_RELEASE: ${{ needs.parse.outputs.tag_release }}
           VERSION: ${{ needs.parse.outputs.version }}
         run: |
           git fetch origin main --no-tags
@@ -106,7 +168,14 @@ jobs:
             exit 1
           fi
 
-          if [[ "$MAIN" != "$EXPECTED_SHA" ]]; then
+          if [[ "$TAG_RELEASE" == "true" ]]; then
+            # main moves while the build runs; the tag, not main's tip, is what
+            # pins a tagged candidate.
+            if ! git merge-base --is-ancestor "$EXPECTED_SHA" "$MAIN"; then
+              echo "::error::Candidate $EXPECTED_SHA is not contained in main ($MAIN)"
+              exit 1
+            fi
+          elif [[ "$MAIN" != "$EXPECTED_SHA" ]]; then
             echo "::error::Candidate $EXPECTED_SHA is not the current main commit ($MAIN)"
             exit 1
           fi
@@ -127,17 +196,25 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: ${{ needs.parse.outputs.candidate_sha }}
-      - name: Download the candidate Windows installer
+      - if: ${{ needs.parse.outputs.same_run == 'true' }}
+        name: Take the candidate Windows installer from this run
+        uses: actions/download-artifact@v4
+        with:
+          name: desktop-release-assets-x86_64-pc-windows-msvc
+          path: windows-candidate
+      - if: ${{ needs.parse.outputs.same_run != 'true' }}
+        name: Download the candidate Windows installer
         shell: bash
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          RUN_ID: ${{ needs.parse.outputs.dry_run_id }}
+          RUN_ID: ${{ needs.parse.outputs.source_run_id }}
         run: |
           gh run download "$RUN_ID" \
             --repo "$GITHUB_REPOSITORY" \
             --name "desktop-release-assets-x86_64-pc-windows-msvc" \
             --dir windows-candidate
-          cp windows-candidate/anarlog-windows-x86_64-setup.exe .
+      - shell: bash
+        run: cp windows-candidate/anarlog-windows-x86_64-setup.exe .
       - shell: pwsh
         env:
           WINDOWS_SIGNER_ORGANIZATION: ${{ vars.WINDOWS_SIGNER_ORGANIZATION }}
@@ -174,42 +251,83 @@ jobs:
           fetch-depth: 0
           fetch-tags: true
       - run: ./scripts/version.sh "./apps/desktop/src-tauri/tauri.conf.json" "${{ needs.parse.outputs.version }}"
-      - name: Download candidate provenance
+      - name: Verify the staging run identity
         env:
           EXPECTED_SHA: ${{ needs.parse.outputs.candidate_sha }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          RUN_ID: ${{ needs.parse.outputs.dry_run_id }}
+          RUN_ID: ${{ needs.parse.outputs.source_run_id }}
+          SAME_RUN: ${{ needs.parse.outputs.same_run }}
           VERSION: ${{ needs.parse.outputs.version }}
         run: |
           RUN=$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$RUN_ID")
+
+          if [[ "$SAME_RUN" == "true" ]]; then
+            # desktop_cd calls this workflow from inside the tag build, so the
+            # staging run is the one still executing and can never report
+            # "completed". Being this very run is the stronger identity check,
+            # and the jobs that staged the assets are already green because this
+            # job only starts once they have succeeded.
+            if [[ "$RUN_ID" != "$GITHUB_RUN_ID" ]]; then
+              echo "::error::Run $RUN_ID is not the executing run $GITHUB_RUN_ID"
+              exit 1
+            fi
+            STATE="true"
+            EVENT='.event == "push"'
+          else
+            # A candidate comes either from a stable dispatch or from a tag
+            # build whose publication has to be retried by hand.
+            STATE='.status == "completed" and .conclusion == "success"'
+            EVENT='(.event == "workflow_dispatch" or .event == "push")'
+          fi
+
           if ! echo "$RUN" | jq -e \
             --arg repo "$GITHUB_REPOSITORY" \
             --arg sha "$EXPECTED_SHA" \
             --arg workflow ".github/workflows/desktop_cd.yaml" \
             --argjson run_id "$RUN_ID" \
-            '
-              .id == $run_id
-              and .status == "completed"
-              and .conclusion == "success"
+            "
+              .id == \$run_id
+              and ($STATE)
               and .run_attempt == 1
-              and .event == "workflow_dispatch"
-              and (.head_sha | ascii_downcase) == $sha
-              and .repository.full_name == $repo
-              and .head_repository.full_name == $repo
-              and (.path | split("@")[0]) == $workflow
-            ' > /dev/null; then
+              and ($EVENT)
+              and (.head_sha | ascii_downcase) == \$sha
+              and .repository.full_name == \$repo
+              and .head_repository.full_name == \$repo
+              and (.path | split(\"@\")[0]) == \$workflow
+            " > /dev/null; then
             echo "::error::Run $RUN_ID is not an unrerun, successful desktop CD run for candidate $EXPECTED_SHA"
             exit 1
           fi
-
+      - if: ${{ needs.parse.outputs.same_run == 'true' }}
+        name: Take candidate provenance from this run
+        uses: actions/download-artifact@v4
+        with:
+          name: desktop-release-provenance-${{ needs.parse.outputs.version }}-${{ needs.parse.outputs.candidate_sha }}
+          path: release-provenance
+      - if: ${{ needs.parse.outputs.same_run != 'true' }}
+        name: Download candidate provenance
+        env:
+          EXPECTED_SHA: ${{ needs.parse.outputs.candidate_sha }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RUN_ID: ${{ needs.parse.outputs.source_run_id }}
+          VERSION: ${{ needs.parse.outputs.version }}
+        run: |
           gh run download "$RUN_ID" \
             --repo "$GITHUB_REPOSITORY" \
             --name "desktop-release-provenance-$VERSION-$EXPECTED_SHA" \
             --dir release-provenance
-      - name: Download the candidate release assets
+      - if: ${{ needs.parse.outputs.same_run == 'true' }}
+        name: Take the candidate release assets from this run
+        uses: actions/download-artifact@v4
+        with:
+          pattern: desktop-release-assets-*
+          merge-multiple: true
+          path: ${{ runner.temp }}/release-assets
+      - if: ${{ needs.parse.outputs.same_run != 'true' }}
+        name: Download the candidate release assets
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          RUN_ID: ${{ needs.parse.outputs.dry_run_id }}
+          RUN_ID: ${{ needs.parse.outputs.source_run_id }}
         run: |
           gh run download "$RUN_ID" \
             --repo "$GITHUB_REPOSITORY" \
@@ -239,7 +357,7 @@ jobs:
       - name: Verify candidate provenance
         env:
           EXPECTED_SHA: ${{ needs.parse.outputs.candidate_sha }}
-          RUN_ID: ${{ needs.parse.outputs.dry_run_id }}
+          RUN_ID: ${{ needs.parse.outputs.source_run_id }}
           VERSION: ${{ needs.parse.outputs.version }}
         run: |
           node scripts/desktop-release-provenance.mjs verify \
@@ -249,9 +367,14 @@ jobs:
             --candidate-sha "$EXPECTED_SHA" \
             --run-id "$RUN_ID" \
             --asset-dir "$RUNNER_TEMP/release-assets"
+      # The release assets are published under `desktop_v<version>`, which is
+      # what latest.json, the AUR package, the APT repository and the store
+      # workflow all address. The pushed `v<version>` tag triggers the release;
+      # this is the tag the artifacts hang on.
       - name: Create immutable release tag
         env:
           EXPECTED_SHA: ${{ needs.parse.outputs.candidate_sha }}
+          TAG_RELEASE: ${{ needs.parse.outputs.tag_release }}
           VERSION: ${{ needs.parse.outputs.version }}
         run: |
           git fetch origin main --no-tags
@@ -262,8 +385,17 @@ jobs:
           TAG="desktop_v$VERSION"
           EXISTING=$(git rev-parse -q --verify "refs/tags/$TAG" || true)
 
-          if [[ "$TARGET" != "$EXPECTED_SHA" || "$MAIN" != "$EXPECTED_SHA" ]]; then
-            echo "::error::Candidate moved before publication (candidate=$EXPECTED_SHA, checkout=$TARGET, main=$MAIN)"
+          if [[ "$TARGET" != "$EXPECTED_SHA" ]]; then
+            echo "::error::Candidate moved before publication (candidate=$EXPECTED_SHA, checkout=$TARGET)"
+            exit 1
+          fi
+          if [[ "$TAG_RELEASE" == "true" ]]; then
+            if ! git merge-base --is-ancestor "$EXPECTED_SHA" "$MAIN"; then
+              echo "::error::Candidate $EXPECTED_SHA is no longer contained in main ($MAIN)"
+              exit 1
+            fi
+          elif [[ "$MAIN" != "$EXPECTED_SHA" ]]; then
+            echo "::error::Candidate moved before publication (candidate=$EXPECTED_SHA, main=$MAIN)"
             exit 1
           fi
 
@@ -309,21 +441,36 @@ jobs:
             echo "::error::Tag $TAG points to $TAG_TARGET instead of candidate $EXPECTED_SHA"
             exit 1
           fi
-      - name: Download candidate provenance
+      - if: ${{ needs.parse.outputs.same_run == 'true' }}
+        name: Take candidate provenance from this run
+        uses: actions/download-artifact@v4
+        with:
+          name: desktop-release-provenance-${{ needs.parse.outputs.version }}-${{ needs.parse.outputs.candidate_sha }}
+          path: release-provenance
+      - if: ${{ needs.parse.outputs.same_run != 'true' }}
+        name: Download candidate provenance
         env:
           EXPECTED_SHA: ${{ needs.parse.outputs.candidate_sha }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          RUN_ID: ${{ needs.parse.outputs.dry_run_id }}
+          RUN_ID: ${{ needs.parse.outputs.source_run_id }}
           VERSION: ${{ needs.parse.outputs.version }}
         run: |
           gh run download "$RUN_ID" \
             --repo "$GITHUB_REPOSITORY" \
             --name "desktop-release-provenance-$VERSION-$EXPECTED_SHA" \
             --dir release-provenance
-      - name: Download the candidate release assets
+      - if: ${{ needs.parse.outputs.same_run == 'true' }}
+        name: Take the candidate release assets from this run
+        uses: actions/download-artifact@v4
+        with:
+          pattern: desktop-release-assets-*
+          merge-multiple: true
+          path: ${{ runner.temp }}/release-assets
+      - if: ${{ needs.parse.outputs.same_run != 'true' }}
+        name: Download the candidate release assets
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          RUN_ID: ${{ needs.parse.outputs.dry_run_id }}
+          RUN_ID: ${{ needs.parse.outputs.source_run_id }}
         run: |
           gh run download "$RUN_ID" \
             --repo "$GITHUB_REPOSITORY" \
@@ -339,7 +486,7 @@ jobs:
           EXPECTED_SHA: ${{ needs.parse.outputs.candidate_sha }}
           INCLUDE_LINUX: ${{ needs.parse.outputs.include_linux }}
           INCLUDE_WINDOWS: ${{ needs.parse.outputs.include_windows }}
-          RUN_ID: ${{ needs.parse.outputs.dry_run_id }}
+          RUN_ID: ${{ needs.parse.outputs.source_run_id }}
           VERSION: ${{ needs.parse.outputs.version }}
         run: |
           node scripts/desktop-release-assets.mjs merge \
@@ -469,6 +616,7 @@ jobs:
       include_macos: false
       include_windows: true
       submit_to_stores: true
+      tag_release: ${{ needs.parse.outputs.tag_release == 'true' }}
     secrets:
       APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
       APPSTORE_API_KEY_ID: ${{ secrets.APPSTORE_API_KEY_ID }}

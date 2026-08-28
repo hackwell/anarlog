@@ -28,6 +28,11 @@ on:
         description: "Upload to App Store Connect and submit the Microsoft Store update"
         type: boolean
         default: false
+      tag_release:
+        description: "The candidate came from a pushed release tag"
+        required: false
+        type: boolean
+        default: false
     secrets:
       APPLE_TEAM_ID:
         required: false
@@ -109,6 +114,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           INCLUDE_MACOS: ${{ inputs.include_macos }}
           INCLUDE_WINDOWS: ${{ inputs.include_windows }}
+          TAG_RELEASE: ${{ inputs.tag_release }}
           VERSION: ${{ inputs.version }}
         run: |
           set -euo pipefail
@@ -125,7 +131,14 @@ jobs:
             echo "::error::Select at least one store"
             exit 1
           fi
-          if [[ "$EXECUTION_REF" != "refs/heads/main" ]]; then
+          if [[ "$TAG_RELEASE" == "true" ]]; then
+            # Reached through desktop_cd -> desktop_publish on a pushed release
+            # tag, so the execution ref is that tag and must name this version.
+            if [[ "$EXECUTION_REF" != "refs/tags/v$VERSION" ]]; then
+              echo "::error::Tagged store publication must run from refs/tags/v$VERSION, not $EXECUTION_REF"
+              exit 1
+            fi
+          elif [[ "$EXECUTION_REF" != "refs/heads/main" ]]; then
             echo "::error::Store publication must run from refs/heads/main, not $EXECUTION_REF"
             exit 1
           fi
