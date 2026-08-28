@@ -33,11 +33,10 @@ strum = { workspace = true, features = ["derive"] }
 url = { workspace = true, features = ["serde"] }
 uuid = { workspace = true, features = ["v4"] }
 
-specta = { workspace = true }
+specta = { workspace = true, features = ["serde_json"] }
 tauri = { workspace = true, features = ["test"] }
 tauri-specta = { workspace = true, features = ["derive", "typescript"] }
 
-tauri-plugin-analytics = { workspace = true }
 tauri-plugin-os = { workspace = true }
 tauri-plugin-sfx = { workspace = true }
 tauri-plugin-window-state = { workspace = true }

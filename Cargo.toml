@@ -25,7 +25,6 @@ anlg-afconvert = { path = "crates/afconvert", package = "afconvert" }
 anlg-agent-access = { path = "crates/agent-access", package = "agent-access" }
 anlg-agent-core = { path = "crates/agent-core", package = "agent-core" }
 anlg-am = { path = "crates/am", package = "am" }
-anlg-analytics = { path = "crates/analytics", package = "analytics" }
 anlg-api-client = { path = "crates/api-client", package = "api-client" }
 anlg-apple-calendar = { path = "crates/apple-calendar", package = "apple-calendar" }
 anlg-askama-utils = { path = "crates/askama-utils", package = "askama-utils" }
@@ -131,7 +130,6 @@ anlg-ws-client = { path = "crates/ws-client", package = "ws-client" }
 anlg-ws-utils = { path = "crates/ws-utils", package = "ws-utils" }
 anlg-zoom = { path = "crates/zoom", package = "zoom" }
 keyring = "4.1.4"
-posthog-rs = "0.5"
 progenitor-client = "0.13"
 
 notify-rust = "=4.11.7"
@@ -160,7 +158,6 @@ tauri-plugin-updater = "2.10"
 tauri-plugin-window-state = "2.4"
 
 tauri-plugin-agent = { path = "plugins/agent" }
-tauri-plugin-analytics = { path = "plugins/analytics" }
 tauri-plugin-audio-priority = { path = "plugins/audio-priority" }
 tauri-plugin-auth = { path = "plugins/auth" }
 tauri-plugin-bedrock = { path = "plugins/bedrock" }

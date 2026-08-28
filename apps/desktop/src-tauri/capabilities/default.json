@@ -39,7 +39,6 @@
     "windows:allow-devtools-panel-hide",
     "tracing:default",
     "anlg-tray:default",
-    "analytics:default",
     "agent:default",
     "bedrock:default",
     "updater:default",

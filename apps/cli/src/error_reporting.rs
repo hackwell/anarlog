@@ -1,8 +1,16 @@
 use std::sync::Arc;
 use std::time::Duration;
 
+// Opt-in only: crash reporting stays off unless the user sets this. The env
+// var keeps its historical name so existing opt-ins are not silently reset.
+fn reporting_enabled() -> bool {
+    std::env::var("ANARLOG_ANALYTICS")
+        .map(|value| matches!(value.to_ascii_lowercase().as_str(), "1" | "true" | "yes"))
+        .unwrap_or(false)
+}
+
 pub fn init() -> Option<sentry::ClientInitGuard> {
-    if !crate::analytics::telemetry_enabled() {
+    if !reporting_enabled() {
         return None;
     }
 

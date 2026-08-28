@@ -93,9 +93,6 @@ importers:
       '@anlg/editor':
         specifier: workspace:^
         version: link:../../packages/editor
-      '@anlg/plugin-analytics':
-        specifier: workspace:*
-        version: link:../../plugins/analytics
       '@anlg/plugin-auth':
         specifier: workspace:*
         version: link:../../plugins/auth
@@ -907,12 +904,6 @@ importers:
         version: 2.6.1
 
   plugins/agent:
-    dependencies:
-      '@tauri-apps/api':
-        specifier: ^2.10.1
-        version: 2.10.1
-
-  plugins/analytics:
     dependencies:
       '@tauri-apps/api':
         specifier: ^2.10.1

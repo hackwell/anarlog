@@ -37,7 +37,7 @@ pub struct Args {
 }
 
 impl Args {
-    pub fn analytics_command_name(&self) -> &'static str {
+    pub fn command_name(&self) -> &'static str {
         match &self.command {
             Command::Doctor => "doctor",
             Command::Meetings { command } => match command {

@@ -297,8 +297,7 @@ pub fn main() {
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_opener2::init())
         .plugin(tauri_plugin_dialog::init())
-        .plugin(tauri_plugin_tracing::init())
-        .plugin(tauri_plugin_analytics::init());
+        .plugin(tauri_plugin_tracing::init());
 
     #[cfg(not(feature = "app-store"))]
     {
