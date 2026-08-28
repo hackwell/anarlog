@@ -111,10 +111,7 @@ function HeaderViewTranscriptButton({
                       "bg-amber-50 text-amber-500 hover:bg-amber-100 hover:text-amber-600",
                       "dark:bg-amber-950/50 dark:text-amber-300 dark:hover:bg-amber-950 dark:hover:text-amber-200",
                     ]
-                  : [
-                      "bg-red-50 text-red-500 hover:bg-red-100 hover:text-red-600",
-                      "dark:bg-red-950/50 dark:text-red-300 dark:hover:bg-red-950 dark:hover:text-red-200",
-                    ]
+                  : ["bg-accent text-foreground hover:bg-accent/80"]
                 : null,
             ]
           : null,
@@ -132,7 +129,7 @@ function HeaderViewTranscriptLiveIcon({
     muted: boolean;
   };
 }) {
-  const color = live.degraded ? "#f59e0b" : "#ef4444";
+  const color = live.degraded ? "#f59e0b" : "hsl(var(--recording))";
 
   return (
     <span className="relative flex size-4 items-center justify-center">

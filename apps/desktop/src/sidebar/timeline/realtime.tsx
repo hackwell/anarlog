@@ -46,8 +46,8 @@ export const CurrentTimeIndicator = forwardRef<
             data-sidebar-current-time-label
             className={cn([
               "flex shrink-0 items-center gap-1.5 rounded-full px-2 py-0.5 shadow-xs",
-              "border border-red-500 bg-red-500 dark:border-red-500 dark:bg-red-500",
-              "text-[11px] font-semibold text-white dark:text-white",
+              "border-sidebar-border bg-sidebar-selected border",
+              "text-sidebar-selected-foreground text-[11px] font-semibold",
             ])}
           >
             <span className="uppercase">
@@ -57,7 +57,7 @@ export const CurrentTimeIndicator = forwardRef<
           </div>
           <div
             data-sidebar-current-time-line
-            className="h-px min-w-0 flex-1 bg-red-500/85 dark:bg-red-400/70"
+            className="bg-sidebar-border h-px min-w-0 flex-1"
           />
         </div>
       </div>

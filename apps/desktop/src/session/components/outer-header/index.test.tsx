@@ -1053,8 +1053,10 @@ describe("OuterHeader", () => {
 
     fireEvent.click(stopButton);
 
+    // The stop control is a control, not a capture indicator: red stays on the
+    // recording row so a live microphone is the only red on screen.
     expect(stopButton.querySelector("svg")?.getAttribute("class")).toContain(
-      "text-red-500",
+      "text-foreground",
     );
     expect(screen.queryByRole("button", { name: "Join & record" })).toBeNull();
     expect(

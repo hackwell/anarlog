@@ -227,8 +227,8 @@ describe("TimelineItemComponent", () => {
 
     const rowButton = screen.getByText("Live Note").closest("button");
 
-    expect(rowButton?.className).toContain("bg-destructive");
-    expect(rowButton?.className).toContain("text-destructive-foreground");
+    expect(rowButton?.className).toContain("bg-recording-surface");
+    expect(rowButton?.className).toContain("text-recording-foreground");
     expect(rowButton?.className).not.toContain("bg-accent");
     expect(screen.getByTestId("dancing-sticks").dataset.amplitude).toBe("0.5");
 
@@ -268,7 +268,7 @@ describe("TimelineItemComponent", () => {
     );
 
     expect(chip?.textContent).toBe("Recording");
-    expect(chip?.className).toContain("text-destructive-foreground");
+    expect(chip?.className).toContain("text-recording-foreground");
     expect(
       document.querySelector("[data-sidebar-timeline-card-meta]"),
     ).toBeTruthy();
@@ -442,9 +442,13 @@ describe("TimelineItemComponent", () => {
       "[data-sidebar-timeline-upcoming-gauge-fill]",
     );
 
-    expect(rowButton?.className).toContain("bg-destructive/8");
+    // An upcoming meeting is not audio capture, so it reads in the sidebar
+    // brand tone and leaves red to the recording row.
+    expect(rowButton?.className).toContain("bg-sidebar-accent");
+    expect(rowButton?.className).not.toContain("destructive");
     expect(rowButton?.className).toContain("hover:bg-accent/50");
-    expect(rowButton?.className).not.toContain("hover:bg-destructive/12");
+    expect(gauge?.className).toContain("bg-sidebar-ring/25");
+    expect(gaugeFill?.className).toContain("bg-sidebar-ring");
     expect(rowButton?.className).toContain("pl-4");
     expect(rowButton?.className).not.toContain("motion-safe:animate-pulse");
     expect(rowButton?.className).not.toContain("shadow-[0_0_22px");

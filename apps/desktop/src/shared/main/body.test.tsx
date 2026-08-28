@@ -453,11 +453,13 @@ describe("ClassicMainBody", () => {
     );
 
     expect(badge).toBeTruthy();
-    expect(badge.className.split(" ")).toContain("bg-red-500");
-    expect(badge.className.split(" ")).not.toContain("bg-blue-500");
+    // An upcoming meeting is not audio capture: red is reserved for recording,
+    // so the badge reads in the neutral foreground tone.
+    expect(badge.className.split(" ")).toContain("bg-foreground");
+    expect(badge.className.split(" ")).not.toContain("bg-red-500");
   });
 
-  it("hides the red upcoming meeting badge when that note is already open", () => {
+  it("hides the upcoming meeting badge when that note is already open", () => {
     mocks.leftSidebarExpanded = false;
     mocks.currentTab = {
       active: true,

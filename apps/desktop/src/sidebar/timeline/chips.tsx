@@ -20,7 +20,7 @@ export function TimelineCardChip({
         "inline-flex h-4 shrink-0 items-center gap-1 rounded-full px-1.5",
         "text-[10px] leading-none font-semibold tracking-wide uppercase",
         tone === "recording" && [
-          "bg-destructive-foreground/20 text-destructive-foreground",
+          "bg-recording-foreground/12 text-recording-foreground",
         ],
         tone === "muted" && ["bg-muted text-muted-foreground"],
       ])}
@@ -45,7 +45,7 @@ export function UpcomingMeetingChip({
       aria-live="polite"
       ariaLabel={ariaLabel}
       data-sidebar-upcoming-meeting-status
-      className="border-destructive bg-destructive text-destructive-foreground w-28 justify-center shadow-md"
+      className="border-sidebar-selected bg-sidebar-selected text-sidebar-selected-foreground w-28 justify-center shadow-md"
       icon={<ArrowUp aria-hidden className="size-3" weight="bold" />}
       onClick={onClick}
     >

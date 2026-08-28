@@ -1006,7 +1006,7 @@ describe("TimelineView", () => {
     });
 
     expect(chip?.textContent).toBe("In 51s");
-    expect(chip?.className).toContain("bg-destructive");
+    expect(chip?.className).toContain("bg-sidebar-selected");
     expect(chip?.className).toContain("w-28");
     expect(chip?.querySelector("svg")).toBeTruthy();
     expect(chip?.getAttribute("aria-label")).toBe("Team standup in 51s");

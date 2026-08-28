@@ -88,8 +88,11 @@ export function getSegmentColor(
 ): string {
   const speakerIndex = key.speaker_index ?? 0;
 
+  // Local-party speakers used to sit in the red band, which competed with the
+  // recording signal. Red is reserved for audio capture, so they moved to the
+  // brand-blue-through-green band; remote party keeps its purple band.
   const channelPalettes = [
-    [10, 25, 0, 340, 15, 350],
+    [240, 162, 110, 214, 136, 188],
     [285, 305, 270, 295, 315, 280],
   ];
 
@@ -97,7 +100,9 @@ export function getSegmentColor(
   const hues = channelPalettes[paletteIndex]!;
   const hue = hues[speakerIndex % hues.length]!;
 
-  return chroma.oklch(mode === "dark" ? 0.72 : 0.55, 0.15, hue).hex();
+  // Light mode sits at 0.50 rather than 0.55 so every label clears WCAG AA
+  // against the note background; dark mode already cleared it at 0.72.
+  return chroma.oklch(mode === "dark" ? 0.72 : 0.5, 0.15, hue).hex();
 }
 
 export function getSegmentColorVars(key: SegmentKey): SegmentColorVars {

@@ -219,12 +219,12 @@ const ItemBase = memo(function ItemBase({
           !multiSelected && !selected && "hover:bg-accent/50",
           isUpcoming &&
             !isLive && [
-              "bg-destructive/8 text-foreground",
-              "focus-visible:ring-destructive/25",
+              "bg-sidebar-accent text-foreground",
+              "focus-visible:ring-sidebar-ring/40",
             ],
           isLive && [
-            "bg-destructive text-destructive-foreground hover:bg-destructive/90",
-            "focus-visible:ring-destructive/40 focus-visible:ring-2 focus-visible:outline-hidden",
+            "bg-recording-surface text-recording-foreground hover:bg-recording-surface/90",
+            "focus-visible:ring-recording/50 focus-visible:ring-2 focus-visible:outline-hidden",
           ],
           ignored && "opacity-40",
           !ignored && muted && !isLive && !isUpcoming && "opacity-65",
@@ -247,7 +247,7 @@ const ItemBase = memo(function ItemBase({
                 className={cn([
                   "shrink-0 font-mono text-[11px] tabular-nums",
                   isLive
-                    ? "text-destructive-foreground/65"
+                    ? "text-recording-foreground"
                     : "text-muted-foreground",
                 ])}
               >
@@ -294,7 +294,7 @@ const ItemBase = memo(function ItemBase({
                   className={cn([
                     "min-w-0 truncate text-[11px]",
                     isLive
-                      ? "text-destructive-foreground/65"
+                      ? "text-recording-foreground"
                       : "text-muted-foreground",
                   ])}
                 >
@@ -316,11 +316,11 @@ const ItemBase = memo(function ItemBase({
         <div
           aria-hidden
           data-sidebar-timeline-upcoming-gauge
-          className="bg-destructive/20 pointer-events-none absolute top-2 bottom-2 left-1.5 w-0.5 overflow-hidden rounded-full"
+          className="bg-sidebar-ring/25 pointer-events-none absolute top-2 bottom-2 left-1.5 w-0.5 overflow-hidden rounded-full"
         >
           <div
             data-sidebar-timeline-upcoming-gauge-fill
-            className="bg-destructive absolute bottom-0 left-0 w-full rounded-full transition-[height] duration-300 ease-linear"
+            className="bg-sidebar-ring absolute bottom-0 left-0 w-full rounded-full transition-[height] duration-300 ease-linear"
             style={{ height: `${upcomingGaugePercent}%` }}
           />
         </div>

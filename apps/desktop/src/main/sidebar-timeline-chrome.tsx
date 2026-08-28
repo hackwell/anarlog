@@ -139,7 +139,7 @@ export function LeftSurfaceChromeButton({
         <span
           aria-hidden="true"
           data-testid="collapsed-sidebar-upcoming-meeting-badge"
-          className="ring-background pointer-events-none absolute top-1 right-1 size-1.5 rounded-full bg-red-500 ring-2"
+          className="bg-foreground ring-background pointer-events-none absolute top-1 right-1 size-1.5 rounded-full ring-2"
         />
       ) : null}
     </button>

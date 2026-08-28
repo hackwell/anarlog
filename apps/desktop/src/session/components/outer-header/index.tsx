@@ -267,7 +267,7 @@ function HeaderMeetingActionPill({
       return {
         label: t`Stop`,
         title: t`Stop listening`,
-        icon: <Square className="size-3 text-red-500" weight="fill" />,
+        icon: <Square className="text-foreground size-3" weight="fill" />,
         onClick: stopListening,
       };
     }
@@ -276,7 +276,7 @@ function HeaderMeetingActionPill({
       return {
         label: t`Stop`,
         title: t`Stop transcription`,
-        icon: <Square className="size-3 text-red-500" weight="fill" />,
+        icon: <Square className="text-foreground size-3" weight="fill" />,
         onClick: () => {
           void stopTranscription(sessionId);
         },

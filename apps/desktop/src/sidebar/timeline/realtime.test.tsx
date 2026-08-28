@@ -29,7 +29,7 @@ describe("CurrentTimeIndicator", () => {
     );
   });
 
-  test("uses red current-time colors in light and dark mode", () => {
+  test("uses the sidebar brand tone for the current-time marker, not red", () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date(2024, 0, 15, 12, 0, 0));
 
@@ -37,14 +37,15 @@ describe("CurrentTimeIndicator", () => {
     const line = container.querySelector("[data-sidebar-current-time-line]");
     const label = container.querySelector("[data-sidebar-current-time-label]");
 
-    expect(line?.className).toContain("bg-red-500/85");
-    expect(line?.className).toContain("dark:bg-red-400/70");
-    expect(label?.className).toContain("border-red-500");
-    expect(label?.className).toContain("bg-red-500");
-    expect(label?.className).toContain("text-white");
-    expect(label?.className).toContain("dark:border-red-500");
-    expect(label?.className).toContain("dark:bg-red-500");
-    expect(label?.className).toContain("dark:text-white");
+    // Red is reserved for audio capture, so the "now" marker reads in the
+    // sidebar's own brand tone through theme-aware tokens rather than a
+    // literal red with a dark-mode override.
+    expect(line?.className).toContain("bg-sidebar-border");
+    expect(line?.className).not.toContain("red");
+    expect(label?.className).toContain("bg-sidebar-selected");
+    expect(label?.className).toContain("border-sidebar-border");
+    expect(label?.className).toContain("text-sidebar-selected-foreground");
+    expect(label?.className).not.toContain("red");
   });
 
   test("labels the marker as the current time instead of a bare rule", () => {
