@@ -66,6 +66,18 @@ TEAM_ID="$(sed -E 's/.*\(([A-Z0-9]{10})\)$/\1/' <<<"$SIGNING_IDENTITY")"
 ok "Identitaet: $SIGNING_IDENTITY"
 ok "Team-ID:    $TEAM_ID"
 
+# Wo liegt das Zertifikat wirklich? Ein Developer ID im System-Schluesselbund
+# ist der haeufigste Grund, im Export-Dialog das falsche zu erwischen.
+CERT_KEYCHAIN=""
+for kc in $(security list-keychains 2>/dev/null | tr -d ' "'); do
+  if security find-certificate -c "$IDENTITY_PREFIX" "$kc" >/dev/null 2>&1; then
+    CERT_KEYCHAIN="$kc"; break
+  fi
+done
+if [[ -n "$CERT_KEYCHAIN" ]]; then
+  ok "Schluesselbund: $(basename "$CERT_KEYCHAIN" | sed 's/\.keychain.*//')"
+fi
+
 say "Zertifikat"
 
 if [[ $# -ge 1 ]]; then
@@ -88,7 +100,10 @@ else
   'security export' kann keine einzelne Identitaet filtern und wuerde auch
   das persoenliche Entwicklerzertifikat in die CI schieben - deshalb von Hand:
 
-    1. Links 'Anmeldung', Kategorie 'Meine Zertifikate'
+    1. Links den Schluesselbund waehlen, in dem das Zertifikat WIRKLICH
+       liegt - siehe Zeile 'Schluesselbund' oben. Bei Developer ID ist
+       das haeufig 'System', NICHT 'Anmeldung'.
+       Dann Kategorie 'Meine Zertifikate'.
     2. Rechtsklick auf die Zeile MIT aufklappbarem Dreieck:
          $SIGNING_IDENTITY
     3. 'Exportieren ...', Format '.p12'
