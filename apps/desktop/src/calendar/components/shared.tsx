@@ -1,3 +1,4 @@
+import { MicrosoftOutlookLogo } from "@phosphor-icons/react";
 import type { ReactNode } from "react";
 
 export type CalendarProvider = {
@@ -23,6 +24,22 @@ const _PROVIDERS = [
       />
     ),
     platform: "macos",
+  },
+  {
+    disabled: false,
+    id: "microsoft",
+    displayName: "Microsoft 365",
+    badge: "",
+    icon: (
+      <MicrosoftOutlookLogo
+        className="size-5 text-[#0F6CBD]"
+        weight="fill"
+        aria-hidden="true"
+      />
+    ),
+    // Microsoft Graph is reached over HTTPS, so unlike EventKit this provider
+    // is the same on macOS, Windows and Linux.
+    platform: "all",
   },
 ] as const satisfies readonly CalendarProvider[];
 

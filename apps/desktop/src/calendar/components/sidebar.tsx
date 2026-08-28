@@ -28,6 +28,9 @@ import {
   AppleCalendarPermissionDialog,
   TroubleShootingLink,
 } from "./apple/permission";
+import { MicrosoftCalendarSelection } from "./microsoft/calendar-selection";
+import { useMicrosoftConnection } from "./microsoft/connection";
+import { MicrosoftConnectionStatus } from "./microsoft/status";
 import { type CalendarProvider, PROVIDERS } from "./shared";
 
 import {
@@ -87,6 +90,8 @@ export function CalendarSidebarContent() {
           </div>
         ) : provider.id === "apple" ? (
           <AppleProviderItem key={provider.id} provider={provider} />
+        ) : provider.id === "microsoft" ? (
+          <MicrosoftProviderItem key={provider.id} provider={provider} />
         ) : null,
       )}
     </Accordion>
@@ -184,6 +189,52 @@ function AppleProviderItem({ provider }: { provider: CalendarProvider }) {
             />
           }
         />
+      </div>
+    </ProviderAccordionItem>
+  );
+}
+
+function MicrosoftProviderItem({ provider }: { provider: CalendarProvider }) {
+  const { t } = useLingui();
+  const connection = useMicrosoftConnection();
+  const { connect, disconnect, isBusy, isConnected } = connection;
+
+  const providerMenuItems = useMemo(
+    (): MenuItemDef[] =>
+      isConnected
+        ? [
+            {
+              id: "reconnect-microsoft-calendar",
+              text: t`Reconnect`,
+              action: () => {
+                connect();
+              },
+              disabled: isBusy,
+            },
+            {
+              id: "disconnect-microsoft-calendar",
+              text: t`Disconnect`,
+              action: () => {
+                disconnect();
+              },
+              disabled: isBusy,
+            },
+          ]
+        : [],
+    [connect, disconnect, isBusy, isConnected, t],
+  );
+
+  return (
+    <ProviderAccordionItem
+      provider={provider}
+      needsConnect={!isConnected}
+      isConnecting={connection.isSigningIn}
+      onConnect={connect}
+      menuItems={providerMenuItems}
+      after={<MicrosoftConnectionStatus connection={connection} />}
+    >
+      <div className="flex flex-col gap-3">
+        <MicrosoftCalendarSelection />
       </div>
     </ProviderAccordionItem>
   );

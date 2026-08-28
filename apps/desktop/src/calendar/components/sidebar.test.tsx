@@ -1,3 +1,4 @@
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   cleanup,
   fireEvent,
@@ -30,10 +31,50 @@ const mocks = vi.hoisted(() => ({
   allowReconnectedCalendarConnections: vi.fn(),
   syncCalendarEvents: vi.fn(),
   contextMenus: [] as ContextMenuItem[][],
+  platform: "macos",
+  microsoftIsConnected: vi.fn(),
+  microsoftStartLogin: vi.fn(),
+  microsoftCompleteLogin: vi.fn(),
+  microsoftDisconnect: vi.fn(),
+  listCalendars: vi.fn(),
+  createEvent: vi.fn(),
+  openCalendar: vi.fn(),
+  openUrl: vi.fn(),
+  microsoftListeners: [] as ((event: {
+    payload: { connected: boolean; error: string | null };
+  }) => void)[],
+}));
+
+vi.mock("@anlg/plugin-calendar", () => ({
+  commands: {
+    microsoftIsConnected: mocks.microsoftIsConnected,
+    microsoftStartLogin: mocks.microsoftStartLogin,
+    microsoftCompleteLogin: mocks.microsoftCompleteLogin,
+    microsoftDisconnect: mocks.microsoftDisconnect,
+    listCalendars: mocks.listCalendars,
+    createEvent: mocks.createEvent,
+    openCalendar: mocks.openCalendar,
+  },
+  events: {
+    microsoftConnectionChangedEvent: {
+      listen: (
+        listener: (event: {
+          payload: { connected: boolean; error: string | null };
+        }) => void,
+      ) => {
+        mocks.microsoftListeners.push(listener);
+        return Promise.resolve(vi.fn());
+      },
+    },
+  },
+}));
+
+vi.mock("@anlg/plugin-opener2", () => ({
+  commands: { openUrl: mocks.openUrl },
 }));
 
 vi.mock("@tauri-apps/plugin-os", () => ({
-  platform: () => "macos",
+  platform: () => mocks.platform,
 }));
 
 vi.mock("~/shared/hooks/useNativeContextMenu", () => ({
@@ -59,7 +100,22 @@ vi.mock("./apple/calendar-selection", () => ({
   AppleCalendarSelection: () => null,
 }));
 
+vi.mock("./microsoft/calendar-selection", () => ({
+  MicrosoftCalendarSelection: () => null,
+}));
+
 import { CalendarSidebarContent } from "./sidebar";
+
+function renderSidebar() {
+  const queryClient = new QueryClient({
+    defaultOptions: { queries: { retry: false }, mutations: { retry: false } },
+  });
+  return render(
+    <QueryClientProvider client={queryClient}>
+      <CalendarSidebarContent />
+    </QueryClientProvider>,
+  );
+}
 
 function findContextMenuItem(id: string) {
   for (const items of mocks.contextMenus) {
@@ -88,10 +144,27 @@ describe("CalendarSidebarContent", () => {
     mocks.syncCalendarEvents.mockReset();
     mocks.syncCalendarEvents.mockResolvedValue(undefined);
     mocks.contextMenus = [];
+    mocks.platform = "macos";
+    mocks.microsoftListeners = [];
+    mocks.microsoftIsConnected.mockReset();
+    mocks.microsoftIsConnected.mockResolvedValue(false);
+    mocks.microsoftStartLogin.mockReset();
+    mocks.microsoftStartLogin.mockResolvedValue({
+      status: "ok",
+      data: "https://login.microsoftonline.com/common/oauth2/v2.0/authorize",
+    });
+    mocks.microsoftDisconnect.mockReset();
+    mocks.microsoftDisconnect.mockResolvedValue({ status: "ok", data: null });
+    mocks.listCalendars.mockReset();
+    mocks.listCalendars.mockResolvedValue({ status: "ok", data: [] });
+    mocks.openUrl.mockReset();
+    mocks.openUrl.mockResolvedValue({ status: "ok", data: null });
+    mocks.createEvent.mockReset();
+    mocks.openCalendar.mockReset();
   });
 
   it("explains how to recover after Apple Calendar access is denied", () => {
-    render(<CalendarSidebarContent />);
+    renderSidebar();
 
     fireEvent.click(
       screen.getByRole("button", { name: "Connect Apple Calendar" }),
@@ -109,7 +182,7 @@ describe("CalendarSidebarContent", () => {
     mocks.calendar.status = "neverRequested";
     mocks.calendar.confirmedStatus = "neverRequested";
 
-    render(<CalendarSidebarContent />);
+    renderSidebar();
 
     fireEvent.click(
       screen.getByRole("button", { name: "Connect Apple Calendar" }),
@@ -123,7 +196,7 @@ describe("CalendarSidebarContent", () => {
     mocks.calendar.status = "authorized";
     mocks.calendar.confirmedStatus = "authorized";
 
-    render(<CalendarSidebarContent />);
+    renderSidebar();
 
     expect(
       screen.getByRole("button", { name: "Open calendar account actions" }),
@@ -160,7 +233,7 @@ describe("CalendarSidebarContent", () => {
       new Error("write failed"),
     );
 
-    render(<CalendarSidebarContent />);
+    renderSidebar();
 
     const disconnect = findContextMenuItem("disconnect-apple-calendar");
     disconnect?.action?.();
@@ -169,5 +242,146 @@ describe("CalendarSidebarContent", () => {
       expect(mocks.syncCalendarEvents).toHaveBeenCalledOnce();
     });
     expect(mocks.calendar.reset).not.toHaveBeenCalled();
+  });
+});
+
+describe("CalendarSidebarContent, Microsoft 365", () => {
+  afterEach(() => {
+    cleanup();
+    mocks.platform = "macos";
+    mocks.contextMenus = [];
+    mocks.microsoftListeners = [];
+    mocks.calendar.status = "denied";
+    mocks.calendar.confirmedStatus = "denied";
+    mocks.microsoftIsConnected.mockReset();
+    mocks.microsoftIsConnected.mockResolvedValue(false);
+    mocks.microsoftStartLogin.mockReset();
+    mocks.microsoftStartLogin.mockResolvedValue({
+      status: "ok",
+      data: "https://login.microsoftonline.com/common/oauth2/v2.0/authorize",
+    });
+    mocks.microsoftDisconnect.mockReset();
+    mocks.microsoftDisconnect.mockResolvedValue({ status: "ok", data: null });
+    mocks.listCalendars.mockReset();
+    mocks.listCalendars.mockResolvedValue({ status: "ok", data: [] });
+    mocks.openUrl.mockReset();
+    mocks.openUrl.mockResolvedValue({ status: "ok", data: null });
+    mocks.removeDisconnectedCalendarConnection.mockReset();
+    mocks.removeDisconnectedCalendarConnection.mockResolvedValue(undefined);
+    mocks.syncCalendarEvents.mockReset();
+    mocks.syncCalendarEvents.mockResolvedValue(undefined);
+    mocks.createEvent.mockReset();
+    mocks.openCalendar.mockReset();
+  });
+
+  it("is the calendar a Windows install can reach, where Apple is not", () => {
+    mocks.platform = "windows";
+
+    renderSidebar();
+
+    expect(
+      screen.getByRole("button", { name: "Connect Microsoft 365" }),
+    ).toBeTruthy();
+    expect(
+      screen.queryByRole("button", { name: "Connect Apple Calendar" }),
+    ).toBeNull();
+  });
+
+  it("sends the sign-in to the system browser", async () => {
+    renderSidebar();
+
+    fireEvent.click(
+      screen.getByRole("button", { name: "Connect Microsoft 365" }),
+    );
+
+    await waitFor(() => {
+      expect(mocks.openUrl).toHaveBeenCalledWith(
+        "https://login.microsoftonline.com/common/oauth2/v2.0/authorize",
+        null,
+      );
+    });
+    expect(screen.getByText(/Waiting for the sign-in/)).toBeTruthy();
+  });
+
+  it("names the missing build variable rather than failing vaguely", async () => {
+    mocks.microsoftStartLogin.mockResolvedValue({
+      status: "error",
+      error:
+        "Microsoft calendar is unavailable in this build: MICROSOFT_CLIENT_ID was not set at build time",
+    });
+
+    renderSidebar();
+    fireEvent.click(
+      screen.getByRole("button", { name: "Connect Microsoft 365" }),
+    );
+
+    await waitFor(() => {
+      expect(
+        screen.getByText("Microsoft 365 is not set up in this build"),
+      ).toBeTruthy();
+    });
+    expect(screen.getByText(/MICROSOFT_CLIENT_ID/)).toBeTruthy();
+  });
+
+  it("offers reconnect and disconnect once a mailbox is connected", async () => {
+    mocks.platform = "windows";
+    mocks.microsoftIsConnected.mockResolvedValue(true);
+    mocks.listCalendars.mockResolvedValue({
+      status: "ok",
+      data: [{ id: "cal-1", title: "Kalender", provider: "microsoft" }],
+    });
+
+    renderSidebar();
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole("button", { name: "Open calendar account actions" }),
+      ).toBeTruthy();
+    });
+
+    const disconnect = findContextMenuItem("disconnect-microsoft-calendar");
+    const reconnect = findContextMenuItem("reconnect-microsoft-calendar");
+    expect(disconnect?.text).toBe("Disconnect");
+    expect(reconnect?.text).toBe("Reconnect");
+
+    disconnect?.action?.();
+
+    await waitFor(() => {
+      expect(mocks.microsoftDisconnect).toHaveBeenCalledOnce();
+    });
+    expect(mocks.removeDisconnectedCalendarConnection).toHaveBeenCalledWith(
+      "microsoft",
+      "microsoft",
+    );
+  });
+
+  it("offers no write action for a read-only provider", async () => {
+    mocks.platform = "windows";
+    mocks.microsoftIsConnected.mockResolvedValue(true);
+    mocks.listCalendars.mockResolvedValue({
+      status: "ok",
+      data: [{ id: "cal-1", title: "Kalender", provider: "microsoft" }],
+    });
+
+    renderSidebar();
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole("button", { name: "Open calendar account actions" }),
+      ).toBeTruthy();
+    });
+
+    const microsoftMenuIds = mocks.contextMenus
+      .flat()
+      .map((item) => item.id)
+      .filter((id): id is string =>
+        Boolean(id?.endsWith("-microsoft-calendar")),
+      );
+    expect(microsoftMenuIds.sort()).toEqual([
+      "disconnect-microsoft-calendar",
+      "reconnect-microsoft-calendar",
+    ]);
+    expect(mocks.createEvent).not.toHaveBeenCalled();
+    expect(mocks.openCalendar).not.toHaveBeenCalled();
   });
 });
