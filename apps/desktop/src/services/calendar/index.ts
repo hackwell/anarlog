@@ -254,7 +254,11 @@ function connectionKey(
 function calendarProviderForIntegration(
   integrationId: string,
 ): CalendarProviderType | null {
-  return integrationId === "apple" || integrationId === "apple-calendar"
-    ? "apple"
-    : null;
+  if (integrationId === "apple" || integrationId === "apple-calendar") {
+    return "apple";
+  }
+  if (integrationId === "microsoft" || integrationId === "microsoft-calendar") {
+    return "microsoft";
+  }
+  return null;
 }
