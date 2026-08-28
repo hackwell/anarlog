@@ -80,6 +80,10 @@ msgstr "vor {months} Monaten"
 msgid "{primaryModifier} ↩ to send"
 msgstr "{primaryModifier} ↩ zum Senden"
 
+#: src/session/components/outer-header/metadata/index.tsx
+msgid "{startStr} to {endStr}"
+msgstr "{startStr} bis {endStr}"
+
 #: src/sidebar/toast/undo-delete-toast.tsx
 msgid "{title} deleted"
 msgstr "{title} gelöscht"

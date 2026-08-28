@@ -1,3 +1,4 @@
+import { useLingui } from "@lingui/react/macro";
 import { CalendarBlank, MapPin, VideoCamera } from "@phosphor-icons/react";
 import { forwardRef, useState } from "react";
 
@@ -110,6 +111,7 @@ export function EventDisplay({
   children?: React.ReactNode;
 }) {
   const tz = useConfigValue("timezone") || undefined;
+  const { t } = useLingui();
   const dateFormatter = useDateFormatter();
 
   const handleJoinMeeting = () => {
@@ -145,7 +147,7 @@ export function EventDisplay({
       ? dateFormatter.time(endDate)
       : dateFormatter.dateTime(endDate);
 
-    return `${startStr} to ${endStr}`;
+    return t`${startStr} to ${endStr}`;
   };
 
   const getMeetingLinkDomain = () => {

@@ -80,6 +80,10 @@ msgstr "{months} months ago"
 msgid "{primaryModifier} ↩ to send"
 msgstr "{primaryModifier} ↩ to send"
 
+#: src/session/components/outer-header/metadata/index.tsx
+msgid "{startStr} to {endStr}"
+msgstr "{startStr} to {endStr}"
+
 #: src/sidebar/toast/undo-delete-toast.tsx
 msgid "{title} deleted"
 msgstr "{title} deleted"
