@@ -2117,10 +2117,6 @@ msgstr "Open the meeting link when listening starts."
 msgid "Opening sign-in…"
 msgstr "Opening sign-in…"
 
-#: src/session/components/note-input/enhanced/enhance-error.tsx
-msgid "Opening…"
-msgstr "Opening…"
-
 #. placeholder {0}: accessibilityGuidance.paneTitle ?? "Privacy"
 #: src/onboarding/permissions.tsx
 msgid "Opens System Settings and guides you to add Session Echo to the {0} list"
@@ -2670,10 +2666,6 @@ msgstr "Session Echo can read meeting details"
 msgid "Session Echo CLI"
 msgstr "Session Echo CLI"
 
-#: src/session/components/note-input/enhanced/enhance-error.tsx
-msgid "Session Echo could not generate this summary because you were not signed in. Sign in, then try again."
-msgstr "Session Echo could not generate this summary because you were not signed in. Sign in, then try again."
-
 #: src/lock/gate.tsx
 msgid "Session Echo is Locked"
 msgstr "Session Echo is Locked"
@@ -2797,14 +2789,6 @@ msgstr "Show This Event"
 #: src/settings/general/app-settings.tsx
 msgid "Show tray icon"
 msgstr "Show tray icon"
-
-#: src/session/components/note-input/enhanced/enhance-error.tsx
-msgid "Sign in"
-msgstr "Sign in"
-
-#: src/session/components/note-input/enhanced/enhance-error.tsx
-msgid "Sign in to generate this summary"
-msgstr "Sign in to generate this summary"
 
 #: src/settings/ai/llm/subscriptions/connect.tsx
 msgid "Sign in with ChatGPT Plus or Pro, then paste the redirect URL from your browser."
