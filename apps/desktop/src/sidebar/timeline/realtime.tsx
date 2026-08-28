@@ -1,6 +1,7 @@
+import { Trans } from "@lingui/react/macro";
 import { forwardRef, useEffect, useMemo, useState } from "react";
 
-import { TZDate, safeParseDate } from "@anlg/utils";
+import { cn, TZDate, safeParseDate } from "@anlg/utils";
 
 import type { TimelineEventsTable, TimelineSessionsTable } from "./utils";
 
@@ -40,17 +41,24 @@ export const CurrentTimeIndicator = forwardRef<
       style={variant === "inside" ? { top: insideOffset } : undefined}
     >
       <div className="absolute inset-x-0 top-0 -translate-y-1/2">
-        <div
-          data-sidebar-current-time-line
-          className="absolute top-1/2 right-0 left-0 h-px -translate-y-1/2 bg-red-500/85 dark:bg-red-400/70"
-        />
-        <div className="relative flex h-5 items-center justify-center">
+        <div className="flex h-5 items-center gap-2 px-3">
           <div
             data-sidebar-current-time-label
-            className="rounded-full border border-red-500 bg-red-500 px-2 py-0.5 font-mono text-[11px] font-semibold text-white opacity-0 shadow-xs transition-opacity group-hover:opacity-100 dark:border-red-500 dark:bg-red-500 dark:text-white"
+            className={cn([
+              "flex shrink-0 items-center gap-1.5 rounded-full px-2 py-0.5 shadow-xs",
+              "border border-red-500 bg-red-500 dark:border-red-500 dark:bg-red-500",
+              "text-[11px] font-semibold text-white dark:text-white",
+            ])}
           >
-            {label}
+            <span className="uppercase">
+              <Trans>Now</Trans>
+            </span>
+            <span className="font-mono font-normal tabular-nums">{label}</span>
           </div>
+          <div
+            data-sidebar-current-time-line
+            className="h-px min-w-0 flex-1 bg-red-500/85 dark:bg-red-400/70"
+          />
         </div>
       </div>
     </div>

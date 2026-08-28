@@ -47,6 +47,18 @@ describe("CurrentTimeIndicator", () => {
     expect(label?.className).toContain("dark:text-white");
   });
 
+  test("labels the marker as the current time instead of a bare rule", () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date(2024, 0, 15, 12, 0, 0));
+
+    const { container } = render(<CurrentTimeIndicator />);
+    const label = container.querySelector("[data-sidebar-current-time-label]");
+
+    expect(label?.textContent).toBe("Now12:00 PM");
+    expect(label?.className).not.toContain("opacity-0");
+    expect(label?.className).not.toContain("group-hover:opacity-100");
+  });
+
   test("syncs the label at the next wall-clock minute", () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date(2024, 0, 15, 12, 0, 45));

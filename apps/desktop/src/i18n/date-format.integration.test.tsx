@@ -1,4 +1,5 @@
 import { cleanup, render, screen } from "@testing-library/react";
+import type { ReactNode } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const mocks = vi.hoisted(() => ({
@@ -12,6 +13,13 @@ vi.mock("@lingui/react", () => {
     typeof input === "string" ? input : Array.from(input).join("");
 
   return {
+    Trans: ({
+      children,
+      message,
+    }: {
+      children?: ReactNode;
+      message?: string;
+    }) => children ?? message ?? null,
     useLingui: () => ({
       _: translate,
       t: translate,

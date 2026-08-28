@@ -1983,6 +1983,7 @@ msgid "Notifications"
 msgstr "Benachrichtigungen"
 
 #: src/sidebar/timeline/index.tsx
+#: src/sidebar/timeline/realtime.tsx
 #: src/sidebar/timeline/upcoming-meeting.ts
 msgid "Now"
 msgstr "Jetzt"
