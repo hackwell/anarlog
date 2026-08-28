@@ -25,14 +25,6 @@ vi.mock("@tanstack/react-query", () => ({
   }),
 }));
 
-vi.mock("~/auth", () => ({
-  useAuth: () => ({ session: null, signOut: vi.fn() }),
-}));
-
-vi.mock("~/auth/cloudsync", () => ({
-  applyCloudsyncPreference: vi.fn(),
-}));
-
 vi.mock("~/settings/queries", () => ({
   setSettingValue: vi.fn(),
   useSetSettingValues: () => mocks.setSettingValues,

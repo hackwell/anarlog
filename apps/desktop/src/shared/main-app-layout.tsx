@@ -12,7 +12,6 @@ import {
   useNewNote,
 } from "./useNewNote";
 
-import { AuthProvider } from "~/auth";
 import { DevtoolsFloatingPanelHost } from "~/devtools-panel/host";
 import { MeetingImportSync } from "~/services/meeting-import-sync";
 import { getOrCreateSessionForEventId } from "~/session/queries";
@@ -23,14 +22,6 @@ import { isTabInputSupported, useTabs } from "~/store/zustand/tabs";
 export default function MainAppLayout() {
   useNavigationEvents();
 
-  return (
-    <AuthProvider>
-      <MainAppContent />
-    </AuthProvider>
-  );
-}
-
-function MainAppContent() {
   const isMainWindow = getCurrentWebviewWindowLabel() === "main";
 
   return (

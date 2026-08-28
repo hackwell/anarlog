@@ -95,17 +95,6 @@ const renderers: RendererMap = {
     },
   },
 
-  account: {
-    toChip: (entity) => {
-      if (!entity.email && !entity.userId) return null;
-      return {
-        key: entity.key,
-        icon: User,
-        label: "Account",
-      };
-    },
-  },
-
   device: {
     toChip: (entity) => {
       return {

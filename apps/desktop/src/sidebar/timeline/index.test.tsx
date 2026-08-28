@@ -111,10 +111,6 @@ vi.mock("~/shared/config", () => ({
   useConfigValue: () => mocks.configValue,
 }));
 
-vi.mock("~/auth", () => ({
-  useAuth: () => ({ session: { user: { id: "owner-1" } } }),
-}));
-
 vi.mock("~/calendar/queries", () => ({
   useTimelineTables: () => ({
     timelineEventsTable: mocks.timelineEventsTable,

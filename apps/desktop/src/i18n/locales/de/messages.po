@@ -685,14 +685,6 @@ msgstr "Chat schließen"
 msgid "Closed"
 msgstr "Geschlossen"
 
-#: src/auth/cloudsync.ts
-msgid "Cloud sync is limited to 5 devices. Remove another device to sync here."
-msgstr "Cloud-Synchronisierung ist auf 5 Geräte begrenzt. Entfernen Sie ein anderes Gerät, um hier zu synchronisieren."
-
-#: src/auth/cloudsync.ts
-msgid "Cloud sync is limited to 5 devices. Replace or remove another device to sync here."
-msgstr "Cloud-Synchronisierung ist auf 5 Geräte begrenzt. Ersetzen oder entfernen Sie ein anderes Gerät, um hier zu synchronisieren."
-
 #: src/settings/appearance/theme.tsx
 msgid "Color theme"
 msgstr "Farbschema"
@@ -3066,10 +3058,6 @@ msgstr "Testläufe sind noch nicht verfügbar."
 #: src/onboarding/folder-location.tsx
 msgid "The app will restart after onboarding to apply your storage changes"
 msgstr "Die App wird nach dem Onboarding neu gestartet, um Ihre Speicheränderungen anzuwenden."
-
-#: src/auth/context.tsx
-msgid "The notes on this device are linked to another Session Echo account. Sign in with the account previously used here."
-msgstr "Die Notizen auf diesem Gerät sind mit einem anderen Session-Echo-Konto verknüpft. Melden Sie sich mit dem zuvor hier verwendeten Konto an."
 
 #: src/shared/control.tsx
 msgid "The page you're looking for doesn't exist."

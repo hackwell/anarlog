@@ -328,18 +328,10 @@ describe("ContextBar", () => {
     });
   });
 
-  it("opens the account chip in settings and leaves the device chip inert", () => {
+  it("leaves the device chip inert", () => {
     render(
       <ContextBar
         entities={[
-          {
-            kind: "account",
-            key: "account:current",
-            source: "auto-current",
-            userId: "user-1",
-            email: "user@example.com",
-            pending: false,
-          },
           {
             kind: "device",
             key: "device:current",
@@ -351,7 +343,6 @@ describe("ContextBar", () => {
       />,
     );
 
-    fireEvent.click(screen.getByText("Account"));
     fireEvent.click(screen.getByText("Device"));
 
     expect(openNewMock).not.toHaveBeenCalled();
