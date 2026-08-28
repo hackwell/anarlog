@@ -154,7 +154,6 @@ jobs:
             --exclude tauri-plugin-local-llm \
             --exclude tauri-plugin-local-stt \
             --exclude tauri-plugin-misc \
-            --exclude tauri-plugin-network \
             --exclude tauri-plugin-notification \
             --exclude tauri-plugin-notify \
             --exclude tauri-plugin-opener2 \
@@ -172,7 +171,6 @@ jobs:
             --exclude tauri-plugin-tracing \
             --exclude tauri-plugin-tray \
             --exclude tauri-plugin-updater2 \
-            --exclude tauri-plugin-webhook \
             --exclude tauri-plugin-windows \
             --exclude db3 \
             --exclude db-core \
