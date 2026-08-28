@@ -114,11 +114,24 @@ GUIDE
   open -a "Keychain Access" 2>/dev/null || open -a "Schlüsselbundverwaltung" 2>/dev/null || true
   read -r -p "  Enter, sobald exportiert: " _
   [[ -f "$P12_PATH" ]] || die "Datei nicht gefunden: $P12_PATH"
+  KEEP_P12=1   # ab jetzt existiert der Export - nie wegwerfen
 fi
 
 # Drei Pruefungen, die sonst erst der Release-Lauf nach dem Build meldet.
 CERTS="$(p12_run -in "$P12_PATH" -passin "pass:$P12_PASSWORD" -nokeys -clcerts || true)"
-[[ -n "$CERTS" ]] || die "Die .p12 laesst sich mit diesem Passwort nicht oeffnen."
+# Wer beim Export ein eigenes Passwort vergibt statt das vorgegebene
+# einzufuegen, soll nicht von vorn anfangen muessen.
+TRIES=0
+while [[ -z "$CERTS" && $TRIES -lt 3 ]]; do
+  TRIES=$((TRIES + 1))
+  echo
+  warn "Mit diesem Passwort laesst sich die Datei nicht oeffnen."
+  echo "  Falls beim Export ein eigenes vergeben wurde: hier eingeben."
+  read -r -s -p "  Passwort der .p12 (Versuch $TRIES/3): " P12_PASSWORD; echo
+  [[ -n "$P12_PASSWORD" ]] || continue
+  CERTS="$(p12_run -in "$P12_PATH" -passin "pass:$P12_PASSWORD" -nokeys -clcerts || true)"
+done
+[[ -n "$CERTS" ]] || die "Passwort passt nicht. Die Datei liegt weiterhin unter $P12_PATH."
 ok "Passwort korrekt"
 
 SUBJECT="$(printf '%s' "$CERTS" | openssl x509 -noout -subject 2>/dev/null || true)"
