@@ -491,6 +491,136 @@ describe("TimelineView", () => {
     ).toContain("h-9");
   });
 
+  it("filters the timeline to notes and meetings matching the query", () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2024-01-15T09:00:00.000Z"));
+    mocks.currentTimeMs = Date.now();
+    mocks.timelineEventsTable = {
+      event: {
+        title: "Budget review",
+        started_at: "2024-01-15T13:00:00.000Z",
+        ended_at: "2024-01-15T13:30:00.000Z",
+        tracking_id_event: "event-budget",
+        has_recurrence_rules: false,
+      },
+    };
+    mocks.timelineSessionsTable = {
+      "budget-note": {
+        title: "Budget follow-up",
+        created_at: "2024-01-14T12:00:00.000Z",
+      },
+      "standup-note": {
+        title: "Daily standup",
+        created_at: "2024-01-14T11:00:00.000Z",
+      },
+    };
+
+    render(<TimelineView />);
+
+    expect(screen.getByTestId("timeline-item-standup-note")).toBeTruthy();
+
+    const input = screen.getByRole("textbox", {
+      name: "Search notes and meetings",
+    });
+    fireEvent.change(input, { target: { value: "budget" } });
+
+    expect(screen.getByTestId("timeline-item-event")).toBeTruthy();
+    expect(screen.getByTestId("timeline-item-budget-note")).toBeTruthy();
+    expect(screen.queryByTestId("timeline-item-standup-note")).toBeNull();
+    expect(
+      document.querySelector("[data-sidebar-timeline-search-empty]"),
+    ).toBeNull();
+  });
+
+  it("reports an empty search and restores the list when cleared", () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2024-01-15T09:00:00.000Z"));
+    mocks.currentTimeMs = Date.now();
+    mocks.timelineSessionsTable = {
+      "standup-note": {
+        title: "Daily standup",
+        created_at: "2024-01-14T11:00:00.000Z",
+      },
+    };
+
+    render(<TimelineView />);
+
+    const input = screen.getByRole("textbox", {
+      name: "Search notes and meetings",
+    });
+    fireEvent.change(input, { target: { value: "quarterly" } });
+
+    expect(screen.queryByTestId("timeline-item-standup-note")).toBeNull();
+    expect(
+      document.querySelector("[data-sidebar-timeline-search-empty]")
+        ?.textContent,
+    ).toBe("No matching notes or meetings");
+
+    fireEvent.click(screen.getByRole("button", { name: "Clear search" }));
+
+    expect(screen.getByTestId("timeline-item-standup-note")).toBeTruthy();
+    expect(
+      document.querySelector("[data-sidebar-timeline-search-empty]"),
+    ).toBeNull();
+  });
+
+  it("keeps Cmd+A scoped to the notes the search leaves visible", () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2024-01-15T09:00:00.000Z"));
+    mocks.currentTimeMs = Date.now();
+    mocks.currentTab = { type: "sessions", id: "selected-note" };
+    mocks.timelineSelectionAnchorId = "session-selected-note";
+    mocks.timelineSessionsTable = {
+      "selected-note": {
+        title: "Budget follow-up",
+        created_at: "2024-01-15T12:00:00.000Z",
+      },
+      "other-note": {
+        title: "Daily standup",
+        created_at: "2024-01-15T11:00:00.000Z",
+      },
+    };
+
+    render(<TimelineView />);
+
+    const input = screen.getByRole("textbox", {
+      name: "Search notes and meetings",
+    });
+    fireEvent.change(input, { target: { value: "budget" } });
+
+    fireEvent.keyDown(window, { key: "a", metaKey: true });
+
+    expect(mocks.selectAll).toHaveBeenCalledWith(["session-selected-note"]);
+  });
+
+  it("leaves timeline shortcuts alone while typing in the search field", () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2024-01-15T09:00:00.000Z"));
+    mocks.currentTimeMs = Date.now();
+    mocks.currentTab = { type: "sessions", id: "selected-note" };
+    mocks.timelineSelectionAnchorId = "session-selected-note";
+    mocks.timelineSelectionSelectedIds = ["session-selected-note"];
+    mocks.timelineSessionsTable = {
+      "selected-note": {
+        title: "Selected note",
+        created_at: "2024-01-15T12:00:00.000Z",
+      },
+    };
+
+    render(<TimelineView />);
+
+    const input = screen.getByRole("textbox", {
+      name: "Search notes and meetings",
+    });
+    input.focus();
+
+    fireEvent.keyDown(input, { key: "Backspace" });
+    fireEvent.keyDown(input, { key: "a", metaKey: true });
+
+    expect(screen.queryByRole("dialog")).toBeNull();
+    expect(mocks.selectAll).not.toHaveBeenCalled();
+  });
+
   it("selects all visible notes with Cmd+A after a sidebar note selection", () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date("2024-01-15T09:00:00.000Z"));

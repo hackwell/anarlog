@@ -641,6 +641,7 @@ msgstr "Wird aufgeräumt …"
 #: src/settings/ai/shared/provider-search.tsx
 #: src/sidebar/automations.tsx
 #: src/sidebar/settings.tsx
+#: src/sidebar/timeline/search.tsx
 #: src/templates/template-icon-picker.tsx
 #: src/templates/template-sidebar.tsx
 msgid "Clear search"
@@ -1903,6 +1904,10 @@ msgstr "Keine Übereinstimmung"
 msgid "No matching languages found"
 msgstr "Keine passenden Sprachen gefunden"
 
+#: src/sidebar/timeline/index.tsx
+msgid "No matching notes or meetings"
+msgstr "Keine passenden Notizen oder Meetings"
+
 #: src/session/components/note-input/transcript/renderer/speaker-assign.tsx
 msgid "No matching people"
 msgstr "Keine passenden Personen"
@@ -2489,6 +2494,14 @@ msgstr "Installierte Apps durchsuchen …"
 #: src/settings/general/main-language.tsx
 msgid "Search language..."
 msgstr "Sprache suchen..."
+
+#: src/sidebar/timeline/search.tsx
+msgid "Search notes and meetings"
+msgstr "Notizen und Meetings durchsuchen"
+
+#: src/sidebar/timeline/search.tsx
+msgid "Search notes and meetings..."
+msgstr "Notizen und Meetings durchsuchen …"
 
 #: src/contacts/details.tsx
 msgid "Search or add company"

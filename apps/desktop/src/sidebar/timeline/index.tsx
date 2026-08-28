@@ -28,6 +28,7 @@ import {
   shouldClearTimelineSelectionOnPointerDown,
 } from "./interaction";
 import { useCurrentTimeMs } from "./realtime";
+import { filterTimelineBuckets, TimelineSearchField } from "./search";
 import {
   useUpcomingMeetingStatus,
   useUpcomingMeetingLabelFormatter,
@@ -74,6 +75,12 @@ export const TimelineView = memo(function TimelineView({
     timelineSessionsTable,
     timezone,
   });
+  const [searchQuery, setSearchQuery] = useState("");
+  const isSearching = searchQuery.trim().length > 0;
+  const visibleBuckets = useMemo(
+    () => filterTimelineBuckets(buckets, searchQuery),
+    [buckets, searchQuery],
+  );
   const openNew = useTabs((state) => state.openNew);
 
   const showOpenCalendarChip =
@@ -82,8 +89,8 @@ export const TimelineView = memo(function TimelineView({
     showOpenCalendarButton && hasMoreFutureItems;
 
   const hasToday = useMemo(
-    () => buckets.some((bucket) => bucket.label === "Today"),
-    [buckets],
+    () => visibleBuckets.some((bucket) => bucket.label === "Today"),
+    [visibleBuckets],
   );
   const indicatorTimeMs = useCurrentTimeMs();
   const formatUpcomingMeetingLabel = useUpcomingMeetingLabelFormatter();
@@ -109,12 +116,12 @@ export const TimelineView = memo(function TimelineView({
   const hasActiveVisibleSession = useMemo(
     () =>
       !!activeSessionId &&
-      buckets.some((bucket) =>
+      visibleBuckets.some((bucket) =>
         bucket.items.some(
           (item) => item.type === "session" && item.id === activeSessionId,
         ),
       ),
-    [activeSessionId, buckets],
+    [activeSessionId, visibleBuckets],
   );
 
   const currentTab = useTabs((state) => state.currentTab);
@@ -169,13 +176,13 @@ export const TimelineView = memo(function TimelineView({
 
   const flatItemKeys = useMemo(() => {
     const keys: string[] = [];
-    for (const bucket of buckets) {
+    for (const bucket of visibleBuckets) {
       for (const item of bucket.items) {
         keys.push(`${item.type}-${item.id}`);
       }
     }
     return keys;
-  }, [buckets]);
+  }, [visibleBuckets]);
   const flatItemKeysRef = useRef(flatItemKeys);
   flatItemKeysRef.current = flatItemKeys;
   const getFlatItemKeys = useCallback(() => flatItemKeysRef.current, []);
@@ -292,15 +299,15 @@ export const TimelineView = memo(function TimelineView({
     };
   }, [
     containerRef,
-    buckets.length,
+    visibleBuckets.length,
     flatItemKeys.length,
     upcomingMeetingStatus?.itemKey,
   ]);
 
   const todayBucketLength = useMemo(() => {
-    const b = buckets.find((bucket) => bucket.label === "Today");
+    const b = visibleBuckets.find((bucket) => bucket.label === "Today");
     return b?.items.length ?? 0;
-  }, [buckets]);
+  }, [visibleBuckets]);
   const autoScrollAnchorNode = hasToday ? todayAnchorNode : null;
 
   useAutoScrollToAnchor({
@@ -390,8 +397,8 @@ export const TimelineView = memo(function TimelineView({
     if (hasToday) {
       return -1;
     }
-    return getFallbackIndicatorIndex(buckets, Date.now());
-  }, [buckets, hasToday, indicatorTimeMs]);
+    return getFallbackIndicatorIndex(visibleBuckets, Date.now());
+  }, [visibleBuckets, hasToday, indicatorTimeMs]);
 
   const toggleShowIgnored = useCallback(() => {
     const nextShowIgnored = !showIgnored;
@@ -478,114 +485,127 @@ export const TimelineView = memo(function TimelineView({
       />
       <div
         data-sidebar-timeline-root
-        className="relative h-full"
+        className="flex h-full flex-col"
         onWheelCapture={handleWheelCapture}
       >
-        <div
-          ref={containerRef}
-          data-sidebar-timeline-scroll
-          onContextMenu={showContextMenu}
-          className={cn([
-            "scrollbar-hide flex h-full flex-col overflow-y-auto",
-            "rounded-xl",
-          ])}
-        >
-          {(topChromeInset || hasMoreFutureItems) && (
-            <div
-              aria-hidden
-              data-sidebar-timeline-top-spacer
-              className={cn([topSpacerClassName, "shrink-0"])}
-            />
-          )}
-          <TimelineBuckets
-            bucketHeaderTopClassName={bucketHeaderTopClassName}
-            buckets={buckets}
-            emptyTodayLabel={<Trans>No items today</Trans>}
-            getFlatItemKeys={getFlatItemKeys}
-            hasActiveVisibleSession={hasActiveVisibleSession}
-            hasToday={hasToday}
-            indicatorIndex={indicatorIndex}
-            registerIndicator={setCurrentTimeIndicatorRef}
-            selectedIds={selectedIds}
-            selectedNodeRef={scrollSelectedSessionIntoView}
-            selectedSessionId={selectedSessionId}
-            timezone={timezone}
-            upcomingMeetingStatus={upcomingMeetingStatus}
-            upcomingNodeRef={setUpcomingMeetingNodeRef}
-          />
+        <div className={cn(["shrink-0 pb-1", topChromeInset && "pt-11"])}>
+          <TimelineSearchField onChange={setSearchQuery} value={searchQuery} />
         </div>
-
-        {!isScrolledToBottom && (
+        <div className="relative min-h-0 flex-1">
           <div
-            aria-hidden
-            data-sidebar-timeline-bottom-fade
-            className="from-background/0 to-background pointer-events-none absolute inset-x-0 bottom-0 z-30 h-7 bg-linear-to-b"
-          />
-        )}
-
-        {topChromeInset && (
-          <div
-            aria-hidden
-            data-sidebar-timeline-top-occluder
-            className="bg-background pointer-events-none absolute inset-x-0 top-0 z-10 h-12"
-          />
-        )}
-
-        {(showOpenCalendarChip ||
-          showUpcomingMeetingChip ||
-          showTopNowChip) && (
-          <div
-            data-sidebar-timeline-top-chip-stack
+            ref={containerRef}
+            data-sidebar-timeline-scroll
+            onContextMenu={showContextMenu}
             className={cn([
-              "absolute left-1/2 z-20 flex -translate-x-1/2 transform flex-col items-center gap-2",
-              topChipStackTopClassName,
+              "scrollbar-hide flex h-full flex-col overflow-y-auto",
+              "rounded-xl",
             ])}
           >
-            {showOpenCalendarChip && (
-              <TimelineTopChip
-                ariaLabel={t`Open calendar`}
-                icon={<CalendarDots size={12} />}
-                onClick={handleOpenCalendar}
-              >
-                <Trans>Open calendar</Trans>
-              </TimelineTopChip>
-            )}
-            {upcomingMeetingStatus && showUpcomingMeetingChip && (
-              <UpcomingMeetingChip
-                ariaLabel={`${
-                  upcomingMeetingStatus.title || t`Meeting`
-                } ${upcomingMeetingStatus.label.toLowerCase()}`}
-                label={upcomingMeetingStatus.label}
-                onClick={scrollToUpcomingMeeting}
+            {(topChromeInset || hasMoreFutureItems) && (
+              <div
+                aria-hidden
+                data-sidebar-timeline-top-spacer
+                className={cn([topSpacerClassName, "shrink-0"])}
               />
             )}
-            {showTopNowChip && (
+            <TimelineBuckets
+              bucketHeaderTopClassName={bucketHeaderTopClassName}
+              buckets={visibleBuckets}
+              emptyTodayLabel={<Trans>No items today</Trans>}
+              getFlatItemKeys={getFlatItemKeys}
+              hasActiveVisibleSession={hasActiveVisibleSession}
+              hasToday={hasToday}
+              indicatorIndex={indicatorIndex}
+              registerIndicator={setCurrentTimeIndicatorRef}
+              selectedIds={selectedIds}
+              selectedNodeRef={scrollSelectedSessionIntoView}
+              selectedSessionId={selectedSessionId}
+              timezone={timezone}
+              upcomingMeetingStatus={upcomingMeetingStatus}
+              upcomingNodeRef={setUpcomingMeetingNodeRef}
+            />
+            {isSearching && visibleBuckets.length === 0 ? (
+              <div
+                data-sidebar-timeline-search-empty
+                className="text-muted-foreground px-3 py-8 text-center text-sm"
+              >
+                <Trans>No matching notes or meetings</Trans>
+              </div>
+            ) : null}
+          </div>
+
+          {!isScrolledToBottom && (
+            <div
+              aria-hidden
+              data-sidebar-timeline-bottom-fade
+              className="from-background/0 to-background pointer-events-none absolute inset-x-0 bottom-0 z-30 h-7 bg-linear-to-b"
+            />
+          )}
+
+          {topChromeInset && (
+            <div
+              aria-hidden
+              data-sidebar-timeline-top-occluder
+              className="bg-background pointer-events-none absolute inset-x-0 top-0 z-10 h-12"
+            />
+          )}
+
+          {(showOpenCalendarChip ||
+            showUpcomingMeetingChip ||
+            showTopNowChip) && (
+            <div
+              data-sidebar-timeline-top-chip-stack
+              className={cn([
+                "absolute left-1/2 z-20 flex -translate-x-1/2 transform flex-col items-center gap-2",
+                topChipStackTopClassName,
+              ])}
+            >
+              {showOpenCalendarChip && (
+                <TimelineTopChip
+                  ariaLabel={t`Open calendar`}
+                  icon={<CalendarDots size={12} />}
+                  onClick={handleOpenCalendar}
+                >
+                  <Trans>Open calendar</Trans>
+                </TimelineTopChip>
+              )}
+              {upcomingMeetingStatus && showUpcomingMeetingChip && (
+                <UpcomingMeetingChip
+                  ariaLabel={`${
+                    upcomingMeetingStatus.title || t`Meeting`
+                  } ${upcomingMeetingStatus.label.toLowerCase()}`}
+                  label={upcomingMeetingStatus.label}
+                  onClick={scrollToUpcomingMeeting}
+                />
+              )}
+              {showTopNowChip && (
+                <TimelineNowChip
+                  ariaLabel={t`Go back to now`}
+                  direction="up"
+                  onClick={scrollToToday}
+                >
+                  <Trans>Now</Trans>
+                </TimelineNowChip>
+              )}
+            </div>
+          )}
+
+          {!showUpcomingMeetingChip &&
+            !isTodayVisible &&
+            !isScrolledPastToday && (
               <TimelineNowChip
                 ariaLabel={t`Go back to now`}
-                direction="up"
                 onClick={scrollToToday}
+                direction="down"
+                className={cn([
+                  "absolute bottom-2 left-1/2 -translate-x-1/2 transform",
+                  "z-40",
+                ])}
               >
                 <Trans>Now</Trans>
               </TimelineNowChip>
             )}
-          </div>
-        )}
-
-        {!showUpcomingMeetingChip &&
-          !isTodayVisible &&
-          !isScrolledPastToday && (
-            <TimelineNowChip
-              ariaLabel={t`Go back to now`}
-              onClick={scrollToToday}
-              direction="down"
-              className={cn([
-                "absolute bottom-2 left-1/2 -translate-x-1/2 transform",
-                "z-40",
-              ])}
-            >
-              <Trans>Now</Trans>
-            </TimelineNowChip>
-          )}
+        </div>
       </div>
     </>
   );
