@@ -444,8 +444,13 @@ describe("TimelineItemComponent", () => {
     );
 
     // An upcoming meeting is not audio capture, so it reads in the sidebar
-    // brand tone and leaves red to the recording row.
-    expect(rowButton?.className).toContain("bg-sidebar-accent");
+    // brand tone and leaves red to the recording row. It marks itself with the
+    // gauge alone - a fill on top would be a second device for one state, and
+    // the rail's one filled row is the selected one.
+    expect(rowButton?.className.split(/\s+/)).not.toContain(
+      "bg-sidebar-accent",
+    );
+    expect(rowButton?.className).not.toContain("bg-sidebar-selected");
     expect(rowButton?.className).not.toContain("destructive");
     expect(rowButton?.className).toContain("hover:bg-sidebar-accent");
     expect(gauge?.className).toContain("bg-sidebar-ring/25");

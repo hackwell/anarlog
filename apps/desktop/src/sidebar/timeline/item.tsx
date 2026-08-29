@@ -177,8 +177,10 @@ const ItemBase = memo(function ItemBase({
   const showLiveStop = isLive && onStop;
   const showSelectedMarker = !isLive && (selected || multiSelected);
   // The selected fill is the one saturated surface in the rail, so anything
-  // sitting on it has to leave the muted ramp or it drops to ~1.5:1.
-  const isSelectedFill = showSelectedMarker && !isUpcoming;
+  // sitting on it has to leave the muted ramp or it drops to ~1.5:1. An
+  // upcoming row no longer carries a fill of its own, so selection wins
+  // outright when a row is both.
+  const isSelectedFill = showSelectedMarker;
   const secondaryToneClassName = isLive
     ? "text-recording-foreground"
     : isSelectedFill
@@ -225,11 +227,10 @@ const ItemBase = memo(function ItemBase({
           (multiSelected || selected) &&
             "bg-sidebar-selected text-sidebar-selected-foreground",
           !multiSelected && !selected && "hover:bg-sidebar-accent",
-          isUpcoming &&
-            !isLive && [
-              "bg-sidebar-accent text-foreground",
-              "focus-visible:ring-sidebar-ring/40",
-            ],
+          // One device per state: the gauge already marks the row and carries
+          // time-to-start, so the fill would only be a second, less
+          // informative copy of the same signal.
+          isUpcoming && !isLive && "focus-visible:ring-sidebar-ring/40",
           isLive && [
             "bg-recording-surface text-recording-foreground hover:bg-recording-surface/90",
             "focus-visible:ring-recording/50 focus-visible:ring-2 focus-visible:outline-hidden",
