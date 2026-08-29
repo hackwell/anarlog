@@ -75,10 +75,15 @@ export function TimelineBuckets({
               className={cn([
                 "sticky z-20",
                 bucketHeaderTopClassName,
-                "bg-background pt-0 pr-1 pb-1 pl-3",
+                "bg-background pt-3 pr-1 pb-1 pl-3",
               ])}
             >
-              <div className="text-foreground text-base font-bold">
+              {/* A date separator is a label, not a headline: the rail's one
+                  emphasis belongs to the selected row. Uppercase with tracking
+                  marks it as a different class of text, so it stays findable at
+                  11px/muted without borrowing size or weight from the items it
+                  labels; the group break is carried by spacing instead. */}
+              <div className="text-muted-foreground text-[11px] font-medium tracking-[0.06em] uppercase">
                 {bucket.label}
               </div>
             </div>
