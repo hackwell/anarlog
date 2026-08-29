@@ -443,11 +443,17 @@
   caret-color: var(--color-foreground, #374151);
 }
 
+/* Absent text, not a heading. The title placeholder inherits h1's 1.5rem so it
+ * sits exactly where the title will, but it must not inherit h1's 700 - that
+ * is what made an empty note read as a shouted headline. Weight carries the
+ * demotion, because colour cannot: muted-foreground is already the lightest
+ * text tone that clears AA here, and the old 0.6 opacity took it down to
+ * 2.26:1 (light) / 2.69:1 (dark), under even the 3:1 large-text floor. */
 .note-typography.prosemirror-editor .is-editor-empty:first-child::before,
 .note-typography.prosemirror-editor .is-empty::before,
 .note-typography.prosemirror-editor .react-placeholder-widget {
-  opacity: 0.6;
   color: var(--color-muted-foreground, #9ca3af);
+  font-weight: 400;
 }
 
 /* Innermost block under the caret gets a subtle backdrop; `.is-empty`
