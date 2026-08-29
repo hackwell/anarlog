@@ -466,7 +466,9 @@ export const TimelineView = memo(function TimelineView({
         className="flex h-full flex-col"
         onWheelCapture={handleWheelCapture}
       >
-        <div className={cn(["shrink-0 pb-1", topChromeInset && "pt-11"])}>
+        <div
+          className={cn(["shrink-0 px-2 pt-1 pb-2", topChromeInset && "pt-11"])}
+        >
           <TimelineSearchField onChange={setSearchQuery} value={searchQuery} />
         </div>
         <div className="relative min-h-0 flex-1">

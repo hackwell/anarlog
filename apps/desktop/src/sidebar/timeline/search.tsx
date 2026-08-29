@@ -41,7 +41,7 @@ export function TimelineSearchField({
     <div
       data-sidebar-timeline-search
       className={cn([
-        "flex h-8 w-full shrink-0 items-center gap-2 rounded-lg px-2",
+        "flex h-8 w-full shrink-0 items-center gap-2 rounded-lg px-2.5",
         "bg-sidebar-accent transition-colors",
         "focus-within:ring-sidebar-ring focus-within:ring-2",
       ])}
