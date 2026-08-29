@@ -154,6 +154,7 @@ export function SettingsNav() {
           className={cn([
             "border-border bg-accent/50 flex h-8 w-full shrink-0 items-center gap-2 rounded-lg border px-3",
             "focus-within:bg-accent transition-colors",
+            "focus-within:ring-sidebar-ring focus-within:ring-2",
           ])}
         >
           <MagnifyingGlass className="text-muted-foreground h-4 w-4 shrink-0" />

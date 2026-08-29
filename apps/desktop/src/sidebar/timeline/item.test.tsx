@@ -229,7 +229,7 @@ describe("TimelineItemComponent", () => {
 
     expect(rowButton?.className).toContain("bg-recording-surface");
     expect(rowButton?.className).toContain("text-recording-foreground");
-    expect(rowButton?.className).not.toContain("bg-accent");
+    expect(rowButton?.className).not.toContain("bg-sidebar-selected");
     expect(screen.getByTestId("dancing-sticks").dataset.amplitude).toBe("0.5");
 
     const stopButton = screen.getByRole("button", { name: "Stop listening" });
@@ -368,7 +368,8 @@ describe("TimelineItemComponent", () => {
 
     const rowButton = screen.getByText("Open Note").closest("button");
 
-    expect(rowButton?.className).toContain("bg-accent");
+    expect(rowButton?.className).toContain("bg-sidebar-selected");
+    expect(rowButton?.className).toContain("text-sidebar-selected-foreground");
     expect(
       document.querySelector("[data-sidebar-timeline-selected-marker]"),
     ).not.toBeNull();
@@ -446,7 +447,7 @@ describe("TimelineItemComponent", () => {
     // brand tone and leaves red to the recording row.
     expect(rowButton?.className).toContain("bg-sidebar-accent");
     expect(rowButton?.className).not.toContain("destructive");
-    expect(rowButton?.className).toContain("hover:bg-accent/50");
+    expect(rowButton?.className).toContain("hover:bg-sidebar-accent");
     expect(gauge?.className).toContain("bg-sidebar-ring/25");
     expect(gaugeFill?.className).toContain("bg-sidebar-ring");
     expect(rowButton?.className).toContain("pl-4");

@@ -176,6 +176,14 @@ const ItemBase = memo(function ItemBase({
   const hasMetadata = Boolean(isLive || durationLabel);
   const showLiveStop = isLive && onStop;
   const showSelectedMarker = !isLive && (selected || multiSelected);
+  // The selected fill is the one saturated surface in the rail, so anything
+  // sitting on it has to leave the muted ramp or it drops to ~1.5:1.
+  const isSelectedFill = showSelectedMarker && !isUpcoming;
+  const secondaryToneClassName = isLive
+    ? "text-recording-foreground"
+    : isSelectedFill
+      ? "text-sidebar-selected-foreground"
+      : "text-muted-foreground";
   const showUpcomingGauge =
     typeof upcomingProgress === "number" &&
     Boolean(isUpcoming) &&
@@ -214,9 +222,9 @@ const ItemBase = memo(function ItemBase({
           showUpcomingGauge && "pl-4",
           showTrailingStatus && "pr-10",
           ignored ? "cursor-default" : "cursor-pointer",
-          multiSelected && "bg-accent",
-          !multiSelected && selected && "bg-accent",
-          !multiSelected && !selected && "hover:bg-accent/50",
+          (multiSelected || selected) &&
+            "bg-sidebar-selected text-sidebar-selected-foreground",
+          !multiSelected && !selected && "hover:bg-sidebar-accent",
           isUpcoming &&
             !isLive && [
               "bg-sidebar-accent text-foreground",
@@ -246,9 +254,7 @@ const ItemBase = memo(function ItemBase({
                 data-sidebar-timeline-card-time
                 className={cn([
                   "shrink-0 font-mono text-[11px] tabular-nums",
-                  isLive
-                    ? "text-recording-foreground"
-                    : "text-muted-foreground",
+                  secondaryToneClassName,
                 ])}
               >
                 {displayTime}
@@ -258,13 +264,19 @@ const ItemBase = memo(function ItemBase({
               isLockRevealed ? (
                 <LockOpen
                   aria-label={t`Unlock Note`}
-                  className="text-muted-foreground size-3.5 shrink-0 self-center"
+                  className={cn([
+                    "size-3.5 shrink-0 self-center",
+                    secondaryToneClassName,
+                  ])}
                   weight="fill"
                 />
               ) : (
                 <Lock
                   aria-label={t`Locked note`}
-                  className="text-muted-foreground size-3.5 shrink-0 self-center"
+                  className={cn([
+                    "size-3.5 shrink-0 self-center",
+                    secondaryToneClassName,
+                  ])}
                   weight="fill"
                 />
               )
@@ -293,9 +305,7 @@ const ItemBase = memo(function ItemBase({
                   data-sidebar-timeline-card-duration
                   className={cn([
                     "min-w-0 truncate text-[11px]",
-                    isLive
-                      ? "text-recording-foreground"
-                      : "text-muted-foreground",
+                    secondaryToneClassName,
                   ])}
                 >
                   {durationLabel}
@@ -328,7 +338,10 @@ const ItemBase = memo(function ItemBase({
       {showSpinner ? (
         <div
           aria-hidden
-          className="text-muted-foreground pointer-events-none absolute top-1/2 right-3 flex size-5 -translate-y-1/2 items-center justify-center"
+          className={cn([
+            "pointer-events-none absolute top-1/2 right-3 flex size-5 -translate-y-1/2 items-center justify-center",
+            secondaryToneClassName,
+          ])}
         >
           <Spinner size={14} />
         </div>
