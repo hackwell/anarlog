@@ -42,22 +42,26 @@ export const CurrentTimeIndicator = forwardRef<
     >
       <div className="absolute inset-x-0 top-0 -translate-y-1/2">
         <div className="flex h-5 items-center gap-2 px-3">
+          {/* A clock reading, not a control: no fill, border or shadow. The
+              background is only an occluder for the `inside` variant, which
+              rides over a row. sidebar-selected is deliberately absent - that
+              colour answers "where am I" and must not also mean "now". */}
           <div
             data-sidebar-current-time-label
             className={cn([
-              "flex shrink-0 items-center gap-1.5 rounded-full px-2 py-0.5 shadow-xs",
-              "border-sidebar-border bg-sidebar-selected border",
-              "text-sidebar-selected-foreground text-[11px] font-semibold",
+              "flex shrink-0 items-center gap-1.5 rounded-sm pr-1.5",
+              "bg-background",
+              "text-muted-foreground text-[11px] font-normal",
             ])}
           >
-            <span className="uppercase">
+            <span className="tracking-[0.06em] uppercase">
               <Trans>Now</Trans>
             </span>
-            <span className="font-mono font-normal tabular-nums">{label}</span>
+            <span className="font-mono tabular-nums">{label}</span>
           </div>
           <div
             data-sidebar-current-time-line
-            className="bg-sidebar-border h-px min-w-0 flex-1"
+            className="bg-sidebar-now-line h-px min-w-0 flex-1"
           />
         </div>
       </div>

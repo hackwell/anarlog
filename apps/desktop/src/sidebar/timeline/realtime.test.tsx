@@ -29,7 +29,7 @@ describe("CurrentTimeIndicator", () => {
     );
   });
 
-  test("uses the sidebar brand tone for the current-time marker, not red", () => {
+  test("draws the current-time marker as a quiet rule, not red and not the selection colour", () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date(2024, 0, 15, 12, 0, 0));
 
@@ -37,14 +37,16 @@ describe("CurrentTimeIndicator", () => {
     const line = container.querySelector("[data-sidebar-current-time-line]");
     const label = container.querySelector("[data-sidebar-current-time-label]");
 
-    // Red is reserved for audio capture, so the "now" marker reads in the
-    // sidebar's own brand tone through theme-aware tokens rather than a
-    // literal red with a dark-mode override.
-    expect(line?.className).toContain("bg-sidebar-border");
+    // Red is reserved for audio capture, and sidebar-selected answers "where
+    // am I" - the marker marks a position, so it borrows neither. It reads as
+    // a muted time reading against its own 3:1 rule token.
+    expect(line?.className).toContain("bg-sidebar-now-line");
     expect(line?.className).not.toContain("red");
-    expect(label?.className).toContain("bg-sidebar-selected");
-    expect(label?.className).toContain("border-sidebar-border");
-    expect(label?.className).toContain("text-sidebar-selected-foreground");
+    expect(label?.className).toContain("text-muted-foreground");
+    expect(label?.className).not.toContain("sidebar-selected");
+    expect(label?.className).not.toContain("border");
+    expect(label?.className).not.toContain("shadow");
+    expect(label?.className).not.toContain("font-semibold");
     expect(label?.className).not.toContain("red");
   });
 

@@ -41,6 +41,11 @@
     --sidebar-selected-marker: 0 0% 100%;
     --sidebar-border: 222 18% 84%;
     --sidebar-ring: 222 72% 46%;
+    /* The "now" rule marks a position in the timeline, so it has to clear the
+       3:1 non-text minimum on its own - sidebar-border sits at 1.26:1 and is
+       for chrome edges. Kept off sidebar-selected: that colour means "this is
+       selected" and nothing else. */
+    --sidebar-now-line: 222 14% 55%;
     --recording: 358 72% 48%;
     --recording-surface: 358 72% 48%;
     --recording-foreground: 0 0% 100%;
@@ -90,6 +95,7 @@
     --sidebar-selected-marker: 0 0% 100%;
     --sidebar-border: 222 14% 20%;
     --sidebar-ring: 222 76% 62%;
+    --sidebar-now-line: 222 12% 40%;
     --recording: 358 75% 59%;
     --recording-surface: 358 68% 46%;
     --recording-foreground: 0 0% 100%;

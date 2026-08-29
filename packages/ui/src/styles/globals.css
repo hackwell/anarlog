@@ -57,6 +57,7 @@
   --color-sidebar-selected: hsl(var(--sidebar-selected));
   --color-sidebar-selected-foreground: hsl(var(--sidebar-selected-foreground));
   --color-sidebar-selected-marker: hsl(var(--sidebar-selected-marker));
+  --color-sidebar-now-line: hsl(var(--sidebar-now-line));
 
   --color-recording: hsl(var(--recording));
   --color-recording-surface: hsl(var(--recording-surface));
