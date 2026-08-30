@@ -173,12 +173,18 @@ jobs:
       - name: Stage the rolling DMG
         env:
           DMG_PATH: ${{ steps.find-dmg.outputs.path }}
+          CERT_ID: ${{ steps.apple-cert.outputs.cert-id }}
         run: |
           set -euo pipefail
           mkdir -p rolling-assets
           cp "$DMG_PATH" "rolling-assets/$ROLLING_DMG"
           (cd rolling-assets && shasum -a 256 "$ROLLING_DMG" > "$ROLLING_DMG.sha256")
-          codesign --verify --strict --verbose=2 "rolling-assets/$ROLLING_DMG"
+          # Tauri signs the DMG it writes, but that is its behaviour and not a
+          # guarantee; sign it here if it ever stops.
+          if ! codesign --verify --strict --verbose=2 "rolling-assets/$ROLLING_DMG"; then
+            codesign --force --sign "$CERT_ID" --timestamp "rolling-assets/$ROLLING_DMG"
+            codesign --verify --strict --verbose=2 "rolling-assets/$ROLLING_DMG"
+          fi
       - uses: actions/upload-artifact@v4
         with:
           name: desktop-rolling-assets
