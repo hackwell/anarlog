@@ -1,10 +1,13 @@
 import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
 import test from "node:test";
 
 import {
   lastStableVersion,
   nextRollingVersion,
 } from "./desktop-rolling-version.mjs";
+
+const ROLLING_WORKFLOW = ".github/workflows/desktop_rolling_cd.yaml";
 
 test("derives the next patch of the newest published stable release", () => {
   assert.equal(
@@ -118,4 +121,68 @@ test("successive runs of the same base version stay ordered", () => {
     Number(later.split(".").pop()) > Number(earlier.split(".").pop()),
     "run number must increase",
   );
+});
+
+// These assertions are the committed proof of the constraint that matters most:
+// a rolling build must never become what the shipped updater reads from
+// releases/latest/download/latest.json.
+test("the rolling workflow cannot publish itself as the latest release", async () => {
+  const workflow = await readFile(ROLLING_WORKFLOW, "utf8");
+  // Prose in the leading comment block explains the same flags; assert against
+  // the executable part so the test cannot pass on a comment alone.
+  const executable = workflow
+    .split("\n")
+    .filter((line) => !/^\s*#/.test(line))
+    .join("\n");
+
+  assert.match(executable, /gh release create "\$ROLLING_TAG"/);
+  assert.match(executable, /\n\s+--prerelease \\\n/);
+  assert.match(executable, /\n\s+--prerelease=true \\\n/);
+  // Both gh release create and gh release edit pin Latest off explicitly, and
+  // nothing in this workflow ever asks for Latest.
+  assert.equal((executable.match(/--latest=false/g) ?? []).length, 2);
+  assert.doesNotMatch(executable, /--latest[\s\\]/);
+  assert.doesNotMatch(executable, /--latest=true/);
+
+  // No updater manifest is generated or uploaded anywhere in this workflow.
+  assert.doesNotMatch(executable, /desktop-latest-json\.mjs/);
+  assert.match(executable, /A rolling build must never stage latest\.json/);
+  assert.match(
+    executable,
+    /releases\/latest resolved to the rolling tag \$ROLLING_TAG/,
+  );
+
+  // The rolling tag must not collide with the stable release tag namespace
+  // (`desktop_v<version>`) that latest.json, the AUR package and the APT
+  // repository all address.
+  const tag = /ROLLING_TAG: (\S+)/.exec(workflow)?.[1];
+  assert.equal(tag, "desktop-dev");
+  assert.doesNotMatch(tag, /^desktop_v/);
+  assert.doesNotMatch(tag, /^v\d/);
+});
+
+test("the rolling workflow builds only the macOS Apple Silicon target", async () => {
+  const workflow = await readFile(ROLLING_WORKFLOW, "utf8");
+
+  assert.match(workflow, /ROLLING_TARGET: aarch64-apple-darwin/);
+  assert.doesNotMatch(workflow, /x86_64-apple-darwin/);
+  assert.doesNotMatch(workflow, /unknown-linux-gnu/);
+  assert.doesNotMatch(workflow, /pc-windows-msvc/);
+
+  // The expensive macOS job must not start before RELEASES_TOKEN is proven.
+  assert.match(workflow, /build-macos:\n {4}needs: prepare\n/);
+  assert.match(workflow, /uses: \.\/\.github\/actions\/releases_preflight/);
+  assert.match(workflow, /uses: \.\/\.github\/actions\/macos_notarize_dmg/);
+});
+
+test("the stable release path keeps its tag trigger and publish guard", async () => {
+  const stable = await readFile(".github/workflows/desktop_cd.yaml", "utf8");
+
+  assert.match(stable, /on:\n {2}push:\n {4}tags:\n {6}- "v\*\.\*\.\*"/);
+  assert.doesNotMatch(stable, /\n {4}branches:/);
+  assert.match(
+    stable,
+    /if: \$\{\{ github\.event_name == 'push' && needs\.compute-version\.outputs\.publish == 'true'/,
+  );
+  assert.match(stable, /Missing changelog for stable version \$VERSION/);
 });

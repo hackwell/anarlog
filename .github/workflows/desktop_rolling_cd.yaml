@@ -1,0 +1,315 @@
+# Rolling development build. Every push to `main` produces one signed and
+# notarized macOS DMG and replaces the single `desktop-dev` pre-release in the
+# public releases repository, so the current state of main is always
+# downloadable and installable.
+#
+# This is deliberately separate from desktop_cd.yaml. The stable path takes its
+# version from a pushed `v*.*.*` tag, requires a committed changelog entry,
+# records provenance, publishes latest.json and marks its release Latest. A
+# rolling build has none of those and must never be able to acquire them, so it
+# does not run through the stable jobs at all.
+#
+# Three independent mechanisms keep a rolling build away from `releases/latest`
+# and therefore away from the shipped updater, which polls
+# https://github.com/flagbit/session-echo-releases/releases/latest/download/latest.json:
+#
+#   1. The release is created with `--prerelease --latest=false` and is never
+#      edited back. GitHub never resolves `/releases/latest` to a pre-release,
+#      so the updater's URL cannot resolve to this release. The publish job
+#      re-reads the API afterwards and fails if it ever did.
+#   2. The release carries no `latest.json` asset. Only DMGs and their
+#      checksums are uploaded, and the publish job fails if a latest.json ever
+#      appears on the rolling tag, so there is nothing here for an updater to
+#      read even if the flag were flipped by hand.
+#   3. The build uses tauri.conf.staging.json, whose updater is
+#      `"active": false` and whose identifier is de.flagbit.sessionecho.staging.
+#      The rolling app therefore installs beside a stable install instead of
+#      replacing it, and never polls for updates at all.
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+# One rolling build at a time, and the newest push wins: a rolling release is
+# "the current build", so an in-flight build of an older commit is worth less
+# than the one that supersedes it.
+concurrency:
+  group: desktop-rolling-release
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  ROLLING_TAG: desktop-dev
+  ROLLING_TARGET: aarch64-apple-darwin
+  ROLLING_DMG: anarlog-dev-macos-aarch64.dmg
+  TAURI_CONF_PATH: ./src-tauri/tauri.conf.staging.json
+  NODE_OPTIONS: "--max-old-space-size=4096"
+
+jobs:
+  # Runs before the expensive macOS build so a missing RELEASES_TOKEN costs
+  # seconds instead of a signed build that cannot be published. The preflight
+  # action reports the reason as a single ::error:: annotation; this job repeats
+  # it in the run summary so it is visible without opening the logs.
+  prepare:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+      - id: preflight
+        name: Verify the releases repository is writable
+        uses: ./.github/actions/releases_preflight
+        with:
+          token: ${{ secrets.RELEASES_TOKEN }}
+      - if: ${{ failure() && steps.preflight.outcome == 'failure' }}
+        name: Explain the preflight failure in the summary
+        run: |
+          echo "## Rolling build not published" >> "$GITHUB_STEP_SUMMARY"
+          echo "\`RELEASES_TOKEN\` is missing or cannot write to the releases repository, so no rolling DMG was built. See the annotation on the preflight step." >> "$GITHUB_STEP_SUMMARY"
+      - id: version
+        name: Derive the rolling version
+        env:
+          RUN_NUMBER: ${{ github.run_number }}
+        run: |
+          set -euo pipefail
+          VERSION=$(git tag --list 'desktop_v*' 'v*' \
+            | node scripts/desktop-rolling-version.mjs --run-number "$RUN_NUMBER")
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "Rolling version: $VERSION"
+
+  # Mirrors the staging branch of desktop_cd.yaml's build-macos job: one Apple
+  # Silicon target, the staging configuration, signed and notarized the same
+  # way. Intel, Linux and Windows are intentionally not built on every push.
+  build-macos:
+    needs: prepare
+    runs-on: depot-macos-26
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
+          fetch-depth: 0
+          fetch-tags: true
+          submodules: recursive
+      - uses: ./.github/actions/macos_tcc
+      - env:
+          ROLLING_VERSION: ${{ needs.prepare.outputs.version }}
+        run: ./scripts/version.sh "./apps/desktop/src-tauri/tauri.conf.json" "$ROLLING_VERSION"
+      - uses: ./.github/actions/install_desktop_deps
+        with:
+          target: macos
+      - uses: ./.github/actions/rust_install
+        with:
+          platform: macos
+      - run: echo "SDKROOT=$(xcrun --sdk macosx --show-sdk-path)" >> $GITHUB_ENV
+      - uses: ./.github/actions/pnpm_install
+      - run: pnpm -F ui build
+      - run: |
+          TAURI_ENV_TARGET_TRIPLE="$ROLLING_TARGET" cargo xtask prepare-binaries
+          ./scripts/sidecar.sh "./apps/desktop/$TAURI_CONF_PATH" "binaries/char-chrome-native-host"
+          ./scripts/sidecar.sh "./apps/desktop/$TAURI_CONF_PATH" "binaries/check-permissions"
+          ./scripts/sidecar.sh "./apps/desktop/$TAURI_CONF_PATH" "resources/cli/anarlog-cli"
+      - uses: ./.github/actions/apple_cert
+        id: apple-cert
+        with:
+          apple-certificate: ${{ secrets.APPLE_CERTIFICATE }}
+          apple-certificate-password: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
+          keychain-password: ${{ secrets.KEYCHAIN_PASSWORD }}
+      - env:
+          CERT_ID: ${{ steps.apple-cert.outputs.cert-id }}
+        run: |
+          CLOUDSYNC_DYLIB="../../crates/cloudsync/vendor/cloudsync/macos/aarch64/cloudsync.dylib"
+          codesign --force --sign "$CERT_ID" --timestamp --options runtime "$CLOUDSYNC_DYLIB"
+          codesign --verify --strict --verbose=2 "$CLOUDSYNC_DYLIB"
+        working-directory: ./apps/desktop
+      - run: pnpm -F desktop tauri build --target "$ROLLING_TARGET" --config "$TAURI_CONF_PATH" --features devtools --verbose
+        env:
+          # https://v2.tauri.app/reference/environment-variables/
+          CI: false
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CARGO_PROFILE_RELEASE_DEBUG: line-tables-only
+          APP_VERSION: ${{ needs.prepare.outputs.version }}
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_PASSWORD: ${{ secrets.APPLE_PASSWORD }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
+          APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
+          APPLE_SIGNING_IDENTITY: ${{ steps.apple-cert.outputs.cert-id }}
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
+          VITE_APP_URL: "https://sessionecho.flagbit.de"
+          VITE_API_URL: "https://api.sessionecho.flagbit.de"
+          VITE_APP_VERSION: ${{ needs.prepare.outputs.version }}
+      - id: find-dmg
+        env:
+          ROLLING_VERSION: ${{ needs.prepare.outputs.version }}
+        run: |
+          set -euo pipefail
+          shopt -s nullglob
+          bundle_dir="apps/desktop/src-tauri/target/$ROLLING_TARGET/release/bundle"
+          apps=("$bundle_dir/macos"/*.app)
+          dmgs=("$bundle_dir/dmg"/*.dmg)
+          if [[ ${#apps[@]} -ne 1 || ${#dmgs[@]} -ne 1 ]]; then
+            echo "::error::Expected exactly one .app and one .dmg for $ROLLING_TARGET"
+            exit 1
+          fi
+          app_version=$(plutil -extract CFBundleShortVersionString raw -o - "${apps[0]}/Contents/Info.plist")
+          if [[ "$app_version" != "$ROLLING_VERSION" ]]; then
+            echo "::error::Built app reports version $app_version, expected $ROLLING_VERSION"
+            exit 1
+          fi
+          echo "path=${dmgs[0]}" >> "$GITHUB_OUTPUT"
+      - uses: ./.github/actions/macos_notarize_dmg
+        with:
+          dmg-path: ${{ steps.find-dmg.outputs.path }}
+          signing-identity: ${{ steps.apple-cert.outputs.cert-id }}
+          apple-id: ${{ secrets.APPLE_ID }}
+          apple-password: ${{ secrets.APPLE_PASSWORD }}
+          apple-team-id: ${{ secrets.APPLE_TEAM_ID }}
+      # Only the DMG is staged. The updater bundles tauri wrote next to it
+      # (.app.tar.gz and .app.tar.gz.sig) are deliberately left behind: nothing
+      # a rolling build produces may end up in an updater feed.
+      - name: Stage the rolling DMG
+        env:
+          DMG_PATH: ${{ steps.find-dmg.outputs.path }}
+        run: |
+          set -euo pipefail
+          mkdir -p rolling-assets
+          cp "$DMG_PATH" "rolling-assets/$ROLLING_DMG"
+          (cd rolling-assets && shasum -a 256 "$ROLLING_DMG" > "$ROLLING_DMG.sha256")
+          spctl --assess --type open --context context:primary-signature -vv "rolling-assets/$ROLLING_DMG"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: desktop-rolling-assets
+          path: rolling-assets/*
+          if-no-files-found: error
+          retention-days: 7
+
+  publish-rolling:
+    needs: [prepare, build-macos]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - id: releases
+        name: Verify the releases repository is writable
+        uses: ./.github/actions/releases_preflight
+        with:
+          token: ${{ secrets.RELEASES_TOKEN }}
+      # A cancelled supersede can leave this run publishing a commit main has
+      # already moved past. Skipping is correct: the newer run publishes the
+      # newer build, and a rolling release must describe the tip of main.
+      - id: tip
+        name: Check this commit is still the tip of main
+        run: |
+          set -euo pipefail
+          git fetch origin main --no-tags
+          MAIN=$(git rev-parse origin/main)
+          if [[ "$MAIN" != "$GITHUB_SHA" ]]; then
+            echo "::notice::main advanced from $GITHUB_SHA to $MAIN while this build ran; a newer run publishes instead"
+            echo "publish=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "publish=true" >> "$GITHUB_OUTPUT"
+          fi
+      - if: ${{ steps.tip.outputs.publish == 'true' }}
+        uses: actions/download-artifact@v4
+        with:
+          name: desktop-rolling-assets
+          path: rolling-assets
+      - if: ${{ steps.tip.outputs.publish == 'true' }}
+        name: Publish the rolling pre-release
+        env:
+          GH_TOKEN: ${{ secrets.RELEASES_TOKEN }}
+          RELEASES_REPOSITORY: ${{ steps.releases.outputs.repository }}
+          ROLLING_VERSION: ${{ needs.prepare.outputs.version }}
+        run: |
+          set -euo pipefail
+          if [[ -e "rolling-assets/latest.json" ]]; then
+            echo "::error::A rolling build must never stage latest.json"
+            exit 1
+          fi
+
+          TITLE="Development build $ROLLING_VERSION"
+          NOTES=$(printf '%s\n' \
+            "Rolling development build of \`main\`, replaced on every push. Not a release." \
+            "" \
+            "- Version: \`$ROLLING_VERSION\`" \
+            "- Commit: \`$GITHUB_SHA\`" \
+            "- Built: $(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+            "" \
+            "Installs as \"Session Echo Staging\" beside a stable install and never auto-updates. For the supported build, use the latest stable release.")
+
+          if gh release view "$ROLLING_TAG" --repo "$RELEASES_REPOSITORY" > /dev/null 2>&1; then
+            gh release upload "$ROLLING_TAG" --repo "$RELEASES_REPOSITORY" --clobber rolling-assets/*
+            gh release edit "$ROLLING_TAG" --repo "$RELEASES_REPOSITORY" \
+              --title "$TITLE" \
+              --notes "$NOTES" \
+              --draft=false \
+              --prerelease=true \
+              --latest=false
+          else
+            gh release create "$ROLLING_TAG" --repo "$RELEASES_REPOSITORY" \
+              --title "$TITLE" \
+              --notes "$NOTES" \
+              --prerelease \
+              --latest=false \
+              rolling-assets/*
+          fi
+      # Proves the three containment mechanisms held for this run rather than
+      # assuming they did. Any failure here means a rolling build could be
+      # served to the updater, so it fails the run loudly.
+      - if: ${{ steps.tip.outputs.publish == 'true' }}
+        name: Prove the rolling release cannot reach the updater
+        env:
+          GH_TOKEN: ${{ secrets.RELEASES_TOKEN }}
+          RELEASES_REPOSITORY: ${{ steps.releases.outputs.repository }}
+        run: |
+          set -euo pipefail
+          release=$(gh api "repos/$RELEASES_REPOSITORY/releases/tags/$ROLLING_TAG")
+
+          if ! jq -e '.prerelease == true and .draft == false' <<< "$release" > /dev/null; then
+            echo "::error::Rolling release $ROLLING_TAG is not a published pre-release"
+            exit 1
+          fi
+          if jq -e '[.assets[].name] | index("latest.json")' <<< "$release" > /dev/null; then
+            echo "::error::Rolling release $ROLLING_TAG carries a latest.json the updater could read"
+            exit 1
+          fi
+          if ! jq -e --arg dmg "$ROLLING_DMG" '[.assets[].name] | index($dmg)' <<< "$release" > /dev/null; then
+            echo "::error::Rolling release $ROLLING_TAG is missing $ROLLING_DMG"
+            exit 1
+          fi
+
+          # `releases/latest` is what the updater endpoint resolves. It 404s
+          # only while no stable release exists at all, which is a pre-existing
+          # state of the releases repository and not something this run caused.
+          if latest_tag=$(gh api "repos/$RELEASES_REPOSITORY/releases/latest" --jq .tag_name 2> /dev/null); then
+            if [[ "$latest_tag" == "$ROLLING_TAG" ]]; then
+              echo "::error::releases/latest resolved to the rolling tag $ROLLING_TAG; the updater would serve a development build"
+              exit 1
+            fi
+            echo "releases/latest is $latest_tag, not $ROLLING_TAG"
+          else
+            echo "::warning::$RELEASES_REPOSITORY has no stable release yet, so releases/latest does not resolve"
+          fi
+      - if: ${{ steps.tip.outputs.publish == 'true' }}
+        name: Summarize the rolling build
+        env:
+          RELEASES_REPOSITORY: ${{ steps.releases.outputs.repository }}
+          ROLLING_VERSION: ${{ needs.prepare.outputs.version }}
+        run: |
+          {
+            echo "## Rolling development build"
+            echo "- Version: \`$ROLLING_VERSION\`"
+            echo "- Commit: \`$GITHUB_SHA\`"
+            echo "- Download: https://github.com/$RELEASES_REPOSITORY/releases/download/$ROLLING_TAG/$ROLLING_DMG"
+            echo "- Release page: https://github.com/$RELEASES_REPOSITORY/releases/tag/$ROLLING_TAG"
+          } >> "$GITHUB_STEP_SUMMARY"
