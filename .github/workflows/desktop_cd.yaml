@@ -204,7 +204,7 @@ jobs:
     if: ${{ !cancelled() && (needs.preflight.result == 'success' || needs.preflight.result == 'skipped') }}
     permissions:
       contents: write
-    runs-on: macos-15
+    runs-on: macos-26
     strategy:
       fail-fast: true
       matrix:
