@@ -1,0 +1,113 @@
+Session Echo
+Copyright (c) 2026-present Flagbit GmbH & Co. KG
+
+This product includes software developed by Fastrepl, Inc.
+(https://github.com/fastrepl/anarlog), licensed under the MIT License,
+Copyright (c) 2023-present Fastrepl, Inc.
+
+Session Echo is distributed under the MIT License. See LICENSE for the full
+text and for both copyright notices.
+
+
+WHY THIS FILE EXISTS
+--------------------
+
+Session Echo is built from a private source repository and distributed as
+public binaries. Nobody receiving a build can read its commit history, so the
+history cannot serve as the record of where this software came from. This file
+is that record. It is the attribution the MIT License requires, in the only
+place a recipient of a binary can actually see it.
+
+
+PROVENANCE
+----------
+
+Session Echo is a hard fork of the project now published as `anarlog`. There
+are no ongoing merges from upstream.
+
+The upstream history begins on 2024-12-09 and the project was renamed several
+times before this fork was taken. Established from the repository history:
+
+  2024-12-09  Fastnote
+              Initial commit (31c9422cd). The README read "# Fastnote" and
+              package.json declared "name": "fastnote".
+
+  2025        Hyprnote
+              In use by 2025-05-04 (#719, "Welcome to Hyprnote"); the README
+              was rewritten for Hyprnote branding on 2025-11-16 (5c33b0a06),
+              and application data directories and bundle identifiers were
+              migrated to `hyprnote` in November 2025 (#1680, #1687).
+
+  2026-02     Char
+              Product renamed from Hyprnote to Char (#3998, #4247, and the
+              content migration in #3937). Char was a product name only — no
+              separate public repository under that name exists.
+
+  2026-04/05  Anarlog
+              Renamed again to Anarlog: README (#5131, 2026-04-26),
+              application naming (#5286, 2026-05-20), and storage paths
+              (#5314). Remaining `fastrepl/char` references were repointed at
+              `fastrepl/anarlog` on 2026-08-12 (#6678).
+
+  2026-08-27  Session Echo
+              Forked and rebranded by Flagbit GmbH & Co. KG (3077c1a29,
+              "rename to Session Echo with de.flagbit bundle identifiers").
+
+Throughout that chain the repository was a single, continuously renamed
+project. The upstream repository remains public at
+https://github.com/fastrepl/anarlog, and the older URL
+https://github.com/fastrepl/hyprnote redirects to it.
+
+The names "Fastnote", "Hyprnote", "Char", "Anarlog" and "Fastrepl" are the
+upstream project's and its authors' marks. They were removed from Session Echo
+for trademark reasons, not licensing ones; the MIT License grants no rights in
+them. Their use above is factual attribution of origin, not a claim to them.
+
+
+WHAT WAS REMOVED FROM THE UPSTREAM PROJECT
+------------------------------------------
+
+Session Echo is a subtractive fork. Notably, the upstream `enterprise/` tree —
+server-side meeting-bot infrastructure that was commercially licensed by
+Fastrepl, Inc. and not covered by the MIT License — was deleted in full, along
+with its separate license files. No commercially licensed upstream code is
+present in Session Echo, and none is distributed with its binaries.
+
+The hosted API, the web application and the mobile applications were removed as
+well.
+
+
+THIRD-PARTY COMPONENTS
+----------------------
+
+The components below are compiled into or loaded by Session Echo builds. Each
+license was verified against the pinned upstream revision.
+
+  whisper.cpp
+    https://github.com/ggml-org/whisper.cpp
+    MIT License, Copyright (c) 2023-2024 The ggml authors
+    Vendored through whisper-rs (below) and compiled into the app.
+
+  whisper-rs
+    https://codeberg.org/tazz4843/whisper-rs (revision 129b982)
+    The Unlicense
+
+  ort (ONNX Runtime bindings for Rust)
+    https://github.com/pykeio/ort (version 2.0.0-rc.10)
+    MIT License OR Apache License 2.0
+    Links the ONNX Runtime library, which carries its own license.
+
+  knf-rs, from pyannote-rs
+    https://github.com/thewh1teagle/pyannote-rs (revision e23bd29)
+    MIT License
+
+Model weights are not bundled. Whisper and local LLM weights are downloaded on
+first use and are covered by their own licenses from their respective
+publishers. At the time of writing these downloads are still served from the
+upstream project's mirror (hyprnote.s3.us-east-1.amazonaws.com); moving them to
+their original publishers is planned.
+
+This section lists the principal native and machine-learning components. It is
+not a complete transitive dependency manifest. The full set of Rust and
+JavaScript dependencies and their licenses is determined by Cargo.lock and
+pnpm-lock.yaml in the source repository.
