@@ -3,11 +3,11 @@
   "version": "1.0.0",
   "description": "Query Session Echo meeting notes, summaries, transcripts, participants, action items, and recurring history.",
   "author": {
-    "name": "Fastrepl",
+    "name": "Flagbit",
     "email": "founders@sessionecho.flagbit.de",
     "url": "https://sessionecho.flagbit.de"
   },
-  "repository": "https://github.com/fastrepl/anarlog/tree/main/agent-plugins/session-echo",
+  "repository": "https://github.com/flagbit/session-echo/tree/main/agent-plugins/session-echo",
   "license": "MIT",
   "keywords": ["meetings", "notes", "transcripts", "productivity", "mcp"],
   "skills": "./skills/",
@@ -16,7 +16,7 @@
     "displayName": "Session Echo",
     "shortDescription": "Query your meeting notes",
     "longDescription": "Find Session Echo meetings and read their notes, summaries, participants, action items, bounded transcript excerpts, and recurring history. The bundled local MCP server and CLI fallback are read-only.",
-    "developerName": "Fastrepl",
+    "developerName": "Flagbit",
     "category": "Productivity",
     "capabilities": [
       "Find meetings",

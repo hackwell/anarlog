@@ -83,7 +83,7 @@ done
 
 ```graphql
 query($n: Int!, $after: String) {
-  repository(owner: "fastrepl", name: "anarlog") {
+  repository(owner: "flagbit", name: "session-echo") {
     pullRequest(number: $n) {
       reviewThreads(first: 50, after: $after) {
         pageInfo { hasNextPage endCursor }
@@ -114,7 +114,7 @@ Also paginate review comments in case Bugbot posted one that is not yet a
 thread:
 
 ```bash
-gh api --paginate repos/fastrepl/anarlog/pulls/<n>/comments
+gh api --paginate repos/flagbit/session-echo/pulls/<n>/comments
 gh pr view <n> --comments
 ```
 

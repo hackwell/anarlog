@@ -19,30 +19,30 @@ The bundled MCP configuration starts `anarlog mcp`. If the client cannot find th
 ### Claude Code
 
 ```bash
-claude plugin marketplace add fastrepl/anarlog
-claude plugin install session-echo@fastrepl
+claude plugin marketplace add flagbit/session-echo
+claude plugin install session-echo@flagbit
 ```
 
 ### GitHub Copilot CLI
 
 ```bash
-copilot plugin marketplace add fastrepl/anarlog
-copilot plugin install session-echo@fastrepl
+copilot plugin marketplace add flagbit/session-echo
+copilot plugin install session-echo@flagbit
 ```
 
 ### ChatGPT and Codex
 
 ```bash
-codex plugin marketplace add fastrepl/anarlog \
+codex plugin marketplace add flagbit/session-echo \
   --sparse .agents/plugins \
   --sparse agent-plugins/session-echo
 ```
 
-Restart the ChatGPT desktop app, open the Plugins Directory, select the Fastrepl source, and install Session Echo.
+Restart the ChatGPT desktop app, open the Plugins Directory, select the Flagbit source, and install Session Echo.
 
 ### Cursor
 
-Import `https://github.com/fastrepl/anarlog` as a team marketplace, or load `agent-plugins/session-echo` as a local plugin while testing.
+Import `https://github.com/flagbit/session-echo` as a team marketplace, or load `agent-plugins/session-echo` as a local plugin while testing.
 
 ## Configure MCP directly
 

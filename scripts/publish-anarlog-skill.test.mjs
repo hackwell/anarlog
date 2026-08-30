@@ -61,14 +61,14 @@ test("repository marketplaces resolve the Session Echo plugin package", async ()
   ];
   for (const marketplacePath of marketplacePaths) {
     const marketplace = await readJson(marketplacePath);
-    assert.equal(marketplace.name, "fastrepl");
+    assert.equal(marketplace.name, "flagbit");
     assert.equal(marketplace.plugins.length, 1);
     assert.equal(marketplace.plugins[0].name, "session-echo");
     assert.equal(marketplace.plugins[0].source, `./${PLUGIN_ROOT}`);
   }
 
   const codexMarketplace = await readJson(".agents/plugins/marketplace.json");
-  assert.equal(codexMarketplace.name, "fastrepl");
+  assert.equal(codexMarketplace.name, "flagbit");
   assert.equal(codexMarketplace.plugins[0].source.path, `./${PLUGIN_ROOT}`);
 });
 

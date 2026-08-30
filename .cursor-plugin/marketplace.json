@@ -1,11 +1,11 @@
 {
-  "name": "fastrepl",
+  "name": "flagbit",
   "owner": {
-    "name": "Fastrepl",
+    "name": "Flagbit",
     "email": "founders@sessionecho.flagbit.de"
   },
   "metadata": {
-    "description": "Official plugins from Fastrepl",
+    "description": "Official plugins from Flagbit",
     "version": "1.0.0"
   },
   "plugins": [

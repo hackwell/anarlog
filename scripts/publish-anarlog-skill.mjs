@@ -33,7 +33,7 @@ export const PLUGIN_PACKAGE_MIRRORS = [
 ];
 
 const SKILL_REPO_BASE =
-  "https://github.com/fastrepl/anarlog/blob/main/skills/session-echo";
+  "https://github.com/flagbit/session-echo/blob/main/skills/session-echo";
 
 export const REFERENCE_LINK_REWRITES = {
   "references/cli.md": `${SKILL_REPO_BASE}/references/cli.md`,

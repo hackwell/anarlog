@@ -1,12 +1,12 @@
 {
-  "name": "fastrepl",
+  "name": "flagbit",
   "owner": {
-    "name": "Fastrepl",
+    "name": "Flagbit",
     "email": "founders@sessionecho.flagbit.de",
     "url": "https://sessionecho.flagbit.de"
   },
   "metadata": {
-    "description": "Official plugins from Fastrepl",
+    "description": "Official plugins from Flagbit",
     "version": "1.0.0"
   },
   "plugins": [
@@ -17,11 +17,11 @@
       "description": "Query Session Echo meeting notes, summaries, transcripts, participants, action items, and recurring history.",
       "version": "1.0.0",
       "author": {
-        "name": "Fastrepl",
+        "name": "Flagbit",
         "email": "founders@sessionecho.flagbit.de",
         "url": "https://sessionecho.flagbit.de"
       },
-      "repository": "https://github.com/fastrepl/anarlog/tree/main/agent-plugins/session-echo",
+      "repository": "https://github.com/flagbit/session-echo/tree/main/agent-plugins/session-echo",
       "license": "MIT",
       "category": "Productivity",
       "tags": ["meetings", "notes", "transcripts", "mcp"]

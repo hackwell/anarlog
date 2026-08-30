@@ -1,7 +1,7 @@
 {
-  "name": "fastrepl",
+  "name": "flagbit",
   "interface": {
-    "displayName": "Fastrepl"
+    "displayName": "Flagbit"
   },
   "plugins": [
     {

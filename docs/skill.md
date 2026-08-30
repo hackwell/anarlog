@@ -22,7 +22,7 @@ Never query or modify Session Echo's SQLite database directly. The CLI and MCP s
 3. Get the meeting before requesting its transcript. Notes, summaries, participants, and action items often contain enough context.
 4. Ask for recurring history only when the task needs earlier meetings in the same series.
 
-See [CLI commands](https://github.com/fastrepl/anarlog/blob/main/skills/session-echo/references/cli.md) and [MCP tools](https://github.com/fastrepl/anarlog/blob/main/skills/session-echo/references/mcp.md).
+See [CLI commands](https://github.com/flagbit/session-echo/blob/main/skills/session-echo/references/cli.md) and [MCP tools](https://github.com/flagbit/session-echo/blob/main/skills/session-echo/references/mcp.md).
 
 ## Keep context bounded
 
@@ -39,4 +39,4 @@ See [CLI commands](https://github.com/fastrepl/anarlog/blob/main/skills/session-
 - CLI export can create a file. Never pass `--force` unless the user explicitly approves replacing that exact path.
 - If search results are ambiguous, ask the user to choose a meeting.
 
-For setup and failures, see [setup](https://github.com/fastrepl/anarlog/blob/main/skills/session-echo/references/setup.md) and [errors](https://github.com/fastrepl/anarlog/blob/main/skills/session-echo/references/errors.md).
+For setup and failures, see [setup](https://github.com/flagbit/session-echo/blob/main/skills/session-echo/references/setup.md) and [errors](https://github.com/flagbit/session-echo/blob/main/skills/session-echo/references/errors.md).

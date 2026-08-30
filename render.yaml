@@ -16,9 +16,9 @@ services:
           name: otel-collector
           property: host
       - key: OTEL_ALLOWED_ORIGIN_APP
-        value: https://char.com
+        value: https://sessionecho.flagbit.de
       - key: OTEL_ALLOWED_ORIGIN_WWW
-        value: https://www.char.com
+        value: https://www.sessionecho.flagbit.de
       - key: OTEL_ALLOWED_ORIGIN_LOCAL
         value: http://localhost:3000
   - type: pserv

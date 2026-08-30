@@ -30,8 +30,8 @@ On macOS, open **Session Echo → Settings → Developers** and select **Install
 To build from source instead:
 
 ```bash
-git clone https://github.com/fastrepl/anarlog.git
-cd anarlog
+git clone https://github.com/flagbit/session-echo.git
+cd session-echo
 cargo install --locked --path apps/cli
 anarlog --version
 ```

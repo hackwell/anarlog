@@ -4,7 +4,7 @@ use tauri::Manager;
 
 use crate::AppWindow;
 
-// TODO: https://github.com/fastrepl/anarlog/commit/150c8a1 this not worked. webview_window not found.
+// TODO: upstream commit 150c8a1 did not work here. webview_window not found.
 pub fn on_window_event(window: &tauri::Window<tauri::Wry>, event: &tauri::WindowEvent) {
     let app = window.app_handle();
 
@@ -175,7 +175,7 @@ mod test {
                 Some(serde_json::json!({ "calendarEventId": "123", "record": "true" })),
             ),
             (
-                "hyprnote://hyprnote.com/app/new?record=true",
+                "sessionecho://sessionecho.flagbit.de/app/new?record=true",
                 "/app/new",
                 Some(serde_json::json!({ "record": "true" })),
             ),
