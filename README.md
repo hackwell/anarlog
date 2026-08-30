@@ -1,104 +1,113 @@
-> **Note:** The team is now building **[char](https://char.com)**. The **anarlog** community application remains open-source, MIT-licensed, and maintained as the local-first meeting notetaker in this repo.
-
 <div align="center">
 
-  <img width="110" src="apps/desktop/src-tauri/icons/stable/128x128@2x.png" alt="anarlog icon" />
+  <img width="110" src="brand/session-echo-icon-navy-512.png" alt="Session Echo icon" />
 
-  <h1>anarlog</h1>
+  <h1>Session Echo</h1>
 
   <p>
-    <b>The privacy-first AI meeting notepad.</b>
+    <b>A meeting recorder that keeps the meeting on your machine.</b>
     <br />
-    Open source, local-first, and yours to fork. Granola, rearranged.
+    Records, transcribes, and summarises locally. No account, no telemetry.
   </p>
 
   <p>
-    <a href="https://anarlog.so">Website</a>
-    &nbsp;•&nbsp;
-    <a href="https://docs.anarlog.so">Docs</a>
-    &nbsp;•&nbsp;
-    <a href="https://anarlog.so/download">Download</a>
-    &nbsp;•&nbsp;
-    <a href="https://anarlog.so/discord">Discord</a>
-    &nbsp;•&nbsp;
-    <a href="https://www.reddit.com/r/anarlog/">r/anarlog</a>
-    &nbsp;•&nbsp;
-    <a href="https://x.com/anarlogapp">@anarlogapp</a>
-    &nbsp;•&nbsp;
-    <a href="https://status.anarlog.so">Status</a>
-  </p>
-
-  <p>
-    <a href="https://github.com/fastrepl/anarlog/stargazers"><img src="https://img.shields.io/github/stars/fastrepl/anarlog?style=flat&color=ffe09d" alt="GitHub stars" /></a>
     <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-black" alt="MIT license" /></a>
-    <a href="https://anarlog.so/discord"><img src="https://img.shields.io/badge/Discord-join-5865F2?logo=discord&logoColor=white" alt="Discord" /></a>
-    <a href="https://deepwiki.com/fastrepl/anarlog"><img src="https://deepwiki.com/badge.svg" alt="Ask DeepWiki" /></a>
   </p>
 
 </div>
 
 <br />
 
-anarlog is an open-source alternative to Granola. It takes notes in your meetings without sending a bot to join the call: it listens to your device audio, can transcribe on your machine, and keeps app data in a local SQLite database.
+Session Echo is a desktop meeting recorder. It captures the audio on your
+device, transcribes it there, and turns it into notes you can edit and export.
+No bot joins the call, nothing shows up in the participant list, and there is
+no Session Echo account to create.
 
-It is built for people who want AI meeting notes without handing their conversations to someone else's cloud, and for anyone who needs to get a notetaker past a security review with a straight face.
+It is built for people who need meeting notes without handing the conversation
+to someone else's cloud, and for anyone who has to get a notetaker past a works
+council or a data protection review.
 
-## Why anarlog
+## What it does
 
-- **No bot joins your call.** anarlog captures audio directly on your device. Nothing appears in the participant list, and nothing records from inside the meeting.
-- **Local when you choose it.** On supported Macs, available built-in transcription models run on-device. Local Intelligence providers keep summaries and chat on your computer too.
-- **Your data, in a format you can read.** Sessions, notes, and transcripts live in local SQLite. Recordings and attachments are plain local files. Export Markdown whenever it fits your workflow.
-- **Bring your own AI.** Use a supported hosted provider, your own API key, or an OpenAI-compatible local server such as Ollama, LM Studio, or Unsloth.
-- **Readable source, MIT.** The community application is MIT-licensed. Fork it, audit it, sell it, or build it yourself.
-- **Cloud is opt-in, not required.** Hosted AI, encrypted CloudSync, and sharing exist when you want them. Nothing depends on them.
+- **Records without joining.** Audio is captured from your device, not from
+  inside the meeting.
+- **Transcribes on your machine.** Whisper models run locally. On Apple
+  hardware the system speech recogniser can be used instead. Speaker
+  diarization runs locally too.
+- **Summarises with a model you choose.** Point it at a local
+  OpenAI-compatible server (Ollama, LM Studio) or at a hosted provider with
+  your own API key. There is no Session Echo-operated inference service.
+- **Keeps data in formats you can read.** Sessions, notes, and transcripts live
+  in a local SQLite database. Recordings are plain files. Notes export to
+  Markdown.
+- **Sends no telemetry.** There is no analytics and no crash reporting. The
+  app's log output stays in the local log file.
+- **Connects to your calendar.** Apple Calendar and Microsoft 365 are
+  supported, so scheduled meetings show up without a hosted connector.
+- **German and English UI.**
 
 ## What runs where
 
-| Part of the workflow | Where it happens |
-| --- | --- |
-| Audio capture and recording | Your device |
-| Transcription | Your device with an on-device model, or the provider you select |
-| Notes and transcript storage | Local SQLite plus local files |
-| AI summaries and chat | Your choice: local model, your own API key, or optional hosted AI |
-| Sync and sharing | Off by default, opt-in encrypted CloudSync |
+| Part of the workflow        | Where it happens                                                                |
+| --------------------------- | ------------------------------------------------------------------------------- |
+| Audio capture and recording | Your device                                                                     |
+| Transcription               | Your device (local Whisper, or Apple's speech recogniser)                       |
+| Diarization                 | Your device                                                                     |
+| Notes and transcript storage| Local SQLite plus local files                                                   |
+| Summaries and chat          | The provider you configure — a local server, or a hosted API with your own key  |
+| Calendar                    | Apple Calendar locally; Microsoft 365 directly against Microsoft Graph          |
 
-## How AI works
+Two things do leave the machine, and only when you ask for them: requests to
+whatever LLM or speech-to-text provider you configured yourself, and the
+one-time download of local model weights (currently still served from the
+upstream project's mirror — see [NOTICE](NOTICE)).
 
-anarlog keeps audio transcription separate from the language model used for summaries and chat. You can change either one without changing the other.
+## Status
 
-| Stage | App setting | Anarlog Cloud | Local or bring your own |
-| --- | --- | --- | --- |
-| Audio → transcript | **Transcription** | A managed route chooses by language and live or batch mode. Current primary paths include Deepgram Nova and Soniox 5. | Soniqo or Apple Speech when available, or your selected transcription provider and model |
-| Transcript + memo → summary, title, or chat | **Intelligence** | Auto currently uses the latest Claude Sonnet alias through OpenRouter. | Your selected API, subscription, OpenAI-compatible server, or eligible Apple Intelligence |
+Session Echo is a hard fork of [anarlog](https://github.com/fastrepl/anarlog)
+by Fastrepl, Inc., rebuilt as a local-only product. See [NOTICE](NOTICE) for
+the full provenance.
 
-The active provider and model are always visible under **Settings → Transcription** and **Settings → Intelligence**. Read [Models and providers](https://docs.anarlog.so/models-and-providers) for the current routes, local model list, and privacy boundaries.
+Two things are worth knowing before you read the tree:
 
-## Get started
+- **macOS is the supported platform.** Linux and Windows artifacts are built in
+  CI and can be included in a release, but they are optional and not the
+  target.
+- **Account, sync, and subscription code is still present and inert.** The
+  hosted API it talked to has been deleted, so none of it functions, but the
+  code has not been removed from the tree yet. If you grep for `isPro`,
+  `CloudSync`, or Supabase and find hits, that is why. Removing it is planned,
+  not done.
 
-1. [Download Anarlog](https://anarlog.so/download) for macOS, Windows, or Linux.
-2. Open it and join a meeting. anarlog records on your device and transcribes with the model you selected.
-3. Generate a note, edit it like a document, and export Markdown when you need it.
-4. Optional: connect an LLM provider or a local model in settings for summaries and chat.
-
-Product docs live at [docs.anarlog.so](https://docs.anarlog.so). To build the desktop app from source, follow [Local development](#local-development).
+There is no public download page, no docs site, no Discord, and no forum.
+Signed builds are published to
+[`flagbit/session-echo-releases`](https://github.com/flagbit/session-echo-releases).
 
 ## Repository map
 
-| Path | What lives there |
-| --- | --- |
-| `apps/desktop` | Tauri v2 desktop app: React and TypeScript UI, Rust backend |
-| `apps/cli` | Local CLI and MCP server |
-| `plugins/*` | Tauri capabilities such as local STT, database access, calendar, export, and notifications |
-| `crates/*` | Rust libraries for audio capture, transcription, diarization, storage, and services |
-| `packages/*` | Shared TypeScript packages for the editor, database, UI, and plugin SDK |
-| `supabase/` | Hosted authentication, sharing, sync, billing, and Cloud API data |
-| `skills/anarlog` | Published agent skill for the CLI and MCP server |
+| Path                  | What lives there                                                            |
+| --------------------- | --------------------------------------------------------------------------- |
+| `apps/desktop`        | Tauri v2 desktop app: React and TypeScript UI, Rust backend                 |
+| `apps/cli`            | Local CLI and MCP server                                                     |
+| `plugins/*`           | Tauri plugin boundaries: local STT, database, calendar, export, notifications |
+| `crates/*`            | Rust libraries for audio capture, transcription, diarization, and storage    |
+| `packages/*`          | Shared TypeScript packages for the editor, database, UI, and plugin SDK      |
+| `crates/db-app`       | SQLite schema and migrations                                                 |
+| `skills/session-echo` | Published agent skill for the CLI and MCP server                             |
+| `docs/superpowers`    | Design specifications and implementation plans                               |
+
+Sessions are the core entity — notes, transcripts, and summaries are all backed
+by a session. Documents are stored as TipTap-dialect ProseMirror JSON.
 
 ## Local development
 
-The local-first desktop app starts without secrets. Hosted AI, CloudSync, authentication, billing, and connected integrations need their optional local services and configuration.
+The desktop app starts without secrets. Provider API keys are entered in the
+app, not baked into the build.
 
-You need Node.js 22 or later, pnpm 11.1.1, Rust 1.94.0, and the [Tauri v2 system dependencies](https://v2.tauri.app/start/prerequisites/). On Debian or Ubuntu, the repository can install the required toolchains and system packages:
+You need Node.js 22 or later, pnpm 11.1.1, Rust 1.94.0, and the
+[Tauri v2 system dependencies](https://v2.tauri.app/start/prerequisites/). On
+Debian or Ubuntu, the repository can install the toolchains and system packages
+for you:
 
 ```bash
 bash scripts/setup-linux.sh
@@ -111,35 +120,19 @@ pnpm install --frozen-lockfile
 pnpm exec turbo dev:desktop
 ```
 
-Read [CONTRIBUTING.md](CONTRIBUTING.md) for validation commands, code ownership, and the contribution workflow. Ask [DeepWiki](https://deepwiki.com/fastrepl/anarlog) for a code-indexed explanation of a subsystem.
+`turbo dev:desktop` builds the shared UI package first; the raw
+`pnpm dev:desktop` script does not.
 
-## Name history
+Read [CONTRIBUTING.md](CONTRIBUTING.md) for validation commands and the
+contribution workflow, and [AGENTS.md](AGENTS.md) for the conventions the code
+follows.
 
-**anarlog** started as **Hyprnote**, then briefly used the **char** name.
+## Security
 
-We later split the work into two projects. **[char](https://char.com)** is the team's current productivity app. **anarlog** is this open-source, local-first meeting notetaker.
-
-This repository is not the current char codebase, and anarlog is not being retired. Its community application stays MIT-licensed, forkable, buildable from source, and built for local notes you control.
-
-If you came here from Granola, welcome. If you came here from Hyprnote, welcome back.
-
-Either way, it's yours.
-
-## Contributing
-
-Issues, pull requests, bug reports, and docs fixes are all welcome.
-
-- Read [CONTRIBUTING.md](CONTRIBUTING.md) before opening a pull request.
-- Join the community on [Discord](https://anarlog.so/discord) or [r/anarlog](https://www.reddit.com/r/anarlog/).
+Report vulnerabilities privately. See [SECURITY.md](SECURITY.md).
 
 ## License
 
-- Community application: [MIT](LICENSE)
-
-Maintained by [fastrepl](https://github.com/fastrepl).
-
-## Contributors
-
-<a href="https://github.com/fastrepl/anarlog/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=fastrepl/anarlog" alt="Contributors" />
-</a>
+MIT — see [LICENSE](LICENSE). The upstream copyright is retained alongside
+Flagbit's; [NOTICE](NOTICE) records the provenance and the third-party
+components.
