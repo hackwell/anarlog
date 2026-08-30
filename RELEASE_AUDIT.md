@@ -43,7 +43,7 @@ Run these before publishing a stable desktop release.
 5. **Changelog** — add the entry via `.agents/skills/new-changelog`.
 
 6. **Cut the release** — push the `v<version>` tag; `desktop_cd` builds, signs
-   and publishes it to `flagbit/session-echo-releases` in one run. Follow
+   and publishes it to this repository's Releases in one run. Follow
    `.agents/skills/release-new-version`.
 
 ## Notes

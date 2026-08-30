@@ -175,10 +175,6 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: ${{ needs.compute-version.outputs.candidate_sha }}
-      - name: Verify the releases repository is writable
-        uses: ./.github/actions/releases_preflight
-        with:
-          token: ${{ secrets.RELEASES_TOKEN }}
       - run: ./scripts/version.sh "./apps/desktop/src-tauri/tauri.conf.json" "${{ needs.compute-version.outputs.version }}"
       - if: ${{ needs.compute-version.outputs.include_windows == 'true' }}
         name: Verify stable signing configuration

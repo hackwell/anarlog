@@ -126,7 +126,7 @@ After the changelog merge, verify `main` has not moved, then push the release
 tag. The pushed tag is the whole release: `desktop_cd.yaml` builds, signs and
 notarizes every platform, verifies the candidate, and then calls
 `desktop_publish.yaml` in the same run to create the GitHub release in
-`flagbit/session-echo-releases`. There is no second workflow to start and no
+this repository's Releases. There is no second workflow to start and no
 SHA to copy.
 
 ```bash
@@ -157,7 +157,6 @@ accepts first-attempt run IDs, so evidence cannot be mixed across attempts.
 The run must:
 
 - take the version from the tag and find the matching changelog entry
-- pass the `RELEASES_TOKEN` preflight before the build matrix starts
 - build both Apple Silicon and Intel macOS artifacts
 - build the signed Windows and Linux artifacts for the same version and commit
 - stage every planned release asset as `desktop-release-assets-<target>`
@@ -207,7 +206,7 @@ Before reporting success, capture:
 - pushed `v<version>` tag
 - release run URL, event, and head SHA
 - `desktop_v<version>` tag
-- GitHub release URL in `flagbit/session-echo-releases`
+- GitHub release URL in this repository
 - the updater platform keys listed in the published `latest.json`
 - changelog URL
 - stable DMG SHA-256

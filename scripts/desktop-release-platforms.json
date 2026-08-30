@@ -1,6 +1,6 @@
 {
   "$comment": "Single source of truth for desktop release platform coverage. The release scripts (scripts/desktop-release-assets.mjs, scripts/desktop-latest-json.mjs, scripts/desktop-release-provenance.mjs) read this plan directly, and their tests validate the desktop_cd/desktop_publish workflows against it, so any drift fails CI before publishing. Linux and Windows are optional release modes selected at publish time. `updatePlatform` keys are the keys tauri-plugin-updater looks up in latest.json: it tries `{os}-{arch}-{installer}` first and falls back to `{os}-{arch}`, so a macOS .app bundle resolves `darwin-aarch64` while an AppImage resolves `linux-x86_64-appimage`.",
-  "releaseRepository": "flagbit/session-echo-releases",
+  "releaseRepository": "flagbit/session-echo",
   "tagPrefix": "desktop_v",
   "macos": {
     "optional": false,

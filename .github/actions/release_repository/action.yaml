@@ -1,0 +1,25 @@
+name: Resolve release repository
+description: >-
+  Read the repository that receives releases from the release plan, so the
+  workflows never hardcode it.
+
+outputs:
+  repository:
+    description: The releases repository read from the release plan
+    value: ${{ steps.resolve.outputs.repository }}
+
+runs:
+  using: composite
+  steps:
+    - id: resolve
+      shell: bash
+      run: |
+        set -euo pipefail
+
+        REPOSITORY=$(jq -er '.releaseRepository' scripts/desktop-release-platforms.json)
+        if [[ ! "$REPOSITORY" =~ ^[A-Za-z0-9._-]+/[A-Za-z0-9._-]+$ ]]; then
+          echo "::error::Release plan has no valid releaseRepository, got '$REPOSITORY'"
+          exit 1
+        fi
+        echo "repository=$REPOSITORY" >> "$GITHUB_OUTPUT"
+        echo "Releases go to $REPOSITORY"

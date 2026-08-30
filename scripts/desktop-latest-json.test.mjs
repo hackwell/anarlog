@@ -68,15 +68,15 @@ test("maps every planned updater artifact to a signed download URL", async () =>
     assert.equal(latest.pub_date, "2026-08-27T09:15:00Z");
     assert.equal(latest.notes, notes);
     assert.deepEqual(latest.platforms["darwin-aarch64"], {
-      url: "https://github.com/flagbit/session-echo-releases/releases/download/desktop_v1.4.14/anarlog-macos-aarch64.app.tar.gz",
+      url: "https://github.com/flagbit/session-echo/releases/download/desktop_v1.4.14/anarlog-macos-aarch64.app.tar.gz",
       signature,
     });
     assert.deepEqual(latest.platforms["linux-x86_64-deb"], {
-      url: "https://github.com/flagbit/session-echo-releases/releases/download/desktop_v1.4.14/anarlog-linux-x86_64.deb",
+      url: "https://github.com/flagbit/session-echo/releases/download/desktop_v1.4.14/anarlog-linux-x86_64.deb",
       signature,
     });
     assert.deepEqual(latest.platforms["windows-x86_64-nsis"], {
-      url: "https://github.com/flagbit/session-echo-releases/releases/download/desktop_v1.4.14/anarlog-windows-x86_64-setup.exe",
+      url: "https://github.com/flagbit/session-echo/releases/download/desktop_v1.4.14/anarlog-windows-x86_64-setup.exe",
       signature,
     });
     for (const platform of Object.values(latest.platforms)) {

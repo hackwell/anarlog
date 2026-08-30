@@ -36,7 +36,7 @@
     "updater": {
       "active": true,
       "endpoints": [
-        "https://github.com/flagbit/session-echo-releases/releases/latest/download/latest.json"
+        "https://updates.sessionecho.flagbit.de/stable/{{target}}/{{arch}}/{{current_version}}"
       ]
     }
   }

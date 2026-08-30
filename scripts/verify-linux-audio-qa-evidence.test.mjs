@@ -111,7 +111,7 @@ async function createFixture() {
     await writeFile(
       path.join(root, "provenance.json"),
       JSON.stringify({
-        release_repository: "flagbit/session-echo-releases",
+        release_repository: "flagbit/session-echo",
         version,
         candidate_sha: candidateSha,
         workflow_run_id: audioQaRunId,

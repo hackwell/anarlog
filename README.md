@@ -80,8 +80,7 @@ Two things are worth knowing before you read the tree:
   not done.
 
 There is no public download page, no docs site, no Discord, and no forum.
-Signed builds are published to
-[`flagbit/session-echo-releases`](https://github.com/flagbit/session-echo-releases).
+Signed builds are published to this repository's Releases.
 
 ## Repository map
 
