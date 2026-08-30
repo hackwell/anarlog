@@ -1,6 +1,14 @@
 import { createServer, type IncomingMessage, type ServerResponse } from "node:http";
 
-import { diskImage, isNewer, type Release, updaterBundle, versionOf } from "./release.ts";
+import {
+  diskImage,
+  isNewer,
+  latestJsonAsset,
+  type LatestJson,
+  type Release,
+  updaterFor,
+  versionOf,
+} from "./release.ts";
 
 const TOKEN = required("GITHUB_TOKEN");
 const REPOSITORY = required("GITHUB_REPOSITORY");
@@ -93,9 +101,15 @@ async function handleUpdate(res: ServerResponse, target: string, arch: string, c
     return;
   }
 
-  const artifacts = updaterBundle(release, arch);
+  const manifest = latestJsonAsset(release);
+  if (!manifest) {
+    send(res, 404, { error: `No latest.json in ${release.tag_name}` });
+    return;
+  }
+
+  const artifacts = updaterFor(JSON.parse(await assetText(manifest.id)) as LatestJson, target, arch);
   if (!artifacts) {
-    send(res, 404, { error: `No macOS ${arch} updater bundle in ${release.tag_name}` });
+    send(res, 404, { error: `No ${target}-${arch} updater artifact in ${release.tag_name}` });
     return;
   }
 
@@ -103,8 +117,8 @@ async function handleUpdate(res: ServerResponse, target: string, arch: string, c
     version,
     pub_date: release.published_at,
     notes: release.body ?? "",
-    url: `${PUBLIC_URL}/download/${encodeURIComponent(release.tag_name)}/${encodeURIComponent(artifacts.bundle.name)}`,
-    signature: await assetText(artifacts.signature.id),
+    url: `${PUBLIC_URL}/download/${encodeURIComponent(release.tag_name)}/${encodeURIComponent(artifacts.assetName)}`,
+    signature: artifacts.signature,
   });
 }
 

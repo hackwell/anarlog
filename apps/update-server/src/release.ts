@@ -7,6 +7,16 @@ export type Release = {
   assets: Asset[];
 };
 
+// The release ships one latest.json holding every platform's updater signature.
+// The build writes it; nothing else in the release carries the signature, so
+// this file is the only source for it.
+export type LatestJson = {
+  version: string;
+  pub_date?: string;
+  notes?: string;
+  platforms: Record<string, { url: string; signature: string }>;
+};
+
 export function versionOf(release: Pick<Release, "tag_name">): string {
   return release.tag_name.replace(/^desktop_v/, "").replace(/^v/, "");
 }
@@ -26,15 +36,24 @@ export function isNewer(candidate: string, current: string): boolean {
   return false;
 }
 
-// The updater bundle and the disk image are different artifacts: Tauri updates
-// from the .app.tar.gz and only ever shows the .dmg to a person.
-export function updaterBundle(release: Release, arch: string): { bundle: Asset; signature: Asset } | null {
-  const bundle = release.assets.find((asset) => asset.name.endsWith(`-macos-${arch}.app.tar.gz`));
-  if (!bundle) {
+export function latestJsonAsset(release: Release): Asset | null {
+  return release.assets.find((asset) => asset.name === "latest.json") ?? null;
+}
+
+// The url in latest.json points straight at the private repository, where a
+// download needs credentials. Only the file name survives; the caller rebuilds
+// the link so it goes through this server instead.
+export function updaterFor(
+  latest: LatestJson,
+  target: string,
+  arch: string,
+): { assetName: string; signature: string } | null {
+  const platform = latest.platforms?.[`${target}-${arch}`];
+  if (!platform?.signature || !platform.url) {
     return null;
   }
-  const signature = release.assets.find((asset) => asset.name === `${bundle.name}.sig`);
-  return signature ? { bundle, signature } : null;
+  const assetName = platform.url.split("/").pop();
+  return assetName ? { assetName, signature: platform.signature } : null;
 }
 
 export function diskImage(release: Release, arch: string): Asset | null {

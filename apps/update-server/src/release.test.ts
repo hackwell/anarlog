@@ -1,15 +1,30 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { diskImage, isNewer, type Release, updaterBundle, versionOf } from "./release.ts";
+import { diskImage, isNewer, latestJsonAsset, type LatestJson, type Release, updaterFor, versionOf } from "./release.ts";
 
 const release = (names: string[]): Release => ({
   tag_name: "desktop_v1.5.0",
   name: "1.5.0",
   body: "",
-  published_at: "2026-08-30T20:00:00Z",
+  published_at: "2026-08-30T21:00:43Z",
   assets: names.map((name, id) => ({ id, name, size: 1 })),
 });
+
+// Shaped after the latest.json the release actually ships.
+const manifest: LatestJson = {
+  version: "1.5.0",
+  platforms: {
+    "darwin-aarch64": {
+      url: "https://github.com/flagbit/session-echo/releases/download/desktop_v1.5.0/anarlog-macos-aarch64.app.tar.gz",
+      signature: "signature-aarch64",
+    },
+    "darwin-x86_64": {
+      url: "https://github.com/flagbit/session-echo/releases/download/desktop_v1.5.0/anarlog-macos-x86_64.app.tar.gz",
+      signature: "signature-x86_64",
+    },
+  },
+};
 
 test("reads the version out of the release tag", () => {
   assert.equal(versionOf({ tag_name: "desktop_v1.5.0" }), "1.5.0");
@@ -29,35 +44,43 @@ test("compares version segments as numbers, not as text", () => {
   assert.equal(isNewer("1.10.0", "1.9.0"), true);
 });
 
-test("pairs the updater bundle with its signature", () => {
-  const found = updaterBundle(
-    release(["app-macos-aarch64.app.tar.gz", "app-macos-aarch64.app.tar.gz.sig", "app-macos-aarch64.dmg"]),
-    "aarch64",
-  );
-  assert.equal(found?.bundle.name, "app-macos-aarch64.app.tar.gz");
-  assert.equal(found?.signature.name, "app-macos-aarch64.app.tar.gz.sig");
+test("finds the manifest among the release assets", () => {
+  assert.equal(latestJsonAsset(release(["latest.json", "app.dmg"]))?.name, "latest.json");
+  assert.equal(latestJsonAsset(release(["app.dmg"])), null);
 });
 
-// Serving a bundle without its signature makes the updater reject the download
-// after it has spent the bandwidth, so it must not be offered at all.
-test("refuses an updater bundle whose signature is missing", () => {
-  assert.equal(updaterBundle(release(["app-macos-aarch64.app.tar.gz"]), "aarch64"), null);
+test("takes the signature and the file name from the manifest", () => {
+  const found = updaterFor(manifest, "darwin", "aarch64");
+  assert.equal(found?.assetName, "anarlog-macos-aarch64.app.tar.gz");
+  assert.equal(found?.signature, "signature-aarch64");
 });
 
 test("keeps the architectures apart", () => {
-  const both = release([
-    "app-macos-aarch64.app.tar.gz",
-    "app-macos-aarch64.app.tar.gz.sig",
-    "app-macos-x86_64.app.tar.gz",
-    "app-macos-x86_64.app.tar.gz.sig",
-    "app-macos-aarch64.dmg",
-    "app-macos-x86_64.dmg",
-  ]);
-  assert.equal(updaterBundle(both, "x86_64")?.bundle.name, "app-macos-x86_64.app.tar.gz");
-  assert.equal(diskImage(both, "aarch64")?.name, "app-macos-aarch64.dmg");
+  assert.equal(updaterFor(manifest, "darwin", "x86_64")?.assetName, "anarlog-macos-x86_64.app.tar.gz");
+  assert.equal(updaterFor(manifest, "darwin", "x86_64")?.signature, "signature-x86_64");
 });
 
-test("does not mistake the disk image for the updater bundle", () => {
-  assert.equal(updaterBundle(release(["app-macos-aarch64.dmg"]), "aarch64"), null);
-  assert.equal(diskImage(release(["app-macos-aarch64.app.tar.gz"]), "aarch64"), null);
+test("has nothing to offer a platform the manifest does not list", () => {
+  assert.equal(updaterFor(manifest, "linux", "x86_64"), null);
+  assert.equal(updaterFor(manifest, "darwin", "riscv64"), null);
+});
+
+// An entry without a signature would produce an update the app downloads and
+// then refuses, so it must not be offered at all.
+test("refuses a manifest entry that carries no signature", () => {
+  const broken: LatestJson = {
+    version: "1.5.0",
+    platforms: { "darwin-aarch64": { url: "https://example.com/app.tar.gz", signature: "" } },
+  };
+  assert.equal(updaterFor(broken, "darwin", "aarch64"), null);
+});
+
+test("picks the disk image for the requested architecture", () => {
+  const both = release(["anarlog-macos-aarch64.dmg", "anarlog-macos-x86_64.dmg", "latest.json"]);
+  assert.equal(diskImage(both, "aarch64")?.name, "anarlog-macos-aarch64.dmg");
+  assert.equal(diskImage(both, "x86_64")?.name, "anarlog-macos-x86_64.dmg");
+});
+
+test("does not mistake the updater bundle for the disk image", () => {
+  assert.equal(diskImage(release(["anarlog-macos-aarch64.app.tar.gz"]), "aarch64"), null);
 });
