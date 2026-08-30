@@ -195,7 +195,9 @@ const wrapWithThinkingMiddleware = (
   });
 };
 
-const createLanguageModel = (conn: LLMConnectionInfo): LanguageModelV3 => {
+export const createLanguageModel = (
+  conn: LLMConnectionInfo,
+): LanguageModelV3 => {
   switch (conn.providerId) {
     case "anthropic": {
       const provider = createAnthropic({

@@ -658,6 +658,17 @@ export function chatgptCodexUrl(url: string): string {
   }
 }
 
+// The ChatGPT subscription backend only accepts the request shape Codex sends.
+// Sampling controls come back as `Unsupported parameter` 400s, so they are
+// stripped here rather than at every call site. These are the only standard
+// call options @ai-sdk/openai puts on the Responses wire; topK, seed, the
+// penalties, and stopSequences are already dropped by the provider itself.
+const CHATGPT_UNSUPPORTED_BODY_FIELDS = [
+  "max_output_tokens",
+  "temperature",
+  "top_p",
+] as const;
+
 export function chatgptResponsesBody(body: BodyInit | null | undefined) {
   if (typeof body !== "string") {
     return body;
@@ -665,9 +676,23 @@ export function chatgptResponsesBody(body: BodyInit | null | undefined) {
 
   try {
     const parsed = JSON.parse(body) as Record<string, unknown>;
-    if (parsed.store === false) {
-      return body;
+    const dropped = CHATGPT_UNSUPPORTED_BODY_FIELDS.filter(
+      (field) => field in parsed,
+    );
+
+    if (dropped.length === 0) {
+      return parsed.store === false
+        ? body
+        : JSON.stringify({ ...parsed, store: false });
     }
+
+    for (const field of dropped) {
+      delete parsed[field];
+    }
+    console.warn(
+      `[chatgpt] dropped request parameters the ChatGPT subscription endpoint rejects: ${dropped.join(", ")}`,
+    );
+
     return JSON.stringify({ ...parsed, store: false });
   } catch {
     return body;
