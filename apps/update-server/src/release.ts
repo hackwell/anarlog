@@ -24,7 +24,8 @@ export function versionOf(release: Pick<Release, "tag_name">): string {
 // Numeric comparison only: release tags are plain x.y.z, and a pre-release
 // suffix would mean a channel this server does not serve.
 export function isNewer(candidate: string, current: string): boolean {
-  const parse = (value: string) => value.split(".").map((part) => Number.parseInt(part, 10) || 0);
+  const parse = (value: string) =>
+    value.split(".").map((part) => Number.parseInt(part, 10) || 0);
   const [a, b] = [parse(candidate), parse(current)];
   for (let i = 0; i < Math.max(a.length, b.length); i += 1) {
     const left = a[i] ?? 0;
@@ -57,5 +58,8 @@ export function updaterFor(
 }
 
 export function diskImage(release: Release, arch: string): Asset | null {
-  return release.assets.find((asset) => asset.name.endsWith(`-macos-${arch}.dmg`)) ?? null;
+  return (
+    release.assets.find((asset) => asset.name.endsWith(`-macos-${arch}.dmg`)) ??
+    null
+  );
 }

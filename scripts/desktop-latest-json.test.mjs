@@ -111,7 +111,6 @@ test("derives the platform keys from the release plan, not a hardcoded list", as
     assert.deepEqual(Object.keys(latest.platforms), planned);
     assert.deepEqual(planned, [
       "darwin-aarch64",
-      "darwin-x86_64",
       "linux-aarch64-appimage",
       "linux-aarch64-deb",
       "linux-x86_64-appimage",
@@ -138,10 +137,7 @@ test("covers only the selected platforms for a macOS-only release", async () => 
       includeWindows: false,
     });
 
-    assert.deepEqual(Object.keys(latest.platforms), [
-      "darwin-aarch64",
-      "darwin-x86_64",
-    ]);
+    assert.deepEqual(Object.keys(latest.platforms), ["darwin-aarch64"]);
   } finally {
     await rm(directory, { recursive: true, force: true });
   }
@@ -161,7 +157,6 @@ test("covers macOS and Linux when Windows is excluded", async () => {
     assert.ok(!("windows-x86_64-nsis" in latest.platforms));
     assert.deepEqual(Object.keys(latest.platforms), [
       "darwin-aarch64",
-      "darwin-x86_64",
       "linux-aarch64-appimage",
       "linux-aarch64-deb",
       "linux-x86_64-appimage",
@@ -188,7 +183,7 @@ test("fails loudly when an updater signature is missing", async () => {
 
 test("never writes a latest.json when a signature is missing", async () => {
   const { directory, assetDir } = await stageAssets({
-    omitSignatureFor: "anarlog-macos-x86_64.app.tar.gz",
+    omitSignatureFor: "anarlog-macos-aarch64.app.tar.gz",
   });
   const output = path.join(directory, "latest.json");
   try {

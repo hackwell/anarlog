@@ -150,7 +150,6 @@ async function stageAll(directory, buildTargets) {
 
 const allTargets = [
   "aarch64-apple-darwin",
-  "x86_64-apple-darwin",
   "aarch64-unknown-linux-gnu",
   "x86_64-unknown-linux-gnu",
   "x86_64-pc-windows-msvc",
@@ -181,10 +180,7 @@ test("merges the whole matrix into one release description", async () => {
 test("fails when the matrix did not stage a selected platform", async () => {
   const directory = await scratch("merge-missing");
   try {
-    const assetDir = await stageAll(directory, [
-      "aarch64-apple-darwin",
-      "x86_64-apple-darwin",
-    ]);
+    const assetDir = await stageAll(directory, ["aarch64-apple-darwin"]);
 
     await assert.rejects(
       mergeStagedAssets({ assetDir, version: "1.4.14" }),
@@ -198,10 +194,7 @@ test("fails when the matrix did not stage a selected platform", async () => {
 test("merges a macOS-only release when Linux and Windows are excluded", async () => {
   const directory = await scratch("merge-macos");
   try {
-    const assetDir = await stageAll(directory, [
-      "aarch64-apple-darwin",
-      "x86_64-apple-darwin",
-    ]);
+    const assetDir = await stageAll(directory, ["aarch64-apple-darwin"]);
     const release = await mergeStagedAssets({
       assetDir,
       version: "1.4.14",
@@ -212,10 +205,7 @@ test("merges a macOS-only release when Linux and Windows are excluded", async ()
     assert.deepEqual(
       release.assets.map((asset) => asset.id),
       publicAssetFiles({ includeLinux: false, includeWindows: false })
-        .concat([
-          "anarlog-macos-aarch64.app.tar.gz",
-          "anarlog-macos-x86_64.app.tar.gz",
-        ])
+        .concat(["anarlog-macos-aarch64.app.tar.gz"])
         .sort(),
     );
   } finally {
@@ -291,7 +281,6 @@ test("public assets exclude the updater-only macOS archives", () => {
     "anarlog-linux-x86_64.AppImage",
     "anarlog-linux-x86_64.deb",
     "anarlog-macos-aarch64.dmg",
-    "anarlog-macos-x86_64.dmg",
     "anarlog-windows-x86_64-setup.exe",
   ]);
 });

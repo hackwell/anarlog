@@ -4,9 +4,15 @@
   "tagPrefix": "desktop_v",
   "macos": {
     "optional": false,
-    "publicPlatforms": ["dmg-aarch64", "dmg-x86_64"],
-    "updatePlatforms": ["darwin-aarch64", "darwin-x86_64"],
-    "buildTargets": ["aarch64-apple-darwin", "x86_64-apple-darwin"],
+    "publicPlatforms": [
+      "dmg-aarch64"
+    ],
+    "updatePlatforms": [
+      "darwin-aarch64"
+    ],
+    "buildTargets": [
+      "aarch64-apple-darwin"
+    ],
     "assets": [
       {
         "file": "anarlog-macos-aarch64.dmg",
@@ -23,22 +29,6 @@
         "extension": ".app.tar.gz",
         "publicPlatform": null,
         "updatePlatform": "darwin-aarch64"
-      },
-      {
-        "file": "anarlog-macos-x86_64.dmg",
-        "buildTarget": "x86_64-apple-darwin",
-        "bundle": "dmg",
-        "extension": ".dmg",
-        "publicPlatform": "dmg-x86_64",
-        "updatePlatform": null
-      },
-      {
-        "file": "anarlog-macos-x86_64.app.tar.gz",
-        "buildTarget": "x86_64-apple-darwin",
-        "bundle": "macos",
-        "extension": ".app.tar.gz",
-        "publicPlatform": null,
-        "updatePlatform": "darwin-x86_64"
       }
     ]
   },
@@ -56,7 +46,10 @@
       "linux-x86_64-appimage",
       "linux-x86_64-deb"
     ],
-    "buildTargets": ["aarch64-unknown-linux-gnu", "x86_64-unknown-linux-gnu"],
+    "buildTargets": [
+      "aarch64-unknown-linux-gnu",
+      "x86_64-unknown-linux-gnu"
+    ],
     "assets": [
       {
         "file": "anarlog-linux-aarch64.AppImage",
@@ -94,9 +87,15 @@
   },
   "windows": {
     "optional": true,
-    "publicPlatforms": ["nsis-x86_64"],
-    "updatePlatforms": ["windows-x86_64-nsis"],
-    "buildTargets": ["x86_64-pc-windows-msvc"],
+    "publicPlatforms": [
+      "nsis-x86_64"
+    ],
+    "updatePlatforms": [
+      "windows-x86_64-nsis"
+    ],
+    "buildTargets": [
+      "x86_64-pc-windows-msvc"
+    ],
     "assets": [
       {
         "file": "anarlog-windows-x86_64-setup.exe",

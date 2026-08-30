@@ -21,7 +21,6 @@ function createDesktopRelease({
 } = {}) {
   const platformPairs = [
     ["dmg-aarch64", "darwin-aarch64", true],
-    ["dmg-x86_64", "darwin-x86_64", true],
     ...(includeLinux
       ? [
           ["appimage-x86_64", "linux-x86_64-appimage", false],

@@ -221,7 +221,10 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        include: ${{ needs.compute-version.outputs.channel == 'staging' && fromJSON('[{"target":"aarch64-apple-darwin","arch":"aarch64","artifact_name":"silicon"}]') || fromJSON('[{"target":"aarch64-apple-darwin","arch":"aarch64","artifact_name":"silicon"},{"target":"x86_64-apple-darwin","arch":"x86_64","artifact_name":"intel"}]') }}
+        # Apple Silicon only, on both channels. Intel would double the build
+        # for an architecture nobody here runs; the release plan lists the same
+        # single target, and verify-release checks the two against each other.
+        include: ${{ fromJSON('[{"target":"aarch64-apple-darwin","arch":"aarch64","artifact_name":"silicon"}]') }}
     defaults:
       run:
         shell: bash

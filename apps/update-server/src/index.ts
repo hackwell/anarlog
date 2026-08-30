@@ -1,4 +1,8 @@
-import { createServer, type IncomingMessage, type ServerResponse } from "node:http";
+import {
+  createServer,
+  type IncomingMessage,
+  type ServerResponse,
+} from "node:http";
 
 import {
   diskImage,
@@ -49,7 +53,9 @@ async function latestRelease(): Promise<Release | null> {
     return null;
   }
   if (!response.ok) {
-    throw new Error(`GitHub returned ${response.status} for the latest release`);
+    throw new Error(
+      `GitHub returned ${response.status} for the latest release`,
+    );
   }
   const release = (await response.json()) as Release;
   cached = { at: Date.now(), release };
@@ -61,10 +67,15 @@ async function latestRelease(): Promise<Release | null> {
 // the storage backend reject the request, so the redirect is resolved by the
 // caller instead of being followed here.
 async function signedAssetUrl(assetId: number): Promise<string> {
-  const response = await api(`/repos/${REPOSITORY}/releases/assets/${assetId}`, "application/octet-stream");
+  const response = await api(
+    `/repos/${REPOSITORY}/releases/assets/${assetId}`,
+    "application/octet-stream",
+  );
   const location = response.headers.get("location");
   if (!location) {
-    throw new Error(`GitHub returned ${response.status} without a download location for asset ${assetId}`);
+    throw new Error(
+      `GitHub returned ${response.status} without a download location for asset ${assetId}`,
+    );
   }
   return location;
 }
@@ -79,12 +90,20 @@ async function assetText(assetId: number): Promise<string> {
 
 const send = (res: ServerResponse, status: number, body: unknown) => {
   const payload = JSON.stringify(body);
-  res.writeHead(status, { "content-type": "application/json", "content-length": Buffer.byteLength(payload) });
+  res.writeHead(status, {
+    "content-type": "application/json",
+    "content-length": Buffer.byteLength(payload),
+  });
   res.end(payload);
 };
 
 // Tauri substitutes {{target}} and {{arch}} itself; on macOS target is "darwin".
-async function handleUpdate(res: ServerResponse, target: string, arch: string, currentVersion: string) {
+async function handleUpdate(
+  res: ServerResponse,
+  target: string,
+  arch: string,
+  currentVersion: string,
+) {
   if (target !== "darwin") {
     res.writeHead(204).end();
     return;
@@ -107,9 +126,15 @@ async function handleUpdate(res: ServerResponse, target: string, arch: string, c
     return;
   }
 
-  const artifacts = updaterFor(JSON.parse(await assetText(manifest.id)) as LatestJson, target, arch);
+  const artifacts = updaterFor(
+    JSON.parse(await assetText(manifest.id)) as LatestJson,
+    target,
+    arch,
+  );
   if (!artifacts) {
-    send(res, 404, { error: `No ${target}-${arch} updater artifact in ${release.tag_name}` });
+    send(res, 404, {
+      error: `No ${target}-${arch} updater artifact in ${release.tag_name}`,
+    });
     return;
   }
 
@@ -135,7 +160,12 @@ async function handleDownload(res: ServerResponse, tag: string, name: string) {
     send(res, 404, { error: `Unknown asset ${name}` });
     return;
   }
-  res.writeHead(302, { location: await signedAssetUrl(asset.id), "cache-control": "no-store" }).end();
+  res
+    .writeHead(302, {
+      location: await signedAssetUrl(asset.id),
+      "cache-control": "no-store",
+    })
+    .end();
 }
 
 async function handleLatestDmg(res: ServerResponse, arch: string) {
@@ -146,15 +176,25 @@ async function handleLatestDmg(res: ServerResponse, arch: string) {
   }
   const asset = diskImage(release, arch);
   if (!asset) {
-    send(res, 404, { error: `No macOS ${arch} disk image in ${release.tag_name}` });
+    send(res, 404, {
+      error: `No macOS ${arch} disk image in ${release.tag_name}`,
+    });
     return;
   }
-  res.writeHead(302, { location: await signedAssetUrl(asset.id), "cache-control": "no-store" }).end();
+  res
+    .writeHead(302, {
+      location: await signedAssetUrl(asset.id),
+      "cache-control": "no-store",
+    })
+    .end();
 }
 
 const server = createServer((req: IncomingMessage, res: ServerResponse) => {
   const url = new URL(req.url ?? "/", PUBLIC_URL);
-  const segments = url.pathname.split("/").filter(Boolean).map(decodeURIComponent);
+  const segments = url.pathname
+    .split("/")
+    .filter(Boolean)
+    .map(decodeURIComponent);
 
   const route = async () => {
     if (req.method !== "GET" && req.method !== "HEAD") {
@@ -171,7 +211,12 @@ const server = createServer((req: IncomingMessage, res: ServerResponse) => {
       return;
     }
     // /download/latest/macos/{arch} -- the link a person clicks
-    if (segments[0] === "download" && segments[1] === "latest" && segments[2] === "macos" && segments[3]) {
+    if (
+      segments[0] === "download" &&
+      segments[1] === "latest" &&
+      segments[2] === "macos" &&
+      segments[3]
+    ) {
       await handleLatestDmg(res, segments[3]);
       return;
     }
