@@ -103,10 +103,6 @@ jobs:
             echo "::error::Source workflow run ID must be a positive integer"
             exit 1
           fi
-          if [[ "$INPUT_INCLUDE_WINDOWS" != "true" ]]; then
-            echo "::error::Stable releases must include Windows for automatic Microsoft Store submission"
-            exit 1
-          fi
 
           VERSION="$INPUT_VERSION"
           CANDIDATE_SHA="${INPUT_CANDIDATE_SHA,,}"
