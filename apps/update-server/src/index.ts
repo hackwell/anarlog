@@ -131,10 +131,11 @@ async function handleUpdate(
     target,
     arch,
   );
+  // A release that does not build this architecture has no update for it, and
+  // saying so is not an error: an Intel install of 1.5.0 asking a release that
+  // is Apple Silicon only should hear "nothing for you", not a failure.
   if (!artifacts) {
-    send(res, 404, {
-      error: `No ${target}-${arch} updater artifact in ${release.tag_name}`,
-    });
+    res.writeHead(204).end();
     return;
   }
 
