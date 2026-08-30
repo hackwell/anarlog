@@ -9,32 +9,35 @@ const changelogDir = resolve(__dirname, "../../../packages/changelog/content");
 const VIRTUAL_ID = "virtual:changelog";
 const RESOLVED_ID = "\0" + VIRTUAL_ID;
 
-function getLatestVersion(): string | null {
+function listVersions(): string[] {
   try {
     const files = readdirSync(changelogDir).filter(
       (f) => f.endsWith(".md") && /^\d/.test(f),
     );
     const versions = files.map((f) => f.replace(".md", ""));
     versions.sort((a, b) => b.localeCompare(a, undefined, { numeric: true }));
-    return versions[0] || null;
+    return versions;
   } catch {
-    return null;
+    return [];
   }
 }
 
 function buildModule(): string {
-  const latest = getLatestVersion();
-  let content: string | null = null;
+  const versions = listVersions();
+  const entries: Record<string, string> = {};
 
-  if (latest) {
+  for (const version of versions) {
     try {
-      content = readFileSync(resolve(changelogDir, `${latest}.md`), "utf-8");
+      entries[version] = readFileSync(
+        resolve(changelogDir, `${version}.md`),
+        "utf-8",
+      );
     } catch {}
   }
 
   return [
-    `export const latestVersion = ${JSON.stringify(latest)};`,
-    `export const latestContent = ${JSON.stringify(content)};`,
+    `export const latestVersion = ${JSON.stringify(versions[0] ?? null)};`,
+    `export const entries = ${JSON.stringify(entries)};`,
   ].join("\n");
 }
 

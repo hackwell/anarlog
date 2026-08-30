@@ -34,10 +34,10 @@ function readFrontmatterValue(block: string, key: string) {
   return value;
 }
 
-export function fixImageUrls(content: string): string {
+export function stripUnhostedImages(content: string): string {
   return content.replace(
-    /!\[([^\]]*)\]\(\/api\/assets\/([^)]+)\)/g,
-    "![$1](https://auth.hyprnote.com/storage/v1/object/public/public_images/$2)",
+    /^[ \t]*!\[[^\]]*\]\(\/api\/assets\/[^)]+\)[ \t]*$\n?/gm,
+    "",
   );
 }
 
@@ -47,6 +47,6 @@ export function processContent(raw: string): {
   summary: string | null;
 } {
   const { date, summary, body } = parseFrontmatter(raw);
-  const markdown = fixImageUrls(body);
+  const markdown = stripUnhostedImages(body);
   return { content: markdown, date, summary };
 }

@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
-// @ts-ignore virtual module provided by ./vite.ts
-import { latestContent, latestVersion } from "virtual:changelog";
+import { useMemo } from "react";
+// @ts-ignore virtual module provided by ../../plugins/changelog.ts
+import { entries, latestVersion } from "virtual:changelog";
 
 import { processContent } from "@anlg/changelog";
 
@@ -8,59 +8,14 @@ export function getLatestVersion(): string | null {
   return latestVersion;
 }
 
-async function fetchChangelogFromGitHub(
-  version: string,
-): Promise<string | null> {
-  const url = `https://raw.githubusercontent.com/fastrepl/anarlog/main/packages/changelog/content/${version}.md`;
-  try {
-    const response = await fetch(url);
-    if (!response.ok) {
-      return null;
-    }
-    return await response.text();
-  } catch {
-    return null;
-  }
-}
-
 export function useChangelogContent(version: string) {
-  const [content, setContent] = useState<string | null>(null);
-  const [date, setDate] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    let cancelled = false;
-
-    async function loadChangelog() {
-      if (version === latestVersion && latestContent) {
-        const { content: parsed, date: parsedDate } =
-          processContent(latestContent);
-        setContent(parsed);
-        setDate(parsedDate);
-        setLoading(false);
-        return;
-      }
-
-      const raw = await fetchChangelogFromGitHub(version);
-      if (cancelled) return;
-
-      if (raw) {
-        const { content: parsed, date: parsedDate } = processContent(raw);
-        setContent(parsed);
-        setDate(parsedDate);
-      } else {
-        setContent(null);
-        setDate(null);
-      }
-      setLoading(false);
+  return useMemo(() => {
+    const raw = (entries as Record<string, string>)[version];
+    if (!raw) {
+      return { content: null, date: null, loading: false };
     }
 
-    loadChangelog();
-
-    return () => {
-      cancelled = true;
-    };
+    const { content, date } = processContent(raw);
+    return { content, date, loading: false };
   }, [version]);
-
-  return { content, date, loading };
 }
