@@ -4,7 +4,8 @@ Issues, pull requests, bug reports, and documentation fixes are welcome.
 
 ## Before you start
 
-- Search existing issues and pull requests before starting a large change.
+- The source repository is private. Search existing issues and pull requests
+  before starting a large change.
 - Keep changes focused. Add tests for behavior that can regress.
 - Never commit credentials, customer configuration, meeting content, or other private data.
 - Use this file and the repository's `AGENTS.md` files for development guidance.
@@ -50,7 +51,7 @@ Turbo builds shared UI packages before starting the app.
 | `crates/*` | Rust libraries and services |
 | `packages/*` | Shared TypeScript packages |
 | `crates/db-app` | SQLite schema and migrations |
-| `supabase` | Hosted database schema, functions, and tests |
+| `supabase` | Legacy hosted database schema and tests. The hosted API is gone; this is inert and slated for removal |
 | `skills/session-echo` | Published CLI and MCP agent skill |
 | `docs/superpowers` | Implementation plans and design specifications |
 
@@ -96,4 +97,6 @@ Check the affected workflow under `.github/workflows/` for stricter package-spec
 
 By submitting a contribution, you agree that it may be distributed under the repository's [MIT License](LICENSE). Only submit material you have the right to license this way.
 
-Never include customer configuration, credentials, confidential material, or untracked third-party code. Record the immutable upstream revision and license before reusing third-party material.
+Never include customer configuration, credentials, confidential material, or untracked third-party code. Record the immutable upstream revision and license before reusing third-party material, and add it to [NOTICE](NOTICE) — because builds ship publicly from a private source repository, `NOTICE` is the only attribution a recipient can read.
+
+Report security problems privately instead of opening an issue. See [SECURITY.md](SECURITY.md).
