@@ -29,11 +29,17 @@ const api = (path: string, accept = "application/vnd.github+json") =>
 
 let cached: { at: number; release: Release } | null = null;
 
-async function latestRelease(): Promise<Release> {
+// A repository with no published release is not a failure: it means there is
+// nothing to update to, and answering 502 would show the app an error where
+// "you are up to date" is the truth.
+async function latestRelease(): Promise<Release | null> {
   if (cached && Date.now() - cached.at < CACHE_TTL_MS) {
     return cached.release;
   }
   const response = await api(`/repos/${REPOSITORY}/releases/latest`);
+  if (response.status === 404) {
+    return null;
+  }
   if (!response.ok) {
     throw new Error(`GitHub returned ${response.status} for the latest release`);
   }
@@ -77,6 +83,10 @@ async function handleUpdate(res: ServerResponse, target: string, arch: string, c
   }
 
   const release = await latestRelease();
+  if (!release) {
+    res.writeHead(204).end();
+    return;
+  }
   const version = versionOf(release);
   if (!isNewer(version, currentVersion)) {
     res.writeHead(204).end();
@@ -102,7 +112,7 @@ async function handleDownload(res: ServerResponse, tag: string, name: string) {
   const release = await latestRelease();
   // Only the current release is served: an older tag would hand out binaries
   // that the newest release exists to replace.
-  if (release.tag_name !== tag) {
+  if (!release || release.tag_name !== tag) {
     send(res, 404, { error: `Unknown release ${tag}` });
     return;
   }
@@ -116,6 +126,10 @@ async function handleDownload(res: ServerResponse, tag: string, name: string) {
 
 async function handleLatestDmg(res: ServerResponse, arch: string) {
   const release = await latestRelease();
+  if (!release) {
+    send(res, 404, { error: "No published release yet" });
+    return;
+  }
   const asset = diskImage(release, arch);
   if (!asset) {
     send(res, 404, { error: `No macOS ${arch} disk image in ${release.tag_name}` });
