@@ -25,7 +25,7 @@
     }
   },
   "bundle": {
-    "publisher": "Fastrepl",
+    "publisher": "Flagbit",
     "active": true,
     "createUpdaterArtifacts": true,
     "targets": "all",
