@@ -26,13 +26,13 @@ const SOCIALS = [
   {
     label: "GitHub",
     icon: GithubLogo,
-    url: "https://github.com/fastrepl/anarlog",
+    url: "https://github.com/flagbit/session-echo-releases",
   },
   {
     label: "X",
     icon: XLogo,
     size: 14,
-    url: "https://x.com/anarlogapp",
+    url: "https://sessionecho.flagbit.de/x",
   },
 ] as const;
 
