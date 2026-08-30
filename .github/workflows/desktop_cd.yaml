@@ -175,6 +175,18 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: ${{ needs.compute-version.outputs.candidate_sha }}
+      # 1.5.0 shipped unable to connect a Microsoft calendar because this
+      # variable was only ever set in a developer's gitignored .env. It is read
+      # through option_env! at build time, so its absence is silent until a
+      # person clicks the button in the released app.
+      - name: Verify the Microsoft client id is available
+        env:
+          MICROSOFT_CLIENT_ID: ${{ vars.MICROSOFT_CLIENT_ID }}
+        run: |
+          if [[ -z "$MICROSOFT_CLIENT_ID" ]]; then
+            echo "::error::Repository variable MICROSOFT_CLIENT_ID is not set; the build would ship without Microsoft 365 calendar support"
+            exit 1
+          fi
       - run: ./scripts/version.sh "./apps/desktop/src-tauri/tauri.conf.json" "${{ needs.compute-version.outputs.version }}"
       - if: ${{ needs.compute-version.outputs.include_windows == 'true' }}
         name: Verify stable signing configuration
@@ -266,6 +278,12 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CARGO_PROFILE_RELEASE_DEBUG: line-tables-only
           APP_VERSION: ${{ needs.compute-version.outputs.version }}
+          # An OAuth public client id is not a credential: it travels in the
+          # browser during sign-in and Azure treats it as public. It is a
+          # variable so it stays readable in logs, and it must be present at
+          # build time because option_env! bakes it into the binary - a build
+          # without it ships an app that cannot connect a Microsoft calendar.
+          MICROSOFT_CLIENT_ID: ${{ vars.MICROSOFT_CLIENT_ID }}
           APPLE_ID: ${{ secrets.APPLE_ID }}
           APPLE_PASSWORD: ${{ secrets.APPLE_PASSWORD }}
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
@@ -398,6 +416,7 @@ jobs:
         env:
           CARGO_PROFILE_RELEASE_DEBUG: line-tables-only
           APP_VERSION: ${{ needs.compute-version.outputs.version }}
+          MICROSOFT_CLIENT_ID: ${{ vars.MICROSOFT_CLIENT_ID }}
           TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
           TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
           VITE_APP_URL: https://sessionecho.flagbit.de
@@ -564,6 +583,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CARGO_PROFILE_RELEASE_DEBUG: line-tables-only
           APP_VERSION: ${{ needs.compute-version.outputs.version }}
+          MICROSOFT_CLIENT_ID: ${{ vars.MICROSOFT_CLIENT_ID }}
           TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
           TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
           VITE_APP_URL: https://sessionecho.flagbit.de
