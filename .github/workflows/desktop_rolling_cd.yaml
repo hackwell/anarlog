@@ -87,7 +87,7 @@ jobs:
   # way. Intel, Linux and Windows are intentionally not built on every push.
   build-macos:
     needs: prepare
-    runs-on: depot-macos-26
+    runs-on: macos-15
     defaults:
       run:
         shell: bash

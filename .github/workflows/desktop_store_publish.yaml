@@ -189,7 +189,7 @@ jobs:
   mac-app-store:
     if: ${{ inputs.include_macos }}
     needs: validate
-    runs-on: depot-macos-26
+    runs-on: macos-15
     defaults:
       run:
         shell: bash

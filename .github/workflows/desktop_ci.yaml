@@ -58,7 +58,7 @@ jobs:
       matrix:
         include:
           - platform: "macos"
-            runner: "depot-macos-26"
+            runner: "macos-15"
     runs-on: ${{ matrix.runner }}
     steps:
       - uses: actions/checkout@v4
@@ -646,7 +646,7 @@ jobs:
 
   desktop_swift:
     if: ${{ github.event_name != 'pull_request' && !startsWith(github.head_ref || '', 'blog/') }}
-    runs-on: depot-macos-15
+    runs-on: macos-15
     defaults:
       run:
         shell: bash
