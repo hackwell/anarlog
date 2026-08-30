@@ -77,8 +77,13 @@ jobs:
             fi
             CHANNEL="stable"
             CANDIDATE_SHA="$GITHUB_SHA"
-            INCLUDE_LINUX="true"
-            INCLUDE_WINDOWS="true"
+            # macOS only. Windows release signing goes through Azure Trusted
+            # Signing, which this organisation has no account for, so the
+            # preflight would reject every tag. Linux has never been built or
+            # tested for this product and its packaging channels were removed.
+            # A dispatch can still turn either back on for a test run.
+            INCLUDE_LINUX="false"
+            INCLUDE_WINDOWS="false"
             PUBLISH="true"
           else
             CHANNEL="$INPUT_CHANNEL"
