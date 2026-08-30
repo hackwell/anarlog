@@ -1,7 +1,6 @@
-# Rolling development build. Every push to `main` produces one signed and
-# notarized macOS DMG and replaces the single `desktop-dev` pre-release in the
-# public releases repository, so the current state of main is always
-# downloadable and installable.
+# Rolling development build. Every push to `main` produces one signed macOS DMG
+# and replaces the single `desktop-dev` pre-release in the releases repository,
+# so the current state of main is always downloadable and installable.
 #
 # This is deliberately separate from desktop_cd.yaml. The stable path takes its
 # version from a pushed `v*.*.*` tag, requires a committed changelog entry,
@@ -83,8 +82,8 @@ jobs:
           echo "Rolling version: $VERSION"
 
   # Mirrors the staging branch of desktop_cd.yaml's build-macos job: one Apple
-  # Silicon target, the staging configuration, signed and notarized the same
-  # way. Intel, Linux and Windows are intentionally not built on every push.
+  # Silicon target, the staging configuration, signed the same way but not
+  # notarized. Intel, Linux and Windows are intentionally not built on every push.
   build-macos:
     needs: prepare
     runs-on: macos-26
@@ -136,9 +135,11 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CARGO_PROFILE_RELEASE_DEBUG: line-tables-only
           APP_VERSION: ${{ needs.prepare.outputs.version }}
-          APPLE_ID: ${{ secrets.APPLE_ID }}
-          APPLE_PASSWORD: ${{ secrets.APPLE_PASSWORD }}
-          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          # APPLE_ID/APPLE_PASSWORD/APPLE_TEAM_ID are deliberately absent: their
+          # presence is what makes tauri notarize, and a rolling build is not
+          # worth a round trip to Apple on every push to main. The bundle is
+          # still Developer ID signed - it just is not stapled, so first launch
+          # needs right-click > Open. Real releases notarize in desktop_cd.yaml.
           APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
           APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
           APPLE_SIGNING_IDENTITY: ${{ steps.apple-cert.outputs.cert-id }}
@@ -166,13 +167,6 @@ jobs:
             exit 1
           fi
           echo "path=${dmgs[0]}" >> "$GITHUB_OUTPUT"
-      - uses: ./.github/actions/macos_notarize_dmg
-        with:
-          dmg-path: ${{ steps.find-dmg.outputs.path }}
-          signing-identity: ${{ steps.apple-cert.outputs.cert-id }}
-          apple-id: ${{ secrets.APPLE_ID }}
-          apple-password: ${{ secrets.APPLE_PASSWORD }}
-          apple-team-id: ${{ secrets.APPLE_TEAM_ID }}
       # Only the DMG is staged. The updater bundles tauri wrote next to it
       # (.app.tar.gz and .app.tar.gz.sig) are deliberately left behind: nothing
       # a rolling build produces may end up in an updater feed.
@@ -184,7 +178,7 @@ jobs:
           mkdir -p rolling-assets
           cp "$DMG_PATH" "rolling-assets/$ROLLING_DMG"
           (cd rolling-assets && shasum -a 256 "$ROLLING_DMG" > "$ROLLING_DMG.sha256")
-          spctl --assess --type open --context context:primary-signature -vv "rolling-assets/$ROLLING_DMG"
+          codesign --verify --strict --verbose=2 "rolling-assets/$ROLLING_DMG"
       - uses: actions/upload-artifact@v4
         with:
           name: desktop-rolling-assets
@@ -245,7 +239,9 @@ jobs:
             "- Commit: \`$GITHUB_SHA\`" \
             "- Built: $(date -u +%Y-%m-%dT%H:%M:%SZ)" \
             "" \
-            "Installs as \"Session Echo Staging\" beside a stable install and never auto-updates. For the supported build, use the latest stable release.")
+            "Installs as \"Session Echo Staging\" beside a stable install and never auto-updates. For the supported build, use the latest stable release." \
+            "" \
+            "Signed by Flagbit but not notarized, because a development build is not worth a notarization round trip on every push. macOS therefore refuses the first launch from a double-click: right-click the app in Applications, choose Open, and confirm once. Every later launch opens normally.")
 
           if gh release view "$ROLLING_TAG" --repo "$RELEASES_REPOSITORY" > /dev/null 2>&1; then
             gh release upload "$ROLLING_TAG" --repo "$RELEASES_REPOSITORY" --clobber rolling-assets/*
