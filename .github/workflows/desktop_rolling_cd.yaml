@@ -42,7 +42,7 @@ permissions:
 env:
   ROLLING_TAG: desktop-dev
   ROLLING_TARGET: aarch64-apple-darwin
-  ROLLING_DMG: anarlog-dev-macos-aarch64.dmg
+  ROLLING_DMG: session-echo-dev-macos-aarch64.dmg
   TAURI_CONF_PATH: ./src-tauri/tauri.conf.staging.json
   NODE_OPTIONS: "--max-old-space-size=4096"
 
