@@ -1,5 +1,8 @@
 const DISPLAY_HORIZON_MS: f64 = 24.0 * 60.0 * 60.0 * 1000.0;
-const MAX_AGENDA_LABEL_WIDTH: usize = 24;
+const MAX_AGENDA_LABEL_WIDTH: usize = 52;
+/// Enough for a full day and the start of the next. A menu longer than this
+/// stops being a glance and starts being a list you scroll.
+const MAX_AGENDA_ITEMS: usize = 12;
 const MAX_MENU_BAR_LABEL_WIDTH: usize = 30;
 
 use unicode_width::{UnicodeWidthChar, UnicodeWidthStr};
@@ -48,7 +51,7 @@ pub fn agenda_sections(
                 .map_or(event.starts_at_ms > now_ms, |end_ms| end_ms > now_ms)
         })
         .filter_map(|event| agenda_day_label(event, now_ms).map(|label| (event, label)))
-        .take(3)
+        .take(MAX_AGENDA_ITEMS)
     {
         if sections.last().is_none_or(|section| section.label != label) {
             sections.push(TrayAgendaSection {
@@ -229,16 +232,13 @@ fn compact_title(title: &str, max_width: usize) -> String {
 }
 
 fn compact_agenda_label(event: &TrayScheduleEvent) -> String {
-    let start_time = event
-        .time_label
-        .split('–')
-        .next()
-        .unwrap_or_default()
-        .trim();
-    let suffix = format!(" · {start_time}");
-    let title_limit = MAX_AGENDA_LABEL_WIDTH.saturating_sub(suffix.width());
+    // The time comes first because that is what the eye scans a day by; the
+    // whole span rather than the start alone, so a glance answers "am I free
+    // after this" without opening anything.
+    let prefix = format!("{} · ", event.time_label.trim());
+    let title_limit = MAX_AGENDA_LABEL_WIDTH.saturating_sub(prefix.width());
 
-    format!("{}{suffix}", compact_title(&event.title, title_limit))
+    format!("{prefix}{}", compact_title(&event.title, title_limit))
 }
 
 fn duration_label(diff_ms: f64) -> String {
@@ -413,7 +413,7 @@ mod tests {
     }
 
     #[test]
-    fn groups_at_most_three_remaining_events_for_today_and_tomorrow() {
+    fn groups_remaining_events_by_day_and_drops_what_has_finished() {
         let now = 1_000_000.0;
         let mut events = vec![
             event("Active", now - 1_000.0, Some(now + 60_000.0)),
@@ -434,7 +434,7 @@ mod tests {
                     label: "Today".to_string(),
                     events: vec![TrayAgendaEvent {
                         id: "active".to_string(),
-                        label: "Active · 9:00 AM".to_string(),
+                        label: "9:00 AM – 9:30 AM · Active".to_string(),
                     }],
                 },
                 TrayAgendaSection {
@@ -442,16 +442,40 @@ mod tests {
                     events: vec![
                         TrayAgendaEvent {
                             id: "next".to_string(),
-                            label: "Next · 9:00 AM".to_string(),
+                            label: "9:00 AM – 9:30 AM · Next".to_string(),
                         },
                         TrayAgendaEvent {
                             id: "tomorrow-one".to_string(),
-                            label: "Tomorrow one · 9:00 AM".to_string(),
+                            label: "9:00 AM – 9:30 AM · Tomorrow one".to_string(),
+                        },
+                        TrayAgendaEvent {
+                            id: "tomorrow-two".to_string(),
+                            label: "9:00 AM – 9:30 AM · Tomorrow two".to_string(),
                         },
                     ],
                 },
             ]
         );
+    }
+
+    // A busy day used to be cut to three rows, which is the complaint this cap
+    // answers: the menu should hold a day, and stop before it becomes a list.
+    #[test]
+    fn caps_the_agenda_at_a_readable_number_of_rows() {
+        let now = 1_000_000.0;
+        let events: Vec<_> = (0..20)
+            .map(|index| {
+                let start = now + (index as f64 + 1.0) * 60_000.0;
+                event(&format!("Meeting {index}"), start, Some(start + 30_000.0))
+            })
+            .collect();
+
+        let rows: usize = agenda_sections(&events, now, true)
+            .iter()
+            .map(|section| section.events.len())
+            .sum();
+
+        assert_eq!(rows, MAX_AGENDA_ITEMS);
     }
 
     #[test]
@@ -462,7 +486,10 @@ mod tests {
             None,
         ));
 
-        assert_eq!(label, "Sprint retros… · 9:00 AM");
+        assert_eq!(
+            label,
+            "9:00 AM – 9:30 AM · Sprint retrospective and planni…"
+        );
         assert_eq!(label.width(), MAX_AGENDA_LABEL_WIDTH);
     }
 
