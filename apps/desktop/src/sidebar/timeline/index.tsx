@@ -599,22 +599,22 @@ export const TimelineView = memo(function TimelineView({
               </TimelineNowChip>
             )}
         </div>
-      </div>
-      {upcomingMeetingStatus && (
-        <NextMeetingHint
-          label={upcomingMeetingStatus.label}
-          title={upcomingMeetingStatus.title || t`Meeting`}
-          onSelect={() => {
-            setView("timeline");
-            scrollToUpcomingMeeting();
-          }}
+        {upcomingMeetingStatus && (
+          <NextMeetingHint
+            label={upcomingMeetingStatus.label}
+            title={upcomingMeetingStatus.title || t`Meeting`}
+            onSelect={() => {
+              setView("timeline");
+              scrollToUpcomingMeeting();
+            }}
+          />
+        )}
+        <TimelineViewSwitch
+          onChange={setView}
+          upcomingCount={upcomingCount}
+          view={view}
         />
-      )}
-      <TimelineViewSwitch
-        onChange={setView}
-        upcomingCount={upcomingCount}
-        view={view}
-      />
+      </div>
     </>
   );
 });

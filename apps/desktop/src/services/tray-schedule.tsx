@@ -1,3 +1,4 @@
+import { useLingui } from "@lingui/react";
 import { useMemo } from "react";
 
 import {
@@ -9,6 +10,8 @@ import { addDays, safeParseDate, startOfDay, TZDate } from "@anlg/utils";
 
 import { useIgnoredEvents } from "~/calendar/ignored-events";
 import { useTimelineEventsTable } from "~/calendar/queries";
+import type { ClockFormat } from "~/i18n/date-format";
+import { resolveDisplayLocale } from "~/i18n/locales";
 import { useConfigValue } from "~/shared/config";
 import { useCurrentDay } from "~/shared/hooks/useCurrentDay";
 import { useMountEffect } from "~/shared/hooks/useMountEffect";
@@ -90,11 +93,29 @@ export function buildTrayScheduleEvents(
     );
 }
 
+/**
+ * Intl has no separate "12 or 24 hours" argument; the wish rides on the locale
+ * as a Unicode extension. `auto` sends the plain locale so the language decides.
+ */
+function intlLocale(locale: string, clock: ClockFormat): string {
+  const display = resolveDisplayLocale(locale);
+  if (clock === "auto") {
+    return display;
+  }
+  return `${display}-u-hc-${clock === "24h" ? "h23" : "h12"}`;
+}
+
 export function TrayScheduleSync() {
   const timelineEventsTable = useTimelineEventsTable();
   const { isIgnored } = useIgnoredEvents();
   const timezone = useConfigValue("timezone") || undefined;
   const currentDay = useCurrentDay(timezone);
+  // Without these the menu bar clock followed macOS rather than the app: the
+  // locale argument existed but was never passed, so Intl fell back to the
+  // system. The clock preference rides along for the same reason.
+  const { i18n } = useLingui();
+  const clockFormat = useConfigValue("clock_format") as ClockFormat;
+  const locale = intlLocale(i18n.locale, clockFormat);
   const events = useMemo(
     () =>
       buildTrayScheduleEvents(
@@ -102,8 +123,9 @@ export function TrayScheduleSync() {
         isIgnored,
         Date.now(),
         timezone,
+        locale,
       ),
-    [currentDay, isIgnored, timelineEventsTable, timezone],
+    [currentDay, isIgnored, locale, timelineEventsTable, timezone],
   );
 
   return <TraySchedulePublisher key={JSON.stringify(events)} events={events} />;

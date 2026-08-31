@@ -347,11 +347,17 @@ impl<'a, M: tauri::Manager<tauri::Wry>> Tray<'a, tauri::Wry, M> {
             .duration_since(std::time::UNIX_EPOCH)
             .unwrap_or_default()
             .as_millis() as f64;
-        agenda_sections(
-            &SCHEDULE.lock().unwrap(),
-            now_ms,
-            SHOW_EVENTS.load(Ordering::SeqCst),
-        )
+        let schedule = SCHEDULE.lock().unwrap();
+        let show_events = SHOW_EVENTS.load(Ordering::SeqCst);
+        let sections = agenda_sections(&schedule, now_ms, show_events);
+        tracing::info!(
+            scheduled = schedule.len(),
+            show_events,
+            sections = sections.len(),
+            rows = sections.iter().map(|s| s.events.len()).sum::<usize>(),
+            "TRAYDEBUG agenda"
+        );
+        sections
     }
 
     fn build_tray_menu(

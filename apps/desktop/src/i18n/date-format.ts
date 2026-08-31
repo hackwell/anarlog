@@ -5,6 +5,15 @@ import { useMemo } from "react";
 
 import { type DisplayLocale, resolveDisplayLocale } from "./locales";
 
+import { useConfigValue } from "~/shared/config";
+
+/**
+ * How the clock reads, independent of which language the interface speaks.
+ * `auto` keeps the two tied together, which is what every surface did before
+ * this setting existed: German reads 24 hours, English reads 12.
+ */
+export type ClockFormat = "auto" | "12h" | "24h";
+
 // German reads a 24-hour clock and day-first dates; English keeps the 12-hour
 // clock and month-first dates the UI was originally written against.
 const PATTERNS: Record<
@@ -44,8 +53,30 @@ export type DateFormatter = {
   dateTime: (value: Date) => string;
 };
 
-export function getDateFormatter(locale: DisplayLocale): DateFormatter {
-  const patterns = PATTERNS[locale];
+const CLOCK_PATTERNS: Record<"12h" | "24h", { time: string; suffix: string }> =
+  {
+    "12h": { time: "h:mm a", suffix: "h:mm a" },
+    "24h": { time: "HH:mm", suffix: "HH:mm" },
+  };
+
+export function getDateFormatter(
+  locale: DisplayLocale,
+  clock: ClockFormat = "auto",
+): DateFormatter {
+  const base = PATTERNS[locale];
+  // The date half keeps the language's own order; only the clock half moves,
+  // so a German date never turns into a US one just to read 12 hours.
+  const patterns =
+    clock === "auto"
+      ? base
+      : {
+          ...base,
+          time: CLOCK_PATTERNS[clock].time,
+          dateTime: base.dateTime.replace(
+            clock === "24h" ? "h:mm a" : "HH:mm",
+            CLOCK_PATTERNS[clock].suffix,
+          ),
+        };
   const apply = (pattern: string) => (value: Date) => {
     if (!isValid(value)) {
       return "";
@@ -67,8 +98,9 @@ export function getDateFormatter(locale: DisplayLocale): DateFormatter {
 
 export function useDateFormatter(): DateFormatter {
   const { i18n } = useLingui();
+  const clock = useConfigValue("clock_format") as ClockFormat;
   return useMemo(
-    () => getDateFormatter(resolveDisplayLocale(i18n.locale)),
-    [i18n.locale],
+    () => getDateFormatter(resolveDisplayLocale(i18n.locale), clock),
+    [clock, i18n.locale],
   );
 }

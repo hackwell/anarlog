@@ -14,6 +14,7 @@ import { commands as openerCommands } from "@anlg/plugin-opener2";
 import { commands as todoCommands } from "@anlg/plugin-todo";
 import { cn } from "@anlg/utils";
 
+import { useDateFormatter } from "~/i18n/date-format";
 import { streamdownComponents } from "~/session/components/streamdown";
 import { type TaskResource } from "~/store/zustand/tabs";
 
@@ -21,6 +22,7 @@ const rehypePlugins = [defaultRehypePlugins.raw, defaultRehypePlugins.sanitize];
 
 export function ResourceView({ resource }: { resource: TaskResource }) {
   const { t } = useLingui();
+  const dateFormatter = useDateFormatter();
   const {
     data: issue,
     isLoading,
@@ -113,11 +115,7 @@ export function ResourceView({ resource }: { resource: TaskResource }) {
               <StateBadge isPR={isPR} isMerged={isMerged} isClosed={isClosed} />
               <span>
                 <Trans>{issue.user?.login} opened on</Trans>{" "}
-                {new Date(issue.created_at).toLocaleDateString(undefined, {
-                  month: "short",
-                  day: "numeric",
-                  year: "numeric",
-                })}
+                {dateFormatter.date(new Date(issue.created_at))}
               </span>
               {issue.comments != null && issue.comments > 0 ? (
                 <span>
@@ -215,14 +213,7 @@ export function ResourceView({ resource }: { resource: TaskResource }) {
                       </span>
                       <span className="text-muted-foreground">
                         <Trans>commented on</Trans>{" "}
-                        {new Date(comment.created_at).toLocaleDateString(
-                          undefined,
-                          {
-                            month: "short",
-                            day: "numeric",
-                            year: "numeric",
-                          },
-                        )}
+                        {dateFormatter.date(new Date(comment.created_at))}
                       </span>
                     </div>
                     <div className="px-4 py-3">

@@ -14,6 +14,8 @@ import {
 
 import type { HumanSessionRecord } from "./queries";
 
+import { useDateFormatter } from "~/i18n/date-format";
+
 export function RelatedNotesSection({
   sessions,
   onSessionClick,
@@ -22,6 +24,7 @@ export function RelatedNotesSection({
   onSessionClick: (id: string) => void;
 }) {
   const { t } = useLingui();
+  const dateFormatter = useDateFormatter();
   const [search, setSearch] = useState("");
   const [sortOrder, setSortOrder] = useState<"newest" | "oldest">("newest");
   const visibleSessions = sortAndFilterRelatedNotes(
@@ -108,7 +111,7 @@ export function RelatedNotesSection({
                 </span>
                 {session.createdAt && (
                   <time className="text-muted-foreground shrink-0 text-xs">
-                    {new Date(session.createdAt).toLocaleDateString()}
+                    {dateFormatter.date(new Date(session.createdAt))}
                   </time>
                 )}
               </button>

@@ -231,6 +231,14 @@ export const SETTING_DEFINITIONS = {
     path: ["general", "week_start"],
     synced: true,
   },
+  // "auto" keeps the clock tied to the display language, which is what every
+  // surface did before this existed: German reads 24 hours, English reads 12.
+  clock_format: {
+    type: "string",
+    path: ["general", "clock_format"],
+    default: "auto" as "auto" | "12h" | "24h",
+    synced: true,
+  },
   selected_template_id: {
     type: "string",
     path: ["general", "selected_template_id"],
