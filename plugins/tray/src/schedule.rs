@@ -1,8 +1,101 @@
 const DISPLAY_HORIZON_MS: f64 = 24.0 * 60.0 * 60.0 * 1000.0;
-const MAX_AGENDA_LABEL_WIDTH: usize = 24;
+const MAX_AGENDA_LABEL_WIDTH: usize = 52;
+/// Enough for a full day and the start of the next. A menu longer than this
+/// stops being a glance and starts being a list you scroll.
+const MAX_AGENDA_ITEMS: usize = 12;
 const MAX_MENU_BAR_LABEL_WIDTH: usize = 30;
 
+use std::sync::Mutex;
+
 use unicode_width::{UnicodeWidthChar, UnicodeWidthStr};
+
+static LABELS: Mutex<Option<TrayLabels>> = Mutex::new(None);
+
+/// The wording every tray surface reads. Defaults to the English that used to
+/// be compiled in, until the frontend sends the catalogue's version.
+pub fn labels() -> TrayLabels {
+    LABELS.lock().unwrap().clone().unwrap_or_default()
+}
+
+pub fn set_labels(next: TrayLabels) {
+    *LABELS.lock().unwrap() = Some(next);
+}
+
+/// The words the menu bar puts around a countdown. Rust owns the ticking, the
+/// frontend owns the language: it holds the catalogue, so it sends the phrases
+/// and this side only fills in the number.
+#[derive(Debug, Clone, serde::Deserialize, specta::Type, PartialEq)]
+#[serde(rename_all = "camelCase")]
+pub struct TrayLabels {
+    /// A meeting under way, e.g. `" • {duration} left"`.
+    pub remaining: String,
+    /// A meeting still ahead, e.g. `" • in {duration}"`.
+    pub upcoming: String,
+    pub seconds: String,
+    pub minutes: String,
+    pub hours: String,
+    pub today: String,
+    pub tomorrow: String,
+    pub show_events: String,
+    pub open_app: String,
+    pub start_meeting: String,
+    pub new_note: String,
+    pub settings: String,
+    pub check_updates: String,
+    pub downloading_update: String,
+    pub restart_to_apply: String,
+    pub update_available: String,
+    pub update_failed: String,
+    pub update_check_failed: String,
+    pub quit_completely_title: String,
+    pub update_ready: String,
+    pub install_failed: String,
+    pub download_failed: String,
+    pub check_failed: String,
+    pub report_bug: String,
+    pub suggest_feature: String,
+    pub about: String,
+    pub hide: String,
+    pub quit: String,
+    pub quit_completely: String,
+}
+
+impl Default for TrayLabels {
+    /// English, matching what was hardcoded before a language ever reached here.
+    fn default() -> Self {
+        Self {
+            remaining: " • {duration} left".to_string(),
+            upcoming: " • in {duration}".to_string(),
+            seconds: "s".to_string(),
+            minutes: "m".to_string(),
+            hours: "h".to_string(),
+            today: "Today".to_string(),
+            tomorrow: "Tomorrow".to_string(),
+            show_events: "Show events in menu bar".to_string(),
+            open_app: "Open {app}".to_string(),
+            start_meeting: "Start a new meeting".to_string(),
+            new_note: "New Note".to_string(),
+            settings: "Settings".to_string(),
+            check_updates: "Check for Updates".to_string(),
+            downloading_update: "Downloading...".to_string(),
+            restart_to_apply: "Restart to Apply Update".to_string(),
+            update_available: "Update Available".to_string(),
+            update_failed: "Update Failed".to_string(),
+            update_check_failed: "Update Check Failed".to_string(),
+            quit_completely_title: "Quit {app} Completely?".to_string(),
+            update_ready: "Update v{version} is available!".to_string(),
+            install_failed: "Failed to install update: {error}".to_string(),
+            download_failed: "Failed to download update: {error}".to_string(),
+            check_failed: "Failed to check for updates: {error}".to_string(),
+            report_bug: "Report Bug".to_string(),
+            suggest_feature: "Suggest Feature".to_string(),
+            about: "About {app}".to_string(),
+            hide: "Hide".to_string(),
+            quit: "Quit".to_string(),
+            quit_completely: "Quit Completely…".to_string(),
+        }
+    }
+}
 
 #[derive(Debug, Clone, serde::Deserialize, specta::Type, PartialEq)]
 #[serde(rename_all = "camelCase")]
@@ -33,6 +126,7 @@ pub fn agenda_sections(
     events: &[TrayScheduleEvent],
     now_ms: f64,
     show_events: bool,
+    labels: &TrayLabels,
 ) -> Vec<TrayAgendaSection> {
     if !show_events {
         return Vec::new();
@@ -47,12 +141,12 @@ pub fn agenda_sections(
                 .ends_at_ms
                 .map_or(event.starts_at_ms > now_ms, |end_ms| end_ms > now_ms)
         })
-        .filter_map(|event| agenda_day_label(event, now_ms).map(|label| (event, label)))
-        .take(3)
+        .filter_map(|event| agenda_day_label(event, now_ms, labels).map(|label| (event, label)))
+        .take(MAX_AGENDA_ITEMS)
     {
         if sections.last().is_none_or(|section| section.label != label) {
             sections.push(TrayAgendaSection {
-                label: label.to_string(),
+                label: label.clone(),
                 events: Vec::new(),
             });
         }
@@ -66,15 +160,15 @@ pub fn agenda_sections(
     sections
 }
 
-fn agenda_day_label(event: &TrayScheduleEvent, now_ms: f64) -> Option<&'static str> {
+fn agenda_day_label(event: &TrayScheduleEvent, now_ms: f64, labels: &TrayLabels) -> Option<String> {
     if !event.day_start_ms.is_finite() || !event.previous_day_start_ms.is_finite() {
         return None;
     }
 
     if now_ms >= event.day_start_ms {
-        Some("Today")
+        Some(labels.today.clone())
     } else if now_ms >= event.previous_day_start_ms {
-        Some("Tomorrow")
+        Some(labels.tomorrow.clone())
     } else {
         None
     }
@@ -86,6 +180,7 @@ pub fn menu_bar_title(
     show_events: bool,
     is_recording: bool,
     recording_title: Option<&str>,
+    labels: &TrayLabels,
 ) -> Option<String> {
     if is_recording {
         let title = recording_title?.trim();
@@ -103,16 +198,19 @@ pub fn menu_bar_title(
     let active = active_event(events, now_ms);
 
     if let Some(event) = active {
-        let suffix = format!(
-            " • {} left",
-            duration_label(event.ends_at_ms.unwrap_or(now_ms) - now_ms)
+        let suffix = labels.remaining.replace(
+            "{duration}",
+            &duration_label(event.ends_at_ms.unwrap_or(now_ms) - now_ms, labels),
         );
         return Some(menu_bar_label(&event.title, &suffix));
     }
 
     let event = upcoming_event(events, now_ms)?;
 
-    let suffix = format!(" • in {}", duration_label(event.starts_at_ms - now_ms));
+    let suffix = labels.upcoming.replace(
+        "{duration}",
+        &duration_label(event.starts_at_ms - now_ms, labels),
+    );
     Some(menu_bar_label(&event.title, &suffix))
 }
 
@@ -229,36 +327,33 @@ fn compact_title(title: &str, max_width: usize) -> String {
 }
 
 fn compact_agenda_label(event: &TrayScheduleEvent) -> String {
-    let start_time = event
-        .time_label
-        .split('–')
-        .next()
-        .unwrap_or_default()
-        .trim();
-    let suffix = format!(" · {start_time}");
-    let title_limit = MAX_AGENDA_LABEL_WIDTH.saturating_sub(suffix.width());
+    // The time comes first because that is what the eye scans a day by; the
+    // whole span rather than the start alone, so a glance answers "am I free
+    // after this" without opening anything.
+    let prefix = format!("{} · ", event.time_label.trim());
+    let title_limit = MAX_AGENDA_LABEL_WIDTH.saturating_sub(prefix.width());
 
-    format!("{}{suffix}", compact_title(&event.title, title_limit))
+    format!("{prefix}{}", compact_title(&event.title, title_limit))
 }
 
-fn duration_label(diff_ms: f64) -> String {
+fn duration_label(diff_ms: f64, labels: &TrayLabels) -> String {
     let total_seconds = (diff_ms / 1000.0).floor().max(1.0) as u64;
 
     if total_seconds < 60 {
-        return format!("{total_seconds}s");
+        return format!("{total_seconds}{}", labels.seconds);
     }
 
     let total_minutes = total_seconds / 60;
     if total_minutes < 60 {
-        return format!("{total_minutes}m");
+        return format!("{total_minutes}{}", labels.minutes);
     }
 
     let hours = total_minutes / 60;
     let minutes = total_minutes % 60;
     if minutes == 0 {
-        format!("{hours}h")
+        format!("{hours}{}", labels.hours)
     } else {
-        format!("{hours}h {minutes}m")
+        format!("{hours}{} {minutes}{}", labels.hours, labels.minutes)
     }
 }
 
@@ -289,7 +384,7 @@ mod tests {
         ];
 
         assert_eq!(
-            menu_bar_title(&events, now, true, false, None),
+            menu_bar_title(&events, now, true, false, None, &TrayLabels::default()),
             Some("Standup • in 5m".to_string())
         );
     }
@@ -330,7 +425,7 @@ mod tests {
         ];
 
         assert_eq!(
-            menu_bar_title(&events, now, true, false, None),
+            menu_bar_title(&events, now, true, false, None, &TrayLabels::default()),
             Some("Active meeting • 10m left".to_string())
         );
     }
@@ -345,11 +440,11 @@ mod tests {
         )];
 
         assert_eq!(
-            menu_bar_title(&events, now, true, false, None),
+            menu_bar_title(&events, now, true, false, None, &TrayLabels::default()),
             Some("Sprint retrospec… • in 17h 20m".to_string())
         );
         assert_eq!(
-            menu_bar_title(&events, now, true, false, None)
+            menu_bar_title(&events, now, true, false, None, &TrayLabels::default())
                 .unwrap()
                 .chars()
                 .count(),
@@ -366,7 +461,8 @@ mod tests {
             None,
         )];
 
-        let title = menu_bar_title(&events, now, true, false, None).unwrap();
+        let title =
+            menu_bar_title(&events, now, true, false, None, &TrayLabels::default()).unwrap();
 
         assert_eq!(title, "[실뻘한] char 정치현… • in 29m");
         assert_eq!(title.width(), MAX_MENU_BAR_LABEL_WIDTH);
@@ -378,11 +474,25 @@ mod tests {
         let events = vec![event("Unrelated event", now + 60_000.0, None)];
 
         assert_eq!(
-            menu_bar_title(&events, now, true, true, Some("Customer call")),
+            menu_bar_title(
+                &events,
+                now,
+                true,
+                true,
+                Some("Customer call"),
+                &TrayLabels::default()
+            ),
             Some("Customer call".to_string())
         );
         assert_eq!(
-            menu_bar_title(&events, now, false, true, Some("Customer call")),
+            menu_bar_title(
+                &events,
+                now,
+                false,
+                true,
+                Some("Customer call"),
+                &TrayLabels::default()
+            ),
             Some("Customer call".to_string())
         );
     }
@@ -392,8 +502,14 @@ mod tests {
         let now = 1_000_000.0;
         let events = vec![event("Unrelated event", now + 60_000.0, None)];
 
-        assert_eq!(menu_bar_title(&events, now, true, true, None), None);
-        assert_eq!(menu_bar_title(&events, now, true, true, Some("  ")), None);
+        assert_eq!(
+            menu_bar_title(&events, now, true, true, None, &TrayLabels::default()),
+            None
+        );
+        assert_eq!(
+            menu_bar_title(&events, now, true, true, Some("  "), &TrayLabels::default()),
+            None
+        );
     }
 
     #[test]
@@ -401,7 +517,10 @@ mod tests {
         let now = 1_000_000.0;
         let events = vec![event("Finished", now - 60_000.0, Some(now - 1.0))];
 
-        assert_eq!(menu_bar_title(&events, now, true, false, None), None);
+        assert_eq!(
+            menu_bar_title(&events, now, true, false, None, &TrayLabels::default()),
+            None
+        );
     }
 
     #[test]
@@ -409,11 +528,14 @@ mod tests {
         let now = 1_000_000.0;
         let events = vec![event("Standup", now + 5.0 * 60.0 * 1000.0, None)];
 
-        assert_eq!(menu_bar_title(&events, now, false, false, None), None);
+        assert_eq!(
+            menu_bar_title(&events, now, false, false, None, &TrayLabels::default()),
+            None
+        );
     }
 
     #[test]
-    fn groups_at_most_three_remaining_events_for_today_and_tomorrow() {
+    fn groups_remaining_events_by_day_and_drops_what_has_finished() {
         let now = 1_000_000.0;
         let mut events = vec![
             event("Active", now - 1_000.0, Some(now + 60_000.0)),
@@ -428,13 +550,13 @@ mod tests {
         }
 
         assert_eq!(
-            agenda_sections(&events, now, true),
+            agenda_sections(&events, now, true, &TrayLabels::default()),
             vec![
                 TrayAgendaSection {
                     label: "Today".to_string(),
                     events: vec![TrayAgendaEvent {
                         id: "active".to_string(),
-                        label: "Active · 9:00 AM".to_string(),
+                        label: "9:00 AM – 9:30 AM · Active".to_string(),
                     }],
                 },
                 TrayAgendaSection {
@@ -442,16 +564,40 @@ mod tests {
                     events: vec![
                         TrayAgendaEvent {
                             id: "next".to_string(),
-                            label: "Next · 9:00 AM".to_string(),
+                            label: "9:00 AM – 9:30 AM · Next".to_string(),
                         },
                         TrayAgendaEvent {
                             id: "tomorrow-one".to_string(),
-                            label: "Tomorrow one · 9:00 AM".to_string(),
+                            label: "9:00 AM – 9:30 AM · Tomorrow one".to_string(),
+                        },
+                        TrayAgendaEvent {
+                            id: "tomorrow-two".to_string(),
+                            label: "9:00 AM – 9:30 AM · Tomorrow two".to_string(),
                         },
                     ],
                 },
             ]
         );
+    }
+
+    // A busy day used to be cut to three rows, which is the complaint this cap
+    // answers: the menu should hold a day, and stop before it becomes a list.
+    #[test]
+    fn caps_the_agenda_at_a_readable_number_of_rows() {
+        let now = 1_000_000.0;
+        let events: Vec<_> = (0..20)
+            .map(|index| {
+                let start = now + (index as f64 + 1.0) * 60_000.0;
+                event(&format!("Meeting {index}"), start, Some(start + 30_000.0))
+            })
+            .collect();
+
+        let rows: usize = agenda_sections(&events, now, true, &TrayLabels::default())
+            .iter()
+            .map(|section| section.events.len())
+            .sum();
+
+        assert_eq!(rows, MAX_AGENDA_ITEMS);
     }
 
     #[test]
@@ -462,7 +608,10 @@ mod tests {
             None,
         ));
 
-        assert_eq!(label, "Sprint retros… · 9:00 AM");
+        assert_eq!(
+            label,
+            "9:00 AM – 9:30 AM · Sprint retrospective and planni…"
+        );
         assert_eq!(label.width(), MAX_AGENDA_LABEL_WIDTH);
     }
 
@@ -474,11 +623,17 @@ mod tests {
         next_day.previous_day_start_ms = midnight - 86_400_000.0;
 
         assert_eq!(
-            agenda_sections(&[next_day.clone()], midnight - 1.0, true)[0].label,
+            agenda_sections(
+                &[next_day.clone()],
+                midnight - 1.0,
+                true,
+                &TrayLabels::default()
+            )[0]
+            .label,
             "Tomorrow"
         );
         assert_eq!(
-            agenda_sections(&[next_day], midnight, true)[0].label,
+            agenda_sections(&[next_day], midnight, true, &TrayLabels::default())[0].label,
             "Today"
         );
     }

@@ -8,6 +8,7 @@ import {
   getBucketInfo,
   getItemDurationMinutes,
   hasTimelineItemsAfterTomorrow,
+  isMeetingEvent,
   isTimelineItemInFuture,
   type TimelineEventsTable,
   type TimelineSessionsTable,
@@ -383,6 +384,7 @@ describe("timeline utils", () => {
     const buckets = buildTimelineBuckets({
       timelineEventsTable,
       timelineSessionsTable: null,
+      view: "timeline",
     });
 
     const eventItems = buckets
@@ -557,6 +559,7 @@ describe("timeline utils", () => {
     const buckets = buildTimelineBuckets({
       timelineEventsTable,
       timelineSessionsTable,
+      view: "timeline",
     });
 
     const allItems = buckets.flatMap((b) => b.items);
@@ -600,6 +603,7 @@ describe("timeline utils", () => {
     const buckets = buildTimelineBuckets({
       timelineEventsTable,
       timelineSessionsTable: null,
+      view: "timeline",
     });
 
     const allItems = buckets.flatMap((b) => b.items);
@@ -689,5 +693,43 @@ describe("timeline utils", () => {
         },
       }),
     ).toBeNull();
+  });
+});
+
+describe("isMeetingEvent", () => {
+  const event = (participants_json: string | null) => ({
+    type: "event" as const,
+    id: "event-1",
+    data: { title: "Standup", has_recurrence_rules: false, participants_json },
+  });
+
+  // This is the whole basis for stepping a row back, and a real calendar is
+  // 76% personal entries, so getting the threshold wrong hides real meetings.
+  test("treats an entry with other people as a meeting", () => {
+    expect(
+      isMeetingEvent(event('[{"email":"a@x.de"},{"email":"b@x.de"}]')),
+    ).toBe(true);
+  });
+
+  test("treats a solo entry as a personal reminder", () => {
+    expect(isMeetingEvent(event('[{"email":"a@x.de"}]'))).toBe(false);
+    expect(isMeetingEvent(event("[]"))).toBe(false);
+  });
+
+  // A calendar that never filled the column must not make every entry vanish
+  // into the muted ramp, so absent and unparseable both mean "not a meeting".
+  test("survives missing or malformed participant data", () => {
+    expect(isMeetingEvent(event(null))).toBe(false);
+    expect(isMeetingEvent(event("not json"))).toBe(false);
+  });
+
+  test("never calls a recording a meeting", () => {
+    expect(
+      isMeetingEvent({
+        type: "session",
+        id: "session-1",
+        data: { title: "Note", created_at: "2024-01-15T10:00:00.000Z" },
+      }),
+    ).toBe(false);
   });
 });

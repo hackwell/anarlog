@@ -1,4 +1,5 @@
 import {
+  Gear,
   MagnifyingGlass,
   NotePencil,
   Sidebar,
@@ -8,6 +9,7 @@ import { memo, type ReactNode } from "react";
 
 import { cn } from "@anlg/utils";
 
+import { useSettings } from "~/contexts/shell/settings";
 import { useSidebarUpcomingMeetingStatus } from "~/sidebar/timeline/upcoming-meeting";
 
 export const SidebarTimelineChromeWithUpcomingMeeting = memo(
@@ -28,6 +30,7 @@ export const SidebarTimelineChromeWithUpcomingMeeting = memo(
     showSidebarToggle?: boolean;
     showIgnoredTimelineEvents: boolean;
   }) {
+    const { openSettings } = useSettings();
     const upcomingMeetingStatus = useSidebarUpcomingMeetingStatus({
       showIgnored: showIgnoredTimelineEvents,
     });
@@ -40,6 +43,7 @@ export const SidebarTimelineChromeWithUpcomingMeeting = memo(
       <SidebarTimelineChrome
         hasUpcomingMeeting={hasUpcomingMeeting}
         onNewNote={onNewNote}
+        onOpenSettings={openSettings}
         onSearch={onSearch}
         onToggleSidebar={onToggleSidebar}
         sidebarExpanded={sidebarExpanded}
@@ -52,6 +56,7 @@ export const SidebarTimelineChromeWithUpcomingMeeting = memo(
 function SidebarTimelineChrome({
   hasUpcomingMeeting,
   onNewNote,
+  onOpenSettings,
   onSearch,
   onToggleSidebar,
   sidebarExpanded,
@@ -59,6 +64,7 @@ function SidebarTimelineChrome({
 }: {
   hasUpcomingMeeting: boolean;
   onNewNote: () => void;
+  onOpenSettings: () => void;
   onSearch: () => void;
   onToggleSidebar: () => void;
   sidebarExpanded: boolean;
@@ -99,6 +105,14 @@ function SidebarTimelineChrome({
             </LeftSurfaceChromeButton>
             <LeftSurfaceChromeButton ariaLabel="New note" onClick={onNewNote}>
               <NotePencil size={15} />
+            </LeftSurfaceChromeButton>
+            {/* Last in the row: settings are visited rarely, and the two beside
+                it are what the rail is for. */}
+            <LeftSurfaceChromeButton
+              ariaLabel="Settings"
+              onClick={onOpenSettings}
+            >
+              <Gear size={15} />
             </LeftSurfaceChromeButton>
           </>
         ) : null}

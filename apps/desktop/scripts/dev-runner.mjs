@@ -36,18 +36,43 @@ if (command === "run" || command === "build") {
   runChild(command, args);
 }
 
+/**
+ * macOS ties keychain access to the code signature. An ad-hoc signature has no
+ * stable identity - it is derived from the binary, which changes on every
+ * build - so every rebuild looks like a different program and the keychain asks
+ * for a password again. A Developer ID gives the same identity every time, and
+ * the prompt stops after the first "Always Allow".
+ */
+function developerIdIdentity() {
+  const found = spawnSync(
+    "security",
+    ["find-identity", "-v", "-p", "codesigning"],
+    { encoding: "utf8" },
+  );
+  if (found.status !== 0) {
+    return null;
+  }
+  const line = found.stdout
+    .split("\n")
+    .find((entry) => entry.includes("Developer ID Application"));
+  return line ? (line.match(/"([^"]+)"/)?.[1] ?? null) : null;
+}
+
 function signBinary(binary) {
   const scriptDirectory = dirname(scriptPath);
   const entitlements = resolve(
     scriptDirectory,
     "../src-tauri/Entitlements.plist",
   );
+  // Falls back to ad-hoc where no certificate is installed, so a machine
+  // without one still builds - it just keeps the prompts.
+  const identity = developerIdIdentity() ?? "-";
   const signing = spawnSync(
     "codesign",
     [
       "--force",
       "--sign",
-      "-",
+      identity,
       "--identifier",
       "de.flagbit.sessionecho.dev",
       "--requirements",

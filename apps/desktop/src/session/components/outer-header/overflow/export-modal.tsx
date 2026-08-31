@@ -21,6 +21,7 @@ import { cn } from "@anlg/utils";
 
 import { formatDate, formatDuration } from "./export-utils";
 
+import { useDateFormatter } from "~/i18n/date-format";
 import { useTranscriptExportSegments } from "~/session/components/note-input/transcript/export-data";
 import {
   useEnhancedNote,
@@ -72,6 +73,7 @@ export function ExportModal({
   onOpenChange: (open: boolean) => void;
 }) {
   const { t } = useLingui();
+  const dateFormatter = useDateFormatter();
   const [format, setFormat] = useState<FileFormat>("pdf");
   const [includeMemo, setIncludeMemo] = useState(false);
   const [includeSummary, setIncludeSummary] = useState(true);
@@ -159,7 +161,9 @@ export function ExportModal({
     sections.push(`# ${title}`);
 
     if (sessionCreatedAt) {
-      sections.push(`- ${t`Created`}: ${formatDate(sessionCreatedAt)}`);
+      sections.push(
+        `- ${t`Created`}: ${formatDate(sessionCreatedAt, dateFormatter)}`,
+      );
     }
 
     if (participantNames.length > 0) {
@@ -207,7 +211,7 @@ export function ExportModal({
     sections.push("=".repeat(title.length));
 
     if (sessionCreatedAt) {
-      sections.push(formatDate(sessionCreatedAt));
+      sections.push(formatDate(sessionCreatedAt, dateFormatter));
     }
 
     if (participantNames.length > 0) {
@@ -257,14 +261,16 @@ export function ExportModal({
     sections.push(`#+TITLE: ${title}`);
 
     if (sessionCreatedAt) {
-      sections.push(`#+DATE: ${formatDate(sessionCreatedAt)}`);
+      sections.push(`#+DATE: ${formatDate(sessionCreatedAt, dateFormatter)}`);
     }
 
     sections.push("");
     sections.push(`* ${t`Metadata`}`);
 
     if (sessionCreatedAt) {
-      sections.push(`- ${t`Created`} :: ${formatDate(sessionCreatedAt)}`);
+      sections.push(
+        `- ${t`Created`} :: ${formatDate(sessionCreatedAt, dateFormatter)}`,
+      );
     }
 
     if (participantNames.length > 0) {
@@ -313,7 +319,9 @@ export function ExportModal({
   } => {
     const metadata: ExportMetadata = {
       title: sessionTitle || t`Untitled`,
-      createdAt: sessionCreatedAt ? formatDate(sessionCreatedAt) : "",
+      createdAt: sessionCreatedAt
+        ? formatDate(sessionCreatedAt, dateFormatter)
+        : "",
       participants: participantNames,
       eventTitle: eventTitle || null,
       duration: transcriptDuration,

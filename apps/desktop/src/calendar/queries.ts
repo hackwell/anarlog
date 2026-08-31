@@ -137,6 +137,7 @@ export function useTimelineEventsTable(): TimelineEventsTable {
         event.location,
         event.meeting_link,
         event.description,
+        event.participants_json,
         calendar.color AS calendar_color
       FROM events AS event
       LEFT JOIN calendars AS calendar

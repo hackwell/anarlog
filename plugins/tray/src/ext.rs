@@ -17,7 +17,7 @@ use tauri::{
 
 use crate::{
     schedule::{
-        TrayAgendaSection, TrayScheduleEvent, agenda_sections, menu_bar_title,
+        TrayAgendaSection, TrayLabels, TrayScheduleEvent, agenda_sections, menu_bar_title,
         next_schedule_refresh_ms,
     },
     tray_icon::{RECORDING_FRAMES, TrayIconState},
@@ -204,11 +204,21 @@ impl<'a, M: tauri::Manager<tauri::Wry>> Tray<'a, tauri::Wry, M> {
         let builder = {
             let app = app.clone();
             builder.on_tray_icon_event(move |_tray, event| {
-                if let TrayIconEvent::Click {
-                    button_state: MouseButtonState::Down,
-                    ..
-                } = event
-                {
+                // Enter fires as the pointer reaches the icon, while the menu is
+                // still closed - the only safe moment to swap it, and early
+                // enough that the click opens the new one. Click alone was not
+                // enough: with show_menu_on_left_click the menu opens without
+                // the handler seeing the press, so the agenda never arrived.
+                let ready = matches!(
+                    event,
+                    TrayIconEvent::Enter { .. }
+                        | TrayIconEvent::Move { .. }
+                        | TrayIconEvent::Click {
+                            button_state: MouseButtonState::Down,
+                            ..
+                        }
+                );
+                if ready {
                     let _ = Self::apply_pending_menu(&app);
                 }
             })
@@ -330,6 +340,7 @@ impl<'a, M: tauri::Manager<tauri::Wry>> Tray<'a, tauri::Wry, M> {
             SHOW_EVENTS.load(Ordering::SeqCst),
             IS_RECORDING.load(Ordering::SeqCst),
             recording_title.as_deref(),
+            &crate::schedule::labels(),
         );
         let mut current_title = MENU_BAR_TITLE.lock().unwrap();
 
@@ -342,16 +353,27 @@ impl<'a, M: tauri::Manager<tauri::Wry>> Tray<'a, tauri::Wry, M> {
         Ok(())
     }
 
+    pub fn set_labels(&self, labels: TrayLabels) -> Result<()> {
+        crate::schedule::set_labels(labels);
+
+        let app = self.manager.app_handle();
+        Self::refresh_menu_bar_title(app)?;
+        // Every item title comes from these words, and none of them live in the
+        // agenda, so comparing agendas would find nothing changed and leave the
+        // menu in the language it was built with.
+        Self::rebuild_menu(app)?;
+
+        Ok(())
+    }
+
     fn current_agenda_sections() -> Vec<TrayAgendaSection> {
         let now_ms = std::time::SystemTime::now()
             .duration_since(std::time::UNIX_EPOCH)
             .unwrap_or_default()
             .as_millis() as f64;
-        agenda_sections(
-            &SCHEDULE.lock().unwrap(),
-            now_ms,
-            SHOW_EVENTS.load(Ordering::SeqCst),
-        )
+        let schedule = SCHEDULE.lock().unwrap();
+        let show_events = SHOW_EVENTS.load(Ordering::SeqCst);
+        agenda_sections(&schedule, now_ms, show_events, &crate::schedule::labels())
     }
 
     fn build_tray_menu(

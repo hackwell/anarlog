@@ -1,13 +1,16 @@
-export function formatDate(isoString: string): string {
+import type { DateFormatter } from "~/i18n/date-format";
+
+/**
+ * An export used to be hardcoded to en-US, so a German note carried an English
+ * date and a 12-hour clock whatever the app was set to. The formatter is passed
+ * in rather than built here, so an export reads the way the app does.
+ */
+export function formatDate(
+  isoString: string,
+  dateFormatter: DateFormatter,
+): string {
   const date = new Date(isoString);
-  return date.toLocaleDateString("en-US", {
-    weekday: "long",
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-    hour: "numeric",
-    minute: "2-digit",
-  });
+  return Number.isNaN(date.getTime()) ? "" : dateFormatter.dateTime(date);
 }
 
 export function formatDuration(startMs: number, endMs: number): string {

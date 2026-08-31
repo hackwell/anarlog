@@ -1,4 +1,7 @@
-use crate::{TrayPluginExt, schedule::TrayScheduleEvent};
+use crate::{
+    TrayPluginExt,
+    schedule::{TrayLabels, TrayScheduleEvent},
+};
 
 #[tauri::command]
 #[specta::specta]
@@ -29,5 +32,16 @@ pub async fn set_tray_recording_title(
 ) -> Result<(), String> {
     app.tray()
         .set_recording_title(title)
+        .map_err(|error| error.to_string())
+}
+
+#[tauri::command]
+#[specta::specta]
+pub async fn set_tray_labels(
+    app: tauri::AppHandle<tauri::Wry>,
+    labels: TrayLabels,
+) -> Result<(), String> {
+    app.tray()
+        .set_labels(labels)
         .map_err(|error| error.to_string())
 }

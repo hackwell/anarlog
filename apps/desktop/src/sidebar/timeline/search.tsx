@@ -28,6 +28,31 @@ export function filterTimelineBuckets(
   return filtered;
 }
 
+/**
+ * Keeps only the recordings a person took part in. Events are dropped outright:
+ * the filter answers "what did we talk about", and a calendar slot nobody
+ * recorded holds no answer.
+ */
+export function filterBucketsByParticipant(
+  buckets: TimelineBucket[],
+  sessionIds: Set<string> | null,
+): TimelineBucket[] {
+  if (!sessionIds) {
+    return buckets;
+  }
+
+  const filtered: TimelineBucket[] = [];
+  for (const bucket of buckets) {
+    const items = bucket.items.filter(
+      (item) => item.type === "session" && sessionIds.has(item.id),
+    );
+    if (items.length > 0) {
+      filtered.push({ ...bucket, items });
+    }
+  }
+  return filtered;
+}
+
 export function TimelineSearchField({
   onChange,
   value,

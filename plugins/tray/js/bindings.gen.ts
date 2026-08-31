@@ -29,6 +29,14 @@ async setTrayRecordingTitle(title: string | null) : Promise<Result<null, string>
     if(e instanceof Error) throw e;
     else return { status: "error", error: e  as any };
 }
+},
+async setTrayLabels(labels: TrayLabels) : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("plugin:anlg-tray|set_tray_labels", { labels }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
 }
 }
 
@@ -42,6 +50,20 @@ async setTrayRecordingTitle(title: string | null) : Promise<Result<null, string>
 
 /** user-defined types **/
 
+/**
+ * The words the menu bar puts around a countdown. Rust owns the ticking, the
+ * frontend owns the language: it holds the catalogue, so it sends the phrases
+ * and this side only fills in the number.
+ */
+export type TrayLabels = { 
+/**
+ * A meeting under way, e.g. `" • {duration} left"`.
+ */
+remaining: string; 
+/**
+ * A meeting still ahead, e.g. `" • in {duration}"`.
+ */
+upcoming: string; seconds: string; minutes: string; hours: string; today: string; tomorrow: string; showEvents: string; openApp: string; startMeeting: string; newNote: string; settings: string; checkUpdates: string; downloadingUpdate: string; restartToApply: string; updateAvailable: string; updateFailed: string; updateCheckFailed: string; quitCompletelyTitle: string; updateReady: string; installFailed: string; downloadFailed: string; checkFailed: string; reportBug: string; suggestFeature: string; about: string; hide: string; quit: string; quitCompletely: string }
 export type TrayScheduleEvent = { id: string; title: string; meetingLink: string | null; startsAtMs: number; endsAtMs: number | null; dayStartMs: number; previousDayStartMs: number; timeLabel: string }
 
 /** tauri-specta globals **/

@@ -1,4 +1,6 @@
-import { useMemo } from "react";
+import { useLingui } from "@lingui/react";
+import { useLingui as useLinguiMacro } from "@lingui/react/macro";
+import { useEffect, useMemo } from "react";
 
 import {
   commands as trayCommands,
@@ -9,6 +11,8 @@ import { addDays, safeParseDate, startOfDay, TZDate } from "@anlg/utils";
 
 import { useIgnoredEvents } from "~/calendar/ignored-events";
 import { useTimelineEventsTable } from "~/calendar/queries";
+import type { ClockFormat } from "~/i18n/date-format";
+import { resolveDisplayLocale } from "~/i18n/locales";
 import { useConfigValue } from "~/shared/config";
 import { useCurrentDay } from "~/shared/hooks/useCurrentDay";
 import { useMountEffect } from "~/shared/hooks/useMountEffect";
@@ -90,11 +94,29 @@ export function buildTrayScheduleEvents(
     );
 }
 
+/**
+ * Intl has no separate "12 or 24 hours" argument; the wish rides on the locale
+ * as a Unicode extension. `auto` sends the plain locale so the language decides.
+ */
+function intlLocale(locale: string, clock: ClockFormat): string {
+  const display = resolveDisplayLocale(locale);
+  if (clock === "auto") {
+    return display;
+  }
+  return `${display}-u-hc-${clock === "24h" ? "h23" : "h12"}`;
+}
+
 export function TrayScheduleSync() {
   const timelineEventsTable = useTimelineEventsTable();
   const { isIgnored } = useIgnoredEvents();
   const timezone = useConfigValue("timezone") || undefined;
   const currentDay = useCurrentDay(timezone);
+  // Without these the menu bar clock followed macOS rather than the app: the
+  // locale argument existed but was never passed, so Intl fell back to the
+  // system. The clock preference rides along for the same reason.
+  const { i18n } = useLingui();
+  const clockFormat = useConfigValue("clock_format") as ClockFormat;
+  const locale = intlLocale(i18n.locale, clockFormat);
   const events = useMemo(
     () =>
       buildTrayScheduleEvents(
@@ -102,8 +124,9 @@ export function TrayScheduleSync() {
         isIgnored,
         Date.now(),
         timezone,
+        locale,
       ),
-    [currentDay, isIgnored, timelineEventsTable, timezone],
+    [currentDay, isIgnored, locale, timelineEventsTable, timezone],
   );
 
   return <TraySchedulePublisher key={JSON.stringify(events)} events={events} />;
@@ -130,6 +153,63 @@ function TraySchedulePublisher({ events }: { events: TrayScheduleEvent[] }) {
         console.error("[tray] failed to publish schedule", error);
       });
   });
+
+  return null;
+}
+
+/**
+ * The tray runs in Rust, which knows no catalogue, so every word it shows has
+ * to be handed over. It ticks the countdown itself, so the phrases carry a
+ * {duration} placeholder rather than a finished string.
+ */
+export function TrayLabelsSync() {
+  const { t } = useLinguiMacro();
+  const { i18n } = useLingui();
+
+  const labels = useMemo(
+    () => ({
+      remaining: t` • ${"{duration}"} left`,
+      upcoming: t` • in ${"{duration}"}`,
+      seconds: t`s`,
+      minutes: t`m`,
+      hours: t`h`,
+      today: t`Today`,
+      tomorrow: t`Tomorrow`,
+      showEvents: t`Show events in menu bar`,
+      openApp: t`Open ${"{app}"}`,
+      startMeeting: t`Start a new meeting`,
+      newNote: t`New Note`,
+      settings: t`Settings`,
+      checkUpdates: t`Check for Updates`,
+      downloadingUpdate: t`Downloading...`,
+      restartToApply: t`Restart to Apply Update`,
+      updateAvailable: t`Update Available`,
+      updateFailed: t`Update Failed`,
+      updateCheckFailed: t`Update Check Failed`,
+      quitCompletelyTitle: t`Quit ${"{app}"} Completely?`,
+      updateReady: t`Update v${"{version}"} is available!`,
+      installFailed: t`Failed to install update: ${"{error}"}`,
+      downloadFailed: t`Failed to download update: ${"{error}"}`,
+      checkFailed: t`Failed to check for updates: ${"{error}"}`,
+      reportBug: t`Report Bug`,
+      suggestFeature: t`Suggest Feature`,
+      about: t`About ${"{app}"}`,
+      hide: t`Hide`,
+      quit: t`Quit`,
+      quitCompletely: t`Quit Completely…`,
+    }),
+    // The catalogue swaps wholesale when the language does.
+    [i18n.locale, t],
+  );
+
+  useEffect(() => {
+    if (getCurrentWebviewWindowLabel() !== "main") {
+      return;
+    }
+    void trayCommands.setTrayLabels(labels).catch((error: unknown) => {
+      console.error("[tray] failed to publish labels", error);
+    });
+  }, [labels]);
 
   return null;
 }

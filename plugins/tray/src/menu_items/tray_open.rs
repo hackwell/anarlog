@@ -14,7 +14,9 @@ impl MenuItemHandler for TrayOpen {
         let item = MenuItem::with_id(
             app,
             Self::ID,
-            format!("Open {}", app.package_info().name.as_str()),
+            crate::schedule::labels()
+                .open_app
+                .replace("{app}", app.package_info().name.as_str()),
             true,
             None::<&str>,
         )?;

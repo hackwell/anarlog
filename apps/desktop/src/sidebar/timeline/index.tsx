@@ -10,7 +10,7 @@ import {
   useState,
 } from "react";
 
-import { cn } from "@anlg/utils";
+import { cn, safeParseDate, startOfDay } from "@anlg/utils";
 
 import { useAnchor, useAutoScrollToAnchor } from "./anchor";
 import { TimelineBuckets } from "./buckets";
@@ -26,15 +26,26 @@ import {
   scrollTimelineItemIntoView,
   shouldClearTimelineSelectionOnPointerDown,
 } from "./interaction";
+import { ParticipantFilter } from "./participant-filter";
 import { useCurrentTimeMs } from "./realtime";
-import { filterTimelineBuckets, TimelineSearchField } from "./search";
+import {
+  filterBucketsByParticipant,
+  filterTimelineBuckets,
+  TimelineSearchField,
+} from "./search";
 import {
   useUpcomingMeetingStatus,
   useUpcomingMeetingLabelFormatter,
 } from "./upcoming-meeting";
+import { useTimelineView } from "./view";
+import { NextMeetingHint, TimelineViewSwitch } from "./view-switch";
 
 import { useIgnoredEvents } from "~/calendar/ignored-events";
-import { useTimelineTables } from "~/calendar/queries";
+import { parseEventParticipants, useTimelineTables } from "~/calendar/queries";
+import {
+  useFrequentParticipants,
+  useSessionIdsForHuman,
+} from "~/contacts/queries";
 import { useDeleteSession } from "~/session/hooks/useDeleteSession";
 import { useConfigValue } from "~/shared/config";
 import { scrollElementByWheel } from "~/shared/dom/scroll-wheel";
@@ -44,6 +55,7 @@ import { DestructiveConfirmationDialog } from "~/shared/ui/destructive-confirmat
 import { useTabs } from "~/store/zustand/tabs";
 import { useTimelineSelection } from "~/store/zustand/timeline-selection";
 import { useListener } from "~/stt/contexts";
+import { useSessionIdsForTag, useTags } from "~/tags/queries";
 
 export const TimelineView = memo(function TimelineView({
   showIgnoredEvents,
@@ -64,19 +76,72 @@ export const TimelineView = memo(function TimelineView({
   const [isScrolledToBottom, setIsScrolledToBottom] = useState(true);
 
   const { isIgnored } = useIgnoredEvents();
+  const [view, setView] = useTimelineView();
   const { buckets, hasMoreFutureItems } = useTimelineData({
     isEventIgnored: isIgnored,
     showIgnored,
     timelineEventsTable,
     timelineSessionsTable,
     timezone,
+    view,
   });
+  // What the unselected Timeline tab advertises: meetings still ahead today.
+  // Counted from the events table rather than the buckets, because the archive
+  // view deliberately holds no events at all.
+  const upcomingCount = useMemo(() => {
+    if (!timelineEventsTable) return 0;
+    const now = Date.now();
+    const endOfToday = startOfDay(
+      new Date(now + 24 * 60 * 60 * 1000),
+    ).getTime();
+    return Object.values(timelineEventsTable).filter((row) => {
+      const start = safeParseDate(row.started_at)?.getTime();
+      if (start === undefined || start < now || start >= endOfToday) {
+        return false;
+      }
+      return (
+        parseEventParticipants(row.participants_json ?? undefined).length >= 2
+      );
+    }).length;
+  }, [timelineEventsTable]);
+
   const [searchQuery, setSearchQuery] = useState("");
   const isSearching = searchQuery.trim().length > 0;
-  const visibleBuckets = useMemo(
-    () => filterTimelineBuckets(buckets, searchQuery),
-    [buckets, searchQuery],
+  // Only the archive filters by person: the timeline is the day ahead, and a
+  // meeting nobody has recorded yet has no participants to filter on.
+  const [selectedHumanId, setSelectedHumanId] = useState<string | null>(null);
+  const [selectedTagId, setSelectedTagId] = useState<string | null>(null);
+  const participants = useFrequentParticipants();
+  const tags = useTags();
+  const participantSessionIds = useSessionIdsForHuman(
+    view === "archive" ? selectedHumanId : null,
   );
+  const tagSessionIds = useSessionIdsForTag(
+    view === "archive" ? selectedTagId : null,
+  );
+  const visibleBuckets = useMemo(() => {
+    let result = filterTimelineBuckets(buckets, searchQuery);
+    if (view !== "archive") {
+      return result;
+    }
+    // Both narrow rather than widen: picking a person and a tag asks for the
+    // recordings that satisfy both, which is what a second click implies.
+    if (selectedHumanId) {
+      result = filterBucketsByParticipant(result, participantSessionIds);
+    }
+    if (selectedTagId) {
+      result = filterBucketsByParticipant(result, tagSessionIds);
+    }
+    return result;
+  }, [
+    buckets,
+    participantSessionIds,
+    searchQuery,
+    selectedHumanId,
+    selectedTagId,
+    tagSessionIds,
+    view,
+  ]);
 
   const hasToday = useMemo(
     () => visibleBuckets.some((bucket) => bucket.label === "Today"),
@@ -471,6 +536,25 @@ export const TimelineView = memo(function TimelineView({
         >
           <TimelineSearchField onChange={setSearchQuery} value={searchQuery} />
         </div>
+        {view === "archive" && (
+          <ParticipantFilter
+            onSelectHuman={(humanId) => {
+              setSelectedHumanId(humanId);
+              // Picking a person out of the search means "everything with
+              // them", not "everything whose title also says their name".
+              setSearchQuery("");
+            }}
+            onSelectTag={(tagId) => {
+              setSelectedTagId(tagId);
+              setSearchQuery("");
+            }}
+            participants={participants}
+            query={searchQuery}
+            selectedHumanId={selectedHumanId}
+            selectedTagId={selectedTagId}
+            tags={tags}
+          />
+        )}
         <div className="relative min-h-0 flex-1">
           <div
             ref={containerRef}
@@ -575,6 +659,21 @@ export const TimelineView = memo(function TimelineView({
               </TimelineNowChip>
             )}
         </div>
+        {upcomingMeetingStatus && (
+          <NextMeetingHint
+            label={upcomingMeetingStatus.label}
+            title={upcomingMeetingStatus.title || t`Meeting`}
+            onSelect={() => {
+              setView("timeline");
+              scrollToUpcomingMeeting();
+            }}
+          />
+        )}
+        <TimelineViewSwitch
+          onChange={setView}
+          upcomingCount={upcomingCount}
+          view={view}
+        />
       </div>
     </>
   );

@@ -60,12 +60,16 @@ vi.mock("~/shared/config", () => ({
   useConfigValue: () => undefined,
 }));
 
-vi.mock("~/calendar/queries", () => ({
-  useTimelineTables: () => ({
-    timelineEventsTable: mocks.timelineEventsTable,
-    timelineSessionsTable: mocks.timelineSessionsTable,
-  }),
-}));
+vi.mock("~/calendar/queries", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("~/calendar/queries")>();
+  return {
+    ...actual,
+    useTimelineTables: () => ({
+      timelineEventsTable: mocks.timelineEventsTable,
+      timelineSessionsTable: mocks.timelineSessionsTable,
+    }),
+  };
+});
 
 vi.mock("~/calendar/ignored-events", () => ({
   useIgnoredEvents: () => ({
