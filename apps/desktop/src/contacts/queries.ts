@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useMemo, useRef } from "react";
 
 import { executeTransaction, liveQueryClient, useLiveQuery } from "~/db";
 import { enqueueDatabaseWrite } from "~/db/write-queue";
@@ -140,6 +140,71 @@ const EMPTY_ORGANIZATIONS: OrganizationRecord[] = [];
 const EMPTY_HUMAN_DISPLAY_RECORDS: HumanDisplayRecord[] = [];
 const EMPTY_ORGANIZATION_DISPLAY_RECORDS: OrganizationDisplayRecord[] = [];
 const EMPTY_HUMAN_SESSIONS: HumanSessionRecord[] = [];
+
+export type FrequentParticipant = {
+  humanId: string;
+  name: string;
+  sessionCount: number;
+};
+
+const EMPTY_FREQUENT_PARTICIPANTS: FrequentParticipant[] = [];
+
+/**
+ * Who you actually meet, most first. This is the one axis the rail can order by
+ * without anyone maintaining it: participants arrive with the calendar invite.
+ * Excluded participants are left out, matching how a person's own session list
+ * already counts them.
+ */
+export function useFrequentParticipants(limit = 12): FrequentParticipant[] {
+  const { data = EMPTY_FREQUENT_PARTICIPANTS } = useLiveQuery<
+    { human_id: string; name: string | null; session_count: number },
+    FrequentParticipant[]
+  >({
+    sql: `
+      SELECT
+        mapping.human_id,
+        humans.name,
+        COUNT(DISTINCT mapping.session_id) AS session_count
+      FROM session_participants AS mapping
+      JOIN humans ON humans.id = mapping.human_id AND humans.deleted_at IS NULL
+      JOIN sessions ON sessions.id = mapping.session_id AND sessions.deleted_at IS NULL
+      WHERE mapping.deleted_at IS NULL
+        AND mapping.source <> 'excluded'
+        AND mapping.human_id IS NOT NULL
+        AND mapping.human_id <> ''
+      GROUP BY mapping.human_id, humans.name
+      ORDER BY session_count DESC, humans.name
+      LIMIT ${limit}
+    `,
+    mapRows: (rows) =>
+      rows.map((row) => ({
+        humanId: row.human_id,
+        name: row.name?.trim() || "",
+        sessionCount: Number(row.session_count) || 0,
+      })),
+  });
+  return data;
+}
+
+export function useSessionIdsForHuman(humanId: string | null): Set<string> {
+  const { data = EMPTY_SESSION_IDS } = useLiveQuery<
+    { session_id: string },
+    string[]
+  >({
+    sql: `
+      SELECT DISTINCT session_id
+      FROM session_participants
+      WHERE deleted_at IS NULL
+        AND source <> 'excluded'
+        AND human_id = ?
+    `,
+    params: [humanId ?? ""],
+    mapRows: (rows) => rows.map((row) => row.session_id),
+  });
+  return useMemo(() => new Set(humanId ? data : []), [data, humanId]);
+}
+
+const EMPTY_SESSION_IDS: string[] = [];
 
 export function useHumans(): HumanRecord[] {
   const { data = EMPTY_HUMANS } = useLiveQuery<HumanSqlRow, HumanRecord[]>({

@@ -26,8 +26,13 @@ import {
   scrollTimelineItemIntoView,
   shouldClearTimelineSelectionOnPointerDown,
 } from "./interaction";
+import { ParticipantFilter } from "./participant-filter";
 import { useCurrentTimeMs } from "./realtime";
-import { filterTimelineBuckets, TimelineSearchField } from "./search";
+import {
+  filterBucketsByParticipant,
+  filterTimelineBuckets,
+  TimelineSearchField,
+} from "./search";
 import {
   useUpcomingMeetingStatus,
   useUpcomingMeetingLabelFormatter,
@@ -37,6 +42,10 @@ import { NextMeetingHint, TimelineViewSwitch } from "./view-switch";
 
 import { useIgnoredEvents } from "~/calendar/ignored-events";
 import { parseEventParticipants, useTimelineTables } from "~/calendar/queries";
+import {
+  useFrequentParticipants,
+  useSessionIdsForHuman,
+} from "~/contacts/queries";
 import { useDeleteSession } from "~/session/hooks/useDeleteSession";
 import { useConfigValue } from "~/shared/config";
 import { scrollElementByWheel } from "~/shared/dom/scroll-wheel";
@@ -97,10 +106,19 @@ export const TimelineView = memo(function TimelineView({
 
   const [searchQuery, setSearchQuery] = useState("");
   const isSearching = searchQuery.trim().length > 0;
-  const visibleBuckets = useMemo(
-    () => filterTimelineBuckets(buckets, searchQuery),
-    [buckets, searchQuery],
+  // Only the archive filters by person: the timeline is the day ahead, and a
+  // meeting nobody has recorded yet has no participants to filter on.
+  const [selectedHumanId, setSelectedHumanId] = useState<string | null>(null);
+  const participants = useFrequentParticipants();
+  const participantSessionIds = useSessionIdsForHuman(
+    view === "archive" ? selectedHumanId : null,
   );
+  const visibleBuckets = useMemo(() => {
+    const searched = filterTimelineBuckets(buckets, searchQuery);
+    return view === "archive" && selectedHumanId
+      ? filterBucketsByParticipant(searched, participantSessionIds)
+      : searched;
+  }, [buckets, participantSessionIds, searchQuery, selectedHumanId, view]);
 
   const hasToday = useMemo(
     () => visibleBuckets.some((bucket) => bucket.label === "Today"),
@@ -495,6 +513,13 @@ export const TimelineView = memo(function TimelineView({
         >
           <TimelineSearchField onChange={setSearchQuery} value={searchQuery} />
         </div>
+        {view === "archive" && (
+          <ParticipantFilter
+            onSelect={setSelectedHumanId}
+            participants={participants}
+            selectedHumanId={selectedHumanId}
+          />
+        )}
         <div className="relative min-h-0 flex-1">
           <div
             ref={containerRef}
