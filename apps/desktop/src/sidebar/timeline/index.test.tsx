@@ -119,10 +119,12 @@ vi.mock("~/shared/config", () => ({
   useConfigValue: () => mocks.configValue,
 }));
 
-vi.mock("~/calendar/queries", async () => {
+vi.mock("~/calendar/queries", async (importOriginal) => {
   const React = await vi.importActual<typeof import("react")>("react");
+  const actual = await importOriginal<typeof import("~/calendar/queries")>();
 
   return {
+    ...actual,
     useTimelineTables: () => {
       React.useSyncExternalStore(
         (onStoreChange: () => void) => {
@@ -253,6 +255,7 @@ import { TimelineView } from ".";
 
 describe("TimelineView", () => {
   beforeEach(() => {
+    localStorage.setItem("sidebar-timeline-view", "archive");
     vi.clearAllMocks();
     mocks.anchorNode = null;
     mocks.configValue = undefined;
@@ -379,6 +382,8 @@ describe("TimelineView", () => {
   });
 
   it("filters the timeline to notes and meetings matching the query", () => {
+    // Meetings live in the timeline view; the archive holds recordings only.
+    localStorage.setItem("sidebar-timeline-view", "timeline");
     vi.useFakeTimers();
     vi.setSystemTime(new Date("2024-01-15T09:00:00.000Z"));
     mocks.currentTimeMs = Date.now();
@@ -391,14 +396,16 @@ describe("TimelineView", () => {
         has_recurrence_rules: false,
       },
     };
+    // Same day as the meeting: the timeline is the day ahead, so a recording
+    // from yesterday belongs to the archive and not beside today's events.
     mocks.timelineSessionsTable = {
       "budget-note": {
         title: "Budget follow-up",
-        created_at: "2024-01-14T12:00:00.000Z",
+        created_at: "2024-01-15T12:00:00.000Z",
       },
       "standup-note": {
         title: "Daily standup",
-        created_at: "2024-01-14T11:00:00.000Z",
+        created_at: "2024-01-15T11:00:00.000Z",
       },
     };
 
@@ -953,6 +960,8 @@ describe("TimelineView", () => {
   });
 
   it("shows an imminent meeting chip over the sidebar timeline", () => {
+    // Meetings live in the timeline view; the archive holds recordings only.
+    localStorage.setItem("sidebar-timeline-view", "timeline");
     vi.useFakeTimers();
     vi.setSystemTime(new Date("2024-01-15T12:00:00.000Z"));
     mocks.currentTimeMs = Date.now();
@@ -1037,6 +1046,8 @@ describe("TimelineView", () => {
   });
 
   it("hides the imminent meeting chip when the meeting row is visible", () => {
+    // Meetings live in the timeline view; the archive holds recordings only.
+    localStorage.setItem("sidebar-timeline-view", "timeline");
     vi.useFakeTimers();
     vi.setSystemTime(new Date("2024-01-15T12:00:00.000Z"));
     mocks.currentTimeMs = Date.now();
@@ -1086,6 +1097,8 @@ describe("TimelineView", () => {
   });
 
   it("shows upcoming meeting minutes with remaining seconds", () => {
+    // Meetings live in the timeline view; the archive holds recordings only.
+    localStorage.setItem("sidebar-timeline-view", "timeline");
     vi.useFakeTimers();
     vi.setSystemTime(new Date("2024-01-15T12:00:00.000Z"));
     mocks.currentTimeMs = Date.now();
@@ -1109,6 +1122,8 @@ describe("TimelineView", () => {
   });
 
   it("keeps the meeting chip visible until the scheduled end time", () => {
+    // Meetings live in the timeline view; the archive holds recordings only.
+    localStorage.setItem("sidebar-timeline-view", "timeline");
     vi.useFakeTimers();
     vi.setSystemTime(new Date("2024-01-15T12:00:00.000Z"));
     mocks.currentTimeMs = Date.now();

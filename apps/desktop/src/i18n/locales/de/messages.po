@@ -2287,6 +2287,10 @@ msgstr "Aufnahme"
 msgid "Recording not found. It may have been deleted."
 msgstr "Aufnahme nicht gefunden. Sie wurde möglicherweise gelöscht."
 
+#: src/sidebar/timeline/view-switch.tsx
+msgid "Recordings"
+msgstr "Aufzeichnungen"
+
 #: src/main/windows-title-bar.tsx
 msgid "Redo"
 msgstr "Wiederholen"
@@ -3093,6 +3097,10 @@ msgstr "Diese Aufnahme nutzt Batch-Transkription, daher steht das Transkript im 
 #: src/settings/general/storage/legacy-cleanup.tsx
 msgid "This will remove {0} legacy files and free {1}. Your app data will not be affected because the migration to SQLite is complete."
 msgstr "Dadurch werden {0} veraltete Dateien entfernt und {1} freigegeben. Ihre App-Daten sind davon nicht betroffen, da die Migration zu SQLite abgeschlossen ist."
+
+#: src/sidebar/timeline/view-switch.tsx
+msgid "Timeline"
+msgstr "Zeitstrahl"
 
 #: src/settings/general/timezone.tsx
 msgid "Timezone"

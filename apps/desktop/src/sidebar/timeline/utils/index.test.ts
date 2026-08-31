@@ -383,6 +383,7 @@ describe("timeline utils", () => {
     const buckets = buildTimelineBuckets({
       timelineEventsTable,
       timelineSessionsTable: null,
+      view: "timeline",
     });
 
     const eventItems = buckets
@@ -557,6 +558,7 @@ describe("timeline utils", () => {
     const buckets = buildTimelineBuckets({
       timelineEventsTable,
       timelineSessionsTable,
+      view: "timeline",
     });
 
     const allItems = buckets.flatMap((b) => b.items);
@@ -600,6 +602,7 @@ describe("timeline utils", () => {
     const buckets = buildTimelineBuckets({
       timelineEventsTable,
       timelineSessionsTable: null,
+      view: "timeline",
     });
 
     const allItems = buckets.flatMap((b) => b.items);

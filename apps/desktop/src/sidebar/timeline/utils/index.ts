@@ -10,6 +10,7 @@ import {
   TZDate,
 } from "@anlg/utils";
 
+import { parseEventParticipants } from "~/calendar/queries";
 import { getSessionEvent } from "~/session/utils";
 
 function toTZ(date: Date, timezone?: string): Date {
@@ -29,6 +30,7 @@ export type TimelineEventRow = {
   meeting_link?: string | null;
   description?: string | null;
   calendar_color?: string | null;
+  participants_json?: string | null;
 };
 
 export type TimelineSessionRow = {
@@ -61,6 +63,29 @@ export type SessionTimelineItem = {
 export type TimelineItem = EventTimelineItem | SessionTimelineItem;
 
 export type TimelinePrecision = "time" | "date";
+
+/**
+ * The rail answers two different questions and they want opposite orders.
+ * `archive` is the record of what was captured, newest first, because the thing
+ * you want is almost always the thing you just made. `timeline` is the day
+ * ahead, earliest first, because that is how a day is read.
+ */
+export type TimelineView = "archive" | "timeline";
+
+/**
+ * A calendar entry with no one else in it is a personal reminder, not a meeting
+ * that could be recorded. Counting participants is what separates "Marla zur
+ * Schule" from "HACH PIM WEEKLY". Every event in this database carries the
+ * field, so the test is reliable rather than best-effort.
+ */
+export function isMeetingEvent(item: TimelineItem): boolean {
+  if (item.type !== "event") {
+    return false;
+  }
+  return (
+    parseEventParticipants(item.data.participants_json ?? undefined).length >= 2
+  );
+}
 
 export type TimelineBucket = {
   label: string;
@@ -462,11 +487,23 @@ export function buildTimelineBuckets({
   timelineEventsTable,
   timelineSessionsTable,
   timezone,
+  view = "archive",
 }: {
   timelineEventsTable: TimelineEventsTable;
   timelineSessionsTable: TimelineSessionsTable;
   timezone?: string;
+  view?: TimelineView;
 }): TimelineBucket[] {
+  const ascending = view === "timeline";
+  // The archive is the record of what was captured; a calendar entry that was
+  // never recorded left nothing to come back to and does not belong in it.
+  const includeEvents = view === "timeline";
+  // The timeline is the day ahead. A recording from last week would drag it
+  // backwards, so only today and later appear beside the upcoming meetings.
+  const earliestSession = ascending
+    ? startOfDay(toTZ(new Date(), timezone)).getTime()
+    : Number.NEGATIVE_INFINITY;
+
   const items: TimelineItem[] = [];
   const seenEventKeys = new Set<string>();
 
@@ -490,6 +527,10 @@ export function buildTimelineBuckets({
         seenEventKeys.add(trackingId);
       }
 
+      if (startTime.getTime() < earliestSession) {
+        return;
+      }
+
       items.push({
         type: "session",
         id: sessionId,
@@ -498,7 +539,7 @@ export function buildTimelineBuckets({
     });
   }
 
-  if (timelineEventsTable) {
+  if (includeEvents && timelineEventsTable) {
     Object.entries(timelineEventsTable).forEach(([eventId, row]) => {
       const trackingId = getEventTrackingId(row);
       if (trackingId && seenEventKeys.has(trackingId)) {
@@ -537,7 +578,7 @@ export function buildTimelineBuckets({
           ? -1
           : 0;
     }
-    return timeBValue - timeAValue;
+    return ascending ? timeAValue - timeBValue : timeBValue - timeAValue;
   });
 
   const bucketMap = new Map<
@@ -562,7 +603,9 @@ export function buildTimelineBuckets({
   });
 
   return Array.from(bucketMap.entries())
-    .sort((a, b) => b[1].sortKey - a[1].sortKey)
+    .sort((a, b) =>
+      ascending ? a[1].sortKey - b[1].sortKey : b[1].sortKey - a[1].sortKey,
+    )
     .map(
       ([label, value]) =>
         ({

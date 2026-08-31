@@ -7,6 +7,7 @@ import {
   getItemTimestamp,
   type TimelineBucket,
   type TimelineEventsTable,
+  type TimelineView,
   type TimelineSessionsTable,
 } from "./utils";
 
@@ -54,6 +55,7 @@ export function useTimelineData({
   timelineEventsTable,
   timelineSessionsTable,
   timezone,
+  view,
 }: {
   isEventIgnored: (
     trackingId: string | null | undefined,
@@ -63,6 +65,7 @@ export function useTimelineData({
   timelineEventsTable: TimelineEventsTable;
   timelineSessionsTable: TimelineSessionsTable;
   timezone?: string;
+  view: TimelineView;
 }): {
   buckets: TimelineBucket[];
   hasMoreFutureItems: boolean;
@@ -94,11 +97,12 @@ export function useTimelineData({
       timelineEventsTable: windowData.timelineEventsTable,
       timelineSessionsTable: windowData.timelineSessionsTable,
       timezone,
+      view,
     });
 
     return {
       buckets,
       hasMoreFutureItems: windowData.hasMoreFutureItems,
     };
-  }, [windowData, currentTimeMs, timezone]);
+  }, [windowData, currentTimeMs, timezone, view]);
 }

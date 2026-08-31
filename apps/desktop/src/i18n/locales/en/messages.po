@@ -2287,6 +2287,10 @@ msgstr "Recording"
 msgid "Recording not found. It may have been deleted."
 msgstr "Recording not found. It may have been deleted."
 
+#: src/sidebar/timeline/view-switch.tsx
+msgid "Recordings"
+msgstr "Recordings"
+
 #: src/main/windows-title-bar.tsx
 msgid "Redo"
 msgstr "Redo"
@@ -3093,6 +3097,10 @@ msgstr "This recording is using batch transcription, so the transcript isn't ava
 #: src/settings/general/storage/legacy-cleanup.tsx
 msgid "This will remove {0} legacy files and free {1}. Your app data will not be affected because the migration to SQLite is complete."
 msgstr "This will remove {0} legacy files and free {1}. Your app data will not be affected because the migration to SQLite is complete."
+
+#: src/sidebar/timeline/view-switch.tsx
+msgid "Timeline"
+msgstr "Timeline"
 
 #: src/settings/general/timezone.tsx
 msgid "Timezone"

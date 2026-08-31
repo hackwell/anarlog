@@ -44,7 +44,10 @@ export function useSidebarUpcomingMeetingStatus({
       timezone,
     });
 
+    // Always the timeline shape: the next meeting has to be found whichever
+    // half of the rail is on screen, and the archive holds no events at all.
     return buildTimelineBuckets({
+      view: "timeline",
       timelineEventsTable: windowData.timelineEventsTable,
       timelineSessionsTable: windowData.timelineSessionsTable,
       timezone,

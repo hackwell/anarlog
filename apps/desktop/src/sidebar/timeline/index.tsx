@@ -10,7 +10,7 @@ import {
   useState,
 } from "react";
 
-import { cn } from "@anlg/utils";
+import { cn, safeParseDate, startOfDay } from "@anlg/utils";
 
 import { useAnchor, useAutoScrollToAnchor } from "./anchor";
 import { TimelineBuckets } from "./buckets";
@@ -32,9 +32,11 @@ import {
   useUpcomingMeetingStatus,
   useUpcomingMeetingLabelFormatter,
 } from "./upcoming-meeting";
+import { useTimelineView } from "./view";
+import { NextMeetingHint, TimelineViewSwitch } from "./view-switch";
 
 import { useIgnoredEvents } from "~/calendar/ignored-events";
-import { useTimelineTables } from "~/calendar/queries";
+import { parseEventParticipants, useTimelineTables } from "~/calendar/queries";
 import { useDeleteSession } from "~/session/hooks/useDeleteSession";
 import { useConfigValue } from "~/shared/config";
 import { scrollElementByWheel } from "~/shared/dom/scroll-wheel";
@@ -64,13 +66,35 @@ export const TimelineView = memo(function TimelineView({
   const [isScrolledToBottom, setIsScrolledToBottom] = useState(true);
 
   const { isIgnored } = useIgnoredEvents();
+  const [view, setView] = useTimelineView();
   const { buckets, hasMoreFutureItems } = useTimelineData({
     isEventIgnored: isIgnored,
     showIgnored,
     timelineEventsTable,
     timelineSessionsTable,
     timezone,
+    view,
   });
+  // What the unselected Timeline tab advertises: meetings still ahead today.
+  // Counted from the events table rather than the buckets, because the archive
+  // view deliberately holds no events at all.
+  const upcomingCount = useMemo(() => {
+    if (!timelineEventsTable) return 0;
+    const now = Date.now();
+    const endOfToday = startOfDay(
+      new Date(now + 24 * 60 * 60 * 1000),
+    ).getTime();
+    return Object.values(timelineEventsTable).filter((row) => {
+      const start = safeParseDate(row.started_at)?.getTime();
+      if (start === undefined || start < now || start >= endOfToday) {
+        return false;
+      }
+      return (
+        parseEventParticipants(row.participants_json ?? undefined).length >= 2
+      );
+    }).length;
+  }, [timelineEventsTable]);
+
   const [searchQuery, setSearchQuery] = useState("");
   const isSearching = searchQuery.trim().length > 0;
   const visibleBuckets = useMemo(
@@ -576,6 +600,21 @@ export const TimelineView = memo(function TimelineView({
             )}
         </div>
       </div>
+      {upcomingMeetingStatus && (
+        <NextMeetingHint
+          label={upcomingMeetingStatus.label}
+          title={upcomingMeetingStatus.title || t`Meeting`}
+          onSelect={() => {
+            setView("timeline");
+            scrollToUpcomingMeeting();
+          }}
+        />
+      )}
+      <TimelineViewSwitch
+        onChange={setView}
+        upcomingCount={upcomingCount}
+        view={view}
+      />
     </>
   );
 });
