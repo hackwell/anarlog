@@ -204,11 +204,21 @@ impl<'a, M: tauri::Manager<tauri::Wry>> Tray<'a, tauri::Wry, M> {
         let builder = {
             let app = app.clone();
             builder.on_tray_icon_event(move |_tray, event| {
-                if let TrayIconEvent::Click {
-                    button_state: MouseButtonState::Down,
-                    ..
-                } = event
-                {
+                // Enter fires as the pointer reaches the icon, while the menu is
+                // still closed - the only safe moment to swap it, and early
+                // enough that the click opens the new one. Click alone was not
+                // enough: with show_menu_on_left_click the menu opens without
+                // the handler seeing the press, so the agenda never arrived.
+                let ready = matches!(
+                    event,
+                    TrayIconEvent::Enter { .. }
+                        | TrayIconEvent::Move { .. }
+                        | TrayIconEvent::Click {
+                            button_state: MouseButtonState::Down,
+                            ..
+                        }
+                );
+                if ready {
                     let _ = Self::apply_pending_menu(&app);
                 }
             })
@@ -344,11 +354,15 @@ impl<'a, M: tauri::Manager<tauri::Wry>> Tray<'a, tauri::Wry, M> {
     }
 
     pub fn set_labels(&self, labels: TrayLabels) -> Result<()> {
+        tracing::info!(hide = %labels.hide, "TRAYDEBUG set_labels");
         crate::schedule::set_labels(labels);
 
         let app = self.manager.app_handle();
         Self::refresh_menu_bar_title(app)?;
-        Self::refresh_menu_if_agenda_changed(app)?;
+        // Every item title comes from these words, and none of them live in the
+        // agenda, so comparing agendas would find nothing changed and leave the
+        // menu in the language it was built with.
+        Self::rebuild_menu(app)?;
 
         Ok(())
     }
@@ -430,6 +444,12 @@ impl<'a, M: tauri::Manager<tauri::Wry>> Tray<'a, tauri::Wry, M> {
 
     fn install_menu(app: &AppHandle<tauri::Wry>) -> Result<()> {
         let agenda = Self::current_agenda_sections();
+        let found = app.tray_by_id(TRAY_ID).is_some();
+        tracing::info!(
+            found_tray = found,
+            rows = agenda.iter().map(|s| s.events.len()).sum::<usize>(),
+            "TRAYDEBUG install_menu"
+        );
         if let Some(tray) = app.tray_by_id(TRAY_ID) {
             tray.set_menu(Some(Self::build_tray_menu(app, &agenda)?))?;
         }
@@ -441,6 +461,7 @@ impl<'a, M: tauri::Manager<tauri::Wry>> Tray<'a, tauri::Wry, M> {
 
     #[cfg(target_os = "macos")]
     fn apply_pending_menu(app: &AppHandle<tauri::Wry>) -> Result<()> {
+        tracing::info!(dirty = MENU_DIRTY.load(Ordering::SeqCst), "TRAYDEBUG click");
         while MENU_DIRTY.swap(false, Ordering::SeqCst) {
             Self::install_menu(app)?;
         }
