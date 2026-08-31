@@ -12,7 +12,13 @@ impl MenuItemHandler for TrayQuitCompletely {
     const ID: &'static str = "anlg_tray_quit_completely";
 
     fn build(app: &AppHandle<tauri::Wry>) -> Result<MenuItemKind<tauri::Wry>> {
-        let item = MenuItem::with_id(app, Self::ID, "Quit Completely…", true, None::<&str>)?;
+        let item = MenuItem::with_id(
+            app,
+            Self::ID,
+            &crate::schedule::labels().quit_completely,
+            true,
+            None::<&str>,
+        )?;
         Ok(MenuItemKind::MenuItem(item))
     }
 

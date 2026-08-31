@@ -13,6 +13,16 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
+#. placeholder {0}: "{duration}"
+#: src/services/tray-schedule.tsx
+msgid " • {0} left"
+msgstr " • noch {0}"
+
+#. placeholder {0}: "{duration}"
+#: src/services/tray-schedule.tsx
+msgid " • in {0}"
+msgstr " • in {0}"
+
 #: src/services/enhancer/summary-notification.ts
 msgid "\"{title}\" is ready to read."
 msgstr "\"{title}\" ist bereit zum Lesen."
@@ -139,6 +149,11 @@ msgstr "A bis Z"
 #: src/sidebar/timeline/utils/index.ts
 msgid "a week ago"
 msgstr "vor einer Woche"
+
+#. placeholder {0}: "{app}"
+#: src/services/tray-schedule.tsx
+msgid "About {0}"
+msgstr "Über {0}"
 
 #: src/onboarding/permissions.tsx
 #: src/settings/general/permissions.tsx
@@ -510,6 +525,10 @@ msgstr "Sprecher ändern"
 #: src/chat/components/toolbar-controls.tsx
 msgid "Chat history"
 msgstr "Chatverlauf"
+
+#: src/services/tray-schedule.tsx
+msgid "Check for Updates"
+msgstr "Nach Updates suchen"
 
 #: src/chat/components/input/use-dictation.ts
 msgid "Check microphone permission and the selected input device, then try again."
@@ -1094,6 +1113,10 @@ msgstr "Modell wird heruntergeladen"
 msgid "Downloading Session Echo {0}{progress}"
 msgstr "Session Echo {0}{progress} wird heruntergeladen"
 
+#: src/services/tray-schedule.tsx
+msgid "Downloading..."
+msgstr "Wird geladen …"
+
 #: src/settings/automations/index.tsx
 #: src/settings/automations/workflow-builder.tsx
 #: src/sidebar/automations.tsx
@@ -1353,6 +1376,10 @@ msgstr "Zu den letzten"
 msgid "Got it"
 msgstr "Verstanden"
 
+#: src/services/tray-schedule.tsx
+msgid "h"
+msgstr "Std."
+
 #: src/settings/general/app-settings.tsx
 msgid "Have Session Echo ready when you sign in."
 msgstr "Session Echo bereithalten, wenn Sie sich anmelden."
@@ -1384,6 +1411,10 @@ msgstr "Session Echo helfen, Meeting-Aktivitäten zu lesen"
 #: src/chat/components/body/empty.tsx
 msgid "Hi, I'm Session Echo AI. Set up a language model and I'll be ready to help."
 msgstr "Hallo, ich bin Session Echo AI. Richten Sie ein Sprachmodell ein, dann kann ich helfen."
+
+#: src/services/tray-schedule.tsx
+msgid "Hide"
+msgstr "Ausblenden"
 
 #: src/sidebar/timeline/index.tsx
 msgid "Hide Deleted Events"
@@ -1614,6 +1645,10 @@ msgstr "Gesperrte Notiz"
 msgid "Low-light canvas"
 msgstr "Dunkle Oberfläche"
 
+#: src/services/tray-schedule.tsx
+msgid "m"
+msgstr "Min."
+
 #: src/settings/ai/shared/index.tsx
 msgid "macOS cannot access your login Keychain. Repairing briefly locks it and asks for your Mac password before Session Echo retries this API key."
 msgstr "macOS kann nicht auf Ihren Anmelde-Schlüsselbund zugreifen. Die Reparatur sperrt ihn kurzzeitig und fragt nach Ihrem Mac-Passwort, bevor Session Echo diesen API-Schlüssel erneut versucht."
@@ -1806,6 +1841,7 @@ msgstr "Neuer Chat"
 
 #: src/main/empty.tsx
 #: src/main/windows-title-bar.tsx
+#: src/services/tray-schedule.tsx
 msgid "New Note"
 msgstr "Neue Notiz"
 
@@ -2027,6 +2063,11 @@ msgstr "Modelle auf dem Gerät können ein paar Minuten zum Aufwärmen benötige
 msgid "Open"
 msgstr "Öffnen"
 
+#. placeholder {0}: "{app}"
+#: src/services/tray-schedule.tsx
+msgid "Open {0}"
+msgstr "{0} öffnen"
+
 #. placeholder {0}: permissionName.toLowerCase()
 #. placeholder {0}: title.toLowerCase()
 #: src/calendar/components/apple/permission.tsx
@@ -2227,6 +2268,14 @@ msgstr "Datenschutz"
 msgid "Pro"
 msgstr "Pro"
 
+#: src/services/tray-schedule.tsx
+msgid "Quit"
+msgstr "Beenden"
+
+#: src/services/tray-schedule.tsx
+msgid "Quit Completely…"
+msgstr "Vollständig beenden …"
+
 #: src/session/components/note-input/transcript/screens/empty.tsx
 msgid "Re-transcribe"
 msgstr "Neu transkribieren"
@@ -2364,6 +2413,10 @@ msgstr "Ersetzen durch …"
 msgid "Report a Bug"
 msgstr "Fehler melden"
 
+#: src/services/tray-schedule.tsx
+msgid "Report Bug"
+msgstr "Fehler melden"
+
 #: src/calendar/components/apple/permission.tsx
 msgid "Request"
 msgstr "Anfragen"
@@ -2407,6 +2460,10 @@ msgstr "Neu starten"
 msgid "Restart App"
 msgstr "App neu starten"
 
+#: src/services/tray-schedule.tsx
+msgid "Restart to Apply Update"
+msgstr "Zum Anwenden neu starten"
+
 #: src/main/windows-title-bar.tsx
 msgid "Restore"
 msgstr "Wiederherstellen"
@@ -2438,6 +2495,10 @@ msgstr "Zusammenfassung überprüfen"
 #: src/settings/ai/stt/select.tsx
 msgid "Runs after the recording finishes, not during the meeting."
 msgstr "Läuft nach Abschluss der Aufnahme, nicht während des Meetings."
+
+#: src/services/tray-schedule.tsx
+msgid "s"
+msgstr "s"
 
 #: src/templates/auto-form.tsx
 msgid "Save"
@@ -2695,6 +2756,7 @@ msgstr "KI-Zusammenfassungen einrichten"
 
 #: src/main/empty.tsx
 #: src/main/windows-title-bar.tsx
+#: src/services/tray-schedule.tsx
 #: src/sidebar/toast/registry.tsx
 msgid "Settings"
 msgstr "Einstellungen"
@@ -2718,6 +2780,10 @@ msgstr "Gelöschte Termine anzeigen"
 #: src/sidebar/timeline/item.tsx
 msgid "Show Event"
 msgstr "Termin anzeigen"
+
+#: src/services/tray-schedule.tsx
+msgid "Show events in menu bar"
+msgstr "Termine in der Menüleiste zeigen"
 
 #: src/settings/general/meeting-settings.tsx
 msgid "Show floating bar"
@@ -2830,6 +2896,10 @@ msgstr "SQLite-Migrationsprüfung ist unvollständig"
 #: src/settings/automations/workflow-builder.tsx
 msgid "Stack another destination. Steps run top to bottom."
 msgstr "Ein weiteres Ziel hinzufügen. Schritte laufen von oben nach unten."
+
+#: src/services/tray-schedule.tsx
+msgid "Start a new meeting"
+msgstr "Neues Meeting starten"
 
 #: src/settings/general/meeting-settings.tsx
 msgid "Start listening when a scheduled meeting begins."
@@ -2945,6 +3015,10 @@ msgstr "Speicher aktualisiert"
 
 #: src/main/windows-title-bar.tsx
 msgid "Suggest a Feature"
+msgstr "Funktion vorschlagen"
+
+#: src/services/tray-schedule.tsx
+msgid "Suggest Feature"
 msgstr "Funktion vorschlagen"
 
 #: src/session/components/note-input/raw.tsx
@@ -3114,10 +3188,12 @@ msgstr "Tipp: Namen von Teammitgliedern, Abkürzungen, Unternehmensjargon und Pr
 msgid "Tip: The Session Echo team loves our users!"
 msgstr "Tipp: Das Session-Echo-Team liebt seine Nutzer!"
 
+#: src/services/tray-schedule.tsx
 #: src/sidebar/timeline/utils/index.ts
 msgid "Today"
 msgstr "Heute"
 
+#: src/services/tray-schedule.tsx
 #: src/sidebar/timeline/utils/index.ts
 msgid "Tomorrow"
 msgstr "Morgen"

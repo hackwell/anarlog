@@ -5,7 +5,21 @@ const MAX_AGENDA_LABEL_WIDTH: usize = 52;
 const MAX_AGENDA_ITEMS: usize = 12;
 const MAX_MENU_BAR_LABEL_WIDTH: usize = 30;
 
+use std::sync::Mutex;
+
 use unicode_width::{UnicodeWidthChar, UnicodeWidthStr};
+
+static LABELS: Mutex<Option<TrayLabels>> = Mutex::new(None);
+
+/// The wording every tray surface reads. Defaults to the English that used to
+/// be compiled in, until the frontend sends the catalogue's version.
+pub fn labels() -> TrayLabels {
+    LABELS.lock().unwrap().clone().unwrap_or_default()
+}
+
+pub fn set_labels(next: TrayLabels) {
+    *LABELS.lock().unwrap() = Some(next);
+}
 
 /// The words the menu bar puts around a countdown. Rust owns the ticking, the
 /// frontend owns the language: it holds the catalogue, so it sends the phrases
@@ -22,6 +36,20 @@ pub struct TrayLabels {
     pub hours: String,
     pub today: String,
     pub tomorrow: String,
+    pub show_events: String,
+    pub open_app: String,
+    pub start_meeting: String,
+    pub new_note: String,
+    pub settings: String,
+    pub check_updates: String,
+    pub downloading_update: String,
+    pub restart_to_apply: String,
+    pub report_bug: String,
+    pub suggest_feature: String,
+    pub about: String,
+    pub hide: String,
+    pub quit: String,
+    pub quit_completely: String,
 }
 
 impl Default for TrayLabels {
@@ -35,6 +63,20 @@ impl Default for TrayLabels {
             hours: "h".to_string(),
             today: "Today".to_string(),
             tomorrow: "Tomorrow".to_string(),
+            show_events: "Show events in menu bar".to_string(),
+            open_app: "Open {app}".to_string(),
+            start_meeting: "Start a new meeting".to_string(),
+            new_note: "New Note".to_string(),
+            settings: "Settings".to_string(),
+            check_updates: "Check for Updates".to_string(),
+            downloading_update: "Downloading...".to_string(),
+            restart_to_apply: "Restart to Apply Update".to_string(),
+            report_bug: "Report Bug".to_string(),
+            suggest_feature: "Suggest Feature".to_string(),
+            about: "About {app}".to_string(),
+            hide: "Hide".to_string(),
+            quit: "Quit".to_string(),
+            quit_completely: "Quit Completely…".to_string(),
         }
     }
 }

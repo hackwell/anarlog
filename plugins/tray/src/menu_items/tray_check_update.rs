@@ -25,11 +25,12 @@ pub struct TrayCheckUpdate;
 
 impl TrayCheckUpdate {
     pub fn set_state(app: &AppHandle<tauri::Wry>, state: UpdateMenuState) -> Result<()> {
+        let labels = crate::schedule::labels();
         let (text, enabled, state_value) = match &state {
-            UpdateMenuState::CheckForUpdate => ("Check for Updates", true, STATE_CHECK_FOR_UPDATE),
-            UpdateMenuState::Downloading => ("Downloading...", false, STATE_DOWNLOADING),
+            UpdateMenuState::CheckForUpdate => (labels.check_updates, true, STATE_CHECK_FOR_UPDATE),
+            UpdateMenuState::Downloading => (labels.downloading_update, false, STATE_DOWNLOADING),
             UpdateMenuState::RestartToApply(_) => {
-                ("Restart to Apply Update", true, STATE_RESTART_TO_APPLY)
+                (labels.restart_to_apply, true, STATE_RESTART_TO_APPLY)
             }
         };
 

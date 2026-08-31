@@ -44,9 +44,6 @@ static SCHEDULE_TASK: Mutex<Option<JoinHandle<()>>> = Mutex::new(None);
 static MENU_BAR_TITLE: Mutex<Option<String>> = Mutex::new(None);
 static RECORDING_TITLE: Mutex<Option<String>> = Mutex::new(None);
 static AGENDA_SECTIONS: Mutex<Vec<TrayAgendaSection>> = Mutex::new(Vec::new());
-// Set by the frontend, which owns the catalogue. Until it does, the defaults
-// are the English wording that used to be compiled in here.
-static LABELS: Mutex<Option<TrayLabels>> = Mutex::new(None);
 // muda 0.17 stores a raw MenuChild pointer on each NSMenuItem. Replacing the
 // tray menu while it is still visible frees those items and crashes on click
 // (HYPRNOTE2-2MTS). Defer set_menu until the next tray mouse-down instead.
@@ -333,7 +330,7 @@ impl<'a, M: tauri::Manager<tauri::Wry>> Tray<'a, tauri::Wry, M> {
             SHOW_EVENTS.load(Ordering::SeqCst),
             IS_RECORDING.load(Ordering::SeqCst),
             recording_title.as_deref(),
-            &Self::labels(),
+            &crate::schedule::labels(),
         );
         let mut current_title = MENU_BAR_TITLE.lock().unwrap();
 
@@ -346,12 +343,8 @@ impl<'a, M: tauri::Manager<tauri::Wry>> Tray<'a, tauri::Wry, M> {
         Ok(())
     }
 
-    fn labels() -> TrayLabels {
-        LABELS.lock().unwrap().clone().unwrap_or_default()
-    }
-
     pub fn set_labels(&self, labels: TrayLabels) -> Result<()> {
-        *LABELS.lock().unwrap() = Some(labels);
+        crate::schedule::set_labels(labels);
 
         let app = self.manager.app_handle();
         Self::refresh_menu_bar_title(app)?;
@@ -367,7 +360,7 @@ impl<'a, M: tauri::Manager<tauri::Wry>> Tray<'a, tauri::Wry, M> {
             .as_millis() as f64;
         let schedule = SCHEDULE.lock().unwrap();
         let show_events = SHOW_EVENTS.load(Ordering::SeqCst);
-        let sections = agenda_sections(&schedule, now_ms, show_events, &Self::labels());
+        let sections = agenda_sections(&schedule, now_ms, show_events, &crate::schedule::labels());
         tracing::info!(
             scheduled = schedule.len(),
             show_events,
