@@ -7,6 +7,38 @@ const MAX_MENU_BAR_LABEL_WIDTH: usize = 30;
 
 use unicode_width::{UnicodeWidthChar, UnicodeWidthStr};
 
+/// The words the menu bar puts around a countdown. Rust owns the ticking, the
+/// frontend owns the language: it holds the catalogue, so it sends the phrases
+/// and this side only fills in the number.
+#[derive(Debug, Clone, serde::Deserialize, specta::Type, PartialEq)]
+#[serde(rename_all = "camelCase")]
+pub struct TrayLabels {
+    /// A meeting under way, e.g. `" • {duration} left"`.
+    pub remaining: String,
+    /// A meeting still ahead, e.g. `" • in {duration}"`.
+    pub upcoming: String,
+    pub seconds: String,
+    pub minutes: String,
+    pub hours: String,
+    pub today: String,
+    pub tomorrow: String,
+}
+
+impl Default for TrayLabels {
+    /// English, matching what was hardcoded before a language ever reached here.
+    fn default() -> Self {
+        Self {
+            remaining: " • {duration} left".to_string(),
+            upcoming: " • in {duration}".to_string(),
+            seconds: "s".to_string(),
+            minutes: "m".to_string(),
+            hours: "h".to_string(),
+            today: "Today".to_string(),
+            tomorrow: "Tomorrow".to_string(),
+        }
+    }
+}
+
 #[derive(Debug, Clone, serde::Deserialize, specta::Type, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct TrayScheduleEvent {
@@ -36,6 +68,7 @@ pub fn agenda_sections(
     events: &[TrayScheduleEvent],
     now_ms: f64,
     show_events: bool,
+    labels: &TrayLabels,
 ) -> Vec<TrayAgendaSection> {
     if !show_events {
         return Vec::new();
@@ -50,12 +83,12 @@ pub fn agenda_sections(
                 .ends_at_ms
                 .map_or(event.starts_at_ms > now_ms, |end_ms| end_ms > now_ms)
         })
-        .filter_map(|event| agenda_day_label(event, now_ms).map(|label| (event, label)))
+        .filter_map(|event| agenda_day_label(event, now_ms, labels).map(|label| (event, label)))
         .take(MAX_AGENDA_ITEMS)
     {
         if sections.last().is_none_or(|section| section.label != label) {
             sections.push(TrayAgendaSection {
-                label: label.to_string(),
+                label: label.clone(),
                 events: Vec::new(),
             });
         }
@@ -69,15 +102,15 @@ pub fn agenda_sections(
     sections
 }
 
-fn agenda_day_label(event: &TrayScheduleEvent, now_ms: f64) -> Option<&'static str> {
+fn agenda_day_label(event: &TrayScheduleEvent, now_ms: f64, labels: &TrayLabels) -> Option<String> {
     if !event.day_start_ms.is_finite() || !event.previous_day_start_ms.is_finite() {
         return None;
     }
 
     if now_ms >= event.day_start_ms {
-        Some("Today")
+        Some(labels.today.clone())
     } else if now_ms >= event.previous_day_start_ms {
-        Some("Tomorrow")
+        Some(labels.tomorrow.clone())
     } else {
         None
     }
@@ -89,6 +122,7 @@ pub fn menu_bar_title(
     show_events: bool,
     is_recording: bool,
     recording_title: Option<&str>,
+    labels: &TrayLabels,
 ) -> Option<String> {
     if is_recording {
         let title = recording_title?.trim();
@@ -106,16 +140,19 @@ pub fn menu_bar_title(
     let active = active_event(events, now_ms);
 
     if let Some(event) = active {
-        let suffix = format!(
-            " • {} left",
-            duration_label(event.ends_at_ms.unwrap_or(now_ms) - now_ms)
+        let suffix = labels.remaining.replace(
+            "{duration}",
+            &duration_label(event.ends_at_ms.unwrap_or(now_ms) - now_ms, labels),
         );
         return Some(menu_bar_label(&event.title, &suffix));
     }
 
     let event = upcoming_event(events, now_ms)?;
 
-    let suffix = format!(" • in {}", duration_label(event.starts_at_ms - now_ms));
+    let suffix = labels.upcoming.replace(
+        "{duration}",
+        &duration_label(event.starts_at_ms - now_ms, labels),
+    );
     Some(menu_bar_label(&event.title, &suffix))
 }
 
@@ -241,24 +278,24 @@ fn compact_agenda_label(event: &TrayScheduleEvent) -> String {
     format!("{prefix}{}", compact_title(&event.title, title_limit))
 }
 
-fn duration_label(diff_ms: f64) -> String {
+fn duration_label(diff_ms: f64, labels: &TrayLabels) -> String {
     let total_seconds = (diff_ms / 1000.0).floor().max(1.0) as u64;
 
     if total_seconds < 60 {
-        return format!("{total_seconds}s");
+        return format!("{total_seconds}{}", labels.seconds);
     }
 
     let total_minutes = total_seconds / 60;
     if total_minutes < 60 {
-        return format!("{total_minutes}m");
+        return format!("{total_minutes}{}", labels.minutes);
     }
 
     let hours = total_minutes / 60;
     let minutes = total_minutes % 60;
     if minutes == 0 {
-        format!("{hours}h")
+        format!("{hours}{}", labels.hours)
     } else {
-        format!("{hours}h {minutes}m")
+        format!("{hours}{} {minutes}{}", labels.hours, labels.minutes)
     }
 }
 
@@ -289,7 +326,7 @@ mod tests {
         ];
 
         assert_eq!(
-            menu_bar_title(&events, now, true, false, None),
+            menu_bar_title(&events, now, true, false, None, &TrayLabels::default()),
             Some("Standup • in 5m".to_string())
         );
     }
@@ -330,7 +367,7 @@ mod tests {
         ];
 
         assert_eq!(
-            menu_bar_title(&events, now, true, false, None),
+            menu_bar_title(&events, now, true, false, None, &TrayLabels::default()),
             Some("Active meeting • 10m left".to_string())
         );
     }
@@ -345,11 +382,11 @@ mod tests {
         )];
 
         assert_eq!(
-            menu_bar_title(&events, now, true, false, None),
+            menu_bar_title(&events, now, true, false, None, &TrayLabels::default()),
             Some("Sprint retrospec… • in 17h 20m".to_string())
         );
         assert_eq!(
-            menu_bar_title(&events, now, true, false, None)
+            menu_bar_title(&events, now, true, false, None, &TrayLabels::default())
                 .unwrap()
                 .chars()
                 .count(),
@@ -366,7 +403,8 @@ mod tests {
             None,
         )];
 
-        let title = menu_bar_title(&events, now, true, false, None).unwrap();
+        let title =
+            menu_bar_title(&events, now, true, false, None, &TrayLabels::default()).unwrap();
 
         assert_eq!(title, "[실뻘한] char 정치현… • in 29m");
         assert_eq!(title.width(), MAX_MENU_BAR_LABEL_WIDTH);
@@ -378,11 +416,25 @@ mod tests {
         let events = vec![event("Unrelated event", now + 60_000.0, None)];
 
         assert_eq!(
-            menu_bar_title(&events, now, true, true, Some("Customer call")),
+            menu_bar_title(
+                &events,
+                now,
+                true,
+                true,
+                Some("Customer call"),
+                &TrayLabels::default()
+            ),
             Some("Customer call".to_string())
         );
         assert_eq!(
-            menu_bar_title(&events, now, false, true, Some("Customer call")),
+            menu_bar_title(
+                &events,
+                now,
+                false,
+                true,
+                Some("Customer call"),
+                &TrayLabels::default()
+            ),
             Some("Customer call".to_string())
         );
     }
@@ -392,8 +444,14 @@ mod tests {
         let now = 1_000_000.0;
         let events = vec![event("Unrelated event", now + 60_000.0, None)];
 
-        assert_eq!(menu_bar_title(&events, now, true, true, None), None);
-        assert_eq!(menu_bar_title(&events, now, true, true, Some("  ")), None);
+        assert_eq!(
+            menu_bar_title(&events, now, true, true, None, &TrayLabels::default()),
+            None
+        );
+        assert_eq!(
+            menu_bar_title(&events, now, true, true, Some("  "), &TrayLabels::default()),
+            None
+        );
     }
 
     #[test]
@@ -401,7 +459,10 @@ mod tests {
         let now = 1_000_000.0;
         let events = vec![event("Finished", now - 60_000.0, Some(now - 1.0))];
 
-        assert_eq!(menu_bar_title(&events, now, true, false, None), None);
+        assert_eq!(
+            menu_bar_title(&events, now, true, false, None, &TrayLabels::default()),
+            None
+        );
     }
 
     #[test]
@@ -409,7 +470,10 @@ mod tests {
         let now = 1_000_000.0;
         let events = vec![event("Standup", now + 5.0 * 60.0 * 1000.0, None)];
 
-        assert_eq!(menu_bar_title(&events, now, false, false, None), None);
+        assert_eq!(
+            menu_bar_title(&events, now, false, false, None, &TrayLabels::default()),
+            None
+        );
     }
 
     #[test]
@@ -428,7 +492,7 @@ mod tests {
         }
 
         assert_eq!(
-            agenda_sections(&events, now, true),
+            agenda_sections(&events, now, true, &TrayLabels::default()),
             vec![
                 TrayAgendaSection {
                     label: "Today".to_string(),
@@ -470,7 +534,7 @@ mod tests {
             })
             .collect();
 
-        let rows: usize = agenda_sections(&events, now, true)
+        let rows: usize = agenda_sections(&events, now, true, &TrayLabels::default())
             .iter()
             .map(|section| section.events.len())
             .sum();
@@ -501,11 +565,17 @@ mod tests {
         next_day.previous_day_start_ms = midnight - 86_400_000.0;
 
         assert_eq!(
-            agenda_sections(&[next_day.clone()], midnight - 1.0, true)[0].label,
+            agenda_sections(
+                &[next_day.clone()],
+                midnight - 1.0,
+                true,
+                &TrayLabels::default()
+            )[0]
+            .label,
             "Tomorrow"
         );
         assert_eq!(
-            agenda_sections(&[next_day], midnight, true)[0].label,
+            agenda_sections(&[next_day], midnight, true, &TrayLabels::default())[0].label,
             "Today"
         );
     }
