@@ -20,6 +20,7 @@ import { TimelineCardChip } from "./chips";
 import {
   type EventTimelineItem,
   getItemDurationMinutes,
+  isMeetingEvent,
   isTimelineItemInFuture,
   type SessionTimelineItem,
   type TimelineItem,
@@ -62,6 +63,10 @@ type ItemBaseProps = {
   selected: boolean;
   ignored?: boolean;
   muted?: boolean;
+  /** Carries a transcript and notes: something to come back to, not just a slot. */
+  hasContent?: boolean;
+  /** A calendar entry with no one else in it - a reminder, not a meeting. */
+  subdued?: boolean;
   multiSelected: boolean;
   onClick: () => void;
   onDoubleClick?: () => void;
@@ -148,6 +153,8 @@ const ItemBase = memo(function ItemBase({
   durationMinutes,
   isLive,
   amplitude,
+  hasContent,
+  subdued,
   showSpinner,
   isLocked,
   isLockRevealed,
@@ -242,9 +249,30 @@ const ItemBase = memo(function ItemBase({
       >
         <div className="flex min-w-0 flex-col gap-1">
           <div className="flex min-w-0 items-baseline gap-2">
+            {/* Three kinds of row read differently at a glance: a recording
+                carries a mark because it holds something, a personal calendar
+                entry steps back because it will never be recorded, and a
+                meeting sits between them at full weight. */}
+            {hasContent && !isLive && (
+              <span
+                aria-hidden
+                data-sidebar-timeline-content-marker
+                className={cn([
+                  "size-1.5 shrink-0 self-center rounded-full",
+                  isSelectedFill
+                    ? "bg-sidebar-selected-foreground"
+                    : "bg-sidebar-selected",
+                ])}
+              />
+            )}
             <div
               className={cn([
-                "pointer-events-none min-w-0 flex-1 truncate text-sm font-normal",
+                "pointer-events-none min-w-0 flex-1 truncate text-sm",
+                hasContent ? "font-medium" : "font-normal",
+                subdued &&
+                  !isSelectedFill &&
+                  !isLive &&
+                  "text-muted-foreground",
                 ignored && "line-through",
               ])}
             >
@@ -400,6 +428,8 @@ function itemBasePropsAreEqual(prev: ItemBaseProps, next: ItemBaseProps) {
     prev.selected === next.selected &&
     prev.ignored === next.ignored &&
     prev.muted === next.muted &&
+    prev.hasContent === next.hasContent &&
+    prev.subdued === next.subdued &&
     prev.multiSelected === next.multiSelected &&
     prev.onClick === next.onClick &&
     prev.onDoubleClick === next.onDoubleClick &&
@@ -573,6 +603,7 @@ const EventItem = memo(
 
     return (
       <ItemBase
+        subdued={!isMeetingEvent(item)}
         title={title}
         displayTime={displayTime}
         durationMinutes={durationMinutes}
@@ -787,6 +818,7 @@ const SessionItem = memo(
 
     return (
       <ItemBase
+        hasContent
         title={title}
         displayTime={displayTime}
         durationMinutes={durationMinutes}
