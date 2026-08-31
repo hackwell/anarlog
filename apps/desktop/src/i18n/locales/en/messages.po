@@ -1600,6 +1600,10 @@ msgstr "Last run failed {relative}: {0}"
 msgid "Learn how to fix this"
 msgstr "Learn how to fix this"
 
+#: src/sidebar/timeline/participant-filter.tsx
+msgid "Less"
+msgstr "Less"
+
 #: src/settings/appearance/theme.tsx
 msgid "Light"
 msgstr "Light"

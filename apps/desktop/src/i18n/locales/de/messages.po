@@ -1600,6 +1600,10 @@ msgstr "Letzte Ausführung fehlgeschlagen {relative}: {0}"
 msgid "Learn how to fix this"
 msgstr "Erfahren, wie sich das beheben lässt"
 
+#: src/sidebar/timeline/participant-filter.tsx
+msgid "Less"
+msgstr "Weniger"
+
 #: src/settings/appearance/theme.tsx
 msgid "Light"
 msgstr "Hell"

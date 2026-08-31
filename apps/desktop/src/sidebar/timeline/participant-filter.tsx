@@ -1,20 +1,25 @@
+import { Trans } from "@lingui/react/macro";
+import { useEffect, useState } from "react";
+
 import { cn } from "@anlg/utils";
 
 import type { FrequentParticipant } from "~/contacts/queries";
 import type { TagRecord } from "~/tags/queries";
 
-const VISIBLE_PEOPLE = 3;
-const VISIBLE_TAGS = 3;
+const COLLAPSED = 3;
+
+type Entry = { id: string; label: string; count: number; isTag: boolean };
 
 /**
  * Two ways into the archive, side by side. People cost nothing to maintain -
  * they arrive with the calendar invite - while tags are what you decided a
- * recording was about. A tag is marked so the two never read as one list.
+ * recording was about.
  */
 export function ParticipantFilter({
   onSelectHuman,
   onSelectTag,
   participants,
+  query,
   selectedHumanId,
   selectedTagId,
   tags,
@@ -22,62 +27,98 @@ export function ParticipantFilter({
   onSelectHuman: (humanId: string | null) => void;
   onSelectTag: (tagId: string | null) => void;
   participants: FrequentParticipant[];
+  query: string;
   selectedHumanId: string | null;
   selectedTagId: string | null;
   tags: TagRecord[];
 }) {
-  const people = keepSelectedVisible(
-    participants,
-    selectedHumanId,
-    VISIBLE_PEOPLE,
-    (entry) => entry.humanId,
-  );
-  // A tag with nothing on it is a leftover, not a filter.
-  const usable = tags.filter((tag) => tag.sessionCount > 0);
-  const shownTags = keepSelectedVisible(
-    usable,
-    selectedTagId,
-    VISIBLE_TAGS,
-    (entry) => entry.id,
-  );
+  const [expanded, setExpanded] = useState(false);
+  const needle = query.trim().toLowerCase();
 
-  if (people.shown.length === 0 && shownTags.shown.length === 0) {
+  // Typing is already how you say who you mean, so the row answers the search
+  // rather than sitting beside it. Collapsing again would hide the filter you
+  // just found, so a search always shows everything it matched.
+  useEffect(() => {
+    if (needle) setExpanded(false);
+  }, [needle]);
+
+  const all: Entry[] = [
+    ...participants.map((entry) => ({
+      id: entry.humanId,
+      label: entry.name,
+      count: entry.sessionCount,
+      isTag: false,
+    })),
+    ...tags
+      .filter((tag) => tag.sessionCount > 0)
+      .map((tag) => ({
+        id: tag.id,
+        label: tag.name,
+        count: tag.sessionCount,
+        isTag: true,
+      })),
+  ];
+
+  const matching = needle
+    ? all.filter((entry) => entry.label.toLowerCase().includes(needle))
+    : all;
+
+  const selectedId = selectedTagId ?? selectedHumanId;
+  const shown =
+    needle || expanded ? matching : withSelected(matching, selectedId);
+  const hidden = matching.length - shown.length;
+
+  if (shown.length === 0) {
     return null;
   }
+
+  const toggle = (entry: Entry) => {
+    if (entry.isTag) {
+      onSelectTag(entry.id === selectedTagId ? null : entry.id);
+    } else {
+      onSelectHuman(entry.id === selectedHumanId ? null : entry.id);
+    }
+  };
 
   return (
     <div
       data-sidebar-participant-filter
       className="flex shrink-0 flex-wrap gap-1 px-2 pb-2"
     >
-      {people.shown.map((participant) => (
+      {shown.map((entry) => (
         <Chip
-          key={participant.humanId}
-          active={participant.humanId === selectedHumanId}
-          count={participant.sessionCount}
-          label={firstName(participant.name) || participant.humanId.slice(0, 6)}
-          onClick={() =>
-            onSelectHuman(
-              participant.humanId === selectedHumanId
-                ? null
-                : participant.humanId,
-            )
-          }
+          key={`${entry.isTag ? "tag" : "human"}-${entry.id}`}
+          active={entry.id === selectedId}
+          count={entry.count}
+          isTag={entry.isTag}
+          label={entry.isTag ? entry.label : firstName(entry.label)}
+          onClick={() => toggle(entry)}
         />
       ))}
-      {people.hidden > 0 && <More count={people.hidden} />}
 
-      {shownTags.shown.map((tag) => (
-        <Chip
-          key={tag.id}
-          active={tag.id === selectedTagId}
-          count={tag.sessionCount}
-          isTag
-          label={tag.name}
-          onClick={() => onSelectTag(tag.id === selectedTagId ? null : tag.id)}
-        />
-      ))}
-      {shownTags.hidden > 0 && <More count={shownTags.hidden} />}
+      {hidden > 0 && (
+        <button
+          type="button"
+          data-sidebar-filter-more
+          onClick={() => setExpanded(true)}
+          className={cn([
+            "text-muted-foreground hover:text-sidebar-foreground rounded-full px-2 py-1 text-[11px]",
+            "focus-visible:ring-sidebar-ring/40 focus-visible:ring-2 focus-visible:outline-none",
+          ])}
+        >
+          +{hidden}
+        </button>
+      )}
+
+      {expanded && !needle && (
+        <button
+          type="button"
+          onClick={() => setExpanded(false)}
+          className="text-muted-foreground hover:text-sidebar-foreground rounded-full px-2 py-1 text-[11px]"
+        >
+          <Trans>Less</Trans>
+        </button>
+      )}
     </div>
   );
 }
@@ -86,32 +127,17 @@ export function ParticipantFilter({
  * The chip you are filtering by has to stay on screen even when it ranks below
  * the cut, or the filter you are inside disappears from its own row.
  */
-function keepSelectedVisible<T>(
-  entries: T[],
-  selectedId: string | null,
-  limit: number,
-  idOf: (entry: T) => string,
-): { shown: T[]; hidden: number } {
-  const head = entries.slice(0, limit);
-  const selected = entries.find((entry) => idOf(entry) === selectedId);
-  const shown =
-    selected && !head.includes(selected)
-      ? [selected, ...head.slice(0, limit - 1)]
-      : head;
-  return { shown, hidden: Math.max(0, entries.length - shown.length) };
+function withSelected(entries: Entry[], selectedId: string | null): Entry[] {
+  const head = entries.slice(0, COLLAPSED);
+  const selected = entries.find((entry) => entry.id === selectedId);
+  return selected && !head.includes(selected)
+    ? [selected, ...head.slice(0, COLLAPSED - 1)]
+    : head;
 }
 
 // A rail this narrow cannot spend its width on surnames.
 function firstName(name: string): string {
-  return name.trim().split(/\s+/)[0] ?? "";
-}
-
-function More({ count }: { count: number }) {
-  return (
-    <span className="text-muted-foreground self-center px-1 text-[11px]">
-      +{count}
-    </span>
-  );
+  return name.trim().split(/\s+/)[0] ?? name;
 }
 
 function Chip({
@@ -123,7 +149,7 @@ function Chip({
 }: {
   active: boolean;
   count: number;
-  isTag?: boolean;
+  isTag: boolean;
   label: string;
   onClick: () => void;
 }) {

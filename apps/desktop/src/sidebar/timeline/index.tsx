@@ -538,9 +538,18 @@ export const TimelineView = memo(function TimelineView({
         </div>
         {view === "archive" && (
           <ParticipantFilter
-            onSelectHuman={setSelectedHumanId}
-            onSelectTag={setSelectedTagId}
+            onSelectHuman={(humanId) => {
+              setSelectedHumanId(humanId);
+              // Picking a person out of the search means "everything with
+              // them", not "everything whose title also says their name".
+              setSearchQuery("");
+            }}
+            onSelectTag={(tagId) => {
+              setSelectedTagId(tagId);
+              setSearchQuery("");
+            }}
             participants={participants}
+            query={searchQuery}
             selectedHumanId={selectedHumanId}
             selectedTagId={selectedTagId}
             tags={tags}

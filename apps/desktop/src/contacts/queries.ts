@@ -163,7 +163,13 @@ export function useFrequentParticipants(limit = 12): FrequentParticipant[] {
     sql: `
       SELECT
         mapping.human_id,
-        humans.name,
+        -- A contact can exist with only an address; the part before the @ is
+        -- still a name someone recognises, while the id never is.
+        COALESCE(
+          NULLIF(TRIM(humans.name), ''),
+          NULLIF(substr(humans.email, 1, instr(humans.email, '@') - 1), ''),
+          ''
+        ) AS name,
         COUNT(DISTINCT mapping.session_id) AS session_count
       FROM session_participants AS mapping
       JOIN humans ON humans.id = mapping.human_id AND humans.deleted_at IS NULL
@@ -172,8 +178,9 @@ export function useFrequentParticipants(limit = 12): FrequentParticipant[] {
         AND mapping.source <> 'excluded'
         AND mapping.human_id IS NOT NULL
         AND mapping.human_id <> ''
-      GROUP BY mapping.human_id, humans.name
-      ORDER BY session_count DESC, humans.name
+      GROUP BY mapping.human_id, name
+      HAVING name <> ''
+      ORDER BY session_count DESC, name
       LIMIT ${limit}
     `,
     mapRows: (rows) =>
