@@ -354,7 +354,6 @@ impl<'a, M: tauri::Manager<tauri::Wry>> Tray<'a, tauri::Wry, M> {
     }
 
     pub fn set_labels(&self, labels: TrayLabels) -> Result<()> {
-        tracing::info!(hide = %labels.hide, "TRAYDEBUG set_labels");
         crate::schedule::set_labels(labels);
 
         let app = self.manager.app_handle();
@@ -374,15 +373,7 @@ impl<'a, M: tauri::Manager<tauri::Wry>> Tray<'a, tauri::Wry, M> {
             .as_millis() as f64;
         let schedule = SCHEDULE.lock().unwrap();
         let show_events = SHOW_EVENTS.load(Ordering::SeqCst);
-        let sections = agenda_sections(&schedule, now_ms, show_events, &crate::schedule::labels());
-        tracing::info!(
-            scheduled = schedule.len(),
-            show_events,
-            sections = sections.len(),
-            rows = sections.iter().map(|s| s.events.len()).sum::<usize>(),
-            "TRAYDEBUG agenda"
-        );
-        sections
+        agenda_sections(&schedule, now_ms, show_events, &crate::schedule::labels())
     }
 
     fn build_tray_menu(
@@ -444,12 +435,6 @@ impl<'a, M: tauri::Manager<tauri::Wry>> Tray<'a, tauri::Wry, M> {
 
     fn install_menu(app: &AppHandle<tauri::Wry>) -> Result<()> {
         let agenda = Self::current_agenda_sections();
-        let found = app.tray_by_id(TRAY_ID).is_some();
-        tracing::info!(
-            found_tray = found,
-            rows = agenda.iter().map(|s| s.events.len()).sum::<usize>(),
-            "TRAYDEBUG install_menu"
-        );
         if let Some(tray) = app.tray_by_id(TRAY_ID) {
             tray.set_menu(Some(Self::build_tray_menu(app, &agenda)?))?;
         }
@@ -461,7 +446,6 @@ impl<'a, M: tauri::Manager<tauri::Wry>> Tray<'a, tauri::Wry, M> {
 
     #[cfg(target_os = "macos")]
     fn apply_pending_menu(app: &AppHandle<tauri::Wry>) -> Result<()> {
-        tracing::info!(dirty = MENU_DIRTY.load(Ordering::SeqCst), "TRAYDEBUG click");
         while MENU_DIRTY.swap(false, Ordering::SeqCst) {
             Self::install_menu(app)?;
         }
