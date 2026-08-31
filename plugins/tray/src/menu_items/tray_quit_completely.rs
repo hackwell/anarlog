@@ -28,7 +28,11 @@ impl MenuItemHandler for TrayQuitCompletely {
 
         app.dialog()
             .message(format!("{} will stop running in the background.", app_name))
-            .title(format!("Quit {} Completely?", app_name))
+            .title(
+                crate::schedule::labels()
+                    .quit_completely_title
+                    .replace("{app}", &app_name),
+            )
             .buttons(MessageDialogButtons::OkCancelCustom(
                 "Quit Completely".to_string(),
                 "Cancel".to_string(),

@@ -1262,6 +1262,21 @@ msgstr "Das Meeting als Markdown exportieren"
 msgid "Exporting..."
 msgstr "Wird exportiert …"
 
+#. placeholder {0}: "{error}"
+#: src/services/tray-schedule.tsx
+msgid "Failed to check for updates: {0}"
+msgstr "Update-Prüfung fehlgeschlagen: {0}"
+
+#. placeholder {0}: "{error}"
+#: src/services/tray-schedule.tsx
+msgid "Failed to download update: {0}"
+msgstr "Update konnte nicht geladen werden: {0}"
+
+#. placeholder {0}: "{error}"
+#: src/services/tray-schedule.tsx
+msgid "Failed to install update: {0}"
+msgstr "Update konnte nicht installiert werden: {0}"
+
 #: src/task/resource-view.tsx
 msgid "Failed to load issue"
 msgstr "Issue konnte nicht geladen werden"
@@ -2271,6 +2286,11 @@ msgstr "Pro"
 #: src/services/tray-schedule.tsx
 msgid "Quit"
 msgstr "Beenden"
+
+#. placeholder {0}: "{app}"
+#: src/services/tray-schedule.tsx
+msgid "Quit {0} Completely?"
+msgstr "{0} vollständig beenden?"
 
 #: src/services/tray-schedule.tsx
 msgid "Quit Completely…"
@@ -3331,6 +3351,23 @@ msgstr "Unbenannte Session"
 #: src/services/event-notification/index.ts
 msgid "Upcoming Event"
 msgstr "Bevorstehender Termin"
+
+#: src/services/tray-schedule.tsx
+msgid "Update Available"
+msgstr "Update verfügbar"
+
+#: src/services/tray-schedule.tsx
+msgid "Update Check Failed"
+msgstr "Update-Prüfung fehlgeschlagen"
+
+#: src/services/tray-schedule.tsx
+msgid "Update Failed"
+msgstr "Update fehlgeschlagen"
+
+#. placeholder {0}: "{version}"
+#: src/services/tray-schedule.tsx
+msgid "Update v{0} is available!"
+msgstr "Update v{0} ist verfügbar!"
 
 #: src/settings/ai/stt/select.tsx
 msgid "Upgrade to Pro to use this provider."

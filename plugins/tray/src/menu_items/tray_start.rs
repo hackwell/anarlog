@@ -48,7 +48,7 @@ impl TrayStart {
         MenuItem::with_id(
             app,
             Self::ID,
-            "Start a new meeting",
+            &crate::schedule::labels().start_meeting,
             !disabled,
             None::<&str>,
         )
