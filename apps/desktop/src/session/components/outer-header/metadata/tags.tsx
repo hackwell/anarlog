@@ -4,12 +4,15 @@ import { useState } from "react";
 
 import { cn } from "@anlg/utils";
 
+import { useLanguageModel } from "~/ai/hooks";
 import {
   assignTag,
   unassignTag,
+  useSessionTranscriptText,
   useTags,
   useTagsForSession,
 } from "~/tags/queries";
+import { suggestTags, type TagSuggestion } from "~/tags/suggest";
 
 /**
  * Tagging belongs where the recording is, not in the rail: you decide what a
@@ -22,6 +25,10 @@ export function TagEditor({ sessionId }: { sessionId: string }) {
   const all = useTags();
   const [draft, setDraft] = useState("");
   const [adding, setAdding] = useState(false);
+  const model = useLanguageModel();
+  const transcript = useSessionTranscriptText(sessionId);
+  const [suggestion, setSuggestion] = useState<TagSuggestion | null>(null);
+  const [thinking, setThinking] = useState(false);
 
   const assignedIds = new Set(assigned.map((tag) => tag.id));
   const trimmed = draft.trim();
@@ -42,7 +49,45 @@ export function TagEditor({ sessionId }: { sessionId: string }) {
     await assignTag(sessionId, value);
     setDraft("");
     setAdding(false);
+    // A suggestion that has been taken should not keep offering itself.
+    setSuggestion((current) =>
+      current
+        ? {
+            chosen: current.chosen.filter((entry) => entry !== name),
+            proposed: current.proposed.filter((entry) => entry !== name),
+          }
+        : current,
+    );
   };
+
+  const ask = async () => {
+    if (!model) return;
+    setThinking(true);
+    try {
+      setSuggestion(
+        await suggestTags({
+          model,
+          title: "",
+          transcript,
+          vocabulary: all.map((tag) => tag.name),
+        }),
+      );
+    } catch (error) {
+      console.error("[tags] suggestion failed", error);
+      setSuggestion({ chosen: [], proposed: [] });
+    } finally {
+      setThinking(false);
+    }
+  };
+
+  const offered = suggestion
+    ? [
+        ...suggestion.chosen
+          .filter((name) => !assigned.some((tag) => tag.name === name))
+          .map((name) => ({ name, isNew: false })),
+        ...suggestion.proposed.map((name) => ({ name, isNew: true })),
+      ]
+    : [];
 
   return (
     <div data-session-tags className="flex flex-col gap-2">
@@ -101,6 +146,45 @@ export function TagEditor({ sessionId }: { sessionId: string }) {
           </button>
         )}
       </div>
+
+      {/* Suggested, never applied: a wrong tag is invisible until months later,
+          when the recording cannot be found. Dismissing one costs a second. */}
+      {transcript.length > 200 && !adding && (
+        <div className="flex flex-wrap items-center gap-1.5">
+          {offered.map((entry) => (
+            <button
+              key={entry.name}
+              type="button"
+              onClick={() => void commit(entry.name)}
+              className={cn([
+                "rounded-full border border-dashed px-2.5 py-1 text-xs",
+                "hover:border-solid",
+                entry.isNew
+                  ? "border-primary/50 text-primary"
+                  : "border-muted-foreground/40 text-muted-foreground",
+              ])}
+            >
+              {entry.isNew && <span className="mr-1 opacity-60">+</span>}
+              {entry.name}
+            </button>
+          ))}
+          {suggestion === null && (
+            <button
+              type="button"
+              disabled={thinking || !model}
+              onClick={() => void ask()}
+              className="text-muted-foreground hover:text-foreground rounded-full px-2 py-1 text-xs disabled:opacity-50"
+            >
+              {thinking ? <Trans>Reading…</Trans> : <Trans>Suggest tags</Trans>}
+            </button>
+          )}
+          {suggestion !== null && offered.length === 0 && (
+            <span className="text-muted-foreground text-xs">
+              <Trans>Nothing to suggest</Trans>
+            </span>
+          )}
+        </div>
+      )}
 
       {adding && suggestions.length > 0 && (
         <div className="flex flex-wrap gap-1.5">

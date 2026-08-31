@@ -2049,6 +2049,10 @@ msgstr "Notes"
 msgid "Nothing new was imported. {0} meetings need review and {1} could not be imported."
 msgstr "Nothing new was imported. {0} meetings need review and {1} could not be imported."
 
+#: src/session/components/outer-header/metadata/tags.tsx
+msgid "Nothing to suggest"
+msgstr "Nothing to suggest"
+
 #: src/settings/general/index.tsx
 #: src/sidebar/settings.tsx
 msgid "Notifications"
@@ -2319,6 +2323,10 @@ msgstr "Read meeting controls, chat, and participant status."
 #: src/onboarding/permissions.tsx
 msgid "Read meeting controls, visible chat, and participant status"
 msgstr "Read meeting controls, visible chat, and participant status"
+
+#: src/session/components/outer-header/metadata/tags.tsx
+msgid "Reading…"
+msgstr "Reading…"
 
 #: src/onboarding/index.tsx
 msgid "Ready to go"
@@ -3049,6 +3057,10 @@ msgstr "Suggest a Feature"
 #: src/services/tray-schedule.tsx
 msgid "Suggest Feature"
 msgstr "Suggest Feature"
+
+#: src/session/components/outer-header/metadata/tags.tsx
+msgid "Suggest tags"
+msgstr "Suggest tags"
 
 #: src/session/components/note-input/raw.tsx
 msgid "Suggested templates"

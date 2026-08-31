@@ -1,5 +1,7 @@
 import { useMemo } from "react";
 
+import { transcriptToText } from "./suggest";
+
 import { executeTransaction, useLiveQuery } from "~/db";
 import { enqueueDatabaseWrite } from "~/db/write-queue";
 import { DEFAULT_USER_ID, id } from "~/shared/utils";
@@ -195,4 +197,23 @@ export function unassignTag(sessionId: string, tagId: string): Promise<void> {
       },
     ]);
   });
+}
+
+/** The recording's words as one string, for asking a model what it was about. */
+export function useSessionTranscriptText(sessionId: string | null): string {
+  const { data = EMPTY_IDS } = useLiveQuery<{ words_json: string }, string[]>({
+    sql: `
+      SELECT words_json
+      FROM transcripts
+      WHERE deleted_at IS NULL AND session_id = ?
+      ORDER BY started_at_ms
+    `,
+    params: [sessionId ?? ""],
+    mapRows: (rows) => rows.map((row) => row.words_json),
+  });
+
+  return useMemo(
+    () => (sessionId ? data.map(transcriptToText).join(" ").trim() : ""),
+    [data, sessionId],
+  );
 }
