@@ -38,7 +38,7 @@ fn finds_windows_path_entries_case_insensitively() {
     let expected = Path::new(r"C:\Users\Test\AppData\Local\Session Echo\bin");
 
     assert!(path_list_contains(
-        r"C:\Windows;C:\USERS\TEST\APPDATA\LOCAL\ANARLOG\BIN\;C:\Tools",
+        r"C:\Windows;C:\USERS\TEST\APPDATA\LOCAL\SESSION ECHO\BIN\;C:\Tools",
         expected
     ));
     assert!(!path_list_contains(

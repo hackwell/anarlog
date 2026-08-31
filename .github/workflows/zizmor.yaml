@@ -24,7 +24,13 @@ jobs:
       - run: uvx zizmor --format sarif . > results.sarif
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # The audit above is the gate; this only files the result under code
+      # scanning, which a private repository needs paid Code Security for. Kept
+      # rather than deleted so it starts working the day that is switched on,
+      # but not blocking, because a permanently red check trains people to stop
+      # reading checks.
       - uses: github/codeql-action/upload-sarif@ff2f1c621b7f889edc0d3c761ac2e6a3f8cdb0dd # v4.37.7
+        continue-on-error: true
         with:
           sarif_file: results.sarif
           category: zizmor
