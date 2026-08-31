@@ -249,6 +249,10 @@ msgstr "Gesprochene Sprache hinzufügen"
 msgid "Add step"
 msgstr "Schritt hinzufügen"
 
+#: src/session/components/outer-header/metadata/tags.tsx
+msgid "Add tag"
+msgstr "Schlagwort hinzufügen"
+
 #: src/settings/developers/webhooks.tsx
 msgid "Add webhook"
 msgstr "Webhook hinzufügen"
@@ -2409,6 +2413,11 @@ msgstr "Beispiel {0} entfernen"
 msgid "Remove photo"
 msgstr "Foto entfernen"
 
+#. placeholder {0}: tag.name
+#: src/session/components/outer-header/metadata/tags.tsx
+msgid "Remove tag {0}"
+msgstr "Schlagwort {0} entfernen"
+
 #: src/automations/starters.tsx
 msgid "Render canonical Markdown"
 msgstr "Kanonisches Markdown rendern"
@@ -3100,6 +3109,14 @@ msgstr "Systemaudio"
 #: src/onboarding/permissions.tsx
 msgid "System audio enabled"
 msgstr "Systemaudio aktiviert"
+
+#: src/session/components/outer-header/metadata/tags.tsx
+msgid "Tag name"
+msgstr "Name des Schlagworts"
+
+#: src/session/components/outer-header/metadata/tags.tsx
+msgid "Tags"
+msgstr "Schlagworte"
 
 #: src/settings/developers/skills.tsx
 msgid "Teach coding agents when and how to use the Session Echo CLI and MCP"

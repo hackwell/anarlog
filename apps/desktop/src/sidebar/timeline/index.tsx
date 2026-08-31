@@ -55,6 +55,7 @@ import { DestructiveConfirmationDialog } from "~/shared/ui/destructive-confirmat
 import { useTabs } from "~/store/zustand/tabs";
 import { useTimelineSelection } from "~/store/zustand/timeline-selection";
 import { useListener } from "~/stt/contexts";
+import { useSessionIdsForTag, useTags } from "~/tags/queries";
 
 export const TimelineView = memo(function TimelineView({
   showIgnoredEvents,
@@ -109,16 +110,38 @@ export const TimelineView = memo(function TimelineView({
   // Only the archive filters by person: the timeline is the day ahead, and a
   // meeting nobody has recorded yet has no participants to filter on.
   const [selectedHumanId, setSelectedHumanId] = useState<string | null>(null);
+  const [selectedTagId, setSelectedTagId] = useState<string | null>(null);
   const participants = useFrequentParticipants();
+  const tags = useTags();
   const participantSessionIds = useSessionIdsForHuman(
     view === "archive" ? selectedHumanId : null,
   );
+  const tagSessionIds = useSessionIdsForTag(
+    view === "archive" ? selectedTagId : null,
+  );
   const visibleBuckets = useMemo(() => {
-    const searched = filterTimelineBuckets(buckets, searchQuery);
-    return view === "archive" && selectedHumanId
-      ? filterBucketsByParticipant(searched, participantSessionIds)
-      : searched;
-  }, [buckets, participantSessionIds, searchQuery, selectedHumanId, view]);
+    let result = filterTimelineBuckets(buckets, searchQuery);
+    if (view !== "archive") {
+      return result;
+    }
+    // Both narrow rather than widen: picking a person and a tag asks for the
+    // recordings that satisfy both, which is what a second click implies.
+    if (selectedHumanId) {
+      result = filterBucketsByParticipant(result, participantSessionIds);
+    }
+    if (selectedTagId) {
+      result = filterBucketsByParticipant(result, tagSessionIds);
+    }
+    return result;
+  }, [
+    buckets,
+    participantSessionIds,
+    searchQuery,
+    selectedHumanId,
+    selectedTagId,
+    tagSessionIds,
+    view,
+  ]);
 
   const hasToday = useMemo(
     () => visibleBuckets.some((bucket) => bucket.label === "Today"),
@@ -515,9 +538,12 @@ export const TimelineView = memo(function TimelineView({
         </div>
         {view === "archive" && (
           <ParticipantFilter
-            onSelect={setSelectedHumanId}
+            onSelectHuman={setSelectedHumanId}
+            onSelectTag={setSelectedTagId}
             participants={participants}
             selectedHumanId={selectedHumanId}
+            selectedTagId={selectedTagId}
+            tags={tags}
           />
         )}
         <div className="relative min-h-0 flex-1">
