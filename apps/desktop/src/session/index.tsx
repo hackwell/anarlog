@@ -40,6 +40,7 @@ import {
   isCanonicalSessionImportLocked,
   subscribeCanonicalSessionImportLocks,
 } from "~/session/editor-activity";
+import { usePastSessionNotes } from "~/session/insights/past-notes";
 import { useSession } from "~/session/queries";
 import { useMountEffect } from "~/shared/hooks/useMountEffect";
 import { type Tab, useTabs } from "~/store/zustand/tabs";
@@ -263,13 +264,17 @@ function TabContentNoteInner({
   const { skipReason } = useAutoEnhance(tab);
   const isTranscribing = shouldShowTranscriptTabSpinner(sessionMode);
   const isLiveSessionActive = sessionMode === "active";
+  const { hasPastNotes: hasHistory } = usePastSessionNotes(sessionId, {
+    enabled: contentHydrated && !lockOverlay,
+  });
   const editorTabs = React.useMemo(
     () =>
       createEditorTabs({
         enhancedNoteIds,
         canShowTranscript,
+        hasHistory,
       }),
-    [enhancedNoteIds, canShowTranscript],
+    [enhancedNoteIds, canShowTranscript, hasHistory],
   );
   const currentView = React.useMemo(() => {
     return computeCurrentNoteTab(
@@ -277,8 +282,15 @@ function TabContentNoteInner({
       isLiveSessionActive,
       enhancedNoteIds,
       canShowTranscript,
+      hasHistory,
     );
-  }, [tab.state.view, isLiveSessionActive, enhancedNoteIds, canShowTranscript]);
+  }, [
+    tab.state.view,
+    isLiveSessionActive,
+    enhancedNoteIds,
+    canShowTranscript,
+    hasHistory,
+  ]);
   useAutoFocusEditor({
     sessionId,
     noteInputRef,

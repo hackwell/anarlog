@@ -29,6 +29,13 @@ export function unregisterCanonicalSessionEditor(
   if (editors.size === 0) mountedCanonicalEditors.delete(sessionId);
 }
 
+export function getCanonicalSessionEditor(
+  sessionId: string,
+): EditorView | null {
+  const editors = mountedCanonicalEditors.get(sessionId);
+  return editors ? (editors.keys().next().value ?? null) : null;
+}
+
 export async function flushCanonicalSessionEditorChanges(
   sessionId: string,
 ): Promise<void> {

@@ -1,10 +1,7 @@
-use tauri::{
-    AppHandle, Result,
-    menu::{MenuItem, MenuItemKind},
-};
+use tauri::{AppHandle, Result, menu::MenuItemKind};
 use tauri_plugin_dialog::{DialogExt, MessageDialogButtons};
 
-use super::MenuItemHandler;
+use super::{MenuIcon, MenuItemHandler, icon_item};
 
 pub struct TrayQuitCompletely;
 
@@ -12,14 +9,16 @@ impl MenuItemHandler for TrayQuitCompletely {
     const ID: &'static str = "anlg_tray_quit_completely";
 
     fn build(app: &AppHandle<tauri::Wry>) -> Result<MenuItemKind<tauri::Wry>> {
-        let item = MenuItem::with_id(
+        let item = icon_item(
             app,
             Self::ID,
-            &crate::schedule::labels().quit_completely,
+            crate::schedule::labels()
+                .quit_completely
+                .replace("{app}", app.package_info().name.as_str()),
             true,
-            None::<&str>,
+            MenuIcon::Quit,
         )?;
-        Ok(MenuItemKind::MenuItem(item))
+        Ok(MenuItemKind::Icon(item))
     }
 
     fn handle(app: &AppHandle<tauri::Wry>) {

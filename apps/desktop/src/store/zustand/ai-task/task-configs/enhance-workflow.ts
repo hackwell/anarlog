@@ -99,6 +99,7 @@ async function getUserPrompt(args: TaskArgsMapTransformed["enhance"]) {
     transcripts,
     preMeetingMemo,
     postMeetingMemo,
+    previousMeetings,
   } = args;
   const template = rawTemplate
     ? {
@@ -118,6 +119,7 @@ async function getUserPrompt(args: TaskArgsMapTransformed["enhance"]) {
       transcripts,
       preMeetingMemo,
       postMeetingMemo,
+      previousMeetings,
     },
   });
 

@@ -20,6 +20,7 @@ interface AppSettingsViewProps {
   automaticUpdates: SettingItem;
   showAppInDock: SettingItem;
   showTrayIcon: SettingItem;
+  showEventsInMenuBar: SettingItem;
 }
 
 export function AppSettingsView({
@@ -28,6 +29,7 @@ export function AppSettingsView({
   automaticUpdates,
   showAppInDock,
   showTrayIcon,
+  showEventsInMenuBar,
 }: AppSettingsViewProps) {
   const currentPlatform = platform();
   const isMacos = currentPlatform === "macos";
@@ -78,6 +80,17 @@ export function AppSettingsView({
             }
             checked={showTrayIcon.value}
             onChange={showTrayIcon.onChange}
+          />
+          <SettingSwitchRow
+            title={<Trans>Show events in menu bar</Trans>}
+            description={
+              <Trans>
+                Show today's and tomorrow's calendar events in the tray menu and
+                count down to the next one.
+              </Trans>
+            }
+            checked={showEventsInMenuBar.value}
+            onChange={showEventsInMenuBar.onChange}
           />
         </div>
       </section>

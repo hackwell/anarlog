@@ -16,6 +16,7 @@ import { cn } from "@anlg/utils";
 
 import { Enhanced } from "./enhanced";
 import { Header, SessionViewSwitcher, useEditorTabs } from "./header";
+import { History } from "./history";
 import { RawEditor } from "./raw";
 import { SearchBar } from "./search/bar";
 import { useSearch } from "./search/context";
@@ -394,6 +395,9 @@ const NoteInputContent = forwardRef<
                 scrollRef={scrollRef}
                 editMode={transcriptEditMode}
               />
+            )}
+            {renderedCurrentTab.type === "history" && (
+              <History sessionId={sessionId} />
             )}
           </div>
         </div>

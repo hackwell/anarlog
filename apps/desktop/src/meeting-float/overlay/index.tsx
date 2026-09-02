@@ -75,6 +75,9 @@ export function FloatingBarOverlayScreen() {
         onStop={() => {
           void windowsEvents.floatingBarStop.emit({});
         }}
+        onOpenMain={() => {
+          void windowsEvents.floatingBarOpenMain.emit({});
+        }}
         onToggleExpanded={(expanded) => {
           void windowsEvents.floatingBarSettingsChange.emit({
             floatingBarOpacity: null,

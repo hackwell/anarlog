@@ -203,11 +203,108 @@ export async function populateRecurringMeetingNotes({
     ),
   );
 
+  statements.push(
+    buildTranscriptStatement({
+      sessionId: currentSessionId,
+      workspaceId,
+      ownerUserId,
+      startedAt: now,
+    }),
+  );
+
   await enqueueDatabaseWrite("devtools-recurring-notes", async () => {
     await executeTransaction(statements);
   });
 
   return currentSessionId;
+}
+
+// Enough spoken text for tag suggestions and a two-speaker transcript view;
+// the wording deliberately picks up the threads the past notes left open.
+const TRANSCRIPT_LINES: Array<[speaker: number, text: string]> = [
+  [0, "Okay, let's pick up where we left off last week."],
+  [1, "The onboarding checklist shipped on Tuesday, so that one is done."],
+  [0, "Great. And the pricing page copy, is legal still reviewing it?"],
+  [
+    1,
+    "They came back yesterday with two wording changes, I'll apply them today.",
+  ],
+  [0, "Then we can schedule the launch email for Thursday."],
+  [
+    1,
+    "One more thing: the date labels in the insights tab still use note creation time.",
+  ],
+  [
+    0,
+    "Right, that's the follow-up from last week. Let's make it the meeting start time.",
+  ],
+  [1, "I'll open a ticket and take it this sprint."],
+  [0, "Perfect. Anything on the Q3 roadmap review?"],
+  [
+    1,
+    "Not yet, the customer interviews are still running, three more next week.",
+  ],
+  [0, "Okay, let's revisit it in the next sync. That's all from my side."],
+];
+
+function buildTranscriptStatement({
+  sessionId,
+  workspaceId,
+  ownerUserId,
+  startedAt,
+}: {
+  sessionId: string;
+  workspaceId: string;
+  ownerUserId: string;
+  startedAt: Date;
+}): SqlStatement {
+  let cursorMs = 0;
+  const words = TRANSCRIPT_LINES.flatMap(([speaker, line], lineIndex) =>
+    line.split(" ").map((word, wordIndex) => {
+      const start = cursorMs;
+      cursorMs += 320;
+      if (wordIndex === line.split(" ").length - 1) cursorMs += 900;
+      return {
+        id: `${sessionId}:w${lineIndex}-${wordIndex}`,
+        text: `${wordIndex === 0 ? "" : " "}${word}`,
+        start_ms: start,
+        end_ms: start + 300,
+        channel: speaker,
+        speaker,
+        metadata: "{}",
+      };
+    }),
+  );
+  const startedAtMs = startedAt.getTime();
+  const createdAt = startedAt.toISOString();
+
+  return {
+    sql: `
+      INSERT INTO transcripts (
+        id, workspace_id, owner_user_id, session_id, source, provider, model,
+        language, started_at_ms, ended_at_ms, words_json, created_at, updated_at,
+        deleted_at
+      )
+      VALUES (?, ?, ?, ?, 'devtools', 'devtools', 'seed', 'en', ?, ?, ?, ?, ?, NULL)
+      ON CONFLICT(id) DO UPDATE SET
+        words_json = excluded.words_json,
+        started_at_ms = excluded.started_at_ms,
+        ended_at_ms = excluded.ended_at_ms,
+        updated_at = excluded.updated_at,
+        deleted_at = NULL
+    `,
+    params: [
+      `${sessionId}:transcript`,
+      workspaceId,
+      ownerUserId,
+      sessionId,
+      startedAtMs,
+      startedAtMs + cursorMs,
+      JSON.stringify(words),
+      createdAt,
+      createdAt,
+    ],
+  };
 }
 
 function buildSessionStatements({

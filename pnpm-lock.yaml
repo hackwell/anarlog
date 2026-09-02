@@ -156,6 +156,9 @@ importers:
       '@anlg/plugin-relay':
         specifier: workspace:*
         version: link:../../plugins/relay
+      '@anlg/plugin-screen':
+        specifier: workspace:*
+        version: link:../../plugins/screen
       '@anlg/plugin-settings':
         specifier: workspace:*
         version: link:../../plugins/settings

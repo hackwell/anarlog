@@ -76,6 +76,7 @@ fn make_specta_builder() -> tauri_specta::Builder<tauri::Wry> {
             commands::set_tray_schedule,
             commands::set_tray_recording_title,
             commands::set_tray_labels,
+            commands::set_tray_show_events,
         ])
         .error_handling(tauri_specta::ErrorHandlingMode::Result)
 }

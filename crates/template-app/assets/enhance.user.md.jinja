@@ -15,6 +15,17 @@
 # Meeting Notes
 
 {{ post_meeting_memo }}
+{% endif %}{% if !previous_meetings.is_empty() %}
+
+# Previous Meetings in This Series
+
+Earlier occurrences, most recent first. Use them only to connect threads: mark what was resolved, what is still open, and what is new. Never present their content as if it was discussed today.
+{% for meeting in previous_meetings %}
+
+## {{ meeting.title }} ({{ meeting.occurred_at }})
+
+{{ meeting.summary }}
+{% endfor %}
 {% endif %}
 
 # Transcript

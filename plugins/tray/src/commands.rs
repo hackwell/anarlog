@@ -45,3 +45,14 @@ pub async fn set_tray_labels(
         .set_labels(labels)
         .map_err(|error| error.to_string())
 }
+
+#[tauri::command]
+#[specta::specta]
+pub async fn set_tray_show_events(
+    app: tauri::AppHandle<tauri::Wry>,
+    show: bool,
+) -> Result<(), String> {
+    app.tray()
+        .set_show_events(show)
+        .map_err(|error| error.to_string())
+}

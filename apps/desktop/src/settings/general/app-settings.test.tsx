@@ -30,6 +30,7 @@ function renderAppSettings({
         automaticUpdates={automaticUpdates}
         showAppInDock={setting()}
         showTrayIcon={setting()}
+        showEventsInMenuBar={setting()}
       />,
     ),
     automaticUpdates,

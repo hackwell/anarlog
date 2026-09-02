@@ -36,7 +36,10 @@ pub struct TrayLabels {
     pub hours: String,
     pub today: String,
     pub tomorrow: String,
-    pub show_events: String,
+    pub agenda_record: String,
+    pub agenda_join_and_record: String,
+    pub agenda_prepare_note: String,
+    pub agenda_open_link: String,
     pub open_app: String,
     pub start_meeting: String,
     pub new_note: String,
@@ -55,7 +58,6 @@ pub struct TrayLabels {
     pub report_bug: String,
     pub suggest_feature: String,
     pub about: String,
-    pub hide: String,
     pub quit: String,
     pub quit_completely: String,
 }
@@ -71,7 +73,10 @@ impl Default for TrayLabels {
             hours: "h".to_string(),
             today: "Today".to_string(),
             tomorrow: "Tomorrow".to_string(),
-            show_events: "Show events in menu bar".to_string(),
+            agenda_record: "Start Recording".to_string(),
+            agenda_join_and_record: "Join & Record".to_string(),
+            agenda_prepare_note: "Prepare Note".to_string(),
+            agenda_open_link: "Open Meeting Link".to_string(),
             open_app: "Open {app}".to_string(),
             start_meeting: "Start a new meeting".to_string(),
             new_note: "New Note".to_string(),
@@ -90,9 +95,8 @@ impl Default for TrayLabels {
             report_bug: "Report Bug".to_string(),
             suggest_feature: "Suggest Feature".to_string(),
             about: "About {app}".to_string(),
-            hide: "Hide".to_string(),
             quit: "Quit".to_string(),
-            quit_completely: "Quit Completely…".to_string(),
+            quit_completely: "Quit {app}".to_string(),
         }
     }
 }
@@ -114,6 +118,7 @@ pub struct TrayScheduleEvent {
 pub struct TrayAgendaEvent {
     pub id: String,
     pub label: String,
+    pub has_meeting_link: bool,
 }
 
 #[derive(Debug, PartialEq)]
@@ -154,6 +159,10 @@ pub fn agenda_sections(
         sections.last_mut().unwrap().events.push(TrayAgendaEvent {
             id: event.id.clone(),
             label: compact_agenda_label(event),
+            has_meeting_link: event
+                .meeting_link
+                .as_deref()
+                .is_some_and(|link| !link.trim().is_empty()),
         });
     }
 
@@ -557,6 +566,7 @@ mod tests {
                     events: vec![TrayAgendaEvent {
                         id: "active".to_string(),
                         label: "9:00 AM – 9:30 AM · Active".to_string(),
+                        has_meeting_link: false,
                     }],
                 },
                 TrayAgendaSection {
@@ -565,14 +575,17 @@ mod tests {
                         TrayAgendaEvent {
                             id: "next".to_string(),
                             label: "9:00 AM – 9:30 AM · Next".to_string(),
+                            has_meeting_link: false,
                         },
                         TrayAgendaEvent {
                             id: "tomorrow-one".to_string(),
                             label: "9:00 AM – 9:30 AM · Tomorrow one".to_string(),
+                            has_meeting_link: false,
                         },
                         TrayAgendaEvent {
                             id: "tomorrow-two".to_string(),
                             label: "9:00 AM – 9:30 AM · Tomorrow two".to_string(),
+                            has_meeting_link: false,
                         },
                     ],
                 },

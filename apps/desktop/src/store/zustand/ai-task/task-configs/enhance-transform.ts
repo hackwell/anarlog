@@ -5,6 +5,7 @@ import {
 } from "@anlg/editor/markdown";
 import type {
   Participant,
+  PreviousMeeting,
   Segment,
   Session,
   TemplateSection,
@@ -21,6 +22,11 @@ import {
   loadSessionContentSnapshot,
   type SessionContentSnapshot,
 } from "~/session/content-queries";
+import {
+  buildPastSessionNotes,
+  loadPastSessionNotesData,
+  type PastSessionNote,
+} from "~/session/insights/past-notes";
 import { modelSupportsImageInput } from "~/settings/ai/shared/model-capabilities";
 import type { SettingValues } from "~/settings/schema";
 import { parseDictionaryTermsJson } from "~/stt/keywords";
@@ -28,6 +34,10 @@ import {
   formatMeetingChatContext,
   loadMeetingChatRecords,
 } from "~/stt/meeting-chat-records";
+import {
+  loadMeetingSnapshotRecords,
+  type MeetingSnapshotRecord,
+} from "~/stt/meeting-snapshot-records";
 import {
   buildRenderTranscriptRequestFromRows,
   collectAssignedHumanIdsFromTranscriptRows,
@@ -98,6 +108,7 @@ async function transformArgs(
     ? await collectEnhanceImageContext(sessionId, [
         sessionContext.preMeetingMemo,
         sessionContext.postMeetingMemo,
+        ...(await loadSnapshotImageMarkdown(sessionId)),
       ])
     : [];
 
@@ -109,6 +120,10 @@ async function transformArgs(
     template,
     preMeetingMemo: sessionContext.preMeetingMemo,
     postMeetingMemo: sessionContext.postMeetingMemo,
+    previousMeetings: await loadPreviousMeetings(
+      sessionId,
+      snapshot.ownerUserId,
+    ),
     transcripts: formatTranscripts(segments, sessionContext.transcriptsMeta),
     imageContext,
     summaryLength: normalizeSummaryLengthMode(settingsValues.summary_length),
@@ -116,6 +131,73 @@ async function transformArgs(
       settingsValues.personalization_dictionary_terms,
     ),
   };
+}
+
+const MAX_PREVIOUS_MEETINGS = 3;
+const MAX_PREVIOUS_SUMMARY_CHARS = 2500;
+
+/**
+ * Earlier occurrences of the same recurring meeting, newest first, so the
+ * summary can say what got resolved since last time. Meetings that merely
+ * share people are left out: their content is rarely a continuation.
+ */
+export function selectPreviousMeetings(
+  notes: PastSessionNote[],
+): PreviousMeeting[] {
+  return notes
+    .filter(
+      (note) =>
+        (note.relationship === "same_series" ||
+          note.relationship === "matching_title") &&
+        note.sourceSummary.trim() !== "",
+    )
+    .sort((a, b) => b.occurredAt.localeCompare(a.occurredAt))
+    .slice(0, MAX_PREVIOUS_MEETINGS)
+    .map((note) => ({
+      title: note.title,
+      occurredAt: note.dateLabel,
+      summary: truncate(note.sourceSummary.trim(), MAX_PREVIOUS_SUMMARY_CHARS),
+    }));
+}
+
+// Slides ride along as markdown image lines so the existing attachment lookup,
+// byte budget, and sampling apply to them like to images in the note.
+export function snapshotImageMarkdown(records: MeetingSnapshotRecord[]) {
+  return records.map((record) => {
+    const date = new Date(record.capturedAtMs);
+    const time = `${String(date.getHours()).padStart(2, "0")}:${String(
+      date.getMinutes(),
+    ).padStart(2, "0")}`;
+    return `![Slide ${time}](${record.path})`;
+  });
+}
+
+async function loadPreviousMeetings(
+  sessionId: string,
+  userId: string | null | undefined,
+): Promise<PreviousMeeting[]> {
+  try {
+    const data = await loadPastSessionNotesData();
+    const { notes } = buildPastSessionNotes(data, sessionId, userId ?? null);
+    return selectPreviousMeetings(notes);
+  } catch (error) {
+    console.warn("[enhance] previous meetings unavailable", error);
+    return [];
+  }
+}
+
+async function loadSnapshotImageMarkdown(sessionId: string): Promise<string[]> {
+  try {
+    const records = await loadMeetingSnapshotRecords(sessionId);
+    return snapshotImageMarkdown(records);
+  } catch (error) {
+    console.warn("[enhance] meeting snapshots unavailable", error);
+    return [];
+  }
+}
+
+function truncate(value: string, max: number) {
+  return value.length <= max ? value : `${value.slice(0, max).trimEnd()}…`;
 }
 
 function getMemoTemplateSections(

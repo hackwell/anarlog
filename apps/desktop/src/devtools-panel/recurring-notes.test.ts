@@ -67,6 +67,15 @@ describe("populateRecurringMeetingNotes", () => {
     expect(keyFactInserts[0]?.params).toContain(
       "Transcript controls shipped with a condensed panel layout.\nAlex owns the launch checklist and analytics confirmation.\nMaya wants another empty-state pass after beta feedback.",
     );
+    const transcriptInserts = statements.filter((statement) =>
+      statement.sql.includes("INSERT INTO transcripts"),
+    );
+    expect(transcriptInserts).toHaveLength(1);
+    const words = JSON.parse(String(transcriptInserts[0]?.params[6]));
+    expect(words.length).toBeGreaterThan(50);
+    expect(
+      new Set(words.map((word: { speaker: number }) => word.speaker)),
+    ).toEqual(new Set([0, 1]));
   });
 
   test("namespaces synced fixture ids by workspace", async () => {

@@ -53,6 +53,10 @@ impl TrayCheckUpdate {
         Ok(())
     }
 
+    pub fn restart_pending() -> bool {
+        Self::get_state() == STATE_RESTART_TO_APPLY
+    }
+
     fn get_state() -> u8 {
         UPDATE_STATE.load(Ordering::SeqCst)
     }

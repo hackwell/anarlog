@@ -5,7 +5,7 @@ use tauri::{
 use tauri_plugin_windows::{AppWindow, OpenTab, TabInput, WindowsPluginExt};
 use tauri_specta::Event;
 
-use super::MenuItemHandler;
+use super::{MenuIcon, MenuItemHandler, icon_item};
 
 pub struct TraySettings;
 
@@ -32,5 +32,19 @@ impl MenuItemHandler for TraySettings {
                 tracing::warn!("failed_emit_open_settings_tab: {e}");
             }
         }
+    }
+}
+
+impl TraySettings {
+    // The app menu keeps the plain item; only the tray shows icons.
+    pub fn build_for_tray(app: &AppHandle<tauri::Wry>) -> Result<MenuItemKind<tauri::Wry>> {
+        let item = icon_item(
+            app,
+            Self::ID,
+            &crate::schedule::labels().settings,
+            true,
+            MenuIcon::Settings,
+        )?;
+        Ok(MenuItemKind::Icon(item))
     }
 }

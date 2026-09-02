@@ -77,6 +77,7 @@ import { SettingsAlertToast } from "~/shared/ui/settings-alert";
 import {
   canAppleSpeechTranscribe,
   isConfiguredSttModel,
+  getSttModelSpeakerSupport,
   getSttModelTranscriptionMode,
   isDesktopLocalSttAvailable,
   isLiveTranscriptionSupported,
@@ -586,6 +587,7 @@ type ModelEntry = {
   category?: ModelCategory;
   sizeBytes?: number | null;
   mode?: "realtime" | "batch";
+  speakers?: "provider" | "local";
 };
 
 function getModelCategoryLabel(category?: ModelCategory) {
@@ -675,7 +677,7 @@ function useConfiguredMapping(): {
           soniqoModels,
           soniqoDownloaded,
           deviceInfo.data?.totalMemoryBytes,
-        );
+        ).map((model) => ({ ...model, speakers: "local" as const }));
         return [provider.id, { configured: models.length > 0, models }];
       }
 
@@ -684,7 +686,7 @@ function useConfiguredMapping(): {
           appleSpeechModels,
           appleSpeechDownloaded,
           deviceInfo.data?.totalMemoryBytes,
-        );
+        ).map((model) => ({ ...model, speakers: "local" as const }));
         return [provider.id, { configured: models.length > 0, models }];
       }
 
@@ -702,6 +704,7 @@ function useConfiguredMapping(): {
                 id: "local-file",
                 isDownloaded: !!local_stt_model_path?.trim(),
                 mode: "batch" as const,
+                speakers: "local" as const,
               },
             ],
           },
@@ -722,6 +725,7 @@ function useConfiguredMapping(): {
               id: model,
               isDownloaded: true,
               mode: mode === "live" ? "realtime" : mode,
+              speakers: getSttModelSpeakerSupport(provider.id, model),
             };
           }),
         },
@@ -805,6 +809,7 @@ function ModelSelectItem({
       <div className="flex shrink-0 items-center gap-2 text-[11px]">
         <LocalModelBackendBadge model={model.id} />
         {model.mode !== "realtime" && <ModelModeBadge mode={model.mode} />}
+        <ModelSpeakersBadge speakers={model.speakers} />
         {!model.isDownloaded && sizeLabel && (
           <span className="text-muted-foreground font-mono">{sizeLabel}</span>
         )}
@@ -901,7 +906,43 @@ function ModelSelectedValue({ model }: { model: ModelEntry }) {
         labelClassName={cn([isDeprecated && "text-muted-foreground"])}
       />
       <ModelModeBadge mode={model.mode} />
+      <ModelSpeakersBadge speakers={model.speakers} />
     </div>
+  );
+}
+
+function ModelSpeakersBadge({
+  speakers,
+}: {
+  speakers?: ModelEntry["speakers"];
+}) {
+  if (!speakers) {
+    return null;
+  }
+
+  return (
+    <Tooltip delayDuration={100}>
+      <TooltipTrigger asChild>
+        <span
+          className={cn([
+            "shrink-0 cursor-help rounded-md px-1.5 py-0.5 text-[11px] font-medium",
+            "bg-emerald-50 text-emerald-700",
+          ])}
+        >
+          <Trans>Speakers</Trans>
+        </span>
+      </TooltipTrigger>
+      <TooltipContent side="top" className="max-w-64 text-xs">
+        {speakers === "provider" ? (
+          <Trans>Tells participants apart in the transcript.</Trans>
+        ) : (
+          <Trans>
+            Tells participants apart when the session lists at least two
+            participants and the recording is under ten minutes.
+          </Trans>
+        )}
+      </TooltipContent>
+    </Tooltip>
   );
 }
 

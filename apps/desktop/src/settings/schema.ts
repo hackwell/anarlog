@@ -69,6 +69,11 @@ export const SETTING_DEFINITIONS = {
     path: ["general", "show_tray_icon"],
     default: true as boolean,
   },
+  show_events_in_menu_bar: {
+    type: "boolean",
+    path: ["general", "show_events_in_menu_bar"],
+    default: true as boolean,
+  },
   theme: {
     type: "string",
     path: ["general", "theme"],
@@ -144,6 +149,11 @@ export const SETTING_DEFINITIONS = {
   capture_meeting_chat: {
     type: "boolean",
     path: ["general", "capture_meeting_chat"],
+    default: false as boolean,
+  },
+  capture_meeting_snapshots: {
+    type: "boolean",
+    path: ["general", "capture_meeting_snapshots"],
     default: false as boolean,
   },
   cloud_sync_enabled: {

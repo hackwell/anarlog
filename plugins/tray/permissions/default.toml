@@ -5,4 +5,5 @@ permissions = [
     "allow-set-tray-recording-title",
     "allow-set-tray-labels",
     "allow-set-tray-schedule",
+    "allow-set-tray-show-events",
 ]

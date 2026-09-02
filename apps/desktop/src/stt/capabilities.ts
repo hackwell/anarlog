@@ -248,6 +248,62 @@ export function getSttModelTranscriptionMode(
   return undefined;
 }
 
+// Providers/models whose adapter requests diarization and maps speaker labels
+// onto words. "local" = on-device diarization, which only runs when the session
+// has at least two participants and the recording is at most ten minutes.
+export function getSttModelSpeakerSupport(
+  provider?: string | null,
+  model?: string | null,
+): "provider" | "local" | undefined {
+  if (!provider || !model) {
+    return undefined;
+  }
+
+  if (
+    isOnDeviceSttModel(provider, model) ||
+    isLocalFileSttModel(provider, model)
+  ) {
+    return "local";
+  }
+
+  if (isAnarlogCloudSttModel(provider, model)) {
+    return "provider";
+  }
+
+  if (provider === "openai") {
+    return model === "gpt-4o-transcribe-diarize" ? "provider" : undefined;
+  }
+
+  if (provider === "deepgram") {
+    return model.startsWith("flux-") ? undefined : "provider";
+  }
+
+  if (provider === "elevenlabs") {
+    return model === "scribe_v2" ? "provider" : undefined;
+  }
+
+  if (provider === "mistral") {
+    return model === "voxtral-mini-2602" ? "provider" : undefined;
+  }
+
+  if (
+    provider === "assemblyai" ||
+    provider === "azure_speech" ||
+    provider === "cloudflare_workers_ai" ||
+    provider === "gladia" ||
+    provider === "google_cloud" ||
+    provider === "pyannote" ||
+    provider === "revai" ||
+    provider === "soniox" ||
+    provider === "speechmatics" ||
+    provider === "xai"
+  ) {
+    return "provider";
+  }
+
+  return undefined;
+}
+
 function baseLanguageCode(language: string) {
   return language.split(/[-_]/)[0]?.toLowerCase() ?? "";
 }

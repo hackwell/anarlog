@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { enhanceTransform } from "./enhance-transform";
+import { enhanceTransform, selectPreviousMeetings } from "./enhance-transform";
 
 const mocks = vi.hoisted(() => ({
   collectEnhanceImageContext: vi.fn(),
@@ -12,6 +12,14 @@ const mocks = vi.hoisted(() => ({
   buildRenderTranscriptRequestFromRows: vi.fn(),
   collectAssignedHumanIdsFromTranscriptRows: vi.fn(),
   renderTranscriptSegments: vi.fn(),
+  loadPastSessionNotesData: vi.fn(),
+  buildPastSessionNotes: vi.fn(),
+  loadMeetingSnapshotRecords: vi.fn(),
+}));
+
+vi.mock("~/session/insights/past-notes", () => ({
+  loadPastSessionNotesData: mocks.loadPastSessionNotesData,
+  buildPastSessionNotes: mocks.buildPastSessionNotes,
 }));
 
 vi.mock("./enhance-images", () => ({
@@ -29,6 +37,10 @@ vi.mock("~/session/content-queries", () => ({
 vi.mock("~/stt/meeting-chat-records", () => ({
   formatMeetingChatContext: mocks.formatMeetingChatContext,
   loadMeetingChatRecords: mocks.loadMeetingChatRecords,
+}));
+
+vi.mock("~/stt/meeting-snapshot-records", () => ({
+  loadMeetingSnapshotRecords: mocks.loadMeetingSnapshotRecords,
 }));
 
 vi.mock("~/contacts/queries", () => ({
@@ -88,11 +100,45 @@ describe("enhanceTransform.transformArgs", () => {
     mocks.collectAssignedHumanIdsFromTranscriptRows.mockReturnValue([]);
     mocks.buildRenderTranscriptRequestFromRows.mockReturnValue(null);
     mocks.renderTranscriptSegments.mockResolvedValue([]);
+    mocks.loadPastSessionNotesData.mockResolvedValue({
+      sessions: {},
+      participants: [],
+      enhancedNotes: [],
+      keyFacts: {},
+    });
+    mocks.buildPastSessionNotes.mockReturnValue({
+      notes: [],
+      missing: [],
+      requests: [],
+    });
+    mocks.loadMeetingSnapshotRecords.mockResolvedValue([]);
     consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
   });
 
   afterEach(() => {
     consoleError.mockRestore();
+  });
+
+  it("passes earlier occurrences of the series to the prompt", async () => {
+    mocks.buildPastSessionNotes.mockReturnValue({
+      notes: [pastNote("older", "same_series", "2026-06-26T10:00:00.000Z")],
+      missing: [],
+      requests: [],
+    });
+
+    const result = await enhanceTransform.transformArgs(
+      { sessionId: "session-1", enhancedNoteId: "note-1", templateId: "" },
+      settingsValues,
+    );
+
+    expect(mocks.buildPastSessionNotes).toHaveBeenCalledWith(
+      expect.anything(),
+      "session-1",
+      "user-1",
+    );
+    expect(result.previousMeetings).toEqual([
+      { title: "Weekly Review", occurredAt: "older", summary: "Summary older" },
+    ]);
   });
 
   it("uses the selected template when it can be loaded", async () => {
@@ -313,6 +359,68 @@ describe("enhanceTransform.transformArgs", () => {
     ]);
   });
 
+  it("hands meeting snapshots to the image context", async () => {
+    const capturedAtMs = Date.UTC(2026, 8, 2, 14, 3, 1);
+    const localTime = new Date(capturedAtMs);
+    const label = `${String(localTime.getHours()).padStart(2, "0")}:${String(
+      localTime.getMinutes(),
+    ).padStart(2, "0")}`;
+    mocks.loadMeetingSnapshotRecords.mockResolvedValue([
+      {
+        id: "doc-1",
+        attachmentId: "att-1",
+        filename: "slide-140301.jpg",
+        path: "/tmp/att-1.jpg",
+        capturedAtMs,
+        width: 1600,
+        height: 900,
+        appName: "zoom.us",
+        windowTitle: "Zoom Meeting",
+      },
+    ]);
+    mocks.collectEnhanceImageContext.mockResolvedValue([]);
+
+    await enhanceTransform.transformArgs(
+      { sessionId: "session-1", enhancedNoteId: "note-1", templateId: "" },
+      {
+        current_llm_provider: "openai",
+        current_llm_model: "gpt-4o",
+        ai_language: "en",
+      },
+    );
+
+    const [, markdown] = mocks.collectEnhanceImageContext.mock.calls[0]!;
+    expect(markdown).toContain(`![Slide ${label}](/tmp/att-1.jpg)`);
+  });
+
+  it("keeps summaries working when snapshot lookup fails", async () => {
+    mocks.loadMeetingSnapshotRecords.mockRejectedValue(new Error("db down"));
+    mocks.collectEnhanceImageContext.mockResolvedValue([]);
+
+    const consoleWarn = vi.spyOn(console, "warn").mockImplementation(() => {});
+
+    const result = await enhanceTransform.transformArgs(
+      { sessionId: "session-1", enhancedNoteId: "note-1" },
+      {
+        current_llm_provider: "openai",
+        current_llm_model: "gpt-4o",
+        ai_language: "en",
+      },
+    );
+
+    expect(result.session.title).toBe("Weekly Review");
+    expect(consoleWarn).toHaveBeenCalledWith(
+      "[enhance] meeting snapshots unavailable",
+      expect.any(Error),
+    );
+    const [, markdown] = mocks.collectEnhanceImageContext.mock.calls[0]!;
+    expect(markdown).toEqual([
+      "![pre](asset://localhost/pre.png)",
+      "![post](asset://localhost/post.png)",
+    ]);
+    consoleWarn.mockRestore();
+  });
+
   it("builds speaker identity context from SQLite humans", async () => {
     mocks.collectAssignedHumanIdsFromTranscriptRows.mockReturnValue([
       "human-2",
@@ -365,5 +473,55 @@ describe("enhanceTransform.transformArgs", () => {
         settingsValues,
       ),
     ).rejects.toThrow("Session missing no longer exists");
+  });
+});
+
+function pastNote(
+  id: string,
+  relationship: "same_series" | "matching_title" | "shared_participants",
+  occurredAt: string,
+  sourceSummary = `Summary ${id}`,
+) {
+  return {
+    sessionId: id,
+    title: "Weekly Review",
+    dateLabel: id,
+    occurredAt,
+    sourceSummary,
+    relationship,
+    summary: null,
+    isGenerating: false,
+  };
+}
+
+describe("selectPreviousMeetings", () => {
+  it("keeps series and title matches, newest first, capped at three", () => {
+    const notes = [
+      pastNote("a", "shared_participants", "2026-07-01T00:00:00.000Z"),
+      pastNote("b", "same_series", "2026-06-01T00:00:00.000Z"),
+      pastNote("c", "matching_title", "2026-06-15T00:00:00.000Z"),
+      pastNote("d", "same_series", "2026-05-01T00:00:00.000Z"),
+      pastNote("e", "same_series", "2026-04-01T00:00:00.000Z"),
+      pastNote("f", "same_series", "2026-06-20T00:00:00.000Z", "   "),
+    ];
+
+    expect(selectPreviousMeetings(notes).map((m) => m.occurredAt)).toEqual([
+      "c",
+      "b",
+      "d",
+    ]);
+  });
+
+  it("truncates long summaries", () => {
+    const [meeting] = selectPreviousMeetings([
+      pastNote(
+        "x",
+        "same_series",
+        "2026-06-01T00:00:00.000Z",
+        "y".repeat(3000),
+      ),
+    ]);
+    expect(meeting?.summary.length).toBe(2501);
+    expect(meeting?.summary.endsWith("…")).toBe(true);
   });
 });

@@ -19,7 +19,7 @@ export function TimelineBuckets({
   buckets,
   emptyTodayLabel,
   getFlatItemKeys,
-  hasActiveVisibleSession,
+  suppressCurrentTimeIndicator,
   hasToday,
   indicatorIndex,
   registerIndicator,
@@ -34,7 +34,7 @@ export function TimelineBuckets({
   buckets: TimelineBucket[];
   emptyTodayLabel: ReactNode;
   getFlatItemKeys: () => string[];
-  hasActiveVisibleSession: boolean;
+  suppressCurrentTimeIndicator: boolean;
   hasToday: boolean;
   indicatorIndex: number;
   registerIndicator: (node: HTMLDivElement | null) => void;
@@ -52,9 +52,9 @@ export function TimelineBuckets({
         const shouldPlaceIndicatorBefore =
           !hasToday && indicatorIndex === index;
         const shouldRenderIndicatorBefore =
-          shouldPlaceIndicatorBefore && !hasActiveVisibleSession;
+          shouldPlaceIndicatorBefore && !suppressCurrentTimeIndicator;
         const shouldRenderIndicatorAnchorBefore =
-          shouldPlaceIndicatorBefore && hasActiveVisibleSession;
+          shouldPlaceIndicatorBefore && suppressCurrentTimeIndicator;
         const isTopIndicator = shouldRenderIndicatorBefore && index === 0;
 
         return (
@@ -95,7 +95,7 @@ export function TimelineBuckets({
                 registerIndicator={registerIndicator}
                 selectedSessionId={selectedSessionId}
                 selectedNodeRef={selectedNodeRef}
-                suppressCurrentTimeIndicator={hasActiveVisibleSession}
+                suppressCurrentTimeIndicator={suppressCurrentTimeIndicator}
                 timezone={timezone}
                 selectedIds={selectedIds}
                 getFlatItemKeys={getFlatItemKeys}
@@ -144,7 +144,7 @@ export function TimelineBuckets({
       })}
       {!hasToday &&
         (indicatorIndex === -1 || indicatorIndex === buckets.length) &&
-        (hasActiveVisibleSession ? (
+        (suppressCurrentTimeIndicator ? (
           <CurrentTimeAnchor registerIndicator={registerIndicator} />
         ) : (
           <CurrentTimeIndicator ref={registerIndicator} timezone={timezone} />

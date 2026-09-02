@@ -1,9 +1,6 @@
-use tauri::{
-    AppHandle, Result,
-    menu::{MenuItem, MenuItemKind},
-};
+use tauri::{AppHandle, Result, menu::MenuItemKind};
 
-use super::MenuItemHandler;
+use super::{MenuIcon, MenuItemHandler, icon_item};
 
 pub struct TrayOpen;
 
@@ -11,16 +8,16 @@ impl MenuItemHandler for TrayOpen {
     const ID: &'static str = "anlg_tray_open";
 
     fn build(app: &AppHandle<tauri::Wry>) -> Result<MenuItemKind<tauri::Wry>> {
-        let item = MenuItem::with_id(
+        let item = icon_item(
             app,
             Self::ID,
             crate::schedule::labels()
                 .open_app
                 .replace("{app}", app.package_info().name.as_str()),
             true,
-            None::<&str>,
+            MenuIcon::OpenApp,
         )?;
-        Ok(MenuItemKind::MenuItem(item))
+        Ok(MenuItemKind::Icon(item))
     }
 
     fn handle(app: &AppHandle<tauri::Wry>) {

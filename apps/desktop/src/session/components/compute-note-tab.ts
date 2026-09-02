@@ -5,7 +5,12 @@ export function computeCurrentNoteTab(
   isLiveSessionActive: boolean,
   enhancedNoteIds: readonly string[],
   canShowTranscript = false,
+  hasHistory = false,
 ): EditorView {
+  if (tabView?.type === "history" && hasHistory) {
+    return tabView;
+  }
+
   const firstEnhancedNoteId = enhancedNoteIds[0];
   const hasEnhancedNote = (id: string) => enhancedNoteIds.includes(id);
 

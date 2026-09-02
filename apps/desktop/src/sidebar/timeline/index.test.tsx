@@ -1,10 +1,4 @@
-import {
-  act,
-  cleanup,
-  fireEvent,
-  render,
-  screen,
-} from "@testing-library/react";
+import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import type { ReactNode } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -1218,7 +1212,8 @@ describe("TimelineView", () => {
     expect(queryTopFade(container)).toBeNull();
   });
 
-  it("places the fallback now indicator between future and past buckets", () => {
+  it("places the fallback now indicator ahead of upcoming buckets on the timeline", () => {
+    localStorage.setItem("sidebar-timeline-view", "timeline");
     vi.useFakeTimers();
     vi.setSystemTime(new Date("2024-01-15T15:54:00.000Z"));
 
@@ -1231,32 +1226,38 @@ describe("TimelineView", () => {
           started_at: "2024-01-17T08:30:00.000Z",
         }),
       },
+    };
+
+    render(<TimelineView />);
+
+    const tomorrowHeading = screen.getByText("Tomorrow");
+    const indicator = screen.getByTestId("current-time-indicator");
+
+    expect(isBefore(indicator, tomorrowHeading)).toBe(true);
+    expect(
+      indicator.closest("[data-sidebar-current-time-header-gap]")?.className,
+    ).toContain("py-3");
+  });
+
+  it("hides the now indicator in the recordings view", () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2024-01-15T15:54:00.000Z"));
+
+    mocks.timelineSessionsTable = {
       yesterday: {
         title: "Design sync",
-        created_at: "2024-01-15T12:00:00.000Z",
-      },
-      "two-days-ago": {
-        title: "Product Discovery Pace",
         created_at: "2024-01-14T12:00:00.000Z",
       },
     };
 
     render(<TimelineView />);
 
-    const tomorrowHeading = screen.getByText("Tomorrow");
-    const yesterdayHeading = screen.getByText("Yesterday");
-    const twoDaysAgoHeading = screen.getByText("2 days ago");
-    const indicator = screen.getByTestId("current-time-indicator");
-
-    expect(isBefore(tomorrowHeading, indicator)).toBe(true);
-    expect(isBefore(indicator, yesterdayHeading)).toBe(true);
-    expect(isBefore(indicator, twoDaysAgoHeading)).toBe(true);
-    expect(
-      indicator.closest("[data-sidebar-current-time-header-gap]")?.className,
-    ).toContain("py-3");
+    expect(screen.getByText("Yesterday")).toBeTruthy();
+    expect(screen.queryByTestId("current-time-indicator")).toBeNull();
   });
 
   it("does not auto-scroll to the fallback now indicator without a today bucket", () => {
+    localStorage.setItem("sidebar-timeline-view", "timeline");
     vi.useFakeTimers();
     vi.setSystemTime(new Date("2024-01-15T15:54:00.000Z"));
 
@@ -1362,79 +1363,7 @@ describe("TimelineView", () => {
     expect(anchor).toBeTruthy();
     expect(mocks.registerAnchor).toHaveBeenCalledWith(anchor);
   });
-
-  it("places the fallback now indicator with fresh time after data refreshes", () => {
-    vi.useFakeTimers();
-    vi.setSystemTime(new Date("2024-01-15T23:58:00.000Z"));
-    mocks.configValue = "UTC";
-    mocks.currentTimeMs = Date.now();
-
-    render(<TimelineView />);
-
-    vi.setSystemTime(new Date("2024-01-16T00:01:00.000Z"));
-    mocks.timelineSessionsTable = {
-      tomorrow: {
-        title: "Roadmap review",
-        created_at: "2024-01-17T12:00:00.000Z",
-      },
-      yesterday: {
-        title: "Late wrap",
-        created_at: "2024-01-15T23:59:00.000Z",
-      },
-    };
-    emitTimelineTablesUpdate();
-
-    const tomorrowHeading = screen.getByText("Tomorrow");
-    const yesterdayHeading = screen.getByText("Yesterday");
-    const indicator = screen.getByTestId("current-time-indicator");
-
-    expect(isBefore(tomorrowHeading, indicator)).toBe(true);
-    expect(isBefore(indicator, yesterdayHeading)).toBe(true);
-  });
-
-  it("places the fallback now indicator after stale future buckets", () => {
-    vi.useFakeTimers();
-    vi.setSystemTime(new Date("2024-01-15T23:58:00.000Z"));
-    mocks.configValue = "UTC";
-    mocks.currentTimeMs = Date.now();
-    mocks.smartCurrentTimeMs = Date.now();
-    mocks.timelineSessionsTable = {
-      soon: {
-        title: "Late handoff",
-        created_at: "2024-01-16T00:00:30.000Z",
-      },
-      yesterday: {
-        title: "Planning",
-        created_at: "2024-01-14T12:00:00.000Z",
-      },
-    };
-
-    render(<TimelineView />);
-
-    vi.setSystemTime(new Date("2024-01-16T00:01:00.000Z"));
-    mocks.currentTimeMs = Date.now();
-    emitTimelineTablesUpdate();
-
-    const staleTomorrowHeading = screen.getByText("Tomorrow");
-    const staleTomorrowItem = screen.getByTestId("timeline-item-soon");
-    const yesterdayHeading = screen.getByText("Yesterday");
-    const indicator = screen.getByTestId("current-time-indicator");
-
-    expect(isBefore(staleTomorrowHeading, staleTomorrowItem)).toBe(true);
-    expect(isBefore(staleTomorrowItem, indicator)).toBe(true);
-    expect(isBefore(indicator, yesterdayHeading)).toBe(true);
-  });
 });
-
-// TimelineView is memoized, so re-rendering it from a test with equal props is a
-// no-op. In production the live query pushes new tables into the mounted tree; this
-// emits that push so a refresh is observable without depending on prop identity.
-function emitTimelineTablesUpdate() {
-  act(() => {
-    mocks.timelineTablesVersion += 1;
-    mocks.timelineTablesSubscribers.forEach((notify) => notify());
-  });
-}
 
 function getSidebarActionTabsOrNull() {
   return document.querySelector("[data-sidebar-timeline-action-tabs]");

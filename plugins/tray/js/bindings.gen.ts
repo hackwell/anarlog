@@ -37,6 +37,14 @@ async setTrayLabels(labels: TrayLabels) : Promise<Result<null, string>> {
     if(e instanceof Error) throw e;
     else return { status: "error", error: e  as any };
 }
+},
+async setTrayShowEvents(show: boolean) : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("plugin:anlg-tray|set_tray_show_events", { show }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
 }
 }
 
@@ -63,7 +71,7 @@ remaining: string;
 /**
  * A meeting still ahead, e.g. `" • in {duration}"`.
  */
-upcoming: string; seconds: string; minutes: string; hours: string; today: string; tomorrow: string; showEvents: string; openApp: string; startMeeting: string; newNote: string; settings: string; checkUpdates: string; downloadingUpdate: string; restartToApply: string; updateAvailable: string; updateFailed: string; updateCheckFailed: string; quitCompletelyTitle: string; updateReady: string; installFailed: string; downloadFailed: string; checkFailed: string; reportBug: string; suggestFeature: string; about: string; hide: string; quit: string; quitCompletely: string }
+upcoming: string; seconds: string; minutes: string; hours: string; today: string; tomorrow: string; agendaRecord: string; agendaJoinAndRecord: string; agendaPrepareNote: string; agendaOpenLink: string; openApp: string; startMeeting: string; newNote: string; settings: string; checkUpdates: string; downloadingUpdate: string; restartToApply: string; updateAvailable: string; updateFailed: string; updateCheckFailed: string; quitCompletelyTitle: string; updateReady: string; installFailed: string; downloadFailed: string; checkFailed: string; reportBug: string; suggestFeature: string; about: string; quit: string; quitCompletely: string }
 export type TrayScheduleEvent = { id: string; title: string; meetingLink: string | null; startsAtMs: number; endsAtMs: number | null; dayStartMs: number; previousDayStartMs: number; timeLabel: string }
 
 /** tauri-specta globals **/

@@ -40,9 +40,11 @@ const SETTINGS_FORM_KEYS = [
   "floating_bar_enabled",
   "show_app_in_dock",
   "show_tray_icon",
+  "show_events_in_menu_bar",
   "notification_detect",
   "consent_auto_send_chat",
   "capture_meeting_chat",
+  "capture_meeting_snapshots",
   "ai_language",
   "spoken_languages",
   "current_stt_provider",
@@ -64,9 +66,11 @@ function useSettingsForm(storedSettings: StoredSettingValues) {
       floating_bar_enabled: settingsValue.floating_bar_enabled,
       show_app_in_dock: settingsValue.show_app_in_dock,
       show_tray_icon: settingsValue.show_tray_icon,
+      show_events_in_menu_bar: settingsValue.show_events_in_menu_bar,
       notification_detect: settingsValue.notification_detect,
       consent_auto_send_chat: settingsValue.consent_auto_send_chat,
       capture_meeting_chat: settingsValue.capture_meeting_chat,
+      capture_meeting_snapshots: settingsValue.capture_meeting_snapshots,
       ai_language: settingsValue.ai_language,
       spoken_languages: getAdditionalSpokenLanguages(
         settingsValue.ai_language,
@@ -104,9 +108,11 @@ function useSettingsForm(storedSettings: StoredSettingValues) {
         floating_bar_enabled: normalizedValue.floating_bar_enabled,
         show_app_in_dock: normalizedValue.show_app_in_dock,
         show_tray_icon: normalizedValue.show_tray_icon,
+        show_events_in_menu_bar: normalizedValue.show_events_in_menu_bar,
         notification_detect: normalizedValue.notification_detect,
         consent_auto_send_chat: normalizedValue.consent_auto_send_chat,
         capture_meeting_chat: normalizedValue.capture_meeting_chat,
+        capture_meeting_snapshots: normalizedValue.capture_meeting_snapshots,
         ai_language: normalizedValue.ai_language,
         spoken_languages: JSON.stringify(normalizedValue.spoken_languages),
       });
@@ -229,6 +235,11 @@ function SettingsSectionContent({
                   onChange: (value) =>
                     submitFieldValue("show_tray_icon", value),
                 }}
+                showEventsInMenuBar={{
+                  value: values.show_events_in_menu_bar,
+                  onChange: (value) =>
+                    submitFieldValue("show_events_in_menu_bar", value),
+                }}
               />
             )}
           </form.Subscribe>
@@ -316,6 +327,11 @@ function SettingsSectionContent({
                   value: values.capture_meeting_chat,
                   onChange: (value) =>
                     submitFieldValue("capture_meeting_chat", value),
+                }}
+                captureMeetingSnapshots={{
+                  value: values.capture_meeting_snapshots,
+                  onChange: (value) =>
+                    submitFieldValue("capture_meeting_snapshots", value),
                 }}
               />
             )}

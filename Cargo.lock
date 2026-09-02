@@ -15353,6 +15353,7 @@ dependencies = [
  "host",
  "intercept",
  "libloading 0.8.9",
+ "objc2-foundation",
  "open",
  "serde",
  "serde_json",

@@ -170,6 +170,17 @@ vi.mock("~/session/components/shared", () => ({
     hoisted.sessionMode === "running_batch",
 }));
 
+vi.mock("~/session/insights/past-notes", () => ({
+  usePastSessionNotes: () => ({
+    notes: [],
+    hasPastNotes: false,
+    isGenerating: false,
+    canGenerate: false,
+    regenerate: () => {},
+    regenerateAll: () => {},
+  }),
+}));
+
 vi.mock("~/session/hooks/useEnhancedNotes", () => ({
   useEnsureDefaultSummary: vi.fn(),
 }));
@@ -308,7 +319,12 @@ vi.mock("~/templates", () => ({
   useUserTemplates: () => hoisted.userTemplates,
 }));
 
-import { Header, SessionViewSwitcher, useEditorTabs } from "./header";
+import {
+  Header,
+  SessionViewSwitcher,
+  createEditorTabs,
+  useEditorTabs,
+} from "./header";
 
 describe("Header", () => {
   beforeEach(() => {
@@ -1068,6 +1084,20 @@ describe("Header", () => {
       { type: "enhanced", id: "note-1" },
       { type: "raw" },
       { type: "transcript" },
+    ]);
+  });
+
+  it("includes the history tab when related meetings exist", () => {
+    expect(
+      createEditorTabs({
+        enhancedNoteIds: ["note-1"],
+        canShowTranscript: false,
+        hasHistory: true,
+      }),
+    ).toEqual([
+      { type: "enhanced", id: "note-1" },
+      { type: "raw" },
+      { type: "history" },
     ]);
   });
 

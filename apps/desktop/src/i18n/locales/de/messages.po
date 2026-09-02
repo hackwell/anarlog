@@ -213,6 +213,10 @@ msgstr "Vor dem Aktivieren mindestens eine konfigurierte Aktion hinzufügen."
 msgid "Add at least one example summary."
 msgstr "Mindestens eine Beispielzusammenfassung hinzufügen."
 
+#: src/settings/developers/devtools.tsx
+msgid "Add demo meetings"
+msgstr "Demo-Meetings anlegen"
+
 #: src/templates/auto-format-examples-dialog.tsx
 msgid "Add example"
 msgstr "Beispiel hinzufügen"
@@ -249,10 +253,6 @@ msgstr "Gesprochene Sprache hinzufügen"
 msgid "Add step"
 msgstr "Schritt hinzufügen"
 
-#: src/session/components/outer-header/metadata/tags.tsx
-msgid "Add tag"
-msgstr "Schlagwort hinzufügen"
-
 #: src/settings/developers/webhooks.tsx
 msgid "Add webhook"
 msgstr "Webhook hinzufügen"
@@ -264,6 +264,10 @@ msgstr "Fügen Sie Ihren eigenen LLM-API-Schlüssel hinzu, um aus diesem Transkr
 #: src/settings/general/spoken-languages.tsx
 msgid "Additional spoken languages"
 msgstr "Weitere gesprochene Sprachen"
+
+#: src/settings/developers/devtools.tsx
+msgid "Adds a recurring \"Weekly Product Sync\" with three past meetings, summaries, key facts, participants, and a two-speaker transcript for today's occurrence. Safe to run again."
+msgstr "Legt eine wiederkehrende „Weekly Product Sync“ mit drei vergangenen Meetings, Zusammenfassungen, Kernpunkten, Teilnehmern und einem Transkript mit zwei Sprechern für den heutigen Termin an. Kann gefahrlos wiederholt werden."
 
 #: src/settings/ai/shared/index.tsx
 #: src/sidebar/settings.tsx
@@ -512,6 +516,10 @@ msgstr "Datumsbearbeitung abbrechen"
 #: src/settings/general/meeting-settings.tsx
 msgid "Capture meeting chat in Memos"
 msgstr "Meeting-Chat in Memos erfassen"
+
+#: src/settings/general/meeting-settings.tsx
+msgid "Capture slides from the meeting window"
+msgstr "Folien aus dem Meeting-Fenster festhalten"
 
 #: src/onboarding/folder-location.tsx
 msgid "Change"
@@ -824,6 +832,10 @@ msgstr "Weiter"
 msgid "Control listening without reopening Session Echo."
 msgstr "Das Zuhören steuern, ohne Session Echo erneut zu öffnen."
 
+#: src/session/components/outer-header/copy-view.tsx
+msgid "Copied to clipboard"
+msgstr "In die Zwischenablage kopiert"
+
 #: src/main/windows-title-bar.tsx
 #: src/session/components/note-input/transcript/renderer/selection-menu.tsx
 #: src/settings/ai/llm/subscriptions/connect.tsx
@@ -846,6 +858,10 @@ msgstr "Kopieren Sie die Adresse, auf der Ihr Browser gelandet ist, und fügen S
 #: src/settings/developers/webhooks.tsx
 msgid "Copy this signing secret now — it is only shown once."
 msgstr "Dieses Signing-Secret jetzt kopieren — es wird nur einmal angezeigt."
+
+#: src/session/components/outer-header/copy-view.tsx
+msgid "Copy to clipboard"
+msgstr "In die Zwischenablage kopieren"
 
 #. placeholder {0}: error.message
 #: src/settings/developers/cli.tsx
@@ -1035,6 +1051,14 @@ msgstr "Diesen Termin löschen"
 msgid "Deleting..."
 msgstr "Wird gelöscht …"
 
+#: src/settings/developers/devtools.tsx
+msgid "Demo data"
+msgstr "Demo-Daten"
+
+#: src/settings/developers/devtools.tsx
+msgid "Demo meetings added"
+msgstr "Demo-Meetings angelegt"
+
 #: src/templates/template-form.tsx
 msgid "Describe the template purpose..."
 msgstr "Zweck der Vorlage beschreiben …"
@@ -1085,6 +1109,11 @@ msgstr "Deaktivieren"
 #: src/imports/screen.tsx
 msgid "Disconnect"
 msgstr "Trennen"
+
+#. placeholder {0}: entry.name
+#: src/session/components/tag-row.tsx
+msgid "Dismiss suggestion {0}"
+msgstr "Vorschlag {0} verwerfen"
 
 #: src/settings/general/audio-settings.tsx
 msgid "Don't save"
@@ -1266,10 +1295,18 @@ msgstr "Das Meeting als Markdown exportieren"
 msgid "Exporting..."
 msgstr "Wird exportiert …"
 
+#: src/session/components/note-input/history.tsx
+msgid "Extract key facts"
+msgstr "Kernpunkte herausziehen"
+
 #. placeholder {0}: "{error}"
 #: src/services/tray-schedule.tsx
 msgid "Failed to check for updates: {0}"
 msgstr "Update-Prüfung fehlgeschlagen: {0}"
+
+#: src/session/components/outer-header/copy-view.tsx
+msgid "Failed to copy"
+msgstr "Kopieren fehlgeschlagen"
 
 #. placeholder {0}: "{error}"
 #: src/services/tray-schedule.tsx
@@ -1431,10 +1468,6 @@ msgstr "Session Echo helfen, Meeting-Aktivitäten zu lesen"
 msgid "Hi, I'm Session Echo AI. Set up a language model and I'll be ready to help."
 msgstr "Hallo, ich bin Session Echo AI. Richten Sie ein Sprachmodell ein, dann kann ich helfen."
 
-#: src/services/tray-schedule.tsx
-msgid "Hide"
-msgstr "Ausblenden"
-
 #: src/sidebar/timeline/index.tsx
 msgid "Hide Deleted Events"
 msgstr "Gelöschte Termine ausblenden"
@@ -1450,6 +1483,14 @@ msgstr "Seitenleiste ausblenden"
 #: src/main/windows-title-bar.tsx
 msgid "Hide Sidebar"
 msgstr "Seitenleiste ausblenden"
+
+#: src/session/components/note-input/history.tsx
+msgid "Hide summary"
+msgstr "Zusammenfassung ausblenden"
+
+#: src/session/components/note-input/header.tsx
+msgid "History"
+msgstr "Verlauf"
 
 #. placeholder {0}: history.position
 #. placeholder {1}: history.total
@@ -1526,6 +1567,10 @@ msgstr "Oberhalb einfügen"
 msgid "Insert below"
 msgstr "Unterhalb einfügen"
 
+#: src/session/components/note-input/snapshot-strip.tsx
+msgid "Insert slide from {time}"
+msgstr "Folie von {time} einfügen"
+
 #: src/settings/developers/cli.tsx
 msgid "Install"
 msgstr "Installieren"
@@ -1551,6 +1596,10 @@ msgstr "Position"
 msgid "Join & record"
 msgstr "Beitreten & aufnehmen"
 
+#: src/services/tray-schedule.tsx
+msgid "Join & Record"
+msgstr "Beitreten & aufnehmen"
+
 #: src/session/components/outer-header/index.tsx
 msgid "Join meeting and record"
 msgstr "Meeting beitreten und aufnehmen"
@@ -1562,6 +1611,10 @@ msgstr "Treten Sie unserer Community bei und bleiben Sie auf dem Laufenden:"
 #: src/settings/general/meeting-settings.tsx
 msgid "Join scheduled meetings"
 msgstr "Geplanten Meetings beitreten"
+
+#: src/settings/general/meeting-settings.tsx
+msgid "Keep a screenshot of the meeting window whenever the shared content changes. Needs Screen Recording access."
+msgstr "Speichert einen Screenshot des Meeting-Fensters, sobald sich der geteilte Inhalt ändert. Benötigt Zugriff auf Bildschirmaufnahme."
 
 #: src/settings/ai/llm/subscriptions/connect.tsx
 msgid "Kimi Code API key"
@@ -2000,6 +2053,10 @@ msgstr "Keine Anbieter gefunden."
 msgid "No recent chats"
 msgstr "Keine letzten Chats"
 
+#: src/session/components/note-input/history.tsx
+msgid "No related meetings yet."
+msgstr "Noch keine verwandten Meetings."
+
 #: src/contacts/related-notes.tsx
 msgid "No related notes found"
 msgstr "Keine verwandten Notizen gefunden"
@@ -2052,10 +2109,6 @@ msgstr "Notizen"
 #: src/imports/screen.tsx
 msgid "Nothing new was imported. {0} meetings need review and {1} could not be imported."
 msgstr "Es wurde nichts Neues importiert. {0} Meetings müssen überprüft werden, {1} konnten nicht importiert werden."
-
-#: src/session/components/outer-header/metadata/tags.tsx
-msgid "Nothing to suggest"
-msgstr "Kein Vorschlag"
 
 #: src/settings/general/index.tsx
 #: src/sidebar/settings.tsx
@@ -2124,6 +2177,14 @@ msgstr "In neuem Fenster öffnen"
 #: src/chat/components/toolbar-controls.tsx
 msgid "Open in right panel"
 msgstr "Im rechten Panel öffnen"
+
+#: src/session/components/note-input/history.tsx
+msgid "Open meeting"
+msgstr "Meeting öffnen"
+
+#: src/services/tray-schedule.tsx
+msgid "Open Meeting Link"
+msgstr "Meeting-Link öffnen"
 
 #: src/task/resource-view.tsx
 msgid "Open on GitHub"
@@ -2267,6 +2328,10 @@ msgstr "Aufnahmehinweis im Meeting-Chat posten"
 msgid "Prepare for events with a 5-minute reminder."
 msgstr "Mit einer 5-Minuten-Erinnerung auf Termine vorbereiten."
 
+#: src/services/tray-schedule.tsx
+msgid "Prepare Note"
+msgstr "Notiz vorbereiten"
+
 #: src/session/components/outer-header/overflow/export-modal.tsx
 msgid "Preparing transcript..."
 msgstr "Transkript wird vorbereitet …"
@@ -2301,12 +2366,13 @@ msgstr "Beenden"
 
 #. placeholder {0}: "{app}"
 #: src/services/tray-schedule.tsx
+msgid "Quit {0}"
+msgstr "{0} beenden"
+
+#. placeholder {0}: "{app}"
+#: src/services/tray-schedule.tsx
 msgid "Quit {0} Completely?"
 msgstr "{0} vollständig beenden?"
-
-#: src/services/tray-schedule.tsx
-msgid "Quit Completely…"
-msgstr "Vollständig beenden …"
 
 #: src/session/components/note-input/transcript/screens/empty.tsx
 msgid "Re-transcribe"
@@ -2328,7 +2394,8 @@ msgstr "Meeting-Steuerelemente, Chat und Teilnehmerstatus lesen."
 msgid "Read meeting controls, visible chat, and participant status"
 msgstr "Meeting-Steuerelemente, sichtbaren Chat und Teilnehmerstatus lesen"
 
-#: src/session/components/outer-header/metadata/tags.tsx
+#: src/session/components/note-input/history.tsx
+#: src/session/components/tag-row.tsx
 msgid "Reading…"
 msgstr "Liest …"
 
@@ -2426,7 +2493,7 @@ msgid "Remove photo"
 msgstr "Foto entfernen"
 
 #. placeholder {0}: tag.name
-#: src/session/components/outer-header/metadata/tags.tsx
+#: src/session/components/tag-row.tsx
 msgid "Remove tag {0}"
 msgstr "Schlagwort {0} entfernen"
 
@@ -2540,6 +2607,14 @@ msgstr "Läuft nach Abschluss der Aufnahme, nicht während des Meetings."
 #: src/services/tray-schedule.tsx
 msgid "s"
 msgstr "s"
+
+#: src/session/components/note-input/history.tsx
+msgid "Same series"
+msgstr "Gleiche Serie"
+
+#: src/session/components/note-input/history.tsx
+msgid "Same title"
+msgstr "Gleicher Titel"
 
 #: src/templates/auto-form.tsx
 msgid "Save"
@@ -2802,6 +2877,10 @@ msgstr "KI-Zusammenfassungen einrichten"
 msgid "Settings"
 msgstr "Einstellungen"
 
+#: src/session/components/note-input/history.tsx
+msgid "Shared participants"
+msgstr "Gemeinsame Teilnehmer"
+
 #: src/sidebar/timeline/item.tsx
 msgid "Show All Recurring Events"
 msgstr "Alle wiederkehrenden Termine anzeigen"
@@ -2822,7 +2901,7 @@ msgstr "Gelöschte Termine anzeigen"
 msgid "Show Event"
 msgstr "Termin anzeigen"
 
-#: src/services/tray-schedule.tsx
+#: src/settings/general/app-settings.tsx
 msgid "Show events in menu bar"
 msgstr "Termine in der Menüleiste zeigen"
 
@@ -2853,6 +2932,10 @@ msgstr "Seitenleiste anzeigen"
 msgid "Show Sidebar"
 msgstr "Seitenleiste anzeigen"
 
+#: src/session/components/note-input/history.tsx
+msgid "Show summary"
+msgstr "Zusammenfassung anzeigen"
+
 #: src/settings/general/timezone.tsx
 msgid "Show the timeline in your preferred timezone."
 msgstr "Zeitleiste in Ihrer bevorzugten Zeitzone anzeigen."
@@ -2860,6 +2943,10 @@ msgstr "Zeitleiste in Ihrer bevorzugten Zeitzone anzeigen."
 #: src/sidebar/timeline/item.tsx
 msgid "Show This Event"
 msgstr "Diesen Termin anzeigen"
+
+#: src/settings/general/app-settings.tsx
+msgid "Show today's and tomorrow's calendar events in the tray menu and count down to the next one."
+msgstr "Termine von heute und morgen im Menüleisten-Menü anzeigen und bis zum nächsten herunterzählen."
 
 #: src/settings/general/app-settings.tsx
 msgid "Show tray icon"
@@ -2926,6 +3013,7 @@ msgstr "Beim Erstellen der Zusammenfassung ist etwas schiefgelaufen."
 msgid "Sort options"
 msgstr "Sortieroptionen"
 
+#: src/settings/ai/stt/select.tsx
 #: src/settings/general/audio-settings.tsx
 msgid "Speakers"
 msgstr "Sprecher"
@@ -2951,6 +3039,7 @@ msgid "Start over"
 msgstr "Neu beginnen"
 
 #: src/main/empty.tsx
+#: src/services/tray-schedule.tsx
 msgid "Start Recording"
 msgstr "Aufnahme starten"
 
@@ -3062,7 +3151,7 @@ msgstr "Funktion vorschlagen"
 msgid "Suggest Feature"
 msgstr "Funktion vorschlagen"
 
-#: src/session/components/outer-header/metadata/tags.tsx
+#: src/session/components/tag-row.tsx
 msgid "Suggest tags"
 msgstr "Schlagworte vorschlagen"
 
@@ -3126,13 +3215,13 @@ msgstr "Systemaudio"
 msgid "System audio enabled"
 msgstr "Systemaudio aktiviert"
 
-#: src/session/components/outer-header/metadata/tags.tsx
+#: src/session/components/tag-row.tsx
+msgid "Tag"
+msgstr "Schlagwort"
+
+#: src/session/components/tag-row.tsx
 msgid "Tag name"
 msgstr "Name des Schlagworts"
-
-#: src/session/components/outer-header/metadata/tags.tsx
-msgid "Tags"
-msgstr "Schlagworte"
 
 #: src/settings/developers/skills.tsx
 msgid "Teach coding agents when and how to use the Session Echo CLI and MCP"
@@ -3141,6 +3230,14 @@ msgstr "Coding-Agenten beibringen, wann und wie sie die Session Echo CLI und MCP
 #: src/settings/general/meeting-settings.tsx
 msgid "Tell participants when listening starts; this does not confirm consent."
 msgstr "Teilnehmer informieren, wenn das Zuhören beginnt; dies bestätigt keine Einwilligung."
+
+#: src/settings/ai/stt/select.tsx
+msgid "Tells participants apart in the transcript."
+msgstr "Unterscheidet die Teilnehmer im Transkript."
+
+#: src/settings/ai/stt/select.tsx
+msgid "Tells participants apart when the session lists at least two participants and the recording is under ten minutes."
+msgstr "Unterscheidet die Teilnehmer, wenn die Session mindestens zwei Teilnehmer enthält und die Aufnahme kürzer als zehn Minuten ist."
 
 #: src/templates/auto-form.tsx
 #: src/templates/details.tsx

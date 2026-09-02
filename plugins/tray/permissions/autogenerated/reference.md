@@ -8,6 +8,7 @@ Default permissions for the plugin
 - `allow-set-tray-recording-title`
 - `allow-set-tray-labels`
 - `allow-set-tray-schedule`
+- `allow-set-tray-show-events`
 
 ## Permission Table
 
@@ -118,6 +119,32 @@ Enables the set_tray_schedule command without any pre-configured scope.
 <td>
 
 Denies the set_tray_schedule command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`anlg-tray:allow-set-tray-show-events`
+
+</td>
+<td>
+
+Enables the set_tray_show_events command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`anlg-tray:deny-set-tray-show-events`
+
+</td>
+<td>
+
+Denies the set_tray_show_events command without any pre-configured scope.
 
 </td>
 </tr>
