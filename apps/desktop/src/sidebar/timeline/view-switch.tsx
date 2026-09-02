@@ -1,4 +1,4 @@
-import { Trans } from "@lingui/react/macro";
+import { useLingui } from "@lingui/react/macro";
 import { Clock, FileText } from "@phosphor-icons/react";
 import { motion } from "motion/react";
 
@@ -47,6 +47,8 @@ export function TimelineViewSwitch({
   upcomingCount: number;
   view: TimelineView;
 }) {
+  const { t } = useLingui();
+
   return (
     <div
       data-sidebar-view-switch
@@ -58,25 +60,25 @@ export function TimelineViewSwitch({
       >
         <ViewTab
           active={view === "archive"}
+          label={t`Recordings`}
           onSelect={() => onChange("archive")}
           value="archive"
         >
-          <FileText className="size-3.5" weight="regular" />
-          <Trans>Recordings</Trans>
+          <FileText className="size-4" />
         </ViewTab>
         <ViewTab
           active={view === "timeline"}
+          label={t`Timeline`}
           onSelect={() => onChange("timeline")}
           value="timeline"
         >
-          <Clock className="size-3.5" weight="regular" />
-          <Trans>Timeline</Trans>
+          <Clock className="size-4" />
           {/* The count is what makes the unselected tab worth glancing at: it says
               there is something ahead without spending a row on saying it. */}
           {upcomingCount > 0 && (
             <span
               data-sidebar-view-switch-count
-              className="bg-sidebar-selected text-sidebar-selected-foreground inline-block min-w-4 rounded-full px-1 text-[10px] leading-4 font-semibold"
+              className="bg-sidebar-selected text-sidebar-selected-foreground absolute -top-1.5 -right-2 min-w-4 rounded-full px-1 text-center text-[10px] leading-4 font-semibold"
             >
               {upcomingCount}
             </span>
@@ -90,11 +92,13 @@ export function TimelineViewSwitch({
 function ViewTab({
   active,
   children,
+  label,
   onSelect,
   value,
 }: {
   active: boolean;
   children: React.ReactNode;
+  label: string;
   onSelect: () => void;
   value: TimelineView;
 }) {
@@ -103,18 +107,20 @@ function ViewTab({
       type="button"
       role="tab"
       aria-selected={active}
+      aria-label={label}
+      title={label}
       data-sidebar-view-tab={value}
       onClick={onSelect}
       className={cn([
-        "relative flex h-7 flex-1 items-center justify-center gap-1.5 rounded-[7px] text-xs transition-colors",
+        "relative flex h-7 flex-1 items-center justify-center rounded-[7px] transition-colors",
         "focus-visible:ring-sidebar-ring/40 focus-visible:ring-2 focus-visible:outline-none",
         active
-          ? "text-sidebar-foreground font-semibold"
-          : "text-sidebar-muted-foreground hover:text-sidebar-foreground font-medium",
+          ? "text-sidebar-foreground"
+          : "text-sidebar-muted-foreground hover:text-sidebar-foreground",
       ])}
     >
       {/* One pill shared by both tabs: motion slides it to whichever tab is
-          active instead of fading two separate backgrounds. The label comes
+          active instead of fading two separate backgrounds. The icon comes
           after it in DOM order and is positioned, so it paints on top. */}
       {active && (
         <motion.span
@@ -123,7 +129,7 @@ function ViewTab({
           className="dark:bg-sidebar-foreground/12 absolute inset-0 rounded-[7px] bg-white shadow-[0_1px_2px_rgba(0,0,0,0.12),0_0_0_0.5px_rgba(0,0,0,0.04)] dark:shadow-none"
         />
       )}
-      <span className="relative flex items-center gap-1.5">{children}</span>
+      <span className="relative flex items-center">{children}</span>
     </button>
   );
 }
