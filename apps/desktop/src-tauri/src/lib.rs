@@ -199,7 +199,6 @@ pub fn main() {
         .plugin(tauri_plugin_template::init())
         .plugin(tauri_plugin_http::init())
         .plugin(tauri_plugin_detect::init())
-        .plugin(tauri_plugin_screen::init())
         .plugin(tauri_plugin_dock::init())
         .plugin(tauri_plugin_notification::init())
         .plugin(tauri_plugin_notify::init())
@@ -261,6 +260,13 @@ pub fn main() {
     #[cfg(target_os = "macos")]
     {
         builder = builder.menu(tauri_plugin_tray::build_app_menu);
+    }
+
+    // Meeting window capture ships on macOS only for now; on Linux the plugin
+    // pulls in xcap's GBM/Wayland linkage, which the CI image does not carry.
+    #[cfg(target_os = "macos")]
+    {
+        builder = builder.plugin(tauri_plugin_screen::init());
     }
 
     let specta_builder = make_specta_builder::<tauri::Wry>();
