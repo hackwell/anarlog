@@ -6,6 +6,7 @@ import { commands as windowsCommands } from "@anlg/plugin-windows";
 import { Button } from "@anlg/ui/components/ui/button";
 import { sonnerToast } from "@anlg/ui/components/ui/toast";
 
+import { populateRecurringMeetingNotes } from "~/devtools-panel/recurring-notes";
 import { commands } from "~/types/tauri.gen";
 
 export function DevtoolsSection() {
@@ -21,6 +22,12 @@ export function DevtoolsSection() {
         throw new Error(result.error);
       }
     },
+    onError: (error) => sonnerToast.error(error.message),
+  });
+
+  const seedMutation = useMutation({
+    mutationFn: () => populateRecurringMeetingNotes({ userId: null }),
+    onSuccess: () => sonnerToast.success(t`Demo meetings added`),
     onError: (error) => sonnerToast.error(error.message),
   });
 
@@ -50,6 +57,29 @@ export function DevtoolsSection() {
             onClick={() => openMutation.mutate()}
           >
             {t`Open panel`}
+          </Button>
+        </div>
+      </div>
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div className="min-w-0">
+          <h3 className="text-sm font-medium">{t`Demo data`}</h3>
+          <p className="text-muted-foreground mt-1 text-sm leading-5">
+            <Trans>
+              Adds a recurring "Weekly Product Sync" with three past meetings,
+              summaries, key facts, participants, and a two-speaker transcript
+              for today's occurrence. Safe to run again.
+            </Trans>
+          </p>
+        </div>
+        <div className="flex shrink-0 items-center">
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            disabled={seedMutation.isPending}
+            onClick={() => seedMutation.mutate()}
+          >
+            {t`Add demo meetings`}
           </Button>
         </div>
       </div>
