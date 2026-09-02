@@ -53,6 +53,7 @@ describe("FloatingBarOverlay", () => {
       <FloatingBarOverlay
         state={state()}
         onStop={onStop}
+        onOpenMain={vi.fn()}
         onToggleExpanded={vi.fn()}
       />,
     );
@@ -63,6 +64,23 @@ describe("FloatingBarOverlay", () => {
     expect(screen.getByTestId("waveform")).toBeTruthy();
   });
 
+  it("brings the main window forward", () => {
+    const onOpenMain = vi.fn();
+
+    render(
+      <FloatingBarOverlay
+        state={state()}
+        onStop={vi.fn()}
+        onOpenMain={onOpenMain}
+        onToggleExpanded={vi.fn()}
+      />,
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "Open Session Echo" }));
+
+    expect(onOpenMain).toHaveBeenCalledOnce();
+  });
+
   it("expands to the live transcript and can collapse again", () => {
     const onToggleExpanded = vi.fn();
 
@@ -70,6 +88,7 @@ describe("FloatingBarOverlay", () => {
       <FloatingBarOverlay
         state={state()}
         onStop={vi.fn()}
+        onOpenMain={vi.fn()}
         onToggleExpanded={onToggleExpanded}
       />,
     );
@@ -83,6 +102,7 @@ describe("FloatingBarOverlay", () => {
       <FloatingBarOverlay
         state={state({ liveCaptionMinimized: false })}
         onStop={vi.fn()}
+        onOpenMain={vi.fn()}
         onToggleExpanded={onToggleExpanded}
       />,
     );

@@ -1,4 +1,5 @@
 import {
+  AppWindow,
   ArrowsInSimple,
   ArrowsOutSimple,
   CaretDown,
@@ -37,10 +38,12 @@ import {
 export function FloatingBarOverlay({
   state,
   onStop,
+  onOpenMain,
   onToggleExpanded,
 }: {
   state: FloatingBarState;
   onStop: () => void;
+  onOpenMain: () => void;
   onToggleExpanded: (expanded: boolean) => void;
 }) {
   const [hovered, setHovered] = useState(false);
@@ -59,6 +62,7 @@ export function FloatingBarOverlay({
           state={state}
           hovered={hovered}
           onStop={onStop}
+          onOpenMain={onOpenMain}
           onToggleExpanded={onToggleExpanded}
         />
       ) : (
@@ -66,6 +70,7 @@ export function FloatingBarOverlay({
           state={state}
           hovered={hovered}
           onStop={onStop}
+          onOpenMain={onOpenMain}
           onToggleExpanded={onToggleExpanded}
         />
       )}
@@ -77,11 +82,13 @@ function CompactPill({
   state,
   hovered,
   onStop,
+  onOpenMain,
   onToggleExpanded,
 }: {
   state: FloatingBarState;
   hovered: boolean;
   onStop: () => void;
+  onOpenMain: () => void;
   onToggleExpanded: (expanded: boolean) => void;
 }) {
   const width = compactWidth(state.liveCaptionToggleVisible);
@@ -114,6 +121,7 @@ function CompactPill({
           isExpanded={false}
           colors={colors}
           onStop={onStop}
+          onOpenMain={onOpenMain}
           onToggleExpanded={onToggleExpanded}
         />
       </div>
@@ -125,11 +133,13 @@ function ExpandedPanel({
   state,
   hovered,
   onStop,
+  onOpenMain,
   onToggleExpanded,
 }: {
   state: FloatingBarState;
   hovered: boolean;
   onStop: () => void;
+  onOpenMain: () => void;
   onToggleExpanded: (expanded: boolean) => void;
 }) {
   const colors = barColors(state);
@@ -197,6 +207,7 @@ function ExpandedPanel({
             isExpanded
             colors={colors}
             onStop={onStop}
+            onOpenMain={onOpenMain}
             onToggleExpanded={onToggleExpanded}
           />
         </div>
@@ -210,12 +221,14 @@ function FloatingControls({
   isExpanded,
   colors,
   onStop,
+  onOpenMain,
   onToggleExpanded,
 }: {
   state: FloatingBarState;
   isExpanded: boolean;
   colors: BarColors;
   onStop: () => void;
+  onOpenMain: () => void;
   onToggleExpanded: (expanded: boolean) => void;
 }) {
   return (
@@ -247,6 +260,21 @@ function FloatingControls({
           )}
         </button>
       ) : null}
+      <button
+        type="button"
+        data-tauri-drag-region="false"
+        aria-label="Open Session Echo"
+        onClick={onOpenMain}
+        className="flex items-center justify-center"
+        style={{
+          width: FLOATING_BAR_COMPACT_ICON_SIZE,
+          height: FLOATING_BAR_COMPACT_ICON_SIZE,
+          borderRadius: FLOATING_BAR_CONTROL_RADIUS,
+          color: colors.content,
+        }}
+      >
+        <AppWindow size={14} weight="bold" />
+      </button>
     </div>
   );
 }

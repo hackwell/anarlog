@@ -18,12 +18,17 @@ export const FLOATING_BAR_CONTROL_RADIUS = 10;
 export const FLOATING_BAR_COMPACT_RADIUS = 14;
 export const FLOATING_BAR_EXPANDED_RADIUS = 21;
 
+const OPEN_MAIN_WIDTH =
+  FLOATING_BAR_COMPACT_GAP + FLOATING_BAR_COMPACT_ICON_SIZE;
+
 export function compactControlsWidth(showsExpand: boolean) {
-  return showsExpand
-    ? FLOATING_BAR_COMPACT_STOP_WIDTH +
+  return (
+    (showsExpand
+      ? FLOATING_BAR_COMPACT_STOP_WIDTH +
         FLOATING_BAR_COMPACT_GAP +
         FLOATING_BAR_COMPACT_ICON_SIZE
-    : FLOATING_BAR_COMPACT_SOLO_STOP_WIDTH;
+      : FLOATING_BAR_COMPACT_SOLO_STOP_WIDTH) + OPEN_MAIN_WIDTH
+  );
 }
 
 export function compactWidth(showsExpand: boolean) {

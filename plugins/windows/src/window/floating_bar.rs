@@ -75,10 +75,11 @@ pub(crate) mod layout {
     }
 
     pub fn compact_controls_width(shows_expand: bool) -> f64 {
+        let open_main_width = COMPACT_GAP + COMPACT_ICON_SIZE;
         if shows_expand {
-            COMPACT_STOP_WIDTH + COMPACT_GAP + COMPACT_ICON_SIZE
+            COMPACT_STOP_WIDTH + COMPACT_GAP + COMPACT_ICON_SIZE + open_main_width
         } else {
-            COMPACT_SOLO_STOP_WIDTH
+            COMPACT_SOLO_STOP_WIDTH + open_main_width
         }
     }
 

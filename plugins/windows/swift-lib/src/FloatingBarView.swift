@@ -32,11 +32,12 @@ enum FloatingBarLayout {
   static let dragClickThreshold: CGFloat = 4
 
   static func compactControlsWidth(showsExpand: Bool) -> CGFloat {
+    let openMainWidth = compactGap + compactIconSize
     if showsExpand {
-      return compactStopWidth + compactGap + compactIconSize
+      return compactStopWidth + compactGap + compactIconSize + openMainWidth
     }
 
-    return compactSoloStopWidth
+    return compactSoloStopWidth + openMainWidth
   }
 
   static func compactWidth(showsExpand: Bool) -> CGFloat {
@@ -103,10 +104,20 @@ struct FloatingBarView: View {
 
     return ZStack(alignment: .bottom) {
       if isBarHovered {
-        FloatingBarHoverHandle(
-          color: dragHandleDotColor,
-          width: width
-        )
+        Group {
+          if model.title.isEmpty {
+            FloatingBarHoverHandle(
+              color: dragHandleDotColor,
+              width: width
+            )
+          } else {
+            FloatingBarMarqueeTitle(
+              text: model.title,
+              color: primaryContentColor,
+              width: width
+            )
+          }
+        }
         .frame(height: FloatingBarLayout.hoverHandleHeight)
         .padding(.top, FloatingBarLayout.hoverHandleTopPadding)
         .frame(
@@ -302,6 +313,15 @@ struct FloatingBarView: View {
           action: { performClick { setExpanded(!isExpanded) } }
         )
       }
+
+      FloatingIconButton(
+        systemName: "macwindow",
+        accessibilityLabel: "Open Session Echo",
+        color: primaryContentColor,
+        hoverFill: controlHoverFill,
+        size: FloatingBarLayout.compactIconSize,
+        action: { performClick(RustBridge.openMainWindow) }
+      )
     }
   }
 
@@ -564,6 +584,72 @@ private struct FloatingBarHoverHandle: View {
         height: FloatingBarLayout.hoverHandleHeight
       )
       .padding(.horizontal, FloatingBarLayout.hoverHandleHorizontalPadding)
+  }
+}
+
+// The compact pill has no room for a title, so the drag strip shows it and
+// scrolls it like a ticker when it is wider than the pill.
+private struct FloatingBarMarqueeTitle: View {
+  let text: String
+  let color: Color
+  let width: CGFloat
+  @State private var textWidth: CGFloat = 0
+  @State private var offset: CGFloat = 0
+
+  private let gap: CGFloat = 24
+  private let pointsPerSecond: CGFloat = 28
+
+  private var availableWidth: CGFloat {
+    max(0, width - FloatingBarLayout.hoverHandleHorizontalPadding * 2)
+  }
+
+  private var scrolls: Bool {
+    textWidth > availableWidth
+  }
+
+  var body: some View {
+    HStack(spacing: gap) {
+      label
+      if scrolls {
+        label
+      }
+    }
+    .offset(x: scrolls ? offset : 0)
+    .frame(
+      width: availableWidth,
+      height: FloatingBarLayout.hoverHandleHeight,
+      alignment: scrolls ? .leading : .center
+    )
+    .clipped()
+    .padding(.horizontal, FloatingBarLayout.hoverHandleHorizontalPadding)
+    .onChange(of: textWidth, initial: true) { _, _ in restart() }
+    .onChange(of: text) { _, _ in textWidth = 0 }
+  }
+
+  private var label: some View {
+    Text(text)
+      .font(.system(size: 11, weight: .semibold))
+      .foregroundStyle(color)
+      .lineLimit(1)
+      .fixedSize()
+      .background(
+        GeometryReader { proxy in
+          Color.clear.onAppear { textWidth = proxy.size.width }
+        }
+      )
+  }
+
+  private func restart() {
+    offset = 0
+    guard scrolls else { return }
+    let distance = textWidth + gap
+    withAnimation(
+      .linear(duration: distance / pointsPerSecond)
+        .delay(1)
+        .repeatForever(autoreverses: false)
+    ) {
+      offset = -distance
+    }
   }
 }
 
