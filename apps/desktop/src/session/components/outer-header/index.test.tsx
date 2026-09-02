@@ -40,6 +40,10 @@ const mocks = vi.hoisted(() => ({
   windowControlsGutter: true,
 }));
 
+vi.mock("../tag-row", () => ({
+  TagRow: () => null,
+}));
+
 vi.mock("../folder-picker", () => ({
   FolderPicker: () => (
     <button type="button" role="combobox" aria-label="Select folder">

@@ -249,10 +249,6 @@ msgstr "Gesprochene Sprache hinzufügen"
 msgid "Add step"
 msgstr "Schritt hinzufügen"
 
-#: src/session/components/outer-header/metadata/tags.tsx
-msgid "Add tag"
-msgstr "Schlagwort hinzufügen"
-
 #: src/settings/developers/webhooks.tsx
 msgid "Add webhook"
 msgstr "Webhook hinzufügen"
@@ -1085,6 +1081,11 @@ msgstr "Deaktivieren"
 #: src/imports/screen.tsx
 msgid "Disconnect"
 msgstr "Trennen"
+
+#. placeholder {0}: entry.name
+#: src/session/components/tag-row.tsx
+msgid "Dismiss suggestion {0}"
+msgstr "Vorschlag {0} verwerfen"
 
 #: src/settings/general/audio-settings.tsx
 msgid "Don't save"
@@ -2053,10 +2054,6 @@ msgstr "Notizen"
 msgid "Nothing new was imported. {0} meetings need review and {1} could not be imported."
 msgstr "Es wurde nichts Neues importiert. {0} Meetings müssen überprüft werden, {1} konnten nicht importiert werden."
 
-#: src/session/components/outer-header/metadata/tags.tsx
-msgid "Nothing to suggest"
-msgstr "Kein Vorschlag"
-
 #: src/settings/general/index.tsx
 #: src/sidebar/settings.tsx
 msgid "Notifications"
@@ -2337,7 +2334,7 @@ msgstr "Meeting-Steuerelemente, Chat und Teilnehmerstatus lesen."
 msgid "Read meeting controls, visible chat, and participant status"
 msgstr "Meeting-Steuerelemente, sichtbaren Chat und Teilnehmerstatus lesen"
 
-#: src/session/components/outer-header/metadata/tags.tsx
+#: src/session/components/tag-row.tsx
 msgid "Reading…"
 msgstr "Liest …"
 
@@ -2435,7 +2432,7 @@ msgid "Remove photo"
 msgstr "Foto entfernen"
 
 #. placeholder {0}: tag.name
-#: src/session/components/outer-header/metadata/tags.tsx
+#: src/session/components/tag-row.tsx
 msgid "Remove tag {0}"
 msgstr "Schlagwort {0} entfernen"
 
@@ -3077,7 +3074,7 @@ msgstr "Funktion vorschlagen"
 msgid "Suggest Feature"
 msgstr "Funktion vorschlagen"
 
-#: src/session/components/outer-header/metadata/tags.tsx
+#: src/session/components/tag-row.tsx
 msgid "Suggest tags"
 msgstr "Schlagworte vorschlagen"
 
@@ -3141,13 +3138,13 @@ msgstr "Systemaudio"
 msgid "System audio enabled"
 msgstr "Systemaudio aktiviert"
 
-#: src/session/components/outer-header/metadata/tags.tsx
+#: src/session/components/tag-row.tsx
+msgid "Tag"
+msgstr "Schlagwort"
+
+#: src/session/components/tag-row.tsx
 msgid "Tag name"
 msgstr "Name des Schlagworts"
-
-#: src/session/components/outer-header/metadata/tags.tsx
-msgid "Tags"
-msgstr "Schlagworte"
 
 #: src/settings/developers/skills.tsx
 msgid "Teach coding agents when and how to use the Session Echo CLI and MCP"

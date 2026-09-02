@@ -16,6 +16,7 @@ import { useTabs } from "~/store/zustand/tabs";
 import { LiveCaptureRecovery } from "~/stt/live-capture-recovery";
 import { ScheduledMeetingAutoStart } from "~/stt/scheduled-auto-start";
 import { MainListenerControlBridge } from "~/stt/window-control";
+import { sessionHasTags, useTagSuggestions } from "~/tags/suggestion-store";
 
 export function useClassicMainLifecycle() {
   const openNew = useTabs((state) => state.openNew);
@@ -111,8 +112,22 @@ function EnhancerInit() {
       getLLMConn: () => llmConnRef.current,
       getSelectedTemplateId: () => templateIdRef.current || undefined,
     });
+    // A finished summary is the moment the transcript is known to be worth
+    // tagging; ask once, and only for recordings nobody has tagged by hand.
+    const stopListening = service.on((event) => {
+      if (event.type !== "enhance-completed" || !modelRef.current) return;
+      const model = modelRef.current;
+      void sessionHasTags(event.sessionId).then((tagged) => {
+        if (!tagged) {
+          void useTagSuggestions.getState().request(event.sessionId, model);
+        }
+      });
+    });
 
-    return () => service.dispose();
+    return () => {
+      stopListening();
+      service.dispose();
+    };
   }, [aiTaskStore]);
 
   return null;

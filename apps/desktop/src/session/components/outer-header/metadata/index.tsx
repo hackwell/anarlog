@@ -14,7 +14,6 @@ import { cn, safeParseDate, TZDate } from "@anlg/utils";
 
 import { DateEditor } from "./date";
 import { ParticipantsDisplay } from "./participants";
-import { TagEditor } from "./tags";
 
 import { useDateFormatter } from "~/i18n/date-format";
 import { useSessionEvent } from "~/session/hooks/useSessionEvent";
@@ -92,7 +91,6 @@ function ContentInner({ sessionId }: { sessionId: string }) {
         </EventDisplay>
       )}
       {!eventDisplayData && <ParticipantsDisplay sessionId={sessionId} />}
-      <TagEditor sessionId={sessionId} />
     </div>
   );
 }

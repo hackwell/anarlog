@@ -8,6 +8,7 @@ import { cn, safeParseDate } from "@anlg/utils";
 import { FolderPicker } from "../folder-picker";
 import { TranscriptEditButton } from "../note-input/transcript";
 import { RecordingIcon, useHasTranscript } from "../shared";
+import { TagRow } from "../tag-row";
 import { TitleInput } from "../title-input";
 import { MetadataButton } from "./metadata";
 import { OverflowButton } from "./overflow";
@@ -89,6 +90,7 @@ export function OuterHeader({
         data-session-header-spacer
         className="min-h-full min-w-0 flex-1"
       />
+      <TagRow sessionId={sessionId} />
       <div
         data-tauri-drag-region
         className="relative z-10 flex shrink-0 items-center pr-1"

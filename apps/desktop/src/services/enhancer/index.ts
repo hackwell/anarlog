@@ -53,7 +53,8 @@ type EnhancerEvent =
       reasonCode: EnhanceEligibilitySkipCode | "error";
     }
   | { type: "auto-enhance-started"; sessionId: string; noteId: string }
-  | { type: "auto-enhance-no-model"; sessionId: string };
+  | { type: "auto-enhance-no-model"; sessionId: string }
+  | { type: "enhance-completed"; sessionId: string; noteId: string };
 
 type EnhancerDeps = {
   aiTaskStore: {
@@ -618,6 +619,9 @@ export class EnhancerService {
       })
       .then(async () => {
         const taskState = aiTaskStore.getState().getState(enhanceTaskId);
+        if (taskState?.status === "success") {
+          this.emit({ type: "enhance-completed", sessionId, noteId: note.id });
+        }
         if (taskState?.status === "error") {
           if (opts?.pendingAutoEnhance && taskState.error) {
             if (isRetryableAIError(taskState.error)) {

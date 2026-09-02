@@ -249,10 +249,6 @@ msgstr "Add spoken language"
 msgid "Add step"
 msgstr "Add step"
 
-#: src/session/components/outer-header/metadata/tags.tsx
-msgid "Add tag"
-msgstr "Add tag"
-
 #: src/settings/developers/webhooks.tsx
 msgid "Add webhook"
 msgstr "Add webhook"
@@ -1085,6 +1081,11 @@ msgstr "Disable"
 #: src/imports/screen.tsx
 msgid "Disconnect"
 msgstr "Disconnect"
+
+#. placeholder {0}: entry.name
+#: src/session/components/tag-row.tsx
+msgid "Dismiss suggestion {0}"
+msgstr "Dismiss suggestion {0}"
 
 #: src/settings/general/audio-settings.tsx
 msgid "Don't save"
@@ -2053,10 +2054,6 @@ msgstr "Notes"
 msgid "Nothing new was imported. {0} meetings need review and {1} could not be imported."
 msgstr "Nothing new was imported. {0} meetings need review and {1} could not be imported."
 
-#: src/session/components/outer-header/metadata/tags.tsx
-msgid "Nothing to suggest"
-msgstr "Nothing to suggest"
-
 #: src/settings/general/index.tsx
 #: src/sidebar/settings.tsx
 msgid "Notifications"
@@ -2337,7 +2334,7 @@ msgstr "Read meeting controls, chat, and participant status."
 msgid "Read meeting controls, visible chat, and participant status"
 msgstr "Read meeting controls, visible chat, and participant status"
 
-#: src/session/components/outer-header/metadata/tags.tsx
+#: src/session/components/tag-row.tsx
 msgid "Reading…"
 msgstr "Reading…"
 
@@ -2435,7 +2432,7 @@ msgid "Remove photo"
 msgstr "Remove photo"
 
 #. placeholder {0}: tag.name
-#: src/session/components/outer-header/metadata/tags.tsx
+#: src/session/components/tag-row.tsx
 msgid "Remove tag {0}"
 msgstr "Remove tag {0}"
 
@@ -3077,7 +3074,7 @@ msgstr "Suggest a Feature"
 msgid "Suggest Feature"
 msgstr "Suggest Feature"
 
-#: src/session/components/outer-header/metadata/tags.tsx
+#: src/session/components/tag-row.tsx
 msgid "Suggest tags"
 msgstr "Suggest tags"
 
@@ -3141,13 +3138,13 @@ msgstr "System audio"
 msgid "System audio enabled"
 msgstr "System audio enabled"
 
-#: src/session/components/outer-header/metadata/tags.tsx
+#: src/session/components/tag-row.tsx
+msgid "Tag"
+msgstr "Tag"
+
+#: src/session/components/tag-row.tsx
 msgid "Tag name"
 msgstr "Tag name"
-
-#: src/session/components/outer-header/metadata/tags.tsx
-msgid "Tags"
-msgstr "Tags"
 
 #: src/settings/developers/skills.tsx
 msgid "Teach coding agents when and how to use the Session Echo CLI and MCP"
