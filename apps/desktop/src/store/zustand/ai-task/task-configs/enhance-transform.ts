@@ -35,6 +35,10 @@ import {
   loadMeetingChatRecords,
 } from "~/stt/meeting-chat-records";
 import {
+  loadMeetingSnapshotRecords,
+  type MeetingSnapshotRecord,
+} from "~/stt/meeting-snapshot-records";
+import {
   buildRenderTranscriptRequestFromRows,
   collectAssignedHumanIdsFromTranscriptRows,
   renderTranscriptSegments,
@@ -104,6 +108,7 @@ async function transformArgs(
     ? await collectEnhanceImageContext(sessionId, [
         sessionContext.preMeetingMemo,
         sessionContext.postMeetingMemo,
+        ...snapshotImageMarkdown(await loadMeetingSnapshotRecords(sessionId)),
       ])
     : [];
 
@@ -153,6 +158,18 @@ export function selectPreviousMeetings(
       occurredAt: note.dateLabel,
       summary: truncate(note.sourceSummary.trim(), MAX_PREVIOUS_SUMMARY_CHARS),
     }));
+}
+
+// Slides ride along as markdown image lines so the existing attachment lookup,
+// byte budget, and sampling apply to them like to images in the note.
+export function snapshotImageMarkdown(records: MeetingSnapshotRecord[]) {
+  return records.map((record) => {
+    const date = new Date(record.capturedAtMs);
+    const time = `${String(date.getUTCHours()).padStart(2, "0")}:${String(
+      date.getUTCMinutes(),
+    ).padStart(2, "0")}`;
+    return `![Slide ${time}](${record.path})`;
+  });
 }
 
 async function loadPreviousMeetings(

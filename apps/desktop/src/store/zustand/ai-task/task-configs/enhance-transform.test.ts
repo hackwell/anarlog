@@ -14,6 +14,7 @@ const mocks = vi.hoisted(() => ({
   renderTranscriptSegments: vi.fn(),
   loadPastSessionNotesData: vi.fn(),
   buildPastSessionNotes: vi.fn(),
+  loadMeetingSnapshotRecords: vi.fn(),
 }));
 
 vi.mock("~/session/insights/past-notes", () => ({
@@ -36,6 +37,10 @@ vi.mock("~/session/content-queries", () => ({
 vi.mock("~/stt/meeting-chat-records", () => ({
   formatMeetingChatContext: mocks.formatMeetingChatContext,
   loadMeetingChatRecords: mocks.loadMeetingChatRecords,
+}));
+
+vi.mock("~/stt/meeting-snapshot-records", () => ({
+  loadMeetingSnapshotRecords: mocks.loadMeetingSnapshotRecords,
 }));
 
 vi.mock("~/contacts/queries", () => ({
@@ -106,6 +111,7 @@ describe("enhanceTransform.transformArgs", () => {
       missing: [],
       requests: [],
     });
+    mocks.loadMeetingSnapshotRecords.mockResolvedValue([]);
     consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
   });
 
@@ -351,6 +357,35 @@ describe("enhanceTransform.transformArgs", () => {
       "![pre](asset://localhost/pre.png)",
       "![post](asset://localhost/post.png)",
     ]);
+  });
+
+  it("hands meeting snapshots to the image context", async () => {
+    mocks.loadMeetingSnapshotRecords.mockResolvedValue([
+      {
+        id: "doc-1",
+        attachmentId: "att-1",
+        filename: "slide-140301.jpg",
+        path: "/tmp/att-1.jpg",
+        capturedAtMs: Date.UTC(2026, 8, 2, 14, 3, 1),
+        width: 1600,
+        height: 900,
+        appName: "zoom.us",
+        windowTitle: "Zoom Meeting",
+      },
+    ]);
+    mocks.collectEnhanceImageContext.mockResolvedValue([]);
+
+    await enhanceTransform.transformArgs(
+      { sessionId: "session-1", enhancedNoteId: "note-1", templateId: "" },
+      {
+        current_llm_provider: "openai",
+        current_llm_model: "gpt-4o",
+        ai_language: "en",
+      },
+    );
+
+    const [, markdown] = mocks.collectEnhanceImageContext.mock.calls[0]!;
+    expect(markdown).toContain("![Slide 14:03](/tmp/att-1.jpg)");
   });
 
   it("builds speaker identity context from SQLite humans", async () => {
