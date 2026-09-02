@@ -360,13 +360,18 @@ describe("enhanceTransform.transformArgs", () => {
   });
 
   it("hands meeting snapshots to the image context", async () => {
+    const capturedAtMs = Date.UTC(2026, 8, 2, 14, 3, 1);
+    const localTime = new Date(capturedAtMs);
+    const label = `${String(localTime.getHours()).padStart(2, "0")}:${String(
+      localTime.getMinutes(),
+    ).padStart(2, "0")}`;
     mocks.loadMeetingSnapshotRecords.mockResolvedValue([
       {
         id: "doc-1",
         attachmentId: "att-1",
         filename: "slide-140301.jpg",
         path: "/tmp/att-1.jpg",
-        capturedAtMs: Date.UTC(2026, 8, 2, 14, 3, 1),
+        capturedAtMs,
         width: 1600,
         height: 900,
         appName: "zoom.us",
@@ -385,7 +390,7 @@ describe("enhanceTransform.transformArgs", () => {
     );
 
     const [, markdown] = mocks.collectEnhanceImageContext.mock.calls[0]!;
-    expect(markdown).toContain("![Slide 14:03](/tmp/att-1.jpg)");
+    expect(markdown).toContain(`![Slide ${label}](/tmp/att-1.jpg)`);
   });
 
   it("keeps summaries working when snapshot lookup fails", async () => {

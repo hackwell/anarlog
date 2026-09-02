@@ -5,6 +5,7 @@ const mocks = vi.hoisted(() => ({
   listMicApps: vi.fn(),
   capture: vi.fn(),
   attachmentSave: vi.fn(),
+  attachmentRemove: vi.fn(),
   checkPermission: vi.fn(),
   catalog: vi.fn(),
   persist: vi.fn(),
@@ -23,7 +24,10 @@ vi.mock("@anlg/plugin-screen", () => ({
   commands: { captureTargetWindowContext: mocks.capture },
 }));
 vi.mock("@anlg/plugin-fs-sync", () => ({
-  commands: { attachmentSave: mocks.attachmentSave },
+  commands: {
+    attachmentSave: mocks.attachmentSave,
+    attachmentRemove: mocks.attachmentRemove,
+  },
 }));
 vi.mock("@anlg/plugin-permissions", () => ({
   commands: { checkPermission: mocks.checkPermission },
@@ -131,6 +135,7 @@ describe("startMeetingSnapshotCapture", () => {
     mocks.catalog.mockResolvedValue(undefined);
     mocks.persist.mockResolvedValue("doc-1");
     mocks.decode.mockResolvedValue(frame(10));
+    mocks.attachmentRemove.mockResolvedValue({ status: "ok", data: null });
   });
 
   afterEach(() => {
@@ -216,5 +221,50 @@ describe("startMeetingSnapshotCapture", () => {
 
     expect(mocks.capture).not.toHaveBeenCalled();
     await stop();
+  });
+
+  test("skips an untitled window even without a mic match", async () => {
+    mocks.inspect.mockResolvedValue({
+      status: "ok",
+      data: [{ ...inspection, windowTitle: null }],
+    });
+    mocks.listMicApps.mockResolvedValue({ status: "ok", data: [] });
+    const stop = startMeetingSnapshotCapture({ sessionId: "session-1" });
+    await flush();
+
+    expect(mocks.capture).not.toHaveBeenCalled();
+    await stop();
+  });
+
+  test("captures a titled window even without a mic match", async () => {
+    mocks.inspect.mockResolvedValue({
+      status: "ok",
+      data: [{ ...inspection, windowTitle: "Zoom Meeting" }],
+    });
+    mocks.listMicApps.mockResolvedValue({
+      status: "ok",
+      data: [{ id: "com.other.app", name: "Other" }],
+    });
+    const stop = startMeetingSnapshotCapture({ sessionId: "session-1" });
+    await flush();
+
+    expect(mocks.capture).toHaveBeenCalledWith(
+      { pid: 42, appName: "zoom.us", title: "Zoom Meeting" },
+      { imagePolicy: { maxLongSide: 1600 } },
+    );
+    await stop();
+  });
+
+  test("rolls back the saved file when cataloging fails", async () => {
+    const consoleWarn = vi.spyOn(console, "warn").mockImplementation(() => {});
+    mocks.catalog.mockRejectedValue(new Error("catalog down"));
+    const stop = startMeetingSnapshotCapture({ sessionId: "session-1" });
+    await flush();
+
+    expect(mocks.attachmentRemove).toHaveBeenCalledWith("session-1", "att-1");
+    expect(mocks.persist).not.toHaveBeenCalled();
+    expect(consoleWarn).toHaveBeenCalled();
+    await stop();
+    consoleWarn.mockRestore();
   });
 });

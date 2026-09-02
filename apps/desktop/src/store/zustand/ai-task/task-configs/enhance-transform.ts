@@ -165,8 +165,8 @@ export function selectPreviousMeetings(
 export function snapshotImageMarkdown(records: MeetingSnapshotRecord[]) {
   return records.map((record) => {
     const date = new Date(record.capturedAtMs);
-    const time = `${String(date.getUTCHours()).padStart(2, "0")}:${String(
-      date.getUTCMinutes(),
+    const time = `${String(date.getHours()).padStart(2, "0")}:${String(
+      date.getMinutes(),
     ).padStart(2, "0")}`;
     return `![Slide ${time}](${record.path})`;
   });

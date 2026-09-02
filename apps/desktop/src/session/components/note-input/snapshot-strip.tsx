@@ -47,6 +47,8 @@ export function SnapshotStrip({ sessionId }: { sessionId: string }) {
               alt=""
               width={112}
               height={63}
+              loading="lazy"
+              decoding="async"
               className="h-[63px] w-28 rounded-sm object-cover"
             />
             <span className="text-muted-foreground px-0.5 text-[10px] tabular-nums">
@@ -61,7 +63,7 @@ export function SnapshotStrip({ sessionId }: { sessionId: string }) {
 
 function formatTime(atMs: number) {
   const date = new Date(atMs);
-  return `${String(date.getUTCHours()).padStart(2, "0")}:${String(
-    date.getUTCMinutes(),
+  return `${String(date.getHours()).padStart(2, "0")}:${String(
+    date.getMinutes(),
   ).padStart(2, "0")}`;
 }

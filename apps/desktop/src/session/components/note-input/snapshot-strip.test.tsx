@@ -38,13 +38,18 @@ describe("SnapshotStrip", () => {
   });
 
   it("inserts a clicked slide into the note", () => {
+    const capturedAtMs = Date.UTC(2026, 8, 2, 14, 3, 1);
+    const localTime = new Date(capturedAtMs);
+    const label = `${String(localTime.getHours()).padStart(2, "0")}:${String(
+      localTime.getMinutes(),
+    ).padStart(2, "0")}`;
     mocks.records = [
       {
         id: "doc-1",
         attachmentId: "att-1",
         filename: "slide-140301.jpg",
         path: "/tmp/att-1.jpg",
-        capturedAtMs: Date.UTC(2026, 8, 2, 14, 3, 1),
+        capturedAtMs,
         width: 1600,
         height: 900,
         appName: "zoom.us",
@@ -54,7 +59,7 @@ describe("SnapshotStrip", () => {
     render(<SnapshotStrip sessionId="session-1" />);
 
     fireEvent.click(
-      screen.getByRole("button", { name: "Insert slide from 14:03" }),
+      screen.getByRole("button", { name: `Insert slide from ${label}` }),
     );
 
     expect(mocks.dispatch).toHaveBeenCalledWith({

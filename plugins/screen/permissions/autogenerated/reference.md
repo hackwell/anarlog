@@ -2,6 +2,11 @@
 
 Default permissions for the plugin
 
+#### This default permission set includes the following:
+
+- `allow-capture-target-window-context`
+- `allow-capture-frontmost-window-context`
+
 ## Permission Table
 
 <table>

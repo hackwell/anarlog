@@ -51,6 +51,7 @@ export function startMeetingSnapshotCapture({
   let lastKept: { grey: Uint8Array; atMs: number } | null = null;
   let keptCount = 0;
   let lastCaptureError = "";
+  let interval: ReturnType<typeof setInterval> | null = null;
 
   const captureOnce = async () => {
     if (!(await captureIsEnabled())) return;
@@ -74,13 +75,15 @@ export function startMeetingSnapshotCapture({
           },
         );
         stopped = true;
+        if (interval) clearInterval(interval);
         return;
       }
     }
+    if (stopped || !(await captureIsEnabled())) return;
     if (keptCount >= MAX_MEETING_SNAPSHOTS) return;
 
     const target = await findMeetingWindow();
-    if (!target || stopped) return;
+    if (!target || stopped || !(await captureIsEnabled())) return;
 
     const captured = await screenCommands.captureTargetWindowContext(
       { pid: target.pid, appName: target.app.name, title: target.windowTitle },
@@ -96,20 +99,23 @@ export function startMeetingSnapshotCapture({
       }
       return;
     }
-    if (stopped) return;
+    if (stopped || !(await captureIsEnabled())) return;
+
+    const capturedAtMs = now();
+    if (
+      lastKept &&
+      capturedAtMs - lastKept.atMs < MEETING_SNAPSHOT_MIN_GAP_MS
+    ) {
+      return;
+    }
 
     const grey = await decodeToGreyThumbnail(
       captured.data.dataBase64,
       captured.data.mimeType,
     );
-    const capturedAtMs = now();
     if (lastKept) {
       const changed = frameDifference(lastKept.grey, grey);
-      const gapMs = capturedAtMs - lastKept.atMs;
-      if (
-        changed < MEETING_SNAPSHOT_CHANGE_THRESHOLD ||
-        gapMs < MEETING_SNAPSHOT_MIN_GAP_MS
-      ) {
+      if (changed < MEETING_SNAPSHOT_CHANGE_THRESHOLD) {
         return;
       }
     }
@@ -128,24 +134,49 @@ export function startMeetingSnapshotCapture({
       console.warn("[listener] failed to store meeting snapshot", saved.error);
       return;
     }
-    await catalogLocalNoteAttachment({
-      sessionId,
-      attachmentId: saved.data.attachmentId,
-      filename,
-      contentType: captured.data.mimeType,
-      sizeBytes: bytes.byteLength,
-      sha256: await sha256Hex(bytes.buffer),
-    });
-    await persistMeetingSnapshotRecord(sessionId, {
-      attachmentId: saved.data.attachmentId,
-      filename,
-      path: saved.data.path,
-      capturedAtMs,
-      width: captured.data.width,
-      height: captured.data.height,
-      appName: target.app.name,
-      windowTitle: target.windowTitle ?? "",
-    });
+    try {
+      await catalogLocalNoteAttachment({
+        sessionId,
+        attachmentId: saved.data.attachmentId,
+        filename,
+        contentType: captured.data.mimeType,
+        sizeBytes: bytes.byteLength,
+        sha256: await sha256Hex(bytes.buffer),
+      });
+      await persistMeetingSnapshotRecord(sessionId, {
+        attachmentId: saved.data.attachmentId,
+        filename,
+        path: saved.data.path,
+        capturedAtMs,
+        width: captured.data.width,
+        height: captured.data.height,
+        appName: target.app.name,
+        windowTitle: target.windowTitle ?? "",
+      });
+    } catch (error) {
+      console.warn(
+        "[listener] failed to catalog meeting snapshot, rolling back",
+        error,
+      );
+      try {
+        const cleanup = await fsSyncCommands.attachmentRemove(
+          sessionId,
+          saved.data.attachmentId,
+        );
+        if (cleanup.status === "error") {
+          console.warn(
+            "[listener] failed to roll back meeting snapshot file",
+            cleanup.error,
+          );
+        }
+      } catch (cleanupError) {
+        console.warn(
+          "[listener] failed to roll back meeting snapshot file",
+          cleanupError,
+        );
+      }
+      return;
+    }
     lastKept = { grey, atMs: capturedAtMs };
     keptCount++;
   };
@@ -164,31 +195,35 @@ export function startMeetingSnapshotCapture({
   };
 
   void capture();
-  const interval = setInterval(() => {
+  interval = setInterval(() => {
     void capture();
   }, MEETING_SNAPSHOT_INTERVAL_MS);
 
   return async () => {
     stopped = true;
-    clearInterval(interval);
+    if (interval) clearInterval(interval);
     await inFlight;
   };
 }
 
-// The meeting app that is on the mic is the one on screen; without that
-// signal any detected meeting window will do.
+// A window with no title means no meeting is actually open (the detect
+// plugin still returns an entry for every running browser/Slack/Discord),
+// so an untitled inspection is never a capture target. Among titled
+// inspections, the meeting app that is on the mic is preferred, but any
+// titled window will do when none match the mic.
 async function findMeetingWindow(): Promise<MeetingAccessibilityInspection | null> {
   const inspected = await detectCommands.inspectMeetingAccessibility();
   if (inspected.status === "error" || inspected.data.length === 0) return null;
+  const titled = inspected.data.filter(
+    (entry) =>
+      typeof entry.windowTitle === "string" && entry.windowTitle.trim() !== "",
+  );
+  if (titled.length === 0) return null;
   const micApps = await detectCommands.listMicUsingApplications();
   const micIds = new Set(
     micApps.status === "ok" ? micApps.data.map((app) => app.id) : [],
   );
-  return (
-    inspected.data.find((entry) => micIds.has(entry.app.id)) ??
-    inspected.data[0] ??
-    null
-  );
+  return titled.find((entry) => micIds.has(entry.app.id)) ?? titled[0] ?? null;
 }
 
 function timeStamp(atMs: number) {
