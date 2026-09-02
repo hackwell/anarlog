@@ -26,10 +26,9 @@ use crate::{
 #[cfg(target_os = "macos")]
 use crate::menu_items::{AppInfo, AppNew, HelpReportBug, HelpSuggestFeature, TrayQuit};
 use crate::menu_items::{
-    MenuItemHandler, TrayCheckUpdate, TrayHide, TrayOpen, TrayQuitCompletely, TraySettings,
-    TrayShowEvents, TrayStart, TrayVersion, build_agenda_item,
+    MenuItemHandler, TrayCheckUpdate, TrayOpen, TrayQuitCompletely, TraySettings, TrayStart,
+    build_agenda_item,
 };
-use tauri_plugin_store2::Store2PluginExt;
 
 const TRAY_ID: &str = "anlg-tray";
 
@@ -189,8 +188,6 @@ impl<'a, M: tauri::Manager<tauri::Wry>> Tray<'a, tauri::Wry, M> {
             return Ok(());
         }
 
-        SHOW_EVENTS.store(Self::load_show_events(app), Ordering::SeqCst);
-
         let agenda = Self::current_agenda_sections();
         let menu = Self::build_tray_menu(app, &agenda)?;
         *AGENDA_SECTIONS.lock().unwrap() = agenda;
@@ -291,37 +288,10 @@ impl<'a, M: tauri::Manager<tauri::Wry>> Tray<'a, tauri::Wry, M> {
         SHOW_EVENTS.store(show, Ordering::SeqCst);
 
         let app = self.manager.app_handle();
-        Self::persist_show_events(app, show);
         Self::refresh_menu_bar_title(app)?;
         Self::rebuild_menu(app)?;
         Self::restart_schedule_task(app);
         Ok(())
-    }
-
-    fn load_show_events(app: &AppHandle<tauri::Wry>) -> bool {
-        let result = app
-            .store2()
-            .scoped_store::<String>(crate::PLUGIN_NAME)
-            .and_then(|store| store.get("show_events_in_menu_bar".to_string()));
-
-        match result {
-            Ok(value) => value.unwrap_or(true),
-            Err(error) => {
-                tracing::warn!(%error, "failed to load tray event visibility");
-                true
-            }
-        }
-    }
-
-    fn persist_show_events(app: &AppHandle<tauri::Wry>, show: bool) {
-        let result = app
-            .store2()
-            .scoped_store::<String>(crate::PLUGIN_NAME)
-            .and_then(|store| store.set("show_events_in_menu_bar".to_string(), show));
-
-        if let Err(error) = result {
-            tracing::warn!(%error, "failed to persist tray event visibility");
-        }
     }
 
     fn refresh_menu_bar_title(app: &AppHandle<tauri::Wry>) -> Result<()> {
@@ -393,13 +363,14 @@ impl<'a, M: tauri::Manager<tauri::Wry>> Tray<'a, tauri::Wry, M> {
             menu.append(&heading)?;
 
             for event in &section.events {
-                let item = build_agenda_item(app, &event.id, &event.label)?;
+                let item = build_agenda_item(app, &event.id, &event.label, event.has_meeting_link)?;
                 menu.append(&item)?;
             }
         }
 
-        menu.append(&TrayShowEvents::build(app)?)?;
-        menu.append(&PredefinedMenuItem::separator(app)?)?;
+        if !agenda.is_empty() {
+            menu.append(&PredefinedMenuItem::separator(app)?)?;
+        }
 
         menu.append(&TrayOpen::build(app)?)?;
         menu.append(&TrayStart::build_with_disabled(
@@ -408,12 +379,11 @@ impl<'a, M: tauri::Manager<tauri::Wry>> Tray<'a, tauri::Wry, M> {
         )?)?;
         menu.append(&TraySettings::build(app)?)?;
         menu.append(&PredefinedMenuItem::separator(app)?)?;
-        menu.append(&TrayVersion::build(app)?)?;
-        if crate::updates_enabled() {
+        // Checking for updates lives in Settings; the tray only surfaces an
+        // update that is already downloaded and waiting for a restart.
+        if crate::updates_enabled() && TrayCheckUpdate::restart_pending() {
             menu.append(&TrayCheckUpdate::build(app)?)?;
         }
-        menu.append(&PredefinedMenuItem::separator(app)?)?;
-        menu.append(&TrayHide::build(app)?)?;
         menu.append(&TrayQuitCompletely::build(app)?)?;
 
         Ok(menu)

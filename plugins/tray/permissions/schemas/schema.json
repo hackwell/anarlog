@@ -343,10 +343,22 @@
           "markdownDescription": "Denies the set_tray_schedule command without any pre-configured scope."
         },
         {
-          "description": "Default permissions for the plugin\n#### This default permission set includes:\n\n- `allow-set-tray-icon-visible`\n- `allow-set-tray-recording-title`\n- `allow-set-tray-labels`\n- `allow-set-tray-schedule`",
+          "description": "Enables the set_tray_show_events command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-set-tray-show-events",
+          "markdownDescription": "Enables the set_tray_show_events command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the set_tray_show_events command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-set-tray-show-events",
+          "markdownDescription": "Denies the set_tray_show_events command without any pre-configured scope."
+        },
+        {
+          "description": "Default permissions for the plugin\n#### This default permission set includes:\n\n- `allow-set-tray-icon-visible`\n- `allow-set-tray-recording-title`\n- `allow-set-tray-labels`\n- `allow-set-tray-schedule`\n- `allow-set-tray-show-events`",
           "type": "string",
           "const": "default",
-          "markdownDescription": "Default permissions for the plugin\n#### This default permission set includes:\n\n- `allow-set-tray-icon-visible`\n- `allow-set-tray-recording-title`\n- `allow-set-tray-labels`\n- `allow-set-tray-schedule`"
+          "markdownDescription": "Default permissions for the plugin\n#### This default permission set includes:\n\n- `allow-set-tray-icon-visible`\n- `allow-set-tray-recording-title`\n- `allow-set-tray-labels`\n- `allow-set-tray-schedule`\n- `allow-set-tray-show-events`"
         }
       ]
     }

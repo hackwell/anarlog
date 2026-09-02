@@ -15,7 +15,9 @@ impl MenuItemHandler for TrayQuitCompletely {
         let item = MenuItem::with_id(
             app,
             Self::ID,
-            &crate::schedule::labels().quit_completely,
+            crate::schedule::labels()
+                .quit_completely
+                .replace("{app}", app.package_info().name.as_str()),
             true,
             None::<&str>,
         )?;

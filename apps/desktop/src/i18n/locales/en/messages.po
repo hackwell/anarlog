@@ -1431,10 +1431,6 @@ msgstr "Help Session Echo read meeting activity"
 msgid "Hi, I'm Session Echo AI. Set up a language model and I'll be ready to help."
 msgstr "Hi, I'm Session Echo AI. Set up a language model and I'll be ready to help."
 
-#: src/services/tray-schedule.tsx
-msgid "Hide"
-msgstr "Hide"
-
 #: src/sidebar/timeline/index.tsx
 msgid "Hide Deleted Events"
 msgstr "Hide Deleted Events"
@@ -1550,6 +1546,10 @@ msgstr "Job Title"
 #: src/session/components/outer-header/index.tsx
 msgid "Join & record"
 msgstr "Join & record"
+
+#: src/services/tray-schedule.tsx
+msgid "Join & Record"
+msgstr "Join & Record"
 
 #: src/session/components/outer-header/index.tsx
 msgid "Join meeting and record"
@@ -2125,6 +2125,10 @@ msgstr "Open in New Window"
 msgid "Open in right panel"
 msgstr "Open in right panel"
 
+#: src/services/tray-schedule.tsx
+msgid "Open Meeting Link"
+msgstr "Open Meeting Link"
+
 #: src/task/resource-view.tsx
 msgid "Open on GitHub"
 msgstr "Open on GitHub"
@@ -2267,6 +2271,10 @@ msgstr "Post recording disclosure in meeting chat"
 msgid "Prepare for events with a 5-minute reminder."
 msgstr "Prepare for events with a 5-minute reminder."
 
+#: src/services/tray-schedule.tsx
+msgid "Prepare Note"
+msgstr "Prepare Note"
+
 #: src/session/components/outer-header/overflow/export-modal.tsx
 msgid "Preparing transcript..."
 msgstr "Preparing transcript..."
@@ -2301,12 +2309,13 @@ msgstr "Quit"
 
 #. placeholder {0}: "{app}"
 #: src/services/tray-schedule.tsx
+msgid "Quit {0}"
+msgstr "Quit {0}"
+
+#. placeholder {0}: "{app}"
+#: src/services/tray-schedule.tsx
 msgid "Quit {0} Completely?"
 msgstr "Quit {0} Completely?"
-
-#: src/services/tray-schedule.tsx
-msgid "Quit Completely…"
-msgstr "Quit Completely…"
 
 #: src/session/components/note-input/transcript/screens/empty.tsx
 msgid "Re-transcribe"
@@ -2822,7 +2831,7 @@ msgstr "Show Deleted Events"
 msgid "Show Event"
 msgstr "Show Event"
 
-#: src/services/tray-schedule.tsx
+#: src/settings/general/app-settings.tsx
 msgid "Show events in menu bar"
 msgstr "Show events in menu bar"
 
@@ -2860,6 +2869,10 @@ msgstr "Show the timeline in your preferred timezone."
 #: src/sidebar/timeline/item.tsx
 msgid "Show This Event"
 msgstr "Show This Event"
+
+#: src/settings/general/app-settings.tsx
+msgid "Show today's and tomorrow's calendar events in the tray menu and count down to the next one."
+msgstr "Show today's and tomorrow's calendar events in the tray menu and count down to the next one."
 
 #: src/settings/general/app-settings.tsx
 msgid "Show tray icon"
@@ -2952,6 +2965,7 @@ msgid "Start over"
 msgstr "Start over"
 
 #: src/main/empty.tsx
+#: src/services/tray-schedule.tsx
 msgid "Start Recording"
 msgstr "Start Recording"
 

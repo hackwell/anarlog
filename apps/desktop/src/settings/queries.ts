@@ -455,6 +455,11 @@ function applySettingSideEffects(values: SettingValues): void {
       .setTrayIconVisible(values.show_tray_icon)
       .catch(console.error);
   }
+  if (values.show_events_in_menu_bar !== undefined) {
+    void trayCommands
+      .setTrayShowEvents(values.show_events_in_menu_bar)
+      .catch(console.error);
+  }
   if (values.automatic_updates !== undefined && !isAppStoreBuild()) {
     void updaterCommands
       .setAutomaticUpdatesEnabled(values.automatic_updates)
