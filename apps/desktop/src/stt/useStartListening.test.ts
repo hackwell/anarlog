@@ -59,6 +59,8 @@ const {
   sonnerToastDismissMock,
   startMeetingChatCaptureMock,
   stopMeetingChatCaptureMock,
+  startMeetingSnapshotCaptureMock,
+  snapshotStopMock,
   catalogLocalSessionAudioMock,
   markSessionAudioTranscriptionCompleteMock,
   getEnhancerServiceMock,
@@ -110,7 +112,9 @@ const {
   sonnerToastErrorMock: vi.fn(),
   sonnerToastDismissMock: vi.fn(),
   startMeetingChatCaptureMock: vi.fn(),
-  stopMeetingChatCaptureMock: vi.fn(),
+  stopMeetingChatCaptureMock: vi.fn(async () => {}),
+  startMeetingSnapshotCaptureMock: vi.fn(),
+  snapshotStopMock: vi.fn(async () => {}),
   catalogLocalSessionAudioMock: vi.fn(),
   markSessionAudioTranscriptionCompleteMock: vi.fn(),
   getEnhancerServiceMock: vi.fn(),
@@ -174,6 +178,10 @@ vi.mock("~/ai/task-window-sync", () => ({
 
 vi.mock("./meeting-chat-capture", () => ({
   startMeetingChatCapture: startMeetingChatCaptureMock,
+}));
+
+vi.mock("~/stt/meeting-snapshot-capture", () => ({
+  startMeetingSnapshotCapture: startMeetingSnapshotCaptureMock,
 }));
 
 vi.mock("./useKeywords", () => ({
@@ -533,6 +541,7 @@ describe("useStartListening", () => {
       },
     });
     startMeetingChatCaptureMock.mockReturnValue(stopMeetingChatCaptureMock);
+    startMeetingSnapshotCaptureMock.mockReturnValue(snapshotStopMock);
   });
 
   afterEach(() => {
@@ -3762,6 +3771,39 @@ describe("useStartListening", () => {
       });
     });
     expect(stopMeetingChatCaptureMock).toHaveBeenCalledOnce();
+  });
+
+  test("starts meeting snapshot capture alongside chat capture", async () => {
+    useConfigValueMock.mockImplementation((key: string) =>
+      key === "ai_language"
+        ? "en"
+        : key === "consent_auto_send_chat"
+          ? false
+          : [],
+    );
+
+    const { result } = renderHook(() => useStartListening("session-1"));
+
+    await act(async () => {
+      await result.current();
+    });
+
+    await waitFor(() => {
+      expect(startMeetingSnapshotCaptureMock).toHaveBeenCalledWith({
+        sessionId: "session-1",
+      });
+    });
+
+    const onStopped = startMock.mock.calls[0]?.[1]?.onStopped;
+    await act(async () => {
+      await onStopped?.("session-1", {
+        durationSeconds: 42,
+        audioPath: null,
+        requestedLiveTranscription: false,
+        liveTranscriptionActive: false,
+      });
+    });
+    expect(snapshotStopMock).toHaveBeenCalledOnce();
   });
 
   test("starts capture discovery before a supported meeting app is active", async () => {
