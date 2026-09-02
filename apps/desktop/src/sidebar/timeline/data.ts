@@ -14,7 +14,18 @@ import {
 export function getFallbackIndicatorIndex(
   buckets: TimelineBucket[],
   nowMs: number,
+  ascending = false,
 ) {
+  // The timeline runs forward from today, so "now" sits ahead of the first
+  // bucket that has not started yet.
+  if (ascending) {
+    return buckets.findIndex((bucket) => {
+      const firstItem = bucket.items[0];
+      const itemDate = firstItem ? getItemTimestamp(firstItem) : null;
+      return !!itemDate && itemDate.getTime() >= nowMs;
+    });
+  }
+
   let staleFutureBoundary: number | null = null;
 
   for (let index = 0; index < buckets.length; index++) {

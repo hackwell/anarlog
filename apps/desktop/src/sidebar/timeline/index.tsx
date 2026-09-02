@@ -444,8 +444,12 @@ export const TimelineView = memo(function TimelineView({
     if (hasToday) {
       return -1;
     }
-    return getFallbackIndicatorIndex(visibleBuckets, Date.now());
-  }, [visibleBuckets, hasToday, indicatorTimeMs]);
+    return getFallbackIndicatorIndex(
+      visibleBuckets,
+      Date.now(),
+      view === "timeline",
+    );
+  }, [visibleBuckets, hasToday, indicatorTimeMs, view]);
 
   const toggleShowIgnored = useCallback(() => {
     const nextShowIgnored = !showIgnored;
@@ -562,7 +566,9 @@ export const TimelineView = memo(function TimelineView({
             onContextMenu={showContextMenu}
             className={cn([
               "scrollbar-hide flex h-full flex-col overflow-y-auto",
-              "rounded-xl",
+              // Same inset as the search field above, so a selected row's
+              // fill lines up with the field's edges.
+              "rounded-xl px-2",
             ])}
           >
             {(topChromeInset || hasMoreFutureItems) && (
@@ -577,7 +583,9 @@ export const TimelineView = memo(function TimelineView({
               buckets={visibleBuckets}
               emptyTodayLabel={<Trans>No items today</Trans>}
               getFlatItemKeys={getFlatItemKeys}
-              hasActiveVisibleSession={hasActiveVisibleSession}
+              suppressCurrentTimeIndicator={
+                hasActiveVisibleSession || view === "archive"
+              }
               hasToday={hasToday}
               indicatorIndex={indicatorIndex}
               registerIndicator={setCurrentTimeIndicatorRef}
