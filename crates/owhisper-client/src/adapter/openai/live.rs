@@ -137,7 +137,9 @@ impl RealtimeSttAdapter for OpenAIAdapter {
                                 .then(|| params.keywords.clone()),
                             prompt: None,
                         }),
-                        turn_detection: Some(TurnDetectionConfig {
+                        // gpt-live-transcribe segments turns itself and rejects
+                        // server VAD with "Turn detection is not supported".
+                        turn_detection: (!uses_plural_hints).then(|| TurnDetectionConfig {
                             detection_type: TurnDetectionType::ServerVad,
                             create_response: None,
                             interrupt_response: None,
@@ -760,6 +762,11 @@ mod tests {
         );
         assert!(transcription.get("language").is_none());
         assert!(json["session"].get("include").is_none());
+        assert!(
+            json["session"]["audio"]["input"]
+                .get("turn_detection")
+                .is_none()
+        );
     }
 
     #[test]
