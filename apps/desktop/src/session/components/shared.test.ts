@@ -297,6 +297,21 @@ describe("hasStoredNoteContent", () => {
 });
 
 describe("computeCurrentNoteTab", () => {
+  it("keeps the history view only while related meetings exist", () => {
+    expect(
+      computeCurrentNoteTab({ type: "history" }, true, ["note-1"], false, true),
+    ).toEqual({ type: "history" });
+    expect(
+      computeCurrentNoteTab(
+        { type: "history" },
+        false,
+        ["note-1"],
+        false,
+        false,
+      ),
+    ).toEqual({ type: "raw" });
+  });
+
   describe("when listening is active", () => {
     it("preserves enhanced view", () => {
       const result = computeCurrentNoteTab(

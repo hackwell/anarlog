@@ -213,6 +213,10 @@ msgstr "Vor dem Aktivieren mindestens eine konfigurierte Aktion hinzufügen."
 msgid "Add at least one example summary."
 msgstr "Mindestens eine Beispielzusammenfassung hinzufügen."
 
+#: src/settings/developers/devtools.tsx
+msgid "Add demo meetings"
+msgstr "Demo-Meetings anlegen"
+
 #: src/templates/auto-format-examples-dialog.tsx
 msgid "Add example"
 msgstr "Beispiel hinzufügen"
@@ -260,6 +264,10 @@ msgstr "Fügen Sie Ihren eigenen LLM-API-Schlüssel hinzu, um aus diesem Transkr
 #: src/settings/general/spoken-languages.tsx
 msgid "Additional spoken languages"
 msgstr "Weitere gesprochene Sprachen"
+
+#: src/settings/developers/devtools.tsx
+msgid "Adds a recurring \"Weekly Product Sync\" with three past meetings, summaries, key facts, participants, and a two-speaker transcript for today's occurrence. Safe to run again."
+msgstr "Legt eine wiederkehrende „Weekly Product Sync“ mit drei vergangenen Meetings, Zusammenfassungen, Kernpunkten, Teilnehmern und einem Transkript mit zwei Sprechern für den heutigen Termin an. Kann gefahrlos wiederholt werden."
 
 #: src/settings/ai/shared/index.tsx
 #: src/sidebar/settings.tsx
@@ -1031,6 +1039,14 @@ msgstr "Diesen Termin löschen"
 msgid "Deleting..."
 msgstr "Wird gelöscht …"
 
+#: src/settings/developers/devtools.tsx
+msgid "Demo data"
+msgstr "Demo-Daten"
+
+#: src/settings/developers/devtools.tsx
+msgid "Demo meetings added"
+msgstr "Demo-Meetings angelegt"
+
 #: src/templates/template-form.tsx
 msgid "Describe the template purpose..."
 msgstr "Zweck der Vorlage beschreiben …"
@@ -1267,6 +1283,10 @@ msgstr "Das Meeting als Markdown exportieren"
 msgid "Exporting..."
 msgstr "Wird exportiert …"
 
+#: src/session/components/note-input/history.tsx
+msgid "Extract key facts"
+msgstr "Kernpunkte herausziehen"
+
 #. placeholder {0}: "{error}"
 #: src/services/tray-schedule.tsx
 msgid "Failed to check for updates: {0}"
@@ -1447,6 +1467,14 @@ msgstr "Seitenleiste ausblenden"
 #: src/main/windows-title-bar.tsx
 msgid "Hide Sidebar"
 msgstr "Seitenleiste ausblenden"
+
+#: src/session/components/note-input/history.tsx
+msgid "Hide summary"
+msgstr "Zusammenfassung ausblenden"
+
+#: src/session/components/note-input/header.tsx
+msgid "History"
+msgstr "Verlauf"
 
 #. placeholder {0}: history.position
 #. placeholder {1}: history.total
@@ -2001,6 +2029,10 @@ msgstr "Keine Anbieter gefunden."
 msgid "No recent chats"
 msgstr "Keine letzten Chats"
 
+#: src/session/components/note-input/history.tsx
+msgid "No related meetings yet."
+msgstr "Noch keine verwandten Meetings."
+
 #: src/contacts/related-notes.tsx
 msgid "No related notes found"
 msgstr "Keine verwandten Notizen gefunden"
@@ -2121,6 +2153,10 @@ msgstr "In neuem Fenster öffnen"
 #: src/chat/components/toolbar-controls.tsx
 msgid "Open in right panel"
 msgstr "Im rechten Panel öffnen"
+
+#: src/session/components/note-input/history.tsx
+msgid "Open meeting"
+msgstr "Meeting öffnen"
 
 #: src/services/tray-schedule.tsx
 msgid "Open Meeting Link"
@@ -2334,6 +2370,7 @@ msgstr "Meeting-Steuerelemente, Chat und Teilnehmerstatus lesen."
 msgid "Read meeting controls, visible chat, and participant status"
 msgstr "Meeting-Steuerelemente, sichtbaren Chat und Teilnehmerstatus lesen"
 
+#: src/session/components/note-input/history.tsx
 #: src/session/components/tag-row.tsx
 msgid "Reading…"
 msgstr "Liest …"
@@ -2546,6 +2583,14 @@ msgstr "Läuft nach Abschluss der Aufnahme, nicht während des Meetings."
 #: src/services/tray-schedule.tsx
 msgid "s"
 msgstr "s"
+
+#: src/session/components/note-input/history.tsx
+msgid "Same series"
+msgstr "Gleiche Serie"
+
+#: src/session/components/note-input/history.tsx
+msgid "Same title"
+msgstr "Gleicher Titel"
 
 #: src/templates/auto-form.tsx
 msgid "Save"
@@ -2808,6 +2853,10 @@ msgstr "KI-Zusammenfassungen einrichten"
 msgid "Settings"
 msgstr "Einstellungen"
 
+#: src/session/components/note-input/history.tsx
+msgid "Shared participants"
+msgstr "Gemeinsame Teilnehmer"
+
 #: src/sidebar/timeline/item.tsx
 msgid "Show All Recurring Events"
 msgstr "Alle wiederkehrenden Termine anzeigen"
@@ -2858,6 +2907,10 @@ msgstr "Seitenleiste anzeigen"
 #: src/main/windows-title-bar.tsx
 msgid "Show Sidebar"
 msgstr "Seitenleiste anzeigen"
+
+#: src/session/components/note-input/history.tsx
+msgid "Show summary"
+msgstr "Zusammenfassung anzeigen"
 
 #: src/settings/general/timezone.tsx
 msgid "Show the timeline in your preferred timezone."

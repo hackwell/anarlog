@@ -213,6 +213,10 @@ msgstr "Add at least one configured action before enabling."
 msgid "Add at least one example summary."
 msgstr "Add at least one example summary."
 
+#: src/settings/developers/devtools.tsx
+msgid "Add demo meetings"
+msgstr "Add demo meetings"
+
 #: src/templates/auto-format-examples-dialog.tsx
 msgid "Add example"
 msgstr "Add example"
@@ -260,6 +264,10 @@ msgstr "Add your own LLM API key to generate a summary from this transcript."
 #: src/settings/general/spoken-languages.tsx
 msgid "Additional spoken languages"
 msgstr "Additional spoken languages"
+
+#: src/settings/developers/devtools.tsx
+msgid "Adds a recurring \"Weekly Product Sync\" with three past meetings, summaries, key facts, participants, and a two-speaker transcript for today's occurrence. Safe to run again."
+msgstr "Adds a recurring \"Weekly Product Sync\" with three past meetings, summaries, key facts, participants, and a two-speaker transcript for today's occurrence. Safe to run again."
 
 #: src/settings/ai/shared/index.tsx
 #: src/sidebar/settings.tsx
@@ -1031,6 +1039,14 @@ msgstr "Delete This Event"
 msgid "Deleting..."
 msgstr "Deleting..."
 
+#: src/settings/developers/devtools.tsx
+msgid "Demo data"
+msgstr "Demo data"
+
+#: src/settings/developers/devtools.tsx
+msgid "Demo meetings added"
+msgstr "Demo meetings added"
+
 #: src/templates/template-form.tsx
 msgid "Describe the template purpose..."
 msgstr "Describe the template purpose..."
@@ -1267,6 +1283,10 @@ msgstr "Export the meeting as Markdown"
 msgid "Exporting..."
 msgstr "Exporting..."
 
+#: src/session/components/note-input/history.tsx
+msgid "Extract key facts"
+msgstr "Extract key facts"
+
 #. placeholder {0}: "{error}"
 #: src/services/tray-schedule.tsx
 msgid "Failed to check for updates: {0}"
@@ -1447,6 +1467,14 @@ msgstr "Hide sidebar"
 #: src/main/windows-title-bar.tsx
 msgid "Hide Sidebar"
 msgstr "Hide Sidebar"
+
+#: src/session/components/note-input/history.tsx
+msgid "Hide summary"
+msgstr "Hide summary"
+
+#: src/session/components/note-input/header.tsx
+msgid "History"
+msgstr "History"
 
 #. placeholder {0}: history.position
 #. placeholder {1}: history.total
@@ -2001,6 +2029,10 @@ msgstr "No providers found."
 msgid "No recent chats"
 msgstr "No recent chats"
 
+#: src/session/components/note-input/history.tsx
+msgid "No related meetings yet."
+msgstr "No related meetings yet."
+
 #: src/contacts/related-notes.tsx
 msgid "No related notes found"
 msgstr "No related notes found"
@@ -2121,6 +2153,10 @@ msgstr "Open in New Window"
 #: src/chat/components/toolbar-controls.tsx
 msgid "Open in right panel"
 msgstr "Open in right panel"
+
+#: src/session/components/note-input/history.tsx
+msgid "Open meeting"
+msgstr "Open meeting"
 
 #: src/services/tray-schedule.tsx
 msgid "Open Meeting Link"
@@ -2334,6 +2370,7 @@ msgstr "Read meeting controls, chat, and participant status."
 msgid "Read meeting controls, visible chat, and participant status"
 msgstr "Read meeting controls, visible chat, and participant status"
 
+#: src/session/components/note-input/history.tsx
 #: src/session/components/tag-row.tsx
 msgid "Reading…"
 msgstr "Reading…"
@@ -2546,6 +2583,14 @@ msgstr "Runs after the recording finishes, not during the meeting."
 #: src/services/tray-schedule.tsx
 msgid "s"
 msgstr "s"
+
+#: src/session/components/note-input/history.tsx
+msgid "Same series"
+msgstr "Same series"
+
+#: src/session/components/note-input/history.tsx
+msgid "Same title"
+msgstr "Same title"
 
 #: src/templates/auto-form.tsx
 msgid "Save"
@@ -2808,6 +2853,10 @@ msgstr "Set up AI summaries"
 msgid "Settings"
 msgstr "Settings"
 
+#: src/session/components/note-input/history.tsx
+msgid "Shared participants"
+msgstr "Shared participants"
+
 #: src/sidebar/timeline/item.tsx
 msgid "Show All Recurring Events"
 msgstr "Show All Recurring Events"
@@ -2858,6 +2907,10 @@ msgstr "Show sidebar"
 #: src/main/windows-title-bar.tsx
 msgid "Show Sidebar"
 msgstr "Show Sidebar"
+
+#: src/session/components/note-input/history.tsx
+msgid "Show summary"
+msgstr "Show summary"
 
 #: src/settings/general/timezone.tsx
 msgid "Show the timeline in your preferred timezone."

@@ -1,14 +1,17 @@
 import { useLingui } from "@lingui/react/macro";
+import { ClockCounterClockwise } from "@phosphor-icons/react";
 
 import { cn } from "@anlg/utils";
 
 import { HeaderViewEnhanced } from "./header-enhanced";
 import { HeaderViewRaw } from "./header-raw";
+import { IconHeaderView } from "./header-shared";
 import { HeaderViewTranscript } from "./header-transcript";
 
 import { FolderPicker } from "~/session/components/folder-picker";
 import { useCanShowTranscript } from "~/session/components/shared";
 import { useEnsureDefaultSummary } from "~/session/hooks/useEnhancedNotes";
+import { usePastSessionNotes } from "~/session/insights/past-notes";
 import { deleteEnhancedNote, useEnhancedNoteRecords } from "~/session/queries";
 import { type EditorView } from "~/store/zustand/tabs/schema";
 
@@ -114,6 +117,18 @@ export function SessionViewSwitcher({
           );
         }
 
+        if (view.type === "history") {
+          return (
+            <IconHeaderView
+              key={view.type}
+              isActive={currentTab.type === view.type}
+              label={t`History`}
+              icon={<ClockCounterClockwise className="size-4" />}
+              onClick={() => handleTabChange(view)}
+            />
+          );
+        }
+
         return null;
       })}
     </div>
@@ -129,6 +144,7 @@ export function useEditorTabs({
 }): EditorView[] {
   useEnsureDefaultSummary(sessionId);
   const canShowTranscript = useCanShowTranscript(sessionId, { audioExists });
+  const { hasPastNotes } = usePastSessionNotes(sessionId);
 
   const enhancedNoteIds = useEnhancedNoteRecords(sessionId).map(
     (note) => note.id,
@@ -137,15 +153,18 @@ export function useEditorTabs({
   return createEditorTabs({
     enhancedNoteIds,
     canShowTranscript,
+    hasHistory: hasPastNotes,
   });
 }
 
 export function createEditorTabs({
   enhancedNoteIds,
   canShowTranscript,
+  hasHistory = false,
 }: {
   enhancedNoteIds: string[];
   canShowTranscript: boolean;
+  hasHistory?: boolean;
 }): EditorView[] {
   const enhancedTabs: EditorView[] = enhancedNoteIds.map((id) => ({
     type: "enhanced",
@@ -156,5 +175,6 @@ export function createEditorTabs({
     ...enhancedTabs,
     { type: "raw" },
     ...(canShowTranscript ? [{ type: "transcript" } as const] : []),
+    ...(hasHistory ? [{ type: "history" } as const] : []),
   ];
 }
