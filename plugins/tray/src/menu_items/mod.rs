@@ -22,7 +22,78 @@ pub use tray_quit_completely::{TrayQuitCompletely, quit_completely};
 pub use tray_settings::TraySettings;
 pub use tray_start::TrayStart;
 
-use tauri::{AppHandle, Result, menu::MenuItemKind};
+use tauri::{
+    AppHandle, Result,
+    image::Image,
+    menu::{IconMenuItem, MenuItemKind},
+};
+
+pub enum MenuIcon {
+    OpenApp,
+    Record,
+    Settings,
+    Quit,
+    Join,
+    Note,
+    Link,
+}
+
+impl MenuIcon {
+    // muda cannot mark menu images as templates, so the menu is built with
+    // the set that matches the current system appearance instead.
+    fn bytes(&self) -> &'static [u8] {
+        macro_rules! icon {
+            ($name:literal) => {
+                if system_appearance_is_dark() {
+                    include_bytes!(concat!("../../icons/menu/dark/", $name, ".png"))
+                } else {
+                    include_bytes!(concat!("../../icons/menu/light/", $name, ".png"))
+                }
+            };
+        }
+        match self {
+            MenuIcon::OpenApp => icon!("open_app"),
+            MenuIcon::Record => icon!("record"),
+            MenuIcon::Settings => icon!("settings"),
+            MenuIcon::Quit => icon!("quit"),
+            MenuIcon::Join => icon!("join"),
+            MenuIcon::Note => icon!("note"),
+            MenuIcon::Link => icon!("link"),
+        }
+    }
+}
+
+#[cfg(target_os = "macos")]
+pub fn system_appearance_is_dark() -> bool {
+    use objc2_foundation::{NSString, NSUserDefaults};
+
+    let defaults = NSUserDefaults::standardUserDefaults();
+    defaults
+        .stringForKey(&NSString::from_str("AppleInterfaceStyle"))
+        .is_some_and(|style| style.to_string().eq_ignore_ascii_case("dark"))
+}
+
+#[cfg(not(target_os = "macos"))]
+pub fn system_appearance_is_dark() -> bool {
+    false
+}
+
+pub fn icon_item(
+    app: &AppHandle<tauri::Wry>,
+    id: impl Into<tauri::menu::MenuId>,
+    text: impl AsRef<str>,
+    enabled: bool,
+    icon: MenuIcon,
+) -> Result<IconMenuItem<tauri::Wry>> {
+    IconMenuItem::with_id(
+        app,
+        id,
+        text,
+        enabled,
+        Some(Image::from_bytes(icon.bytes())?),
+        None::<&str>,
+    )
+}
 
 pub trait MenuItemHandler {
     const ID: &'static str;

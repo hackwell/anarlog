@@ -1,9 +1,9 @@
 use tauri::{
     AppHandle, Result,
-    menu::{MenuItem, MenuItemKind},
+    menu::{IconMenuItem, MenuItemKind},
 };
 
-use super::MenuItemHandler;
+use super::{MenuIcon, MenuItemHandler, icon_item};
 
 pub struct TrayStart;
 
@@ -11,14 +11,7 @@ impl MenuItemHandler for TrayStart {
     const ID: &'static str = "anlg_tray_start";
 
     fn build(app: &AppHandle<tauri::Wry>) -> Result<MenuItemKind<tauri::Wry>> {
-        let item = MenuItem::with_id(
-            app,
-            Self::ID,
-            &crate::schedule::labels().start_meeting,
-            true,
-            None::<&str>,
-        )?;
-        Ok(MenuItemKind::MenuItem(item))
+        Ok(MenuItemKind::Icon(Self::build_with_disabled(app, false)?))
     }
 
     fn handle(app: &AppHandle<tauri::Wry>) {
@@ -44,13 +37,13 @@ impl TrayStart {
     pub fn build_with_disabled(
         app: &AppHandle<tauri::Wry>,
         disabled: bool,
-    ) -> Result<MenuItem<tauri::Wry>> {
-        MenuItem::with_id(
+    ) -> Result<IconMenuItem<tauri::Wry>> {
+        icon_item(
             app,
             Self::ID,
             &crate::schedule::labels().start_meeting,
             !disabled,
-            None::<&str>,
+            MenuIcon::Record,
         )
     }
 }

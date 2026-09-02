@@ -48,6 +48,8 @@ static AGENDA_SECTIONS: Mutex<Vec<TrayAgendaSection>> = Mutex::new(Vec::new());
 // (HYPRNOTE2-2MTS). Defer set_menu until the next tray mouse-down instead.
 #[cfg(target_os = "macos")]
 static MENU_DIRTY: AtomicBool = AtomicBool::new(false);
+#[cfg(target_os = "macos")]
+static MENU_BUILT_FOR_DARK: AtomicBool = AtomicBool::new(false);
 
 #[cfg(target_os = "macos")]
 pub fn build_app_menu(app: &AppHandle<tauri::Wry>) -> Result<Menu<tauri::Wry>> {
@@ -191,6 +193,11 @@ impl<'a, M: tauri::Manager<tauri::Wry>> Tray<'a, tauri::Wry, M> {
         let agenda = Self::current_agenda_sections();
         let menu = Self::build_tray_menu(app, &agenda)?;
         *AGENDA_SECTIONS.lock().unwrap() = agenda;
+        #[cfg(target_os = "macos")]
+        MENU_BUILT_FOR_DARK.store(
+            crate::menu_items::system_appearance_is_dark(),
+            Ordering::SeqCst,
+        );
 
         let builder = TrayIconBuilder::with_id(TRAY_ID)
             .icon(TrayIconState::Default.to_image()?)
@@ -216,6 +223,14 @@ impl<'a, M: tauri::Manager<tauri::Wry>> Tray<'a, tauri::Wry, M> {
                         }
                 );
                 if ready {
+                    // Icons are baked for one appearance; swap the menu when
+                    // the system switched between light and dark since it
+                    // was built.
+                    if crate::menu_items::system_appearance_is_dark()
+                        != MENU_BUILT_FOR_DARK.load(Ordering::SeqCst)
+                    {
+                        MENU_DIRTY.store(true, Ordering::SeqCst);
+                    }
                     let _ = Self::apply_pending_menu(&app);
                 }
             })
@@ -377,7 +392,7 @@ impl<'a, M: tauri::Manager<tauri::Wry>> Tray<'a, tauri::Wry, M> {
             app,
             START_DISABLED.load(Ordering::SeqCst),
         )?)?;
-        menu.append(&TraySettings::build(app)?)?;
+        menu.append(&TraySettings::build_for_tray(app)?)?;
         menu.append(&PredefinedMenuItem::separator(app)?)?;
         // Checking for updates lives in Settings; the tray only surfaces an
         // update that is already downloaded and waiting for a restart.
@@ -410,7 +425,13 @@ impl<'a, M: tauri::Manager<tauri::Wry>> Tray<'a, tauri::Wry, M> {
         }
         *AGENDA_SECTIONS.lock().unwrap() = agenda;
         #[cfg(target_os = "macos")]
-        MENU_DIRTY.store(false, Ordering::SeqCst);
+        {
+            MENU_BUILT_FOR_DARK.store(
+                crate::menu_items::system_appearance_is_dark(),
+                Ordering::SeqCst,
+            );
+            MENU_DIRTY.store(false, Ordering::SeqCst);
+        }
         Ok(())
     }
 

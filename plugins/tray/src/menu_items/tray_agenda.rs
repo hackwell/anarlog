@@ -1,9 +1,10 @@
 use tauri::{
     AppHandle, Result,
-    menu::{MenuId, MenuItem, MenuItemKind, Submenu},
+    menu::{MenuId, MenuItemKind, Submenu},
 };
 use tauri_plugin_windows::{AppWindow, Navigate, WindowsPluginExt};
 
+use super::{MenuIcon, icon_item};
 use crate::ext::scheduled_event;
 
 const ID_PREFIX: &str = "anlg_tray_agenda_";
@@ -39,6 +40,15 @@ impl AgendaAction {
             AgendaAction::JoinAndRecord => labels.agenda_join_and_record.clone(),
             AgendaAction::PrepareNote => labels.agenda_prepare_note.clone(),
             AgendaAction::OpenLink => labels.agenda_open_link.clone(),
+        }
+    }
+
+    fn icon(self) -> MenuIcon {
+        match self {
+            AgendaAction::Record => MenuIcon::Record,
+            AgendaAction::JoinAndRecord => MenuIcon::Join,
+            AgendaAction::PrepareNote => MenuIcon::Note,
+            AgendaAction::OpenLink => MenuIcon::Link,
         }
     }
 
@@ -80,12 +90,12 @@ pub fn build_agenda_item(
         if action.needs_link() && !has_meeting_link {
             continue;
         }
-        submenu.append(&MenuItem::with_id(
+        submenu.append(&icon_item(
             app,
             item_id(action, event_id),
             action.label(&labels),
             true,
-            None::<&str>,
+            action.icon(),
         )?)?;
     }
     Ok(MenuItemKind::Submenu(submenu))
