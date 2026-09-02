@@ -6,10 +6,13 @@ pub enum TrayIconState {
     UpdateAvailable,
 }
 
+// The wordmark's sound waves pulse outward and back (none, one, both, one),
+// so the icon keeps its width and the menu bar title never shifts.
 pub const RECORDING_FRAMES: &[&[u8]] = &[
     include_bytes!("../icons/tray_recording_0.png"),
     include_bytes!("../icons/tray_recording_1.png"),
     include_bytes!("../icons/tray_recording_2.png"),
+    include_bytes!("../icons/tray_recording_3.png"),
 ];
 
 impl TrayIconState {
