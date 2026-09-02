@@ -10,6 +10,7 @@ import { TranscriptEditButton } from "../note-input/transcript";
 import { RecordingIcon, useHasTranscript } from "../shared";
 import { TagRow } from "../tag-row";
 import { TitleInput } from "../title-input";
+import { CopyViewButton } from "./copy-view";
 import { MetadataButton } from "./metadata";
 import { OverflowButton } from "./overflow";
 
@@ -104,6 +105,7 @@ export function OuterHeader({
         />
         <FolderPicker sessionId={sessionId} align="end" />
         <MetadataButton sessionId={sessionId} />
+        <CopyViewButton sessionId={sessionId} currentView={currentView} />
         <OverflowButton
           standaloneWindow={standaloneWindow}
           sessionId={sessionId}

@@ -828,6 +828,10 @@ msgstr "Weiter"
 msgid "Control listening without reopening Session Echo."
 msgstr "Das Zuhören steuern, ohne Session Echo erneut zu öffnen."
 
+#: src/session/components/outer-header/copy-view.tsx
+msgid "Copied to clipboard"
+msgstr "In die Zwischenablage kopiert"
+
 #: src/main/windows-title-bar.tsx
 #: src/session/components/note-input/transcript/renderer/selection-menu.tsx
 #: src/settings/ai/llm/subscriptions/connect.tsx
@@ -850,6 +854,10 @@ msgstr "Kopieren Sie die Adresse, auf der Ihr Browser gelandet ist, und fügen S
 #: src/settings/developers/webhooks.tsx
 msgid "Copy this signing secret now — it is only shown once."
 msgstr "Dieses Signing-Secret jetzt kopieren — es wird nur einmal angezeigt."
+
+#: src/session/components/outer-header/copy-view.tsx
+msgid "Copy to clipboard"
+msgstr "In die Zwischenablage kopieren"
 
 #. placeholder {0}: error.message
 #: src/settings/developers/cli.tsx
@@ -1291,6 +1299,10 @@ msgstr "Kernpunkte herausziehen"
 #: src/services/tray-schedule.tsx
 msgid "Failed to check for updates: {0}"
 msgstr "Update-Prüfung fehlgeschlagen: {0}"
+
+#: src/session/components/outer-header/copy-view.tsx
+msgid "Failed to copy"
+msgstr "Kopieren fehlgeschlagen"
 
 #. placeholder {0}: "{error}"
 #: src/services/tray-schedule.tsx
