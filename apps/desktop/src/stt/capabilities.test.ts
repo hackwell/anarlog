@@ -17,6 +17,7 @@ import {
   getLiveTranscriptionConfig,
   getOnDeviceTranscriptionConfig,
   getOnDeviceTranscriptionMode,
+  getSttModelSpeakerSupport,
   getSttModelTranscriptionMode,
   getTranscriptionLanguages,
   getUnsupportedDesktopLocalSttRepair,
@@ -530,5 +531,31 @@ describe("getTranscriptionLanguages", () => {
       "en-US",
       "ko",
     ]);
+  });
+
+  test("reports which models label speakers", () => {
+    expect(getSttModelSpeakerSupport("openai", "gpt-transcribe")).toBe(
+      undefined,
+    );
+    expect(
+      getSttModelSpeakerSupport("openai", "gpt-4o-transcribe-diarize"),
+    ).toBe("provider");
+    expect(getSttModelSpeakerSupport("deepgram", "flux-general-en")).toBe(
+      undefined,
+    );
+    expect(getSttModelSpeakerSupport("deepgram", "nova-3-general")).toBe(
+      "provider",
+    );
+    expect(getSttModelSpeakerSupport("elevenlabs", "scribe_v2_realtime")).toBe(
+      undefined,
+    );
+    expect(getSttModelSpeakerSupport("soniox", "stt-rt-v5")).toBe("provider");
+    expect(getSttModelSpeakerSupport("anarlog", "cloud")).toBe("provider");
+    expect(
+      getSttModelSpeakerSupport("soniqo", "soniqo-parakeet-streaming"),
+    ).toBe("local");
+    expect(getSttModelSpeakerSupport("groq", "whisper-large-v3")).toBe(
+      undefined,
+    );
   });
 });

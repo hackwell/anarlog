@@ -2926,6 +2926,7 @@ msgstr "Beim Erstellen der Zusammenfassung ist etwas schiefgelaufen."
 msgid "Sort options"
 msgstr "Sortieroptionen"
 
+#: src/settings/ai/stt/select.tsx
 #: src/settings/general/audio-settings.tsx
 msgid "Speakers"
 msgstr "Sprecher"
@@ -3141,6 +3142,14 @@ msgstr "Coding-Agenten beibringen, wann und wie sie die Session Echo CLI und MCP
 #: src/settings/general/meeting-settings.tsx
 msgid "Tell participants when listening starts; this does not confirm consent."
 msgstr "Teilnehmer informieren, wenn das Zuhören beginnt; dies bestätigt keine Einwilligung."
+
+#: src/settings/ai/stt/select.tsx
+msgid "Tells participants apart in the transcript."
+msgstr "Unterscheidet die Teilnehmer im Transkript."
+
+#: src/settings/ai/stt/select.tsx
+msgid "Tells participants apart when the session lists at least two participants and the recording is under ten minutes."
+msgstr "Unterscheidet die Teilnehmer, wenn die Session mindestens zwei Teilnehmer enthält und die Aufnahme kürzer als zehn Minuten ist."
 
 #: src/templates/auto-form.tsx
 #: src/templates/details.tsx

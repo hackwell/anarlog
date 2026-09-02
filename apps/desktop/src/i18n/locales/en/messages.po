@@ -2926,6 +2926,7 @@ msgstr "Something went wrong while generating the summary."
 msgid "Sort options"
 msgstr "Sort options"
 
+#: src/settings/ai/stt/select.tsx
 #: src/settings/general/audio-settings.tsx
 msgid "Speakers"
 msgstr "Speakers"
@@ -3141,6 +3142,14 @@ msgstr "Teach coding agents when and how to use the Session Echo CLI and MCP"
 #: src/settings/general/meeting-settings.tsx
 msgid "Tell participants when listening starts; this does not confirm consent."
 msgstr "Tell participants when listening starts; this does not confirm consent."
+
+#: src/settings/ai/stt/select.tsx
+msgid "Tells participants apart in the transcript."
+msgstr "Tells participants apart in the transcript."
+
+#: src/settings/ai/stt/select.tsx
+msgid "Tells participants apart when the session lists at least two participants and the recording is under ten minutes."
+msgstr "Tells participants apart when the session lists at least two participants and the recording is under ten minutes."
 
 #: src/templates/auto-form.tsx
 #: src/templates/details.tsx
