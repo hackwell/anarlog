@@ -1567,6 +1567,10 @@ msgstr "Insert above"
 msgid "Insert below"
 msgstr "Insert below"
 
+#: src/session/components/note-input/snapshot-strip.tsx
+msgid "Insert slide from {time}"
+msgstr "Insert slide from {time}"
+
 #: src/settings/developers/cli.tsx
 msgid "Install"
 msgstr "Install"

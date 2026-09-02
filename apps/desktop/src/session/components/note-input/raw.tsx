@@ -16,6 +16,7 @@ import { AudioDropTarget } from "./audio-drop-target";
 import { CreateBriefSuggestion } from "./create-brief-suggestion";
 import { useNoteFileHandlerConfig } from "./file-handler";
 import { MeetingChatHighlights } from "./meeting-chat-highlights";
+import { SnapshotStrip } from "./snapshot-strip";
 
 import { useAudioPlayer } from "~/audio-player";
 import { useSessionEventParticipants } from "~/calendar/queries";
@@ -257,6 +258,7 @@ export const RawEditor = forwardRef<
       >
         <>
           <div className="relative min-h-full">
+            <SnapshotStrip sessionId={sessionId} />
             <NoteEditor
               ref={setEditorRef}
               className={cn(["session-note-editor", className])}
