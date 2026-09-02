@@ -517,6 +517,10 @@ msgstr "Cancel date edit"
 msgid "Capture meeting chat in Memos"
 msgstr "Capture meeting chat in Memos"
 
+#: src/settings/general/meeting-settings.tsx
+msgid "Capture slides from the meeting window"
+msgstr "Capture slides from the meeting window"
+
 #: src/onboarding/folder-location.tsx
 msgid "Change"
 msgstr "Change"
@@ -1603,6 +1607,10 @@ msgstr "Join our community and stay updated:"
 #: src/settings/general/meeting-settings.tsx
 msgid "Join scheduled meetings"
 msgstr "Join scheduled meetings"
+
+#: src/settings/general/meeting-settings.tsx
+msgid "Keep a screenshot of the meeting window whenever the shared content changes. Needs Screen Recording access."
+msgstr "Keep a screenshot of the meeting window whenever the shared content changes. Needs Screen Recording access."
 
 #: src/settings/ai/llm/subscriptions/connect.tsx
 msgid "Kimi Code API key"

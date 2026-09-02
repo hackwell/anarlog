@@ -517,6 +517,10 @@ msgstr "Datumsbearbeitung abbrechen"
 msgid "Capture meeting chat in Memos"
 msgstr "Meeting-Chat in Memos erfassen"
 
+#: src/settings/general/meeting-settings.tsx
+msgid "Capture slides from the meeting window"
+msgstr "Folien aus dem Meeting-Fenster festhalten"
+
 #: src/onboarding/folder-location.tsx
 msgid "Change"
 msgstr "Ändern"
@@ -1603,6 +1607,10 @@ msgstr "Treten Sie unserer Community bei und bleiben Sie auf dem Laufenden:"
 #: src/settings/general/meeting-settings.tsx
 msgid "Join scheduled meetings"
 msgstr "Geplanten Meetings beitreten"
+
+#: src/settings/general/meeting-settings.tsx
+msgid "Keep a screenshot of the meeting window whenever the shared content changes. Needs Screen Recording access."
+msgstr "Speichert einen Screenshot des Meeting-Fensters, sobald sich der geteilte Inhalt ändert. Benötigt Zugriff auf Bildschirmaufnahme."
 
 #: src/settings/ai/llm/subscriptions/connect.tsx
 msgid "Kimi Code API key"

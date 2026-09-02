@@ -15,6 +15,7 @@ export function MeetingSettingsView({
   floatingBar,
   meetingDisclosureAutoPost,
   captureMeetingChat,
+  captureMeetingSnapshots,
 }: {
   autoJoinScheduledMeetings: SettingItem;
   autoStartScheduledMeetings: SettingItem;
@@ -22,6 +23,7 @@ export function MeetingSettingsView({
   floatingBar: SettingItem;
   meetingDisclosureAutoPost: SettingItem;
   captureMeetingChat: SettingItem;
+  captureMeetingSnapshots: SettingItem;
 }) {
   const currentPlatform = platform();
   const supportsMeetingAx =
@@ -77,6 +79,17 @@ export function MeetingSettingsView({
             }
             checked={captureMeetingChat.value}
             onChange={captureMeetingChat.onChange}
+          />
+          <SettingSwitchRow
+            title={<Trans>Capture slides from the meeting window</Trans>}
+            description={
+              <Trans>
+                Keep a screenshot of the meeting window whenever the shared
+                content changes. Needs Screen Recording access.
+              </Trans>
+            }
+            checked={captureMeetingSnapshots.value}
+            onChange={captureMeetingSnapshots.onChange}
           />
         </>
       )}

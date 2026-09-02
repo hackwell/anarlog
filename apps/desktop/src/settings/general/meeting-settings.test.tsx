@@ -23,6 +23,7 @@ function renderMeetingSettings({
   floatingBar = true,
   meetingDisclosureAutoPost = setting(),
   captureMeetingChat = setting(false),
+  captureMeetingSnapshots = setting(false),
 } = {}) {
   return {
     ...render(
@@ -33,6 +34,7 @@ function renderMeetingSettings({
         floatingBar={setting(floatingBar)}
         meetingDisclosureAutoPost={meetingDisclosureAutoPost}
         captureMeetingChat={captureMeetingChat}
+        captureMeetingSnapshots={captureMeetingSnapshots}
       />,
     ),
     meetingDisclosureAutoPost,
@@ -113,5 +115,18 @@ describe("MeetingSettingsView", () => {
     renderMeetingSettings();
 
     expect(screen.getByText(/does not confirm consent/)).toBeTruthy();
+  });
+
+  it("toggles slide capture from the meeting window", () => {
+    const captureMeetingSnapshots = setting(false);
+    renderMeetingSettings({ captureMeetingSnapshots });
+
+    fireEvent.click(
+      screen.getByRole("switch", {
+        name: "Capture slides from the meeting window",
+      }),
+    );
+
+    expect(captureMeetingSnapshots.onChange).toHaveBeenCalledWith(true);
   });
 });
