@@ -108,7 +108,7 @@ async function transformArgs(
     ? await collectEnhanceImageContext(sessionId, [
         sessionContext.preMeetingMemo,
         sessionContext.postMeetingMemo,
-        ...snapshotImageMarkdown(await loadMeetingSnapshotRecords(sessionId)),
+        ...(await loadSnapshotImageMarkdown(sessionId)),
       ])
     : [];
 
@@ -182,6 +182,16 @@ async function loadPreviousMeetings(
     return selectPreviousMeetings(notes);
   } catch (error) {
     console.warn("[enhance] previous meetings unavailable", error);
+    return [];
+  }
+}
+
+async function loadSnapshotImageMarkdown(sessionId: string): Promise<string[]> {
+  try {
+    const records = await loadMeetingSnapshotRecords(sessionId);
+    return snapshotImageMarkdown(records);
+  } catch (error) {
+    console.warn("[enhance] meeting snapshots unavailable", error);
     return [];
   }
 }

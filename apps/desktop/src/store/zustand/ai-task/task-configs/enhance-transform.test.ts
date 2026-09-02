@@ -388,6 +388,34 @@ describe("enhanceTransform.transformArgs", () => {
     expect(markdown).toContain("![Slide 14:03](/tmp/att-1.jpg)");
   });
 
+  it("keeps summaries working when snapshot lookup fails", async () => {
+    mocks.loadMeetingSnapshotRecords.mockRejectedValue(new Error("db down"));
+    mocks.collectEnhanceImageContext.mockResolvedValue([]);
+
+    const consoleWarn = vi.spyOn(console, "warn").mockImplementation(() => {});
+
+    const result = await enhanceTransform.transformArgs(
+      { sessionId: "session-1", enhancedNoteId: "note-1" },
+      {
+        current_llm_provider: "openai",
+        current_llm_model: "gpt-4o",
+        ai_language: "en",
+      },
+    );
+
+    expect(result.session.title).toBe("Weekly Review");
+    expect(consoleWarn).toHaveBeenCalledWith(
+      "[enhance] meeting snapshots unavailable",
+      expect.any(Error),
+    );
+    const [, markdown] = mocks.collectEnhanceImageContext.mock.calls[0]!;
+    expect(markdown).toEqual([
+      "![pre](asset://localhost/pre.png)",
+      "![post](asset://localhost/post.png)",
+    ]);
+    consoleWarn.mockRestore();
+  });
+
   it("builds speaker identity context from SQLite humans", async () => {
     mocks.collectAssignedHumanIdsFromTranscriptRows.mockReturnValue([
       "human-2",
