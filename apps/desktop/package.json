@@ -51,6 +51,7 @@
     "@anlg/plugin-opener2": "workspace:*",
     "@anlg/plugin-permissions": "workspace:*",
     "@anlg/plugin-relay": "workspace:*",
+    "@anlg/plugin-screen": "workspace:*",
     "@anlg/plugin-settings": "workspace:*",
     "@anlg/plugin-sfx": "workspace:*",
     "@anlg/plugin-store2": "workspace:*",

@@ -199,6 +199,7 @@ pub fn main() {
         .plugin(tauri_plugin_template::init())
         .plugin(tauri_plugin_http::init())
         .plugin(tauri_plugin_detect::init())
+        .plugin(tauri_plugin_screen::init())
         .plugin(tauri_plugin_dock::init())
         .plugin(tauri_plugin_notification::init())
         .plugin(tauri_plugin_notify::init())
