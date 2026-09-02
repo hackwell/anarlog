@@ -15,7 +15,7 @@ import systemPromptTemplate from "./past-note-key-facts.system.md.jinja?raw";
 import userPromptTemplate from "./past-note-key-facts.user.md.jinja?raw";
 
 import { useLanguageModel } from "~/ai/hooks";
-import { executeTransaction, useLiveQuery } from "~/db";
+import { executeTransaction, liveQueryClient, useLiveQuery } from "~/db";
 import { enqueueDatabaseWrite } from "~/db/write-queue";
 import { extractPlainText } from "~/search/contexts/engine/utils";
 import { getSessionEvent } from "~/session/utils";
@@ -100,6 +100,62 @@ const EMPTY_SESSIONS: Record<string, PastSessionRow> = {};
 const EMPTY_PARTICIPANTS: PastParticipantRow[] = [];
 const EMPTY_ENHANCED_NOTES: PastEnhancedNoteRow[] = [];
 const EMPTY_KEY_FACTS: Record<string, PastKeyFactsRow> = {};
+
+const SESSIONS_SQL = `
+      SELECT
+        id,
+        owner_user_id AS user_id,
+        title,
+        created_at,
+        event_json
+      FROM sessions
+      WHERE deleted_at IS NULL AND locked = 0
+      ORDER BY created_at, id
+    `;
+const PARTICIPANTS_SQL = `
+      SELECT
+        participant.session_id,
+        participant.human_id,
+        participant.owner_user_id AS user_id,
+        participant.source,
+        COALESCE(
+          NULLIF(human.name, ''),
+          NULLIF(participant.display_name, ''),
+          participant.human_id
+        ) AS name
+      FROM session_participants AS participant
+      LEFT JOIN humans AS human
+        ON human.id = participant.human_id AND human.deleted_at IS NULL
+      WHERE participant.deleted_at IS NULL
+      ORDER BY participant.session_id, participant.created_at, participant.id
+    `;
+const ENHANCED_NOTES_SQL = `
+      SELECT
+        session_id,
+        body AS content,
+        sort_order AS position
+      FROM session_documents
+      WHERE kind IN ('summary', 'template_output') AND deleted_at IS NULL
+        AND session_id IN (
+          SELECT id FROM sessions WHERE deleted_at IS NULL AND locked = 0
+        )
+      ORDER BY session_id, sort_order, created_at, id
+    `;
+const KEY_FACTS_SQL = `
+      SELECT
+        session_id,
+        created_by AS user_id,
+        created_at,
+        updated_at,
+        body AS content,
+        source_hash
+      FROM session_documents
+      WHERE kind = 'key_facts' AND deleted_at IS NULL
+        AND session_id IN (
+          SELECT id FROM sessions WHERE deleted_at IS NULL AND locked = 0
+        )
+      ORDER BY updated_at, id
+    `;
 
 const keyFactsSchema = z.object({
   facts: z.array(z.string()).min(1).max(MAX_KEY_FACTS),
@@ -218,22 +274,31 @@ export function usePastSessionNotes(
   };
 }
 
+/** The same four reads as the hook, for code that runs outside React. */
+export async function loadPastSessionNotesData(): Promise<PastSessionNotesData> {
+  const [sessionRows, participants, enhancedNotes, keyFactRows] =
+    await Promise.all([
+      liveQueryClient.execute<PastSessionRow>(SESSIONS_SQL),
+      liveQueryClient.execute<PastParticipantRow>(PARTICIPANTS_SQL),
+      liveQueryClient.execute<PastEnhancedNoteRow>(ENHANCED_NOTES_SQL),
+      liveQueryClient.execute<PastKeyFactsRow>(KEY_FACTS_SQL),
+    ]);
+  const keyFacts: Record<string, PastKeyFactsRow> = {};
+  for (const row of keyFactRows) keyFacts[row.session_id] = row;
+  return {
+    sessions: Object.fromEntries(sessionRows.map((row) => [row.id, row])),
+    participants,
+    enhancedNotes,
+    keyFacts,
+  };
+}
+
 function usePastSessionNotesData(enabled: boolean): PastSessionNotesData {
   const { data: sessions = EMPTY_SESSIONS } = useLiveQuery<
     PastSessionRow,
     Record<string, PastSessionRow>
   >({
-    sql: `
-      SELECT
-        id,
-        owner_user_id AS user_id,
-        title,
-        created_at,
-        event_json
-      FROM sessions
-      WHERE deleted_at IS NULL AND locked = 0
-      ORDER BY created_at, id
-    `,
+    sql: SESSIONS_SQL,
     enabled,
     mapRows: (rows) =>
       Object.fromEntries(rows.map((row) => [row.id, row])) as Record<
@@ -245,23 +310,7 @@ function usePastSessionNotesData(enabled: boolean): PastSessionNotesData {
     PastParticipantRow,
     PastParticipantRow[]
   >({
-    sql: `
-      SELECT
-        participant.session_id,
-        participant.human_id,
-        participant.owner_user_id AS user_id,
-        participant.source,
-        COALESCE(
-          NULLIF(human.name, ''),
-          NULLIF(participant.display_name, ''),
-          participant.human_id
-        ) AS name
-      FROM session_participants AS participant
-      LEFT JOIN humans AS human
-        ON human.id = participant.human_id AND human.deleted_at IS NULL
-      WHERE participant.deleted_at IS NULL
-      ORDER BY participant.session_id, participant.created_at, participant.id
-    `,
+    sql: PARTICIPANTS_SQL,
     enabled,
     mapRows: (rows) => rows,
   });
@@ -269,18 +318,7 @@ function usePastSessionNotesData(enabled: boolean): PastSessionNotesData {
     PastEnhancedNoteRow,
     PastEnhancedNoteRow[]
   >({
-    sql: `
-      SELECT
-        session_id,
-        body AS content,
-        sort_order AS position
-      FROM session_documents
-      WHERE kind IN ('summary', 'template_output') AND deleted_at IS NULL
-        AND session_id IN (
-          SELECT id FROM sessions WHERE deleted_at IS NULL AND locked = 0
-        )
-      ORDER BY session_id, sort_order, created_at, id
-    `,
+    sql: ENHANCED_NOTES_SQL,
     enabled,
     mapRows: (rows) => rows,
   });
@@ -288,21 +326,7 @@ function usePastSessionNotesData(enabled: boolean): PastSessionNotesData {
     PastKeyFactsRow,
     Record<string, PastKeyFactsRow>
   >({
-    sql: `
-      SELECT
-        session_id,
-        created_by AS user_id,
-        created_at,
-        updated_at,
-        body AS content,
-        source_hash
-      FROM session_documents
-      WHERE kind = 'key_facts' AND deleted_at IS NULL
-        AND session_id IN (
-          SELECT id FROM sessions WHERE deleted_at IS NULL AND locked = 0
-        )
-      ORDER BY updated_at, id
-    `,
+    sql: KEY_FACTS_SQL,
     enabled,
     mapRows: (rows) => {
       const result: Record<string, PastKeyFactsRow> = {};

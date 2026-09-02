@@ -1,5 +1,6 @@
 use crate::{
-    EnhanceTemplate, Error, Participant, Session, Transcript, ValidationError, common_derives,
+    EnhanceTemplate, Error, Participant, PreviousMeeting, Session, Transcript, ValidationError,
+    common_derives,
 };
 use minijinja::{Environment, UndefinedBehavior, context};
 
@@ -103,6 +104,7 @@ common_derives! {
         pub transcripts: Vec<Transcript>,
         pub pre_meeting_memo: String,
         pub post_meeting_memo: String,
+        pub previous_meetings: Vec<PreviousMeeting>,
     }
 }
 
@@ -160,6 +162,7 @@ mod tests {
     - Meeting Notes are the full current state of the user's notes, which may include pre-meeting content plus anything added during the meeting.
     - When both sections are present, focus on what changed or was added in Meeting Notes compared to Pre-Meeting Notes to understand what the user captured during the meeting.
     - Either section may sometimes be empty.
+    - Previous Meetings in This Series, when present, are summaries of earlier occurrences of a recurring meeting. They are background, not source material for today's summary.
 
     # Guidelines
 
@@ -168,6 +171,7 @@ mod tests {
     - Do not add generic opening content such as "Overview", "Meeting Overview", "Introduction", or "Participants" unless the meeting itself was explicitly about those topics.
     - Use Pre-Meeting Notes to understand the user's intent and agenda. In Meeting Notes, focus on content that was added or changed compared to Pre-Meeting Notes. Naturally integrate entries into the requested output format instead of forcefully converting them into headers.
     - Preserve essential details; avoid excessive abstraction. Ensure content remains concrete and specific.
+    - When Previous Meetings are given, carry the thread forward: note what from last time was resolved, what stays open, and what is new. Fold this into the most fitting section unless the template has one for follow-ups. Do not restate earlier content as if it happened today.
     - Pay close attention to emphasized text in notes. Users highlight information using four styles: bold(**text**), italic(_text_), underline(<u>text</u>), strikethrough(~~text~~).
     - Recognize H3 headers (### Header) in notes—these indicate highly important topics that the user wants to retain no matter what.
     - Your final output MUST be ONLY the markdown summary itself.
@@ -299,6 +303,7 @@ End with next steps."#
             }],
             pre_meeting_memo: String::new(),
             post_meeting_memo: String::new(),
+            previous_meetings: vec![],
         }, @"
     # Context
 
@@ -332,6 +337,59 @@ End with next steps."#
     ");
 
     tpl_snapshot!(
+        test_enhance_user_with_previous_meetings,
+        EnhanceUser {
+            session: Session {
+                title: Some("Weekly Sync".to_string()),
+                started_at: None,
+                ended_at: None,
+                event: None,
+            },
+            participants: vec![],
+            template: None,
+            transcripts: vec![Transcript {
+                segments: vec![Segment {
+                    text: "Legal signed off on the pricing copy".to_string(),
+                    speaker: "Maya".to_string(),
+                }],
+                started_at: None,
+                ended_at: None,
+            }],
+            pre_meeting_memo: String::new(),
+            post_meeting_memo: String::new(),
+            previous_meetings: vec![PreviousMeeting {
+                title: "Weekly Sync".to_string(),
+                occurred_at: "2026-08-26".to_string(),
+                summary: "- Pricing copy still with legal\n- Launch email blocked on it".to_string(),
+            }],
+        }, @"
+    # Context
+
+
+    Session: Weekly Sync
+
+
+
+    # Previous Meetings in This Series
+
+    Earlier occurrences, most recent first. Use them only to connect threads: mark what was resolved, what is still open, and what is new. Never present their content as if it was discussed today.
+
+
+    ## Weekly Sync (2026-08-26)
+
+    - Pricing copy still with legal
+    - Launch email blocked on it
+
+
+
+    # Transcript
+
+
+    Maya: Legal signed off on the pricing copy
+    "
+    );
+
+    tpl_snapshot!(
         test_enhance_user_with_memos,
         EnhanceUser {
             session: Session {
@@ -352,6 +410,7 @@ End with next steps."#
             }],
             pre_meeting_memo: "- follow up on PR review\n- align on priorities".to_string(),
             post_meeting_memo: "- check CI\n- ship before EOD".to_string(),
+            previous_meetings: vec![],
         }, @"
     # Context
 

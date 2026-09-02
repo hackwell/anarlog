@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { enhanceTransform } from "./enhance-transform";
+import { enhanceTransform, selectPreviousMeetings } from "./enhance-transform";
 
 const mocks = vi.hoisted(() => ({
   collectEnhanceImageContext: vi.fn(),
@@ -12,6 +12,13 @@ const mocks = vi.hoisted(() => ({
   buildRenderTranscriptRequestFromRows: vi.fn(),
   collectAssignedHumanIdsFromTranscriptRows: vi.fn(),
   renderTranscriptSegments: vi.fn(),
+  loadPastSessionNotesData: vi.fn(),
+  buildPastSessionNotes: vi.fn(),
+}));
+
+vi.mock("~/session/insights/past-notes", () => ({
+  loadPastSessionNotesData: mocks.loadPastSessionNotesData,
+  buildPastSessionNotes: mocks.buildPastSessionNotes,
 }));
 
 vi.mock("./enhance-images", () => ({
@@ -88,11 +95,44 @@ describe("enhanceTransform.transformArgs", () => {
     mocks.collectAssignedHumanIdsFromTranscriptRows.mockReturnValue([]);
     mocks.buildRenderTranscriptRequestFromRows.mockReturnValue(null);
     mocks.renderTranscriptSegments.mockResolvedValue([]);
+    mocks.loadPastSessionNotesData.mockResolvedValue({
+      sessions: {},
+      participants: [],
+      enhancedNotes: [],
+      keyFacts: {},
+    });
+    mocks.buildPastSessionNotes.mockReturnValue({
+      notes: [],
+      missing: [],
+      requests: [],
+    });
     consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
   });
 
   afterEach(() => {
     consoleError.mockRestore();
+  });
+
+  it("passes earlier occurrences of the series to the prompt", async () => {
+    mocks.buildPastSessionNotes.mockReturnValue({
+      notes: [pastNote("older", "same_series", "2026-06-26T10:00:00.000Z")],
+      missing: [],
+      requests: [],
+    });
+
+    const result = await enhanceTransform.transformArgs(
+      { sessionId: "session-1", enhancedNoteId: "note-1", templateId: "" },
+      settingsValues,
+    );
+
+    expect(mocks.buildPastSessionNotes).toHaveBeenCalledWith(
+      expect.anything(),
+      "session-1",
+      "user-1",
+    );
+    expect(result.previousMeetings).toEqual([
+      { title: "Weekly Review", occurredAt: "older", summary: "Summary older" },
+    ]);
   });
 
   it("uses the selected template when it can be loaded", async () => {
@@ -365,5 +405,55 @@ describe("enhanceTransform.transformArgs", () => {
         settingsValues,
       ),
     ).rejects.toThrow("Session missing no longer exists");
+  });
+});
+
+function pastNote(
+  id: string,
+  relationship: "same_series" | "matching_title" | "shared_participants",
+  occurredAt: string,
+  sourceSummary = `Summary ${id}`,
+) {
+  return {
+    sessionId: id,
+    title: "Weekly Review",
+    dateLabel: id,
+    occurredAt,
+    sourceSummary,
+    relationship,
+    summary: null,
+    isGenerating: false,
+  };
+}
+
+describe("selectPreviousMeetings", () => {
+  it("keeps series and title matches, newest first, capped at three", () => {
+    const notes = [
+      pastNote("a", "shared_participants", "2026-07-01T00:00:00.000Z"),
+      pastNote("b", "same_series", "2026-06-01T00:00:00.000Z"),
+      pastNote("c", "matching_title", "2026-06-15T00:00:00.000Z"),
+      pastNote("d", "same_series", "2026-05-01T00:00:00.000Z"),
+      pastNote("e", "same_series", "2026-04-01T00:00:00.000Z"),
+      pastNote("f", "same_series", "2026-06-20T00:00:00.000Z", "   "),
+    ];
+
+    expect(selectPreviousMeetings(notes).map((m) => m.occurredAt)).toEqual([
+      "c",
+      "b",
+      "d",
+    ]);
+  });
+
+  it("truncates long summaries", () => {
+    const [meeting] = selectPreviousMeetings([
+      pastNote(
+        "x",
+        "same_series",
+        "2026-06-01T00:00:00.000Z",
+        "y".repeat(3000),
+      ),
+    ]);
+    expect(meeting?.summary.length).toBe(2501);
+    expect(meeting?.summary.endsWith("…")).toBe(true);
   });
 });
