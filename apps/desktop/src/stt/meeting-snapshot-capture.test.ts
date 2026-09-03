@@ -9,6 +9,8 @@ const mocks = vi.hoisted(() => ({
   checkPermission: vi.fn(),
   catalog: vi.fn(),
   persist: vi.fn(),
+  loadRecords: vi.fn(),
+  recognize: vi.fn(),
   decode: vi.fn(),
   toastWarning: vi.fn(),
   setting: { value: true },
@@ -21,7 +23,10 @@ vi.mock("@anlg/plugin-detect", () => ({
   },
 }));
 vi.mock("@anlg/plugin-screen", () => ({
-  commands: { captureTargetWindowContext: mocks.capture },
+  commands: {
+    captureTargetWindowContext: mocks.capture,
+    recognizeImageText: mocks.recognize,
+  },
 }));
 vi.mock("@anlg/plugin-fs-sync", () => ({
   commands: {
@@ -38,6 +43,7 @@ vi.mock("~/session/attachments", () => ({
 }));
 vi.mock("~/stt/meeting-snapshot-records", () => ({
   persistMeetingSnapshotRecord: mocks.persist,
+  loadMeetingSnapshotRecords: mocks.loadRecords,
   MAX_MEETING_SNAPSHOTS: 60,
 }));
 vi.mock("~/stt/meeting-snapshot-diff", async () => ({
@@ -134,6 +140,8 @@ describe("startMeetingSnapshotCapture", () => {
     });
     mocks.catalog.mockResolvedValue(undefined);
     mocks.persist.mockResolvedValue("doc-1");
+    mocks.loadRecords.mockResolvedValue([]);
+    mocks.recognize.mockResolvedValue({ status: "ok", data: "Q3 roadmap\n" });
     mocks.decode.mockResolvedValue(frame(10));
     mocks.attachmentRemove.mockResolvedValue({ status: "ok", data: null });
   });
@@ -147,7 +155,7 @@ describe("startMeetingSnapshotCapture", () => {
     await flush();
 
     expect(mocks.capture).toHaveBeenCalledWith(
-      { pid: 42, appName: "zoom.us", title: "Zoom Meeting" },
+      { windowId: null, pid: 42, appName: "zoom.us", title: "Zoom Meeting" },
       { imagePolicy: { maxLongSide: 1600 } },
     );
     expect(mocks.attachmentSave).toHaveBeenCalledWith(
@@ -164,6 +172,7 @@ describe("startMeetingSnapshotCapture", () => {
         windowTitle: "Zoom Meeting",
         width: 1600,
         height: 900,
+        text: "Q3 roadmap",
       }),
     );
     await stop();
@@ -190,6 +199,15 @@ describe("startMeetingSnapshotCapture", () => {
 
     await vi.advanceTimersByTimeAsync(MEETING_SNAPSHOT_MIN_GAP_MS);
     expect(mocks.attachmentSave).toHaveBeenCalledTimes(2);
+    await stop();
+  });
+
+  test("counts frames already stored for the session toward the cap", async () => {
+    mocks.loadRecords.mockResolvedValue(new Array(60).fill({ id: "old" }));
+    const stop = startMeetingSnapshotCapture({ sessionId: "session-1" });
+    await flush();
+
+    expect(mocks.capture).not.toHaveBeenCalled();
     await stop();
   });
 
@@ -249,7 +267,7 @@ describe("startMeetingSnapshotCapture", () => {
     await flush();
 
     expect(mocks.capture).toHaveBeenCalledWith(
-      { pid: 42, appName: "zoom.us", title: "Zoom Meeting" },
+      { windowId: null, pid: 42, appName: "zoom.us", title: "Zoom Meeting" },
       { imagePolicy: { maxLongSide: 1600 } },
     );
     await stop();

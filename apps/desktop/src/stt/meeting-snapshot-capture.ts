@@ -15,6 +15,7 @@ import {
 } from "~/stt/meeting-snapshot-diff";
 import {
   MAX_MEETING_SNAPSHOTS,
+  loadMeetingSnapshotRecords,
   persistMeetingSnapshotRecord,
 } from "~/stt/meeting-snapshot-records";
 
@@ -49,7 +50,9 @@ export function startMeetingSnapshotCapture({
   let inFlight: Promise<void> | null = null;
   let permissionChecked = false;
   let lastKept: { grey: Uint8Array; atMs: number } | null = null;
-  let keptCount = 0;
+  // The cap is per session, not per listening run: a session that was stopped
+  // and resumed continues counting where it left off.
+  let keptCount: number | null = null;
   let lastCaptureError = "";
   let interval: ReturnType<typeof setInterval> | null = null;
 
@@ -80,13 +83,19 @@ export function startMeetingSnapshotCapture({
       }
     }
     if (stopped || !(await captureIsEnabled())) return;
+    keptCount ??= (await loadMeetingSnapshotRecords(sessionId)).length;
     if (keptCount >= MAX_MEETING_SNAPSHOTS) return;
 
     const target = await findMeetingWindow();
     if (!target || stopped || !(await captureIsEnabled())) return;
 
     const captured = await screenCommands.captureTargetWindowContext(
-      { pid: target.pid, appName: target.app.name, title: target.windowTitle },
+      {
+        windowId: null,
+        pid: target.pid,
+        appName: target.app.name,
+        title: target.windowTitle,
+      },
       { imagePolicy: { maxLongSide: MAX_LONG_SIDE } },
     );
     if (captured.status === "error") {
@@ -152,6 +161,7 @@ export function startMeetingSnapshotCapture({
         height: captured.data.height,
         appName: target.app.name,
         windowTitle: target.windowTitle ?? "",
+        text: await recognizeText(captured.data.dataBase64),
       });
     } catch (error) {
       console.warn(
@@ -224,6 +234,17 @@ async function findMeetingWindow(): Promise<MeetingAccessibilityInspection | nul
     micApps.status === "ok" ? micApps.data.map((app) => app.id) : [],
   );
   return titled.find((entry) => micIds.has(entry.app.id)) ?? titled[0] ?? null;
+}
+
+// Only kept frames are read: OCR at accurate level costs a few hundred ms, and
+// most ticks are discarded as unchanged.
+async function recognizeText(dataBase64: string) {
+  const result = await screenCommands.recognizeImageText(dataBase64);
+  if (result.status === "error") {
+    console.warn("[listener] slide text recognition failed", result.error);
+    return "";
+  }
+  return result.data.trim();
 }
 
 function timeStamp(atMs: number) {
