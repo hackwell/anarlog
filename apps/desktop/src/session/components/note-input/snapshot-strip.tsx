@@ -29,7 +29,7 @@ export function SnapshotStrip({ sessionId }: { sessionId: string }) {
   return (
     <div
       data-session-snapshots
-      className="scrollbar-hide flex shrink-0 gap-2 overflow-x-auto px-3 pt-2 pb-1"
+      className="flex shrink-0 gap-2 overflow-x-auto px-3 pt-2 pb-2"
     >
       {records.map((record) => {
         const time = formatTime(record.capturedAtMs);
