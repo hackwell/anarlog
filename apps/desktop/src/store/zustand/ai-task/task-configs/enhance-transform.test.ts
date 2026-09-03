@@ -1,6 +1,10 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { enhanceTransform, selectPreviousMeetings } from "./enhance-transform";
+import {
+  enhanceTransform,
+  selectPreviousMeetings,
+  slideTexts,
+} from "./enhance-transform";
 
 const mocks = vi.hoisted(() => ({
   collectEnhanceImageContext: vi.fn(),
@@ -407,6 +411,42 @@ describe("enhanceTransform.transformArgs", () => {
     // Slide text rides along as plain text; frames without readable text stay out.
     expect(result.slides).toEqual([
       { shownAt: label, text: "Q3 Roadmap\n- Onboarding v2" },
+    ]);
+  });
+
+  it("drops slide lines the previous frame already showed", () => {
+    const record = {
+      id: "doc",
+      attachmentId: "att",
+      filename: "slide.webp",
+      path: "/tmp/slide.webp",
+      capturedAtMs: Date.UTC(2026, 8, 2, 14, 3, 1),
+      width: 1600,
+      height: 900,
+      appName: "zoom.us",
+      windowTitle: "Zoom Meeting",
+      text: "",
+    };
+    const slides = slideTexts([
+      {
+        ...record,
+        text: "ACME Deck\nQ3 Roadmap\n- Onboarding v2\nSlide 1 of 9",
+      },
+      {
+        ...record,
+        capturedAtMs: record.capturedAtMs + 60_000,
+        text: "ACME Deck\nHiring plan\n- 2 engineers\nSlide 2 of 9",
+      },
+      {
+        ...record,
+        capturedAtMs: record.capturedAtMs + 120_000,
+        text: "ACME Deck\nHiring plan\n- 2 engineers\nSlide 2 of 9",
+      },
+    ]);
+
+    expect(slides.map((slide) => slide.text)).toEqual([
+      "ACME Deck\nQ3 Roadmap\n- Onboarding v2\nSlide 1 of 9",
+      "Hiring plan\n- 2 engineers\nSlide 2 of 9",
     ]);
   });
 

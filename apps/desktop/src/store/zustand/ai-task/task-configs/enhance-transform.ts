@@ -189,14 +189,26 @@ async function loadPreviousMeetings(
 const MAX_SLIDE_TEXT_CHARS = 1500;
 
 // Recognised slide text reaches the prompt as plain text, so a model without
-// image input still learns what was on screen.
+// image input still learns what was on screen. Lines the previous frame
+// already showed (deck header, footer, meeting controls) are left out, so
+// each entry carries what changed on screen.
 export function slideTexts(records: MeetingSnapshotRecord[]): SlideText[] {
-  return records
-    .filter((record) => record.text.trim() !== "")
-    .map((record) => ({
+  let previousLines = new Set<string>();
+  const slides: SlideText[] = [];
+  for (const record of records) {
+    const lines = record.text
+      .split("\n")
+      .map((line) => line.trim())
+      .filter((line) => line !== "");
+    const fresh = lines.filter((line) => !previousLines.has(line));
+    previousLines = new Set(lines);
+    if (fresh.length === 0) continue;
+    slides.push({
       shownAt: formatSlideTime(record.capturedAtMs),
-      text: truncate(record.text.trim(), MAX_SLIDE_TEXT_CHARS),
-    }));
+      text: truncate(fresh.join("\n"), MAX_SLIDE_TEXT_CHARS),
+    });
+  }
+  return slides;
 }
 
 async function loadSnapshots(
