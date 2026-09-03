@@ -376,11 +376,24 @@ describe("enhanceTransform.transformArgs", () => {
         height: 900,
         appName: "zoom.us",
         windowTitle: "Zoom Meeting",
+        text: "Q3 Roadmap\n- Onboarding v2",
+      },
+      {
+        id: "doc-2",
+        attachmentId: "att-2",
+        filename: "slide-140401.jpg",
+        path: "/tmp/att-2.jpg",
+        capturedAtMs: capturedAtMs + 60_000,
+        width: 1600,
+        height: 900,
+        appName: "zoom.us",
+        windowTitle: "Zoom Meeting",
+        text: "   ",
       },
     ]);
     mocks.collectEnhanceImageContext.mockResolvedValue([]);
 
-    await enhanceTransform.transformArgs(
+    const result = await enhanceTransform.transformArgs(
       { sessionId: "session-1", enhancedNoteId: "note-1", templateId: "" },
       {
         current_llm_provider: "openai",
@@ -391,6 +404,10 @@ describe("enhanceTransform.transformArgs", () => {
 
     const [, markdown] = mocks.collectEnhanceImageContext.mock.calls[0]!;
     expect(markdown).toContain(`![Slide ${label}](/tmp/att-1.jpg)`);
+    // Slide text rides along as plain text; frames without readable text stay out.
+    expect(result.slides).toEqual([
+      { shownAt: label, text: "Q3 Roadmap\n- Onboarding v2" },
+    ]);
   });
 
   it("keeps summaries working when snapshot lookup fails", async () => {

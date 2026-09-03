@@ -26,6 +26,17 @@ Earlier occurrences, most recent first. Use them only to connect threads: mark w
 
 {{ meeting.summary }}
 {% endfor %}
+{% endif %}{% if !slides.is_empty() %}
+
+# Slides Shown
+
+Text read from the meeting window while it was on screen. Use it to name the topics and figures precisely; it says what was shown, not what was agreed.
+{% for slide in slides %}
+
+## Slide at {{ slide.shown_at }}
+
+{{ slide.text }}
+{% endfor %}
 {% endif %}
 
 # Transcript

@@ -7,6 +7,7 @@ import type {
   Participant,
   PreviousMeeting,
   Segment,
+  SlideText,
   Session,
   TemplateSection,
   Transcript,
@@ -101,6 +102,7 @@ async function transformArgs(
   const language = getLanguage(settingsValues);
   const formatOverride = getFormatOverride(settingsValues, templateId);
   const segments = await getTranscriptSegments(snapshot);
+  const snapshots = await loadSnapshots(sessionId);
   const imageContext = modelSupportsImageInput(
     getOptionalSettingsValue(settingsValues, "current_llm_provider"),
     getOptionalSettingsValue(settingsValues, "current_llm_model"),
@@ -108,7 +110,7 @@ async function transformArgs(
     ? await collectEnhanceImageContext(sessionId, [
         sessionContext.preMeetingMemo,
         sessionContext.postMeetingMemo,
-        ...(await loadSnapshotImageMarkdown(sessionId)),
+        ...snapshotImageMarkdown(snapshots),
       ])
     : [];
 
@@ -124,6 +126,7 @@ async function transformArgs(
       sessionId,
       snapshot.ownerUserId,
     ),
+    slides: slideTexts(snapshots),
     transcripts: formatTranscripts(segments, sessionContext.transcriptsMeta),
     imageContext,
     summaryLength: normalizeSummaryLengthMode(settingsValues.summary_length),
@@ -163,13 +166,10 @@ export function selectPreviousMeetings(
 // Slides ride along as markdown image lines so the existing attachment lookup,
 // byte budget, and sampling apply to them like to images in the note.
 export function snapshotImageMarkdown(records: MeetingSnapshotRecord[]) {
-  return records.map((record) => {
-    const date = new Date(record.capturedAtMs);
-    const time = `${String(date.getHours()).padStart(2, "0")}:${String(
-      date.getMinutes(),
-    ).padStart(2, "0")}`;
-    return `![Slide ${time}](${record.path})`;
-  });
+  return records.map(
+    (record) =>
+      `![Slide ${formatSlideTime(record.capturedAtMs)}](${record.path})`,
+  );
 }
 
 async function loadPreviousMeetings(
@@ -186,14 +186,35 @@ async function loadPreviousMeetings(
   }
 }
 
-async function loadSnapshotImageMarkdown(sessionId: string): Promise<string[]> {
+const MAX_SLIDE_TEXT_CHARS = 1500;
+
+// Recognised slide text reaches the prompt as plain text, so a model without
+// image input still learns what was on screen.
+export function slideTexts(records: MeetingSnapshotRecord[]): SlideText[] {
+  return records
+    .filter((record) => record.text.trim() !== "")
+    .map((record) => ({
+      shownAt: formatSlideTime(record.capturedAtMs),
+      text: truncate(record.text.trim(), MAX_SLIDE_TEXT_CHARS),
+    }));
+}
+
+async function loadSnapshots(
+  sessionId: string,
+): Promise<MeetingSnapshotRecord[]> {
   try {
-    const records = await loadMeetingSnapshotRecords(sessionId);
-    return snapshotImageMarkdown(records);
+    return await loadMeetingSnapshotRecords(sessionId);
   } catch (error) {
     console.warn("[enhance] meeting snapshots unavailable", error);
     return [];
   }
+}
+
+function formatSlideTime(atMs: number) {
+  const date = new Date(atMs);
+  return `${String(date.getHours()).padStart(2, "0")}:${String(
+    date.getMinutes(),
+  ).padStart(2, "0")}`;
 }
 
 function truncate(value: string, max: number) {

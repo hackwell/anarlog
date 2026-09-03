@@ -1,6 +1,6 @@
 use crate::{
-    EnhanceTemplate, Error, Participant, PreviousMeeting, Session, Transcript, ValidationError,
-    common_derives,
+    EnhanceTemplate, Error, Participant, PreviousMeeting, Session, SlideText, Transcript,
+    ValidationError, common_derives,
 };
 use minijinja::{Environment, UndefinedBehavior, context};
 
@@ -105,6 +105,7 @@ common_derives! {
         pub pre_meeting_memo: String,
         pub post_meeting_memo: String,
         pub previous_meetings: Vec<PreviousMeeting>,
+        pub slides: Vec<SlideText>,
     }
 }
 
@@ -163,6 +164,7 @@ mod tests {
     - When both sections are present, focus on what changed or was added in Meeting Notes compared to Pre-Meeting Notes to understand what the user captured during the meeting.
     - Either section may sometimes be empty.
     - Previous Meetings in This Series, when present, are summaries of earlier occurrences of a recurring meeting. They are background, not source material for today's summary.
+    - Slides Shown, when present, is text recognised from the meeting window. It names what was on screen; the transcript says what people made of it.
 
     # Guidelines
 
@@ -304,6 +306,7 @@ End with next steps."#
             pre_meeting_memo: String::new(),
             post_meeting_memo: String::new(),
             previous_meetings: vec![],
+            slides: vec![],
         }, @"
     # Context
 
@@ -362,6 +365,7 @@ End with next steps."#
                 occurred_at: "2026-08-26".to_string(),
                 summary: "- Pricing copy still with legal\n- Launch email blocked on it".to_string(),
             }],
+            slides: vec![],
         }, @"
     # Context
 
@@ -390,6 +394,60 @@ End with next steps."#
     );
 
     tpl_snapshot!(
+        test_enhance_user_with_slides,
+        EnhanceUser {
+            session: Session {
+                title: Some("Roadmap Review".to_string()),
+                started_at: None,
+                ended_at: None,
+                event: None,
+            },
+            participants: vec![],
+            template: None,
+            transcripts: vec![Transcript {
+                segments: vec![Segment {
+                    text: "Walking through the milestones".to_string(),
+                    speaker: "Alex".to_string(),
+                }],
+                started_at: None,
+                ended_at: None,
+            }],
+            pre_meeting_memo: String::new(),
+            post_meeting_memo: String::new(),
+            previous_meetings: vec![],
+            slides: vec![SlideText {
+                shown_at: "14:03".to_string(),
+                text: "Q3 Roadmap\n- Onboarding v2\n- Pricing page".to_string(),
+            }],
+        }, @"
+    # Context
+
+
+    Session: Roadmap Review
+
+
+
+    # Slides Shown
+
+    Text read from the meeting window while it was on screen. Use it to name the topics and figures precisely; it says what was shown, not what was agreed.
+
+
+    ## Slide at 14:03
+
+    Q3 Roadmap
+    - Onboarding v2
+    - Pricing page
+
+
+
+    # Transcript
+
+
+    Alex: Walking through the milestones
+    "
+    );
+
+    tpl_snapshot!(
         test_enhance_user_with_memos,
         EnhanceUser {
             session: Session {
@@ -411,6 +469,7 @@ End with next steps."#
             pre_meeting_memo: "- follow up on PR review\n- align on priorities".to_string(),
             post_meeting_memo: "- check CI\n- ship before EOD".to_string(),
             previous_meetings: vec![],
+            slides: vec![],
         }, @"
     # Context
 

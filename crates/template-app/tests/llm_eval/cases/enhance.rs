@@ -70,6 +70,9 @@ pub fn structured_summary(samples: usize) -> Result<EvalCase, Failed> {
                     post_meeting_memo: "- check CI\n- ship before EOD".to_string(),
 
                     previous_meetings: vec![],
+
+
+                    slides: vec![],
                 })))
                 .map_err(render_failed)?,
             },
