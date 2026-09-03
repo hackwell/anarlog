@@ -11,6 +11,7 @@ import { BatchState } from "./screens/batch";
 import { TranscriptEmptyState } from "./screens/empty";
 import { TranscriptListeningState } from "./screens/listening";
 import { useTranscriptScreen } from "./state";
+import { useAudioPeaks } from "./use-audio-peaks";
 
 import { useListener } from "~/stt/contexts";
 import { useUploadFile } from "~/stt/useUploadFile";
@@ -77,6 +78,10 @@ function TranscriptContent({
   editMode: boolean;
 }) {
   const screen = useTranscriptScreen({ sessionId });
+  const waveform = useAudioPeaks(
+    sessionId,
+    screen.kind === "running_batch" && screen.phase !== "importing",
+  );
   const { uploadAudio, uploadTranscript } = useUploadFile(sessionId);
   const regenerateTranscript = useRegenerateTranscript(sessionId);
   const stopTranscription = useListener((state) => state.stopTranscription);
@@ -91,6 +96,7 @@ function TranscriptContent({
           isBatching
           percentage={screen.percentage}
           phase={screen.phase}
+          waveform={waveform}
           onStopTranscription={
             screen.phase === "importing" ? undefined : handleStopTranscription
           }

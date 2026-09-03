@@ -36,6 +36,10 @@ vi.mock("./screens/batch", () => ({
   BatchState: () => <div data-testid="batch-state" />,
 }));
 
+vi.mock("./use-audio-peaks", () => ({
+  useAudioPeaks: () => null,
+}));
+
 vi.mock("./screens/empty", () => ({
   TranscriptEmptyState: () => <div data-testid="empty-state" />,
 }));

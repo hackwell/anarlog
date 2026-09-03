@@ -50,6 +50,12 @@ msgstr "{0} konnte nicht installiert werden"
 msgid "{0} is ready to use"
 msgstr "{0} ist einsatzbereit"
 
+#. placeholder {0}: formatClock(progress * waveform.durationMs)
+#. placeholder {1}: formatClock(waveform.durationMs)
+#: src/session/components/note-input/transcript/screens/empty.tsx
+msgid "{0} of {1} processed"
+msgstr "{0} von {1} verarbeitet"
+
 #. placeholder {0}: issue.user?.login
 #: src/task/resource-view.tsx
 msgid "{0} opened on"
@@ -60,7 +66,7 @@ msgstr "{0} eröffnet am"
 msgid "{0} pending edits"
 msgstr "{0} ausstehende Änderungen"
 
-#. placeholder {0}: Math.round((percentage ?? 0) * 100)
+#. placeholder {0}: Math.round(progress * 100)
 #: src/session/components/note-input/transcript/screens/empty.tsx
 msgid "{0}% complete"
 msgstr "{0} % abgeschlossen"
