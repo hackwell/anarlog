@@ -8,6 +8,50 @@ use image::{
 };
 use xcap::{Monitor, Window, XCapError};
 
+#[cfg(target_os = "macos")]
+mod macos {
+    use swift_rs::{SRData, SRString, swift};
+
+    swift!(fn _sck_capture_window_png_base64(window_id: u32, max_long_side: u32) -> SRString);
+    swift!(fn _vision_recognize_text(png: &SRData) -> SRString);
+
+    /// PNG bytes of exactly this window via ScreenCaptureKit, or `None` when
+    /// the window is gone, access is missing, or the call timed out.
+    pub fn capture_window_png(window_id: u32, max_long_side: u32) -> Option<Vec<u8>> {
+        use base64::Engine;
+
+        let encoded = unsafe { _sck_capture_window_png_base64(window_id, max_long_side) };
+        let encoded = encoded.as_str();
+        if encoded.is_empty() {
+            return None;
+        }
+        base64::engine::general_purpose::STANDARD
+            .decode(encoded)
+            .ok()
+            .filter(|bytes| !bytes.is_empty())
+    }
+
+    pub fn recognize_text(png: &[u8]) -> String {
+        let data = SRData::from(png);
+        let text = unsafe { _vision_recognize_text(&data) };
+        text.as_str().to_string()
+    }
+}
+
+/// Text visible in a PNG, top to bottom, one line per recognised line.
+/// Only macOS has an on-device recogniser wired up; elsewhere this is empty.
+pub fn recognize_text(png: &[u8]) -> String {
+    #[cfg(target_os = "macos")]
+    {
+        macos::recognize_text(png)
+    }
+    #[cfg(not(target_os = "macos"))]
+    {
+        let _ = png;
+        String::new()
+    }
+}
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum CaptureStrategy {
     WindowOnly,
@@ -372,6 +416,24 @@ fn capture_window_source(
 
     if metadata.rect.width == 0 || metadata.rect.height == 0 {
         return Err(Error::InvalidWindowBounds);
+    }
+
+    #[cfg(target_os = "macos")]
+    if let Some(bytes) = macos::capture_window_png(metadata.id, image_policy.max_long_side)
+        && let Ok(dimensions) = image::ImageReader::new(std::io::Cursor::new(&bytes))
+            .with_guessed_format()
+            .and_then(|reader| reader.into_dimensions().map_err(std::io::Error::other))
+    {
+        return Ok(WindowContextImage {
+            image_bytes: bytes,
+            mime_type: "image/png".to_string(),
+            captured_at_ms: unix_ms(SystemTime::now()),
+            width: dimensions.0,
+            height: dimensions.1,
+            strategy: CaptureStrategy::WindowOnly,
+            crop: metadata.rect,
+            subject: CaptureSubject::Window(metadata),
+        });
     }
 
     let (crop, strategy) = compute_capture_rect(metadata.rect, monitor_rect)?;

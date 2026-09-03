@@ -13148,7 +13148,9 @@ checksum = "94143f37725109f92c262ed2cf5e59bce7498c01bcc1502d7b9afe439a4e9f49"
 name = "screen-core"
 version = "0.1.0"
 dependencies = [
+ "base64 0.22.1",
  "image",
+ "swift-rs 1.0.7 (git+https://github.com/yujonglee/swift-rs?rev=41a1605)",
  "thiserror 2.0.18",
  "xcap",
 ]
