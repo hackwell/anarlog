@@ -185,6 +185,24 @@ describe("startMeetingSnapshotCapture", () => {
     await stop();
   });
 
+  test("names the file after the captured mime type", async () => {
+    const result = captureResult();
+    result.data.mimeType = "image/webp";
+    mocks.capture.mockResolvedValue(result);
+    const stop = startMeetingSnapshotCapture({ sessionId: "session-1" });
+    await flush();
+
+    expect(mocks.attachmentSave).toHaveBeenCalledWith(
+      "session-1",
+      expect.any(Array),
+      "slide-140301.webp",
+    );
+    expect(mocks.catalog).toHaveBeenCalledWith(
+      expect.objectContaining({ contentType: "image/webp" }),
+    );
+    await stop();
+  });
+
   test("skips frames that look like the last kept one", async () => {
     const stop = startMeetingSnapshotCapture({ sessionId: "session-1" });
     await flush();

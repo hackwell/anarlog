@@ -3,9 +3,7 @@ use std::{
     time::{SystemTime, UNIX_EPOCH},
 };
 
-use image::{
-    ExtendedColorType, ImageEncoder, RgbaImage, codecs::png::PngEncoder, imageops::FilterType,
-};
+use image::{RgbaImage, imageops::FilterType};
 use xcap::{Monitor, Window, XCapError};
 
 #[cfg(target_os = "macos")]
@@ -451,16 +449,17 @@ fn capture_window_source(
                 rect.height,
             )
         }),
-    ) && let Ok(dimensions) = image::ImageReader::new(std::io::Cursor::new(&bytes))
-        .with_guessed_format()
-        .and_then(|reader| reader.into_dimensions().map_err(std::io::Error::other))
+    ) && let Ok(decoded) = image::load_from_memory(&bytes)
     {
+        let image = decoded.into_rgba8();
+        let (width, height) = image.dimensions();
+        let encoded = encode_webp(&image);
         return Ok(WindowContextImage {
-            image_bytes: bytes,
-            mime_type: "image/png".to_string(),
+            image_bytes: encoded.bytes,
+            mime_type: encoded.mime_type.to_string(),
             captured_at_ms: unix_ms(SystemTime::now()),
-            width: dimensions.0,
-            height: dimensions.1,
+            width,
+            height,
             strategy: CaptureStrategy::WindowOnly,
             crop: subject_rect,
             subject: CaptureSubject::Window(metadata),
@@ -507,7 +506,7 @@ fn build_capture_image(
 ) -> Result<WindowContextImage> {
     let image = resize_for_model(image, image_policy.max_long_side);
     let (width, height) = image.dimensions();
-    let encoded = encode_png(&image)?;
+    let encoded = encode_webp(&image);
 
     Ok(WindowContextImage {
         image_bytes: encoded.bytes,
@@ -692,18 +691,18 @@ struct EncodedImage {
     mime_type: &'static str,
 }
 
-fn encode_png(image: &RgbaImage) -> Result<EncodedImage> {
-    let mut bytes = Vec::new();
-    PngEncoder::new(&mut bytes).write_image(
-        image.as_raw(),
-        image.width(),
-        image.height(),
-        ExtendedColorType::Rgba8,
-    )?;
-    Ok(EncodedImage {
+// Lossy WebP at 80 is ~20x smaller than PNG on slide frames and every LLM
+// provider with image input accepts it; Vision reads it without loss of text.
+const WEBP_QUALITY: f32 = 80.0;
+
+fn encode_webp(image: &RgbaImage) -> EncodedImage {
+    let bytes = webp::Encoder::from_rgba(image.as_raw(), image.width(), image.height())
+        .encode(WEBP_QUALITY)
+        .to_vec();
+    EncodedImage {
         bytes,
-        mime_type: "image/png",
-    })
+        mime_type: "image/webp",
+    }
 }
 
 fn unix_ms(value: SystemTime) -> i64 {
@@ -767,7 +766,7 @@ mod tests {
     use super::{
         CaptureRect, CaptureStage, CaptureStrategy, Error, WindowCandidate, WindowCaptureTarget,
         WindowContextImagePolicy, clamp_rect_around_window, compute_capture_rect,
-        content_source_rect, encode_png, execute_capture_plan, same_pid_match_score,
+        content_source_rect, encode_webp, execute_capture_plan, same_pid_match_score,
         select_exact_target_candidate, select_frontmost_candidate,
         select_same_pid_best_match_candidate,
     };
@@ -1039,11 +1038,12 @@ mod tests {
     }
 
     #[test]
-    fn encode_png_uses_png_container() {
-        let image = RgbaImage::from_raw(1, 1, vec![0, 0, 0, 255]).unwrap();
-        let encoded = encode_png(&image).unwrap();
+    fn encode_webp_uses_webp_container() {
+        let image = RgbaImage::from_raw(2, 2, vec![0, 0, 0, 255].repeat(4)).unwrap();
+        let encoded = encode_webp(&image);
 
-        assert_eq!(encoded.mime_type, "image/png");
-        assert_eq!(&encoded.bytes[..8], b"\x89PNG\r\n\x1a\n");
+        assert_eq!(encoded.mime_type, "image/webp");
+        assert_eq!(&encoded.bytes[..4], b"RIFF");
+        assert_eq!(&encoded.bytes[8..12], b"WEBP");
     }
 }

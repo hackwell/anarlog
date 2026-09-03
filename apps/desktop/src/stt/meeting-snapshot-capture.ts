@@ -23,6 +23,11 @@ export const MEETING_SNAPSHOT_INTERVAL_MS = 10_000;
 export const MEETING_SNAPSHOT_MIN_GAP_MS = 15_000;
 export const MEETING_SNAPSHOT_CHANGE_THRESHOLD = 0.06;
 const MAX_LONG_SIDE = 1600;
+const IMAGE_EXTENSIONS: Record<string, string> = {
+  "image/webp": "webp",
+  "image/png": "png",
+  "image/jpeg": "jpg",
+};
 
 /**
  * Screenshots only the meeting window, and only when what it shows changed.
@@ -148,7 +153,7 @@ export function startMeetingSnapshotCapture({
     const bytes = Uint8Array.from(atob(captured.data.dataBase64), (char) =>
       char.charCodeAt(0),
     );
-    const extension = captured.data.mimeType === "image/png" ? "png" : "jpg";
+    const extension = IMAGE_EXTENSIONS[captured.data.mimeType] ?? "png";
     const filename = `slide-${timeStamp(capturedAtMs)}.${extension}`;
     const saved = await fsSyncCommands.attachmentSave(
       sessionId,
