@@ -46,11 +46,12 @@ async recognizeImageText(dataBase64: string) : Promise<Result<string, string>> {
 
 /** user-defined types **/
 
+export type CaptureInsets = { top: number; left: number; bottom: number; right: number }
 export type CaptureRect = { x: number; y: number; width: number; height: number }
 export type CaptureStrategy = "window_only" | "window_with_context" | "display"
 export type CaptureSubject = { kind: "window"; window: WindowContextMetadata } | { kind: "display"; display: DisplayContextMetadata }
 export type DisplayContextMetadata = { id: number; name: string; rect: CaptureRect; isPrimary: boolean }
-export type WindowCaptureTarget = { windowId: number | null; pid: number; appName: string | null; title: string | null; contentRect?: CaptureRect | null }
+export type WindowCaptureTarget = { windowId: number | null; pid: number; appName: string | null; title: string | null; contentInsets?: CaptureInsets | null }
 export type WindowContextCapture = { mimeType: string; dataBase64: string; capturedAtMs: number; width: number; height: number; strategy: CaptureStrategy; crop: CaptureRect; subject: CaptureSubject }
 export type WindowContextCaptureOptions = { imagePolicy: WindowContextImagePolicy | null }
 export type WindowContextImagePolicy = { maxLongSide: number | null }

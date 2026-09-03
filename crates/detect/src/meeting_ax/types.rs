@@ -78,9 +78,11 @@ pub struct MeetingAccessibilityInspection {
     pub surface: MeetingSurface,
     pub accessibility_trusted: bool,
     pub window_title: Option<String>,
-    /// Screen-space frame of the browser's web content, so a capture can leave
-    /// out tab strip, toolbar and bookmarks. `None` for native apps.
-    pub content_frame: Option<AxRect>,
+    /// Distance from the window edges to the page's web content, so a capture
+    /// can leave out tab strip, toolbar and bookmarks. Insets rather than a
+    /// frame: they stay valid while the window moves. `None` for native apps
+    /// or when no page web area was reachable.
+    pub content_insets: Option<AxInsets>,
     pub participant_streams: Vec<MeetingParticipantStream>,
     pub active_speakers: Vec<String>,
     pub warnings: Vec<String>,
@@ -186,6 +188,15 @@ pub(super) enum UniqueMatch {
     Missing,
     One(usize),
     Ambiguous,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, serde::Serialize, serde::Deserialize, specta::Type)]
+#[serde(rename_all = "camelCase")]
+pub struct AxInsets {
+    pub top: f64,
+    pub left: f64,
+    pub bottom: f64,
+    pub right: f64,
 }
 
 #[cfg(target_os = "macos")]

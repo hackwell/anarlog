@@ -152,15 +152,23 @@ pub struct WindowContextImage {
     pub subject: CaptureSubject,
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+pub struct CaptureInsets {
+    pub top: u32,
+    pub left: u32,
+    pub bottom: u32,
+    pub right: u32,
+}
+
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct WindowCaptureTarget {
     pub window_id: Option<u32>,
     pub pid: u32,
     pub app_name: Option<String>,
     pub title: Option<String>,
-    /// Screen-space region to keep, e.g. a browser's web content without its
-    /// toolbars. Clipped to the window; ignored when it barely overlaps.
-    pub content_rect: Option<CaptureRect>,
+    /// Edges to trim off the window, e.g. a browser's toolbars around its web
+    /// content. Ignored when too little of the window would remain.
+    pub content_insets: Option<CaptureInsets>,
 }
 
 #[derive(Debug, thiserror::Error)]
@@ -237,7 +245,7 @@ where
             let Some(window) = resolve_exact_target_window(target)? else {
                 return Ok(None);
             };
-            capture_window_source(&window, image_policy.clone(), target.content_rect).map(Some)
+            capture_window_source(&window, image_policy.clone(), target.content_insets).map(Some)
         }
         CaptureStage::SamePidWindow => {
             let Some(target) = target else {
@@ -246,7 +254,7 @@ where
             let Some(window) = resolve_same_pid_window(target)? else {
                 return Ok(None);
             };
-            capture_window_source(&window, image_policy.clone(), target.content_rect).map(Some)
+            capture_window_source(&window, image_policy.clone(), target.content_insets).map(Some)
         }
         CaptureStage::FrontmostWindow => {
             let Some(window) = resolve_frontmost_window()? else {
@@ -424,7 +432,7 @@ fn same_pid_match_score(target: &WindowCaptureTarget, candidate: &WindowCandidat
 fn capture_window_source(
     window: &Window,
     image_policy: WindowContextImagePolicy,
-    content_rect: Option<CaptureRect>,
+    content_insets: Option<CaptureInsets>,
 ) -> Result<WindowContextImage> {
     let metadata = window_metadata(window)?;
     let monitor = window.current_monitor()?;
@@ -434,7 +442,7 @@ fn capture_window_source(
         return Err(Error::InvalidWindowBounds);
     }
 
-    let source = content_rect.and_then(|content| content_source_rect(metadata.rect, content));
+    let source = content_insets.and_then(|insets| inset_rect(metadata.rect, insets));
     let subject_rect = source.unwrap_or(metadata.rect);
 
     #[cfg(target_os = "macos")]
@@ -559,29 +567,18 @@ fn monitor_rect(monitor: &Monitor) -> Result<CaptureRect> {
     })
 }
 
-// Too small an overlap means the rect belongs to another window of the same
-// app (the frame comes from AX, the window from the window list); capture the
-// whole window rather than a sliver of it.
-fn content_source_rect(window: CaptureRect, content: CaptureRect) -> Option<CaptureRect> {
+// Insets that leave less than a small viewport are stale or belong to another
+// window of the app; capture the whole window rather than a sliver of it.
+fn inset_rect(window: CaptureRect, insets: CaptureInsets) -> Option<CaptureRect> {
     const MIN_SIDE: u32 = 200;
-    let left = max(window.x, content.x);
-    let top = max(window.y, content.y);
-    let right = min(
-        window.x as i64 + window.width as i64,
-        content.x as i64 + content.width as i64,
-    );
-    let bottom = min(
-        window.y as i64 + window.height as i64,
-        content.y as i64 + content.height as i64,
-    );
-    let width = u32::try_from(right - left as i64).ok()?;
-    let height = u32::try_from(bottom - top as i64).ok()?;
+    let width = window.width.checked_sub(insets.left + insets.right)?;
+    let height = window.height.checked_sub(insets.top + insets.bottom)?;
     if width < MIN_SIDE || height < MIN_SIDE {
         return None;
     }
     Some(CaptureRect {
-        x: left,
-        y: top,
+        x: window.x + insets.left as i32,
+        y: window.y + insets.top as i32,
         width,
         height,
     })
@@ -715,58 +712,54 @@ fn unix_ms(value: SystemTime) -> i64 {
 #[cfg(test)]
 mod tests {
     #[test]
-    fn content_source_rect_clips_to_the_window() {
+    fn inset_rect_trims_the_window_edges() {
         let window = CaptureRect {
             x: 100,
             y: 50,
             width: 1200,
             height: 800,
         };
-        let content = CaptureRect {
-            x: 100,
-            y: 130,
-            width: 1400,
-            height: 720,
+        let insets = CaptureInsets {
+            top: 80,
+            left: 0,
+            bottom: 10,
+            right: 4,
         };
         assert_eq!(
-            content_source_rect(window, content),
+            inset_rect(window, insets),
             Some(CaptureRect {
                 x: 100,
                 y: 130,
-                width: 1200,
-                height: 720
+                width: 1196,
+                height: 710
             })
         );
     }
 
     #[test]
-    fn content_source_rect_rejects_a_sliver_or_another_window() {
+    fn inset_rect_rejects_insets_that_leave_a_sliver() {
         let window = CaptureRect {
             x: 0,
             y: 0,
             width: 1200,
             height: 800,
         };
-        let elsewhere = CaptureRect {
-            x: 2000,
-            y: 0,
-            width: 800,
-            height: 600,
+        let too_deep = CaptureInsets {
+            top: 700,
+            ..CaptureInsets::default()
         };
-        assert_eq!(content_source_rect(window, elsewhere), None);
-        let sliver = CaptureRect {
-            x: 1100,
-            y: 0,
-            width: 800,
-            height: 600,
+        assert_eq!(inset_rect(window, too_deep), None);
+        let oversized = CaptureInsets {
+            left: 1300,
+            ..CaptureInsets::default()
         };
-        assert_eq!(content_source_rect(window, sliver), None);
+        assert_eq!(inset_rect(window, oversized), None);
     }
 
     use super::{
-        CaptureRect, CaptureStage, CaptureStrategy, Error, WindowCandidate, WindowCaptureTarget,
-        WindowContextImagePolicy, clamp_rect_around_window, compute_capture_rect,
-        content_source_rect, encode_webp, execute_capture_plan, same_pid_match_score,
+        CaptureInsets, CaptureRect, CaptureStage, CaptureStrategy, Error, WindowCandidate,
+        WindowCaptureTarget, WindowContextImagePolicy, clamp_rect_around_window,
+        compute_capture_rect, encode_webp, execute_capture_plan, inset_rect, same_pid_match_score,
         select_exact_target_candidate, select_frontmost_candidate,
         select_same_pid_best_match_candidate,
     };
@@ -865,7 +858,7 @@ mod tests {
             pid: 42,
             app_name: Some("Arc".to_string()),
             title: Some("PR Review".to_string()),
-            content_rect: None,
+            content_insets: None,
         };
         let candidates = vec![
             (
@@ -896,7 +889,7 @@ mod tests {
             pid: 42,
             app_name: Some("Arc".to_string()),
             title: Some("PR Review".to_string()),
-            content_rect: None,
+            content_insets: None,
         };
         let app_match = candidate(1, 42, Some("Arc"), Some("Inbox"), Some(false));
         let title_match = candidate(2, 42, Some("Other"), Some("PR Review"), Some(false));
@@ -914,7 +907,7 @@ mod tests {
             pid: 42,
             app_name: Some("Arc".to_string()),
             title: Some("PR Review".to_string()),
-            content_rect: None,
+            content_insets: None,
         };
         let candidates = vec![
             (

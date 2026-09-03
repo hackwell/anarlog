@@ -54,7 +54,12 @@ export function startMeetingSnapshotCapture({
   let stopped = false;
   let inFlight: Promise<void> | null = null;
   let permissionChecked = false;
-  let lastKept: { grey: Uint8Array; atMs: number } | null = null;
+  let lastKept: { lines: Set<string>; atMs: number } | null = null;
+  let lastGrey: Uint8Array | null = null;
+  // Browsers whose UI is itself a web page (Vivaldi) only expose the page's
+  // insets while focus is inside the page. Keep the last known ones per
+  // process so the crop survives a click on the tab strip.
+  let lastInsets: { pid: number; insets: CaptureInsets } | null = null;
   // The cap is per session, not per listening run: a session that was stopped
   // and resumed continues counting where it left off.
   let keptCount: number | null = null;
@@ -102,20 +107,25 @@ export function startMeetingSnapshotCapture({
     }
     if (stopped || !(await captureIsEnabled())) return;
 
+    if (target.contentInsets) {
+      lastInsets = {
+        pid: target.pid,
+        insets: {
+          top: Math.round(target.contentInsets.top),
+          left: Math.round(target.contentInsets.left),
+          bottom: Math.round(target.contentInsets.bottom),
+          right: Math.round(target.contentInsets.right),
+        },
+      };
+    }
     const captured = await screenCommands.captureTargetWindowContext(
       {
         windowId: null,
         pid: target.pid,
         appName: target.app.name,
         title: target.windowTitle ?? null,
-        contentRect: target.contentFrame
-          ? {
-              x: Math.round(target.contentFrame.x),
-              y: Math.round(target.contentFrame.y),
-              width: Math.round(target.contentFrame.width),
-              height: Math.round(target.contentFrame.height),
-            }
-          : null,
+        contentInsets:
+          lastInsets?.pid === target.pid ? lastInsets.insets : null,
       },
       { imagePolicy: { maxLongSide: MAX_LONG_SIDE } },
     );
@@ -143,11 +153,24 @@ export function startMeetingSnapshotCapture({
       captured.data.dataBase64,
       captured.data.mimeType,
     );
-    if (lastKept) {
-      const changed = frameDifference(lastKept.grey, grey);
-      if (changed < MEETING_SNAPSHOT_CHANGE_THRESHOLD) {
-        return;
-      }
+    if (
+      lastGrey &&
+      frameDifference(lastGrey, grey) < MEETING_SNAPSHOT_CHANGE_THRESHOLD
+    ) {
+      return;
+    }
+    lastGrey = grey;
+
+    // Changed pixels are necessary, not sufficient: a webcam tile moves every
+    // tick. A frame counts as a slide when it shows text the last kept frame
+    // did not. Image-only slides are the known blind spot.
+    const text = await recognizeText(captured.data.dataBase64);
+    const lines = textLines(text);
+    if (
+      lines.length === 0 ||
+      (lastKept && lines.every((line) => lastKept!.lines.has(line)))
+    ) {
+      return;
     }
 
     const bytes = Uint8Array.from(atob(captured.data.dataBase64), (char) =>
@@ -188,7 +211,7 @@ export function startMeetingSnapshotCapture({
           (captured.data.subject.kind === "window"
             ? captured.data.subject.window.title
             : ""),
-        text: await recognizeText(captured.data.dataBase64),
+        text,
       });
     } catch (error) {
       console.warn(
@@ -214,7 +237,7 @@ export function startMeetingSnapshotCapture({
       }
       return;
     }
-    lastKept = { grey, atMs: capturedAtMs };
+    lastKept = { lines: new Set(lines), atMs: capturedAtMs };
     keptCount++;
   };
 
@@ -269,8 +292,22 @@ async function findMeetingWindow(): Promise<MeetingAccessibilityInspection | nul
   );
 }
 
-// Only kept frames are read: OCR at accurate level costs a few hundred ms, and
-// most ticks are discarded as unchanged.
+type CaptureInsets = {
+  top: number;
+  left: number;
+  bottom: number;
+  right: number;
+};
+
+function textLines(text: string) {
+  return text
+    .split("\n")
+    .map((line) => line.trim())
+    .filter((line) => line !== "");
+}
+
+// Only frames whose pixels changed are read: OCR at accurate level costs a
+// few hundred ms, and most ticks are discarded as unchanged.
 async function recognizeText(dataBase64: string) {
   const result = await screenCommands.recognizeImageText(dataBase64);
   if (result.status === "error") {

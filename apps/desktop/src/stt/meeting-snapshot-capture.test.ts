@@ -78,7 +78,7 @@ const inspection = {
   surface: "native",
   accessibilityTrusted: true,
   windowTitle: "Zoom Meeting",
-  contentFrame: null,
+  contentInsets: null,
   participantStreams: [],
   activeSpeakers: [],
   warnings: [],
@@ -161,7 +161,7 @@ describe("startMeetingSnapshotCapture", () => {
         pid: 42,
         appName: "zoom.us",
         title: "Zoom Meeting",
-        contentRect: null,
+        contentInsets: null,
       },
       { imagePolicy: { maxLongSide: 1600 } },
     );
@@ -218,12 +218,36 @@ describe("startMeetingSnapshotCapture", () => {
     const stop = startMeetingSnapshotCapture({ sessionId: "session-1" });
     await flush();
     mocks.decode.mockResolvedValue(frame(200));
+    mocks.recognize.mockResolvedValue({ status: "ok", data: "Hiring plan" });
 
     await vi.advanceTimersByTimeAsync(MEETING_SNAPSHOT_INTERVAL_MS);
     expect(mocks.attachmentSave).toHaveBeenCalledTimes(1);
 
     await vi.advanceTimersByTimeAsync(MEETING_SNAPSHOT_MIN_GAP_MS);
     expect(mocks.attachmentSave).toHaveBeenCalledTimes(2);
+    await stop();
+  });
+
+  test("skips a changed frame that shows no new text", async () => {
+    const stop = startMeetingSnapshotCapture({ sessionId: "session-1" });
+    await flush();
+    mocks.decode.mockResolvedValue(frame(200));
+
+    await vi.advanceTimersByTimeAsync(
+      MEETING_SNAPSHOT_INTERVAL_MS + MEETING_SNAPSHOT_MIN_GAP_MS,
+    );
+
+    expect(mocks.recognize).toHaveBeenCalledTimes(2);
+    expect(mocks.attachmentSave).toHaveBeenCalledTimes(1);
+    await stop();
+  });
+
+  test("skips frames without readable text", async () => {
+    mocks.recognize.mockResolvedValue({ status: "ok", data: "  \n" });
+    const stop = startMeetingSnapshotCapture({ sessionId: "session-1" });
+    await flush();
+
+    expect(mocks.attachmentSave).not.toHaveBeenCalled();
     await stop();
   });
 
@@ -293,7 +317,7 @@ describe("startMeetingSnapshotCapture", () => {
         pid: 42,
         appName: "zoom.us",
         title: null,
-        contentRect: null,
+        contentInsets: null,
       },
       { imagePolicy: { maxLongSide: 1600 } },
     );
@@ -304,23 +328,37 @@ describe("startMeetingSnapshotCapture", () => {
     await stop();
   });
 
-  test("passes the browser content frame as capture region", async () => {
+  test("passes the browser insets and keeps them while focus wanders", async () => {
     mocks.inspect.mockResolvedValue({
       status: "ok",
       data: [
         {
           ...inspection,
           windowTitle: null,
-          contentFrame: { x: 10.4, y: 120.6, width: 1580, height: 900.2 },
+          contentInsets: { top: 100.6, left: 0, bottom: 0, right: 0.2 },
         },
       ],
     });
     const stop = startMeetingSnapshotCapture({ sessionId: "session-1" });
     await flush();
 
-    expect(mocks.capture).toHaveBeenCalledWith(
+    expect(mocks.capture).toHaveBeenLastCalledWith(
       expect.objectContaining({
-        contentRect: { x: 10, y: 121, width: 1580, height: 900 },
+        contentInsets: { top: 101, left: 0, bottom: 0, right: 0 },
+      }),
+      { imagePolicy: { maxLongSide: 1600 } },
+    );
+
+    mocks.inspect.mockResolvedValue({
+      status: "ok",
+      data: [{ ...inspection, windowTitle: null, contentInsets: null }],
+    });
+    await vi.advanceTimersByTimeAsync(MEETING_SNAPSHOT_INTERVAL_MS);
+
+    expect(mocks.capture).toHaveBeenCalledTimes(2);
+    expect(mocks.capture).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        contentInsets: { top: 101, left: 0, bottom: 0, right: 0 },
       }),
       { imagePolicy: { maxLongSide: 1600 } },
     );
