@@ -49,8 +49,13 @@ pub(crate) fn assisted_status(permission: Permission) -> Option<PermissionStatus
 
 #[cfg(all(target_os = "macos", feature = "private-tcc"))]
 fn should_check_via_sidecar(permission: Permission) -> bool {
-    // Accessibility trust is process-scoped, so a helper cannot report the app's status.
-    !matches!(permission, Permission::Accessibility)
+    // Accessibility trust is process-scoped, so a helper cannot report the app's
+    // status. Screen capture is keyed to the calling binary's code signature since
+    // macOS 15, so the helper would answer for itself, not for the app.
+    !matches!(
+        permission,
+        Permission::Accessibility | Permission::ScreenRecording
+    )
 }
 
 #[cfg(target_os = "macos")]
