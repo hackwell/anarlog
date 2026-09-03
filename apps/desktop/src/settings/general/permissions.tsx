@@ -169,6 +169,7 @@ function AudioPermissions({
 function MacOSPermissions() {
   const { t } = useLingui();
   const calendar = usePermission("calendar");
+  const screenRecording = usePermission("screenRecording");
   const accessibility = usePermission("accessibility");
   const accessibilityGuidance = usePermissionGuidance("accessibility");
 
@@ -202,6 +203,15 @@ function MacOSPermissions() {
           isPending={calendar.isPending}
           onRequest={calendar.request}
           onOpen={calendar.open}
+        />
+        <PermissionRow
+          title={t`Screen recording`}
+          description={t`Capture slides from the meeting window while recording.`}
+          status={screenRecording.status}
+          isPending={screenRecording.isPending}
+          error={screenRecording.error}
+          onRequest={screenRecording.request}
+          onOpen={screenRecording.open}
         />
       </PermissionGroup>
     </div>

@@ -56,6 +56,7 @@ function renderPermissions(accessibilityStatus: PermissionStatus) {
   mocks.permissions.set("systemAudio", permission("authorized"));
   mocks.permissions.set("accessibility", accessibility);
   mocks.permissions.set("calendar", permission("authorized"));
+  mocks.permissions.set("screenRecording", permission("neverRequested"));
 
   render(<Permissions />);
 
@@ -70,6 +71,19 @@ describe("Permissions", () => {
     mocks.permissions.clear();
     mocks.usePermission.mockClear();
     mocks.closePermissionAssistant.mockClear();
+  });
+
+  it("offers screen recording for meeting slides", () => {
+    renderPermissions("authorized");
+    const screenRecording = mocks.permissions.get("screenRecording")!;
+
+    fireEvent.click(
+      screen.getByRole("button", {
+        name: "Request screen recording permission",
+      }),
+    );
+
+    expect(screenRecording.request).toHaveBeenCalledOnce();
   });
 
   it("explains what Accessibility enables and opens Settings when denied", () => {

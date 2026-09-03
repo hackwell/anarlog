@@ -4,6 +4,7 @@ import { CircleNotch } from "@phosphor-icons/react";
 import { useForm } from "@tanstack/react-form";
 import { useQuery } from "@tanstack/react-query";
 
+import { commands as permissionsCommands } from "@anlg/plugin-permissions";
 import { commands as listenerCommands } from "@anlg/plugin-transcription";
 
 import { AppSettingsView } from "./app-settings";
@@ -330,8 +331,16 @@ function SettingsSectionContent({
                 }}
                 captureMeetingSnapshots={{
                   value: values.capture_meeting_snapshots,
-                  onChange: (value) =>
-                    submitFieldValue("capture_meeting_snapshots", value),
+                  onChange: (value) => {
+                    submitFieldValue("capture_meeting_snapshots", value);
+                    // Ask for Screen Recording the moment the switch goes on,
+                    // not on the first tick of the next meeting.
+                    if (value) {
+                      void permissionsCommands
+                        .requestPermission("screenRecording")
+                        .catch(console.error);
+                    }
+                  },
                 }}
               />
             )}

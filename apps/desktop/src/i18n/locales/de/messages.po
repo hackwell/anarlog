@@ -521,6 +521,10 @@ msgstr "Meeting-Chat in Memos erfassen"
 msgid "Capture slides from the meeting window"
 msgstr "Folien aus dem Meeting-Fenster festhalten"
 
+#: src/settings/general/permissions.tsx
+msgid "Capture slides from the meeting window while recording."
+msgstr "Folien aus dem Meeting-Fenster während der Aufnahme festhalten."
+
 #: src/onboarding/folder-location.tsx
 msgid "Change"
 msgstr "Ändern"
@@ -2639,6 +2643,10 @@ msgstr "Entwurf speichern"
 #: src/settings/general/meeting-settings.tsx
 msgid "Save visible chat from supported meetings using Accessibility."
 msgstr "Sichtbaren Chat unterstützter Meetings über Bedienungshilfen speichern."
+
+#: src/settings/general/permissions.tsx
+msgid "Screen recording"
+msgstr "Bildschirmaufnahme"
 
 #: src/session/components/note-input/transcript/renderer/index.tsx
 msgid "Scroll to bottom"
