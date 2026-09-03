@@ -23,6 +23,7 @@ function renderMeetingSettings({
   floatingBar = true,
   meetingDisclosureAutoPost = setting(),
   captureMeetingChat = setting(false),
+  captureMeetingParticipants = setting(false),
   captureMeetingSnapshots = setting(false),
 } = {}) {
   return {
@@ -34,6 +35,7 @@ function renderMeetingSettings({
         floatingBar={setting(floatingBar)}
         meetingDisclosureAutoPost={meetingDisclosureAutoPost}
         captureMeetingChat={captureMeetingChat}
+        captureMeetingParticipants={captureMeetingParticipants}
         captureMeetingSnapshots={captureMeetingSnapshots}
       />,
     ),
@@ -115,6 +117,19 @@ describe("MeetingSettingsView", () => {
     renderMeetingSettings();
 
     expect(screen.getByText(/does not confirm consent/)).toBeTruthy();
+  });
+
+  it("toggles participant capture from the meeting window", () => {
+    const captureMeetingParticipants = setting(false);
+    renderMeetingSettings({ captureMeetingParticipants });
+
+    fireEvent.click(
+      screen.getByRole("switch", {
+        name: "Add participants from the meeting window",
+      }),
+    );
+
+    expect(captureMeetingParticipants.onChange).toHaveBeenCalledWith(true);
   });
 
   it("toggles slide capture from the meeting window", () => {

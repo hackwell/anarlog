@@ -184,6 +184,10 @@ vi.mock("~/stt/meeting-snapshot-capture", () => ({
   startMeetingSnapshotCapture: startMeetingSnapshotCaptureMock,
 }));
 
+vi.mock("~/stt/meeting-participant-sync", () => ({
+  startMeetingParticipantSync: vi.fn(() => vi.fn(async () => {})),
+}));
+
 vi.mock("./useKeywords", () => ({
   getSessionKeywords: vi.fn(async () => []),
   useKeywords: vi.fn(() => []),

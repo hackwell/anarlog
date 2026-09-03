@@ -46,6 +46,7 @@ const SETTINGS_FORM_KEYS = [
   "consent_auto_send_chat",
   "capture_meeting_chat",
   "capture_meeting_snapshots",
+  "capture_meeting_participants",
   "ai_language",
   "spoken_languages",
   "current_stt_provider",
@@ -72,6 +73,7 @@ function useSettingsForm(storedSettings: StoredSettingValues) {
       consent_auto_send_chat: settingsValue.consent_auto_send_chat,
       capture_meeting_chat: settingsValue.capture_meeting_chat,
       capture_meeting_snapshots: settingsValue.capture_meeting_snapshots,
+      capture_meeting_participants: settingsValue.capture_meeting_participants,
       ai_language: settingsValue.ai_language,
       spoken_languages: getAdditionalSpokenLanguages(
         settingsValue.ai_language,
@@ -114,6 +116,8 @@ function useSettingsForm(storedSettings: StoredSettingValues) {
         consent_auto_send_chat: normalizedValue.consent_auto_send_chat,
         capture_meeting_chat: normalizedValue.capture_meeting_chat,
         capture_meeting_snapshots: normalizedValue.capture_meeting_snapshots,
+        capture_meeting_participants:
+          normalizedValue.capture_meeting_participants,
         ai_language: normalizedValue.ai_language,
         spoken_languages: JSON.stringify(normalizedValue.spoken_languages),
       });
@@ -328,6 +332,11 @@ function SettingsSectionContent({
                   value: values.capture_meeting_chat,
                   onChange: (value) =>
                     submitFieldValue("capture_meeting_chat", value),
+                }}
+                captureMeetingParticipants={{
+                  value: values.capture_meeting_participants,
+                  onChange: (value) =>
+                    submitFieldValue("capture_meeting_participants", value),
                 }}
                 captureMeetingSnapshots={{
                   value: values.capture_meeting_snapshots,

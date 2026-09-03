@@ -174,6 +174,9 @@ export function useCaptureLifecycle(sessionId: string) {
   const stopMeetingSnapshotCaptureRef = useRef<(() => Promise<void>) | null>(
     null,
   );
+  const stopMeetingParticipantSyncRef = useRef<(() => Promise<void>) | null>(
+    null,
+  );
   runBatchRef.current = runBatch;
   canRunBatchRef.current = canRunBatchTranscription(conn);
   localBatchDiarizationAvailableRef.current = localBatchDiarizationAvailable;
@@ -182,6 +185,7 @@ export function useCaptureLifecycle(sessionId: string) {
     const stops = [
       stopMeetingChatCaptureRef,
       stopMeetingSnapshotCaptureRef,
+      stopMeetingParticipantSyncRef,
     ].flatMap((ref) => {
       const stop = ref.current;
       if (!stop) return [];
@@ -202,6 +206,12 @@ export function useCaptureLifecycle(sessionId: string) {
   const setStopMeetingSnapshotCapture = useCallback(
     (stop: (() => Promise<void>) | null) => {
       stopMeetingSnapshotCaptureRef.current = stop;
+    },
+    [],
+  );
+  const setStopMeetingParticipantSync = useCallback(
+    (stop: (() => Promise<void>) | null) => {
+      stopMeetingParticipantSyncRef.current = stop;
     },
     [],
   );
@@ -775,6 +785,7 @@ export function useCaptureLifecycle(sessionId: string) {
     createCaptureLifecycle,
     session,
     setStopMeetingChatCapture,
+    setStopMeetingParticipantSync,
     setStopMeetingSnapshotCapture,
     stopMeetingChatTasks,
   };

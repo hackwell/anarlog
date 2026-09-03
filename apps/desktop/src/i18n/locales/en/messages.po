@@ -243,6 +243,10 @@ msgstr "Add notes about this contact..."
 msgid "Add organization"
 msgstr "Add organization"
 
+#: src/settings/general/meeting-settings.tsx
+msgid "Add participants from the meeting window"
+msgstr "Add participants from the meeting window"
+
 #: src/contacts/new-person-form.tsx
 msgid "Add person"
 msgstr "Add person"
@@ -1912,6 +1916,10 @@ msgstr "My automations"
 #: src/contacts/organization-details.tsx
 msgid "Name"
 msgstr "Name"
+
+#: src/settings/general/meeting-settings.tsx
+msgid "Names shown on the meeting's video tiles become participants of this recording. Needs Accessibility access."
+msgstr "Names shown on the meeting's video tiles become participants of this recording. Needs Accessibility access."
 
 #: src/settings/automations/workflow-builder.tsx
 msgid "Needs setup"

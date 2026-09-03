@@ -243,6 +243,10 @@ msgstr "Notizen zu diesem Kontakt hinzufügen …"
 msgid "Add organization"
 msgstr "Organisation hinzufügen"
 
+#: src/settings/general/meeting-settings.tsx
+msgid "Add participants from the meeting window"
+msgstr "Teilnehmer aus dem Meeting-Fenster übernehmen"
+
 #: src/contacts/new-person-form.tsx
 msgid "Add person"
 msgstr "Person hinzufügen"
@@ -1912,6 +1916,10 @@ msgstr "Meine Automatisierungen"
 #: src/contacts/organization-details.tsx
 msgid "Name"
 msgstr "Name"
+
+#: src/settings/general/meeting-settings.tsx
+msgid "Names shown on the meeting's video tiles become participants of this recording. Needs Accessibility access."
+msgstr "Namen auf den Video-Kacheln des Meetings werden Teilnehmer dieser Aufnahme. Benötigt Zugriff auf Bedienungshilfen."
 
 #: src/settings/automations/workflow-builder.tsx
 msgid "Needs setup"

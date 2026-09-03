@@ -15,6 +15,7 @@ export function MeetingSettingsView({
   floatingBar,
   meetingDisclosureAutoPost,
   captureMeetingChat,
+  captureMeetingParticipants,
   captureMeetingSnapshots,
 }: {
   autoJoinScheduledMeetings: SettingItem;
@@ -23,6 +24,7 @@ export function MeetingSettingsView({
   floatingBar: SettingItem;
   meetingDisclosureAutoPost: SettingItem;
   captureMeetingChat: SettingItem;
+  captureMeetingParticipants: SettingItem;
   captureMeetingSnapshots: SettingItem;
 }) {
   const currentPlatform = platform();
@@ -79,6 +81,17 @@ export function MeetingSettingsView({
             }
             checked={captureMeetingChat.value}
             onChange={captureMeetingChat.onChange}
+          />
+          <SettingSwitchRow
+            title={<Trans>Add participants from the meeting window</Trans>}
+            description={
+              <Trans>
+                Names shown on the meeting's video tiles become participants of
+                this recording. Needs Accessibility access.
+              </Trans>
+            }
+            checked={captureMeetingParticipants.value}
+            onChange={captureMeetingParticipants.onChange}
           />
           <SettingSwitchRow
             title={<Trans>Capture slides from the meeting window</Trans>}

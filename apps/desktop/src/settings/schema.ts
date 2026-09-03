@@ -156,6 +156,11 @@ export const SETTING_DEFINITIONS = {
     path: ["general", "capture_meeting_snapshots"],
     default: false as boolean,
   },
+  capture_meeting_participants: {
+    type: "boolean",
+    path: ["general", "capture_meeting_participants"],
+    default: false as boolean,
+  },
   cloud_sync_enabled: {
     type: "boolean",
     path: ["general", "cloud_sync_enabled"],
