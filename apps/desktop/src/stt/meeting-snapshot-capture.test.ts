@@ -279,7 +279,7 @@ describe("startMeetingSnapshotCapture", () => {
     await stop();
   });
 
-  test("captures an untitled window when its app is on the mic", async () => {
+  test("captures an untitled window when its app is on the mic and names it after the window", async () => {
     mocks.inspect.mockResolvedValue({
       status: "ok",
       data: [{ ...inspection, windowTitle: null }],
@@ -299,7 +299,7 @@ describe("startMeetingSnapshotCapture", () => {
     );
     expect(mocks.persist).toHaveBeenCalledWith(
       "session-1",
-      expect.objectContaining({ windowTitle: "" }),
+      expect.objectContaining({ windowTitle: "Zoom Meeting" }),
     );
     await stop();
   });

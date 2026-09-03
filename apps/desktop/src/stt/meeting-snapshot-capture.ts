@@ -181,7 +181,13 @@ export function startMeetingSnapshotCapture({
         width: captured.data.width,
         height: captured.data.height,
         appName: target.app.name,
-        windowTitle: target.windowTitle ?? "",
+        // The inspection has no title when the AX tree was too large to scope;
+        // the window list still knows what the window is called.
+        windowTitle:
+          target.windowTitle ??
+          (captured.data.subject.kind === "window"
+            ? captured.data.subject.window.title
+            : ""),
         text: await recognizeText(captured.data.dataBase64),
       });
     } catch (error) {
