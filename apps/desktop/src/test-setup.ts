@@ -10,6 +10,57 @@ i18n.activate("en");
 
 Object.defineProperty(globalThis.crypto, "randomUUID", { value: randomUUID });
 
+// jsdom ships no PointerEvent, so fireEvent's pointer events arrive as bare
+// Events: button, clientX/Y and pointerId are silently dropped, which makes
+// pointer-driven UI (the window drag strip, Radix menus) untestable.
+if (typeof globalThis.PointerEvent === "undefined") {
+  class JsdomPointerEvent extends MouseEvent {
+    readonly pointerId: number;
+    readonly pointerType: string;
+    readonly width: number;
+    readonly height: number;
+    readonly pressure: number;
+    readonly tangentialPressure: number;
+    readonly tiltX: number;
+    readonly tiltY: number;
+    readonly twist: number;
+    readonly isPrimary: boolean;
+
+    constructor(type: string, params: PointerEventInit = {}) {
+      super(type, params);
+      this.pointerId = params.pointerId ?? 0;
+      this.pointerType = params.pointerType ?? "mouse";
+      this.width = params.width ?? 1;
+      this.height = params.height ?? 1;
+      this.pressure = params.pressure ?? 0;
+      this.tangentialPressure = params.tangentialPressure ?? 0;
+      this.tiltX = params.tiltX ?? 0;
+      this.tiltY = params.tiltY ?? 0;
+      this.twist = params.twist ?? 0;
+      this.isPrimary = params.isPrimary ?? true;
+    }
+
+    getCoalescedEvents(): PointerEvent[] {
+      return [];
+    }
+
+    getPredictedEvents(): PointerEvent[] {
+      return [];
+    }
+  }
+
+  Object.defineProperty(globalThis, "PointerEvent", {
+    configurable: true,
+    writable: true,
+    value: JsdomPointerEvent,
+  });
+  Object.defineProperty(globalThis.window, "PointerEvent", {
+    configurable: true,
+    writable: true,
+    value: JsdomPointerEvent,
+  });
+}
+
 Object.defineProperty(globalThis.window, "__TAURI_INTERNALS__", {
   value: {
     metadata: {
