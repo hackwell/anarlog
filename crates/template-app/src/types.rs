@@ -38,6 +38,13 @@ common_derives! {
 }
 
 common_derives! {
+    pub struct SlideText {
+        pub shown_at: String,
+        pub text: String,
+    }
+}
+
+common_derives! {
     pub struct PreviousMeeting {
         pub title: String,
         pub occurred_at: String,

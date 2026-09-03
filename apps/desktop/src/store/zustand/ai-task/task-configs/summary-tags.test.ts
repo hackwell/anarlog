@@ -23,6 +23,8 @@ function createEnhanceArgs(
     postMeetingMemo: "",
 
     previousMeetings: [],
+
+    slides: [],
     transcripts: [],
     imageContext: [],
     summaryLength: "detailed",
@@ -40,6 +42,8 @@ describe("summary tags", () => {
         postMeetingMemo: "Next #follow-up",
 
         previousMeetings: [],
+
+        slides: [],
         template: {
           title: "Template #customer",
           description: null,

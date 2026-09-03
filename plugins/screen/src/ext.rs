@@ -34,7 +34,7 @@ pub enum CaptureStrategy {
     Display,
 }
 
-#[derive(Debug, Clone, serde::Serialize, specta::Type)]
+#[derive(Debug, Clone, Copy, serde::Serialize, serde::Deserialize, specta::Type)]
 #[serde(rename_all = "camelCase")]
 pub struct CaptureRect {
     pub x: i32,
@@ -76,6 +76,17 @@ pub struct WindowCaptureTarget {
     pub pid: u32,
     pub app_name: Option<String>,
     pub title: Option<String>,
+    #[serde(default)]
+    pub content_insets: Option<CaptureInsets>,
+}
+
+#[derive(Debug, Clone, Copy, serde::Serialize, serde::Deserialize, specta::Type)]
+#[serde(rename_all = "camelCase")]
+pub struct CaptureInsets {
+    pub top: u32,
+    pub left: u32,
+    pub bottom: u32,
+    pub right: u32,
 }
 
 #[derive(Debug, Clone, serde::Serialize, specta::Type)]
@@ -119,6 +130,14 @@ impl<'a, R: tauri::Runtime, M: tauri::Manager<R>> Screen<'a, R, M> {
                 pid: target.pid,
                 app_name: target.app_name,
                 title: target.title,
+                content_insets: target.content_insets.map(|insets| {
+                    anlg_screen_core::CaptureInsets {
+                        top: insets.top,
+                        left: insets.left,
+                        bottom: insets.bottom,
+                        right: insets.right,
+                    }
+                }),
             },
             map_options(options),
         )?;

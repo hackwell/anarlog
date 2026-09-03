@@ -12,9 +12,12 @@ import { useTabs } from "~/store/zustand/tabs";
 import {
   decodeToGreyThumbnail,
   frameDifference,
+  hasNewSlideText,
+  slideTextLines,
 } from "~/stt/meeting-snapshot-diff";
 import {
   MAX_MEETING_SNAPSHOTS,
+  loadMeetingSnapshotRecords,
   persistMeetingSnapshotRecord,
 } from "~/stt/meeting-snapshot-records";
 
@@ -22,6 +25,11 @@ export const MEETING_SNAPSHOT_INTERVAL_MS = 10_000;
 export const MEETING_SNAPSHOT_MIN_GAP_MS = 15_000;
 export const MEETING_SNAPSHOT_CHANGE_THRESHOLD = 0.06;
 const MAX_LONG_SIDE = 1600;
+const IMAGE_EXTENSIONS: Record<string, string> = {
+  "image/webp": "webp",
+  "image/png": "png",
+  "image/jpeg": "jpg",
+};
 
 /**
  * Screenshots only the meeting window, and only when what it shows changed.
@@ -48,9 +56,17 @@ export function startMeetingSnapshotCapture({
   let stopped = false;
   let inFlight: Promise<void> | null = null;
   let permissionChecked = false;
-  let lastKept: { grey: Uint8Array; atMs: number } | null = null;
-  let keptCount = 0;
+  let lastKept: { lines: string[]; atMs: number } | null = null;
+  let lastGrey: Uint8Array | null = null;
+  // Browsers whose UI is itself a web page (Vivaldi) only expose the page's
+  // insets while focus is inside the page. Keep the last known ones per
+  // process so the crop survives a click on the tab strip.
+  let lastInsets: { pid: number; insets: CaptureInsets } | null = null;
+  // The cap is per session, not per listening run: a session that was stopped
+  // and resumed continues counting where it left off.
+  let keptCount: number | null = null;
   let lastCaptureError = "";
+  let noTargetLogged = false;
   let interval: ReturnType<typeof setInterval> | null = null;
 
   const captureOnce = async () => {
@@ -80,13 +96,39 @@ export function startMeetingSnapshotCapture({
       }
     }
     if (stopped || !(await captureIsEnabled())) return;
+    keptCount ??= (await loadMeetingSnapshotRecords(sessionId)).length;
     if (keptCount >= MAX_MEETING_SNAPSHOTS) return;
 
     const target = await findMeetingWindow();
-    if (!target || stopped || !(await captureIsEnabled())) return;
+    if (!target) {
+      if (!noTargetLogged) {
+        noTargetLogged = true;
+        console.info("[listener] no meeting window to capture slides from");
+      }
+      return;
+    }
+    if (stopped || !(await captureIsEnabled())) return;
 
+    if (target.contentInsets) {
+      lastInsets = {
+        pid: target.pid,
+        insets: {
+          top: Math.round(target.contentInsets.top),
+          left: Math.round(target.contentInsets.left),
+          bottom: Math.round(target.contentInsets.bottom),
+          right: Math.round(target.contentInsets.right),
+        },
+      };
+    }
     const captured = await screenCommands.captureTargetWindowContext(
-      { pid: target.pid, appName: target.app.name, title: target.windowTitle },
+      {
+        windowId: null,
+        pid: target.pid,
+        appName: target.app.name,
+        title: target.windowTitle ?? null,
+        contentInsets:
+          lastInsets?.pid === target.pid ? lastInsets.insets : null,
+      },
       { imagePolicy: { maxLongSide: MAX_LONG_SIDE } },
     );
     if (captured.status === "error") {
@@ -113,17 +155,27 @@ export function startMeetingSnapshotCapture({
       captured.data.dataBase64,
       captured.data.mimeType,
     );
-    if (lastKept) {
-      const changed = frameDifference(lastKept.grey, grey);
-      if (changed < MEETING_SNAPSHOT_CHANGE_THRESHOLD) {
-        return;
-      }
+    if (
+      lastGrey &&
+      frameDifference(lastGrey, grey) < MEETING_SNAPSHOT_CHANGE_THRESHOLD
+    ) {
+      return;
+    }
+    lastGrey = grey;
+
+    // Changed pixels are necessary, not sufficient: a webcam tile moves every
+    // tick. A frame counts as a slide when it shows text the last kept frame
+    // did not. Image-only slides are the known blind spot.
+    const text = await recognizeText(captured.data.dataBase64);
+    const lines = slideTextLines(text);
+    if (!hasNewSlideText(lastKept?.lines ?? null, lines)) {
+      return;
     }
 
     const bytes = Uint8Array.from(atob(captured.data.dataBase64), (char) =>
       char.charCodeAt(0),
     );
-    const extension = captured.data.mimeType === "image/png" ? "png" : "jpg";
+    const extension = IMAGE_EXTENSIONS[captured.data.mimeType] ?? "png";
     const filename = `slide-${timeStamp(capturedAtMs)}.${extension}`;
     const saved = await fsSyncCommands.attachmentSave(
       sessionId,
@@ -151,7 +203,14 @@ export function startMeetingSnapshotCapture({
         width: captured.data.width,
         height: captured.data.height,
         appName: target.app.name,
-        windowTitle: target.windowTitle ?? "",
+        // The inspection has no title when the AX tree was too large to scope;
+        // the window list still knows what the window is called.
+        windowTitle:
+          target.windowTitle ??
+          (captured.data.subject.kind === "window"
+            ? captured.data.subject.window.title
+            : ""),
+        text,
       });
     } catch (error) {
       console.warn(
@@ -177,7 +236,7 @@ export function startMeetingSnapshotCapture({
       }
       return;
     }
-    lastKept = { grey, atMs: capturedAtMs };
+    lastKept = { lines, atMs: capturedAtMs };
     keptCount++;
   };
 
@@ -206,24 +265,48 @@ export function startMeetingSnapshotCapture({
   };
 }
 
-// A window with no title means no meeting is actually open (the detect
-// plugin still returns an entry for every running browser/Slack/Discord),
-// so an untitled inspection is never a capture target. Among titled
-// inspections, the meeting app that is on the mic is preferred, but any
-// titled window will do when none match the mic.
+// The detect plugin returns an entry for every running browser/Slack/Discord,
+// so a bare entry is not evidence of a meeting. Two things are: the app is on
+// the mic, or the AX inspection resolved a meeting window title. The title is
+// missing for large pages (the Zoom web client blows the AX node cap), which is
+// why mic use alone is enough. Without a title the capture side picks the
+// app's frontmost window by pid.
+// ponytail: frontmost window of the pid, not the meeting tab, when a browser
+// has several windows open; add a title heuristic if that bites.
 async function findMeetingWindow(): Promise<MeetingAccessibilityInspection | null> {
   const inspected = await detectCommands.inspectMeetingAccessibility();
   if (inspected.status === "error" || inspected.data.length === 0) return null;
-  const titled = inspected.data.filter(
-    (entry) =>
-      typeof entry.windowTitle === "string" && entry.windowTitle.trim() !== "",
-  );
-  if (titled.length === 0) return null;
   const micApps = await detectCommands.listMicUsingApplications();
   const micIds = new Set(
     micApps.status === "ok" ? micApps.data.map((app) => app.id) : [],
   );
-  return titled.find((entry) => micIds.has(entry.app.id)) ?? titled[0] ?? null;
+  const onMic = inspected.data.find((entry) => micIds.has(entry.app.id));
+  if (onMic) return onMic;
+  return (
+    inspected.data.find(
+      (entry) =>
+        typeof entry.windowTitle === "string" &&
+        entry.windowTitle.trim() !== "",
+    ) ?? null
+  );
+}
+
+type CaptureInsets = {
+  top: number;
+  left: number;
+  bottom: number;
+  right: number;
+};
+
+// Only frames whose pixels changed are read: OCR at accurate level costs a
+// few hundred ms, and most ticks are discarded as unchanged.
+async function recognizeText(dataBase64: string) {
+  const result = await screenCommands.recognizeImageText(dataBase64);
+  if (result.status === "error") {
+    console.warn("[listener] slide text recognition failed", result.error);
+    return "";
+  }
+  return result.data.trim();
 }
 
 function timeStamp(atMs: number) {

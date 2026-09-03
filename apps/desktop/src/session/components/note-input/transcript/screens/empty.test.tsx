@@ -24,6 +24,41 @@ describe("TranscriptEmptyState", () => {
     expect(onStopTranscription).toHaveBeenCalledTimes(1);
   });
 
+  it("draws the recording as progress when peaks are known", () => {
+    const peaks = Array.from({ length: 56 }, (_, index) => (index % 4) / 4);
+
+    render(
+      <TranscriptEmptyState
+        isBatching
+        phase="transcribing"
+        percentage={0.3}
+        waveform={{ peaks, durationMs: 42 * 60_000 + 10_000 }}
+        onStopTranscription={vi.fn()}
+      />,
+    );
+
+    const bar = screen.getByRole("progressbar");
+    expect(bar.getAttribute("aria-valuenow")).toBe("30");
+    expect(bar.children).toHaveLength(56);
+    expect(bar.querySelectorAll('[data-filled="true"]')).toHaveLength(17);
+    expect(screen.getByText("12:39 of 42:10 processed")).not.toBeNull();
+    expect(screen.queryByText("30% complete")).toBeNull();
+  });
+
+  it("keeps the spinner while importing even when peaks are known", () => {
+    render(
+      <TranscriptEmptyState
+        isBatching
+        phase="importing"
+        percentage={0.3}
+        waveform={{ peaks: [0.5, 1], durationMs: 60_000 }}
+      />,
+    );
+
+    expect(screen.queryByRole("progressbar")).toBeNull();
+    expect(screen.getByText("30% complete")).not.toBeNull();
+  });
+
   it("hides the stop control while importing audio", () => {
     render(<TranscriptEmptyState isBatching phase="importing" />);
 

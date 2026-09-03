@@ -12,6 +12,7 @@ mod context;
 mod linux;
 #[cfg(any(test, target_os = "macos", target_os = "linux"))]
 mod node;
+mod participants;
 #[cfg(any(test, target_os = "macos", target_os = "linux"))]
 mod platform;
 mod types;
@@ -66,8 +67,8 @@ use types::{
 #[cfg(target_os = "macos")]
 use types::{AxChatElement, SlackHuddleRoot};
 pub use types::{
-    AxRect, MeetingAccessibilityInspection, MeetingApp, MeetingCapturedChatMessage,
-    MeetingChatCaptureResult, MeetingChatDirection, MeetingChatSendResult,
+    AxInsets, AxRect, MeetingAccessibilityInspection, MeetingApp, MeetingCapturedChatMessage,
+    MeetingChatCaptureResult, MeetingChatDirection, MeetingChatSendResult, MeetingParticipant,
     MeetingParticipantStream, MeetingPlatform, MeetingSurface,
 };
 
@@ -105,6 +106,81 @@ pub fn inspect_meeting_accessibility() -> Vec<MeetingAccessibilityInspection> {
         .into_iter()
         .map(|(app, pid)| inspect_app(app, pid, accessibility_trusted))
         .collect()
+}
+
+// Names on the Teams video tiles, read without the depth and vocabulary limits
+// of the meeting inspection: Teams nests its call UI 20 to 30 levels deep and
+// labels it in the UI language, so the inspection never scopes it. Teams only
+// until the inspection itself learns these trees.
+#[cfg(target_os = "macos")]
+pub fn list_meeting_participants() -> Vec<MeetingParticipant> {
+    const TEAMS_BUNDLES: &[&str] = &["com.microsoft.teams2", "com.microsoft.teams"];
+    const MAX_DEPTH: usize = 40;
+    const MAX_NODES: usize = 4000;
+
+    if !macos_accessibility_client::accessibility::application_is_trusted() {
+        return Vec::new();
+    }
+    let mut seen_pids = HashSet::new();
+    let mut participants = Vec::new();
+    for (app, pid) in TEAMS_BUNDLES
+        .iter()
+        .flat_map(|bundle| running_apps_for_bundle(bundle))
+        .filter(|(_, pid)| seen_pids.insert(*pid))
+    {
+        let ax_app = ax::UiElement::with_app_pid(pid);
+        let _ = ax_app.set_messaging_timeout_secs(0.6);
+        let mut tiles: Vec<(String, String)> = Vec::new();
+        let mut visited = 0;
+        collect_tile_descriptions(&ax_app, 0, MAX_DEPTH, MAX_NODES, &mut visited, &mut tiles);
+        let found = participants::extract_participants(
+            tiles
+                .iter()
+                .map(|(role, description)| (role.as_str(), description.as_str())),
+            &app,
+        );
+        for participant in found {
+            if !participants.iter().any(|known: &MeetingParticipant| {
+                known.name.eq_ignore_ascii_case(&participant.name)
+            }) {
+                participants.push(participant);
+            }
+        }
+    }
+    participants
+}
+
+#[cfg(not(target_os = "macos"))]
+pub fn list_meeting_participants() -> Vec<MeetingParticipant> {
+    Vec::new()
+}
+
+#[cfg(target_os = "macos")]
+fn collect_tile_descriptions(
+    element: &ax::UiElement,
+    depth: usize,
+    max_depth: usize,
+    max_nodes: usize,
+    visited: &mut usize,
+    tiles: &mut Vec<(String, String)>,
+) {
+    if depth > max_depth || *visited >= max_nodes {
+        return;
+    }
+    *visited += 1;
+    let role = element.role().ok().map(|role| role.to_string());
+    if let Some(role) = role.as_deref()
+        && participants::TILE_ROLES.contains(&role)
+        && let Some(description) = string_attr(element, ax::attr::desc())
+    {
+        tiles.push((role.to_string(), description));
+    }
+    let Ok(children) = element.children() else {
+        return;
+    };
+    for child in children.iter() {
+        collect_tile_descriptions(child, depth + 1, max_depth, max_nodes, visited, tiles);
+    }
 }
 
 #[cfg(target_os = "linux")]
@@ -1517,12 +1593,16 @@ fn inspect_app(
     let mut warnings = Vec::new();
     let bundle_platform = classify_bundle(&app.id);
     let mut window_title = None;
+    let mut content_insets = None;
     let mut nodes = Vec::new();
     let mut scoped_platform = None;
 
     if accessibility_trusted {
         let ax_app = ax::UiElement::with_app_pid(pid);
         let _ = ax_app.set_messaging_timeout_secs(0.6);
+        if is_browser_bundle(&app.id) {
+            content_insets = browser_content_insets(&ax_app);
+        }
         if bundle_platform == MeetingPlatform::Slack {
             let mut roots = collect_slack_huddle_roots(&ax_app, &mut warnings);
             match roots.len() {
@@ -1616,10 +1696,50 @@ fn inspect_app(
         surface,
         accessibility_trusted,
         window_title,
+        content_insets,
         participant_streams,
         active_speakers,
         warnings,
     }
+}
+
+// The page web area of the focused element, else the first https web area
+// found under a window. Cheap on purpose: no node walk, so it still resolves
+// for pages whose AX tree exceeds the snapshot limits (the Zoom web client
+// does). Browsers whose own UI is a web page (Vivaldi) expose that UI as a
+// window-sized web area with an extension URL; only https web areas count.
+#[cfg(target_os = "macos")]
+fn browser_content_insets(ax_app: &ax::UiElement) -> Option<AxInsets> {
+    let is_page =
+        |area: &ax::UiElement| url_attr(area).is_some_and(|url| url.starts_with("https://"));
+    let focused = focused_web_area_element(ax_app).filter(|area| is_page(area));
+    let area = focused.or_else(|| {
+        let mut windows = Vec::new();
+        let mut visited = 0;
+        collect_window_elements(ax_app, 0, &mut visited, &mut windows);
+        windows
+            .iter()
+            .filter_map(|window| active_web_area_element(window, None).0)
+            .find(|area| is_page(area))
+    })?;
+    let area_rect = element_rect(&area)?;
+    let window = area.window().ok()?;
+    let window_rect = element_rect(&window)?;
+    Some(AxInsets {
+        top: (area_rect.origin.y - window_rect.origin.y).max(0.0),
+        left: (area_rect.origin.x - window_rect.origin.x).max(0.0),
+        bottom: (window_rect.max_y() - area_rect.max_y()).max(0.0),
+        right: (window_rect.max_x() - area_rect.max_x()).max(0.0),
+    })
+}
+
+#[cfg(target_os = "macos")]
+fn element_rect(element: &ax::UiElement) -> Option<cg::Rect> {
+    element
+        .frame()
+        .ok()
+        .and_then(|frame| frame.cg_rect())
+        .or_else(|| rect_from_position_and_size(element))
 }
 
 #[cfg(target_os = "macos")]
@@ -1713,12 +1833,7 @@ fn snapshot_node(element: &ax::UiElement, index: usize) -> AxNode {
     let placeholder = string_attr(element, ax::attr::placeholder_value());
     let enabled = element.is_enabled().ok().map(|enabled| enabled.value());
     let settable_value = element.is_settable(ax::attr::value()).unwrap_or(false);
-    let bounds = element
-        .frame()
-        .ok()
-        .and_then(|frame| frame.cg_rect())
-        .or_else(|| rect_from_position_and_size(element))
-        .map(AxRect::from);
+    let bounds = element_rect(element).map(AxRect::from);
     let text = searchable_node_text(
         &role,
         &title,

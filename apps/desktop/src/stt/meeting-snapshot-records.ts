@@ -14,6 +14,8 @@ export type MeetingSnapshotRecord = {
   height: number;
   appName: string;
   windowTitle: string;
+  /** Text recognised on the frame; empty when nothing was readable. */
+  text: string;
 };
 
 export const MAX_MEETING_SNAPSHOTS = 60;
@@ -94,6 +96,7 @@ export function parseMeetingSnapshotDocument(row: {
       appName: typeof value.appName === "string" ? value.appName : "",
       windowTitle:
         typeof value.windowTitle === "string" ? value.windowTitle : "",
+      text: typeof value.text === "string" ? value.text : "",
     };
   } catch {
     return null;

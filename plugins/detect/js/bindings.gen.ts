@@ -86,6 +86,14 @@ async inspectMeetingAccessibility() : Promise<Result<MeetingAccessibilityInspect
     else return { status: "error", error: e  as any };
 }
 },
+async listMeetingParticipants() : Promise<Result<MeetingParticipant[], string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("plugin:detect|list_meeting_participants") };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
 async sendMeetingChatMessage(message: string, micActiveBundleIds: string[]) : Promise<Result<MeetingChatSendResult, string>> {
     try {
     return { status: "ok", data: await TAURI_INVOKE("plugin:detect|send_meeting_chat_message", { message, micActiveBundleIds }) };
@@ -143,16 +151,28 @@ detectEvent: "plugin:detect:detect-event"
 
 /** user-defined types **/
 
+export type AxInsets = { top: number; left: number; bottom: number; right: number }
 export type AxRect = { x: number; y: number; width: number; height: number }
 export type DetectEvent = { type: "micDetected"; key: string; apps: InstalledApp[]; duration_secs: number } | { type: "micStopped"; apps: InstalledApp[] } | { type: "micMuted"; value: boolean } | { type: "sleepStateChanged"; value: boolean }
 export type InstalledApp = { id: string; name: string }
 export type InstalledApplicationIcon = { id: string; dataUrl: string }
-export type MeetingAccessibilityInspection = { app: MeetingApp; pid: number; platform: MeetingPlatform; surface: MeetingSurface; accessibilityTrusted: boolean; windowTitle: string | null; participantStreams: MeetingParticipantStream[]; activeSpeakers: string[]; warnings: string[] }
+export type MeetingAccessibilityInspection = { app: MeetingApp; pid: number; platform: MeetingPlatform; surface: MeetingSurface; accessibilityTrusted: boolean; windowTitle: string | null; 
+/**
+ * Distance from the window edges to the page's web content, so a capture
+ * can leave out tab strip, toolbar and bookmarks. Insets rather than a
+ * frame: they stay valid while the window moves. `None` for native apps
+ * or when no page web area was reachable.
+ */
+contentInsets: AxInsets | null; participantStreams: MeetingParticipantStream[]; activeSpeakers: string[]; warnings: string[] }
 export type MeetingApp = { id: string; name: string }
 export type MeetingCapturedChatMessage = { id: string; platform: MeetingPlatform; surface: MeetingSurface; sender: string | null; timestamp: string | null; direction: MeetingChatDirection | null; text: string; links: string[] }
 export type MeetingChatCaptureResult = { app: MeetingApp | null; platform: MeetingPlatform; surface: MeetingSurface; contextId: string | null; messages: MeetingCapturedChatMessage[]; warnings: string[] }
 export type MeetingChatDirection = "incoming" | "outgoing"
 export type MeetingChatSendResult = { sent: boolean; app: MeetingApp | null; platform: MeetingPlatform; surface: MeetingSurface; inputLabel: string | null; sendAction: string | null; warnings: string[] }
+/**
+ * A person shown on the meeting window's video tiles.
+ */
+export type MeetingParticipant = { name: string; isSelf: boolean; app: MeetingApp }
 export type MeetingParticipantStream = { id: string; platform: MeetingPlatform; surface: MeetingSurface; participantName: string | null; label: string | null; bounds: AxRect | null; confidence: number; isActiveSpeaker: boolean; signals: string[] }
 export type MeetingPlatform = "zoom" | "googleMeet" | "microsoftTeams" | "slack" | "discord" | "webex" | "unknown"
 export type MeetingSurface = "native" | "web" | "unknown"

@@ -4,6 +4,7 @@ import { CircleNotch } from "@phosphor-icons/react";
 import { useForm } from "@tanstack/react-form";
 import { useQuery } from "@tanstack/react-query";
 
+import { commands as permissionsCommands } from "@anlg/plugin-permissions";
 import { commands as listenerCommands } from "@anlg/plugin-transcription";
 
 import { AppSettingsView } from "./app-settings";
@@ -45,6 +46,7 @@ const SETTINGS_FORM_KEYS = [
   "consent_auto_send_chat",
   "capture_meeting_chat",
   "capture_meeting_snapshots",
+  "capture_meeting_participants",
   "ai_language",
   "spoken_languages",
   "current_stt_provider",
@@ -71,6 +73,7 @@ function useSettingsForm(storedSettings: StoredSettingValues) {
       consent_auto_send_chat: settingsValue.consent_auto_send_chat,
       capture_meeting_chat: settingsValue.capture_meeting_chat,
       capture_meeting_snapshots: settingsValue.capture_meeting_snapshots,
+      capture_meeting_participants: settingsValue.capture_meeting_participants,
       ai_language: settingsValue.ai_language,
       spoken_languages: getAdditionalSpokenLanguages(
         settingsValue.ai_language,
@@ -113,6 +116,8 @@ function useSettingsForm(storedSettings: StoredSettingValues) {
         consent_auto_send_chat: normalizedValue.consent_auto_send_chat,
         capture_meeting_chat: normalizedValue.capture_meeting_chat,
         capture_meeting_snapshots: normalizedValue.capture_meeting_snapshots,
+        capture_meeting_participants:
+          normalizedValue.capture_meeting_participants,
         ai_language: normalizedValue.ai_language,
         spoken_languages: JSON.stringify(normalizedValue.spoken_languages),
       });
@@ -328,10 +333,23 @@ function SettingsSectionContent({
                   onChange: (value) =>
                     submitFieldValue("capture_meeting_chat", value),
                 }}
+                captureMeetingParticipants={{
+                  value: values.capture_meeting_participants,
+                  onChange: (value) =>
+                    submitFieldValue("capture_meeting_participants", value),
+                }}
                 captureMeetingSnapshots={{
                   value: values.capture_meeting_snapshots,
-                  onChange: (value) =>
-                    submitFieldValue("capture_meeting_snapshots", value),
+                  onChange: (value) => {
+                    submitFieldValue("capture_meeting_snapshots", value);
+                    // Ask for Screen Recording the moment the switch goes on,
+                    // not on the first tick of the next meeting.
+                    if (value) {
+                      void permissionsCommands
+                        .requestPermission("screenRecording")
+                        .catch(console.error);
+                    }
+                  },
                 }}
               />
             )}

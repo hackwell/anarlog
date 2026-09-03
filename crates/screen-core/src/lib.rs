@@ -3,10 +3,66 @@ use std::{
     time::{SystemTime, UNIX_EPOCH},
 };
 
-use image::{
-    ExtendedColorType, ImageEncoder, RgbaImage, codecs::png::PngEncoder, imageops::FilterType,
-};
+use image::{RgbaImage, imageops::FilterType};
 use xcap::{Monitor, Window, XCapError};
+
+#[cfg(target_os = "macos")]
+mod macos {
+    use swift_rs::{SRData, SRString, swift};
+
+    swift!(fn _sck_capture_window_png_base64(
+        window_id: u32,
+        max_long_side: u32,
+        source_x: i32,
+        source_y: i32,
+        source_width: u32,
+        source_height: u32
+    ) -> SRString);
+    swift!(fn _vision_recognize_text(png: &SRData) -> SRString);
+
+    /// PNG bytes of exactly this window via ScreenCaptureKit, or `None` when
+    /// the window is gone, access is missing, or the call timed out.
+    pub fn capture_window_png(
+        window_id: u32,
+        max_long_side: u32,
+        source: Option<(i32, i32, u32, u32)>,
+    ) -> Option<Vec<u8>> {
+        use base64::Engine;
+
+        let (x, y, width, height) = source.unwrap_or_default();
+        let encoded = unsafe {
+            _sck_capture_window_png_base64(window_id, max_long_side, x, y, width, height)
+        };
+        let encoded = encoded.as_str();
+        if encoded.is_empty() {
+            return None;
+        }
+        base64::engine::general_purpose::STANDARD
+            .decode(encoded)
+            .ok()
+            .filter(|bytes| !bytes.is_empty())
+    }
+
+    pub fn recognize_text(png: &[u8]) -> String {
+        let data = SRData::from(png);
+        let text = unsafe { _vision_recognize_text(&data) };
+        text.as_str().to_string()
+    }
+}
+
+/// Text visible in a PNG, top to bottom, one line per recognised line.
+/// Only macOS has an on-device recogniser wired up; elsewhere this is empty.
+pub fn recognize_text(png: &[u8]) -> String {
+    #[cfg(target_os = "macos")]
+    {
+        macos::recognize_text(png)
+    }
+    #[cfg(not(target_os = "macos"))]
+    {
+        let _ = png;
+        String::new()
+    }
+}
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum CaptureStrategy {
@@ -96,12 +152,23 @@ pub struct WindowContextImage {
     pub subject: CaptureSubject,
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+pub struct CaptureInsets {
+    pub top: u32,
+    pub left: u32,
+    pub bottom: u32,
+    pub right: u32,
+}
+
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct WindowCaptureTarget {
     pub window_id: Option<u32>,
     pub pid: u32,
     pub app_name: Option<String>,
     pub title: Option<String>,
+    /// Edges to trim off the window, e.g. a browser's toolbars around its web
+    /// content. Ignored when too little of the window would remain.
+    pub content_insets: Option<CaptureInsets>,
 }
 
 #[derive(Debug, thiserror::Error)]
@@ -178,7 +245,7 @@ where
             let Some(window) = resolve_exact_target_window(target)? else {
                 return Ok(None);
             };
-            capture_window_source(&window, image_policy.clone()).map(Some)
+            capture_window_source(&window, image_policy.clone(), target.content_insets).map(Some)
         }
         CaptureStage::SamePidWindow => {
             let Some(target) = target else {
@@ -187,13 +254,13 @@ where
             let Some(window) = resolve_same_pid_window(target)? else {
                 return Ok(None);
             };
-            capture_window_source(&window, image_policy.clone()).map(Some)
+            capture_window_source(&window, image_policy.clone(), target.content_insets).map(Some)
         }
         CaptureStage::FrontmostWindow => {
             let Some(window) = resolve_frontmost_window()? else {
                 return Ok(None);
             };
-            capture_window_source(&window, image_policy.clone()).map(Some)
+            capture_window_source(&window, image_policy.clone(), None).map(Some)
         }
         CaptureStage::PrimaryDisplay => {
             let Some(monitor) = resolve_primary_monitor()? else {
@@ -365,6 +432,7 @@ fn same_pid_match_score(target: &WindowCaptureTarget, candidate: &WindowCandidat
 fn capture_window_source(
     window: &Window,
     image_policy: WindowContextImagePolicy,
+    content_insets: Option<CaptureInsets>,
 ) -> Result<WindowContextImage> {
     let metadata = window_metadata(window)?;
     let monitor = window.current_monitor()?;
@@ -374,7 +442,39 @@ fn capture_window_source(
         return Err(Error::InvalidWindowBounds);
     }
 
-    let (crop, strategy) = compute_capture_rect(metadata.rect, monitor_rect)?;
+    let source = content_insets.and_then(|insets| inset_rect(metadata.rect, insets));
+    let subject_rect = source.unwrap_or(metadata.rect);
+
+    #[cfg(target_os = "macos")]
+    if let Some(bytes) = macos::capture_window_png(
+        metadata.id,
+        image_policy.max_long_side,
+        source.map(|rect| {
+            (
+                rect.x - metadata.rect.x,
+                rect.y - metadata.rect.y,
+                rect.width,
+                rect.height,
+            )
+        }),
+    ) && let Ok(decoded) = image::load_from_memory(&bytes)
+    {
+        let image = decoded.into_rgba8();
+        let (width, height) = image.dimensions();
+        let encoded = encode_webp(&image);
+        return Ok(WindowContextImage {
+            image_bytes: encoded.bytes,
+            mime_type: encoded.mime_type.to_string(),
+            captured_at_ms: unix_ms(SystemTime::now()),
+            width,
+            height,
+            strategy: CaptureStrategy::WindowOnly,
+            crop: subject_rect,
+            subject: CaptureSubject::Window(metadata),
+        });
+    }
+
+    let (crop, strategy) = compute_capture_rect(subject_rect, monitor_rect)?;
     let local_x = (crop.x - monitor_rect.x) as u32;
     let local_y = (crop.y - monitor_rect.y) as u32;
 
@@ -414,7 +514,7 @@ fn build_capture_image(
 ) -> Result<WindowContextImage> {
     let image = resize_for_model(image, image_policy.max_long_side);
     let (width, height) = image.dimensions();
-    let encoded = encode_png(&image)?;
+    let encoded = encode_webp(&image);
 
     Ok(WindowContextImage {
         image_bytes: encoded.bytes,
@@ -464,6 +564,23 @@ fn monitor_rect(monitor: &Monitor) -> Result<CaptureRect> {
         y: monitor.y()?,
         width: monitor.width()?,
         height: monitor.height()?,
+    })
+}
+
+// Insets that leave less than a small viewport are stale or belong to another
+// window of the app; capture the whole window rather than a sliver of it.
+fn inset_rect(window: CaptureRect, insets: CaptureInsets) -> Option<CaptureRect> {
+    const MIN_SIDE: u32 = 200;
+    let width = window.width.checked_sub(insets.left + insets.right)?;
+    let height = window.height.checked_sub(insets.top + insets.bottom)?;
+    if width < MIN_SIDE || height < MIN_SIDE {
+        return None;
+    }
+    Some(CaptureRect {
+        x: window.x + insets.left as i32,
+        y: window.y + insets.top as i32,
+        width,
+        height,
     })
 }
 
@@ -571,18 +688,18 @@ struct EncodedImage {
     mime_type: &'static str,
 }
 
-fn encode_png(image: &RgbaImage) -> Result<EncodedImage> {
-    let mut bytes = Vec::new();
-    PngEncoder::new(&mut bytes).write_image(
-        image.as_raw(),
-        image.width(),
-        image.height(),
-        ExtendedColorType::Rgba8,
-    )?;
-    Ok(EncodedImage {
+// Lossy WebP at 80 is ~20x smaller than PNG on slide frames and every LLM
+// provider with image input accepts it; Vision reads it without loss of text.
+const WEBP_QUALITY: f32 = 80.0;
+
+fn encode_webp(image: &RgbaImage) -> EncodedImage {
+    let bytes = webp::Encoder::from_rgba(image.as_raw(), image.width(), image.height())
+        .encode(WEBP_QUALITY)
+        .to_vec();
+    EncodedImage {
         bytes,
-        mime_type: "image/png",
-    })
+        mime_type: "image/webp",
+    }
 }
 
 fn unix_ms(value: SystemTime) -> i64 {
@@ -594,11 +711,57 @@ fn unix_ms(value: SystemTime) -> i64 {
 
 #[cfg(test)]
 mod tests {
+    #[test]
+    fn inset_rect_trims_the_window_edges() {
+        let window = CaptureRect {
+            x: 100,
+            y: 50,
+            width: 1200,
+            height: 800,
+        };
+        let insets = CaptureInsets {
+            top: 80,
+            left: 0,
+            bottom: 10,
+            right: 4,
+        };
+        assert_eq!(
+            inset_rect(window, insets),
+            Some(CaptureRect {
+                x: 100,
+                y: 130,
+                width: 1196,
+                height: 710
+            })
+        );
+    }
+
+    #[test]
+    fn inset_rect_rejects_insets_that_leave_a_sliver() {
+        let window = CaptureRect {
+            x: 0,
+            y: 0,
+            width: 1200,
+            height: 800,
+        };
+        let too_deep = CaptureInsets {
+            top: 700,
+            ..CaptureInsets::default()
+        };
+        assert_eq!(inset_rect(window, too_deep), None);
+        let oversized = CaptureInsets {
+            left: 1300,
+            ..CaptureInsets::default()
+        };
+        assert_eq!(inset_rect(window, oversized), None);
+    }
+
     use super::{
-        CaptureRect, CaptureStage, CaptureStrategy, Error, WindowCandidate, WindowCaptureTarget,
-        WindowContextImagePolicy, clamp_rect_around_window, compute_capture_rect, encode_png,
-        execute_capture_plan, same_pid_match_score, select_exact_target_candidate,
-        select_frontmost_candidate, select_same_pid_best_match_candidate,
+        CaptureInsets, CaptureRect, CaptureStage, CaptureStrategy, Error, WindowCandidate,
+        WindowCaptureTarget, WindowContextImagePolicy, clamp_rect_around_window,
+        compute_capture_rect, encode_webp, execute_capture_plan, inset_rect, same_pid_match_score,
+        select_exact_target_candidate, select_frontmost_candidate,
+        select_same_pid_best_match_candidate,
     };
     use image::RgbaImage;
 
@@ -695,6 +858,7 @@ mod tests {
             pid: 42,
             app_name: Some("Arc".to_string()),
             title: Some("PR Review".to_string()),
+            content_insets: None,
         };
         let candidates = vec![
             (
@@ -725,6 +889,7 @@ mod tests {
             pid: 42,
             app_name: Some("Arc".to_string()),
             title: Some("PR Review".to_string()),
+            content_insets: None,
         };
         let app_match = candidate(1, 42, Some("Arc"), Some("Inbox"), Some(false));
         let title_match = candidate(2, 42, Some("Other"), Some("PR Review"), Some(false));
@@ -742,6 +907,7 @@ mod tests {
             pid: 42,
             app_name: Some("Arc".to_string()),
             title: Some("PR Review".to_string()),
+            content_insets: None,
         };
         let candidates = vec![
             (
@@ -865,11 +1031,12 @@ mod tests {
     }
 
     #[test]
-    fn encode_png_uses_png_container() {
-        let image = RgbaImage::from_raw(1, 1, vec![0, 0, 0, 255]).unwrap();
-        let encoded = encode_png(&image).unwrap();
+    fn encode_webp_uses_webp_container() {
+        let image = RgbaImage::from_raw(2, 2, vec![0, 0, 0, 255].repeat(4)).unwrap();
+        let encoded = encode_webp(&image);
 
-        assert_eq!(encoded.mime_type, "image/png");
-        assert_eq!(&encoded.bytes[..8], b"\x89PNG\r\n\x1a\n");
+        assert_eq!(encoded.mime_type, "image/webp");
+        assert_eq!(&encoded.bytes[..4], b"RIFF");
+        assert_eq!(&encoded.bytes[8..12], b"WEBP");
     }
 }

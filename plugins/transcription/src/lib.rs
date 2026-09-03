@@ -8,6 +8,7 @@ use tokio::task::AbortHandle;
 use tokio_util::sync::CancellationToken;
 
 mod api;
+mod audio_peaks;
 mod error;
 mod listener;
 mod listener2;
@@ -101,6 +102,7 @@ fn make_specta_builder<R: tauri::Runtime>() -> tauri_specta::Builder<R> {
             voiceprint::extract_voiceprint_candidates::<tauri::Wry>,
             voiceprint::promote_voiceprint_candidates::<tauri::Wry>,
             voiceprint::cleanup_expired_voiceprint_candidates::<tauri::Wry>,
+            audio_peaks::audio_peaks,
         ])
         .events(tauri_specta::collect_events![
             CaptureLifecycleEvent,

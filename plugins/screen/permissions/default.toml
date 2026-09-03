@@ -1,3 +1,7 @@
 [default]
 description = "Default permissions for the plugin"
-permissions = ["allow-capture-target-window-context", "allow-capture-frontmost-window-context"]
+permissions = [
+  "allow-capture-target-window-context",
+  "allow-capture-frontmost-window-context",
+  "allow-recognize-image-text",
+]

@@ -10,6 +10,7 @@ Default permissions for the plugin
 - `allow-set-competing-application-termination-paused`
 - `allow-list-mic-using-applications`
 - `allow-inspect-meeting-accessibility`
+- `allow-list-meeting-participants`
 - `allow-send-meeting-chat-message`
 - `allow-capture-meeting-chat-messages`
 - `allow-set-respect-do-not-disturb`
@@ -207,6 +208,32 @@ Enables the list_installed_applications command without any pre-configured scope
 <td>
 
 Denies the list_installed_applications command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`detect:allow-list-meeting-participants`
+
+</td>
+<td>
+
+Enables the list_meeting_participants command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`detect:deny-list-meeting-participants`
+
+</td>
+<td>
+
+Denies the list_meeting_participants command without any pre-configured scope.
 
 </td>
 </tr>

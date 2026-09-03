@@ -17,6 +17,7 @@ import {
   getLiveTranscriptionConfig,
   getTranscriptionLanguages,
 } from "~/stt/capabilities";
+import { startMeetingParticipantSync } from "~/stt/meeting-participant-sync";
 import { startMeetingSnapshotCapture } from "~/stt/meeting-snapshot-capture";
 import { useSessionParticipantHumanIds } from "~/stt/queries";
 
@@ -37,6 +38,7 @@ export function useStartListening(sessionId: string) {
     createCaptureLifecycle,
     session,
     setStopMeetingChatCapture,
+    setStopMeetingParticipantSync,
     setStopMeetingSnapshotCapture,
     stopMeetingChatTasks,
   } = useCaptureLifecycle(sessionId);
@@ -221,6 +223,12 @@ export function useStartListening(sessionId: string) {
     );
 
     setStopMeetingSnapshotCapture(startMeetingSnapshotCapture({ sessionId }));
+    setStopMeetingParticipantSync(
+      startMeetingParticipantSync({
+        sessionId,
+        ownerUserId: session?.user_id || undefined,
+      }),
+    );
 
     if (meetingDisclosureAutoSendChat) {
       startMeetingRecordingDisclosure(
@@ -242,6 +250,7 @@ export function useStartListening(sessionId: string) {
     session,
     sessionId,
     setStopMeetingChatCapture,
+    setStopMeetingParticipantSync,
     setStopMeetingSnapshotCapture,
     setLeftSidebarExpanded,
     meetingDisclosureAutoSendChat,

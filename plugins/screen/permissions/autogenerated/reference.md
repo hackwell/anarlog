@@ -6,6 +6,7 @@ Default permissions for the plugin
 
 - `allow-capture-target-window-context`
 - `allow-capture-frontmost-window-context`
+- `allow-recognize-image-text`
 
 ## Permission Table
 
@@ -64,6 +65,32 @@ Enables the capture_target_window_context command without any pre-configured sco
 <td>
 
 Denies the capture_target_window_context command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`screen:allow-recognize-image-text`
+
+</td>
+<td>
+
+Enables the recognize_image_text command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`screen:deny-recognize-image-text`
+
+</td>
+<td>
+
+Denies the recognize_image_text command without any pre-configured scope.
 
 </td>
 </tr>

@@ -13,6 +13,7 @@ fn make_specta_builder<R: tauri::Runtime>() -> tauri_specta::Builder<R> {
         .commands(tauri_specta::collect_commands![
             commands::capture_frontmost_window_context::<tauri::Wry>,
             commands::capture_target_window_context::<tauri::Wry>,
+            commands::recognize_image_text,
         ])
         .error_handling(tauri_specta::ErrorHandlingMode::Result)
 }

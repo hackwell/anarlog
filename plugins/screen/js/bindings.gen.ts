@@ -21,6 +21,18 @@ async captureTargetWindowContext(target: WindowCaptureTarget, options: WindowCon
     if(e instanceof Error) throw e;
     else return { status: "error", error: e  as any };
 }
+},
+/**
+ * Text visible in a PNG, for slides captured from the meeting window. Runs
+ * on-device (Vision on macOS); other platforms return an empty string.
+ */
+async recognizeImageText(dataBase64: string) : Promise<Result<string, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("plugin:screen|recognize_image_text", { dataBase64 }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
 }
 }
 
@@ -34,11 +46,12 @@ async captureTargetWindowContext(target: WindowCaptureTarget, options: WindowCon
 
 /** user-defined types **/
 
+export type CaptureInsets = { top: number; left: number; bottom: number; right: number }
 export type CaptureRect = { x: number; y: number; width: number; height: number }
 export type CaptureStrategy = "window_only" | "window_with_context" | "display"
 export type CaptureSubject = { kind: "window"; window: WindowContextMetadata } | { kind: "display"; display: DisplayContextMetadata }
 export type DisplayContextMetadata = { id: number; name: string; rect: CaptureRect; isPrimary: boolean }
-export type WindowCaptureTarget = { pid: number; appName: string | null; title: string | null }
+export type WindowCaptureTarget = { windowId: number | null; pid: number; appName: string | null; title: string | null; contentInsets?: CaptureInsets | null }
 export type WindowContextCapture = { mimeType: string; dataBase64: string; capturedAtMs: number; width: number; height: number; strategy: CaptureStrategy; crop: CaptureRect; subject: CaptureSubject }
 export type WindowContextCaptureOptions = { imagePolicy: WindowContextImagePolicy | null }
 export type WindowContextImagePolicy = { maxLongSide: number | null }

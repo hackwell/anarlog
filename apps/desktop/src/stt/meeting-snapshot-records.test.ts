@@ -29,6 +29,7 @@ const record = {
   height: 900,
   appName: "zoom.us",
   windowTitle: "Zoom Meeting",
+  text: "Q3 roadmap",
 };
 
 describe("meeting snapshot records", () => {
@@ -63,6 +64,13 @@ describe("meeting snapshot records", () => {
         body: JSON.stringify({ path: 1 }),
       }),
     ).toBeNull();
+    const { text: _text, ...withoutText } = record;
+    expect(
+      parseMeetingSnapshotDocument({
+        id: "doc-4",
+        body: JSON.stringify(withoutText),
+      }),
+    ).toEqual({ id: "doc-4", ...withoutText, text: "" });
   });
 
   it("loads records in capture order", async () => {

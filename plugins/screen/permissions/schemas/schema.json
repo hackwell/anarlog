@@ -319,10 +319,22 @@
           "markdownDescription": "Denies the capture_target_window_context command without any pre-configured scope."
         },
         {
-          "description": "Default permissions for the plugin\n#### This default permission set includes:\n\n- `allow-capture-target-window-context`\n- `allow-capture-frontmost-window-context`",
+          "description": "Enables the recognize_image_text command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-recognize-image-text",
+          "markdownDescription": "Enables the recognize_image_text command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the recognize_image_text command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-recognize-image-text",
+          "markdownDescription": "Denies the recognize_image_text command without any pre-configured scope."
+        },
+        {
+          "description": "Default permissions for the plugin\n#### This default permission set includes:\n\n- `allow-capture-target-window-context`\n- `allow-capture-frontmost-window-context`\n- `allow-recognize-image-text`",
           "type": "string",
           "const": "default",
-          "markdownDescription": "Default permissions for the plugin\n#### This default permission set includes:\n\n- `allow-capture-target-window-context`\n- `allow-capture-frontmost-window-context`"
+          "markdownDescription": "Default permissions for the plugin\n#### This default permission set includes:\n\n- `allow-capture-target-window-context`\n- `allow-capture-frontmost-window-context`\n- `allow-recognize-image-text`"
         }
       ]
     }

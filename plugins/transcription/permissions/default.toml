@@ -28,4 +28,5 @@ permissions = [
     "allow-extract-voiceprint-candidates",
     "allow-promote-voiceprint-candidates",
     "allow-cleanup-expired-voiceprint-candidates",
+    "allow-audio-peaks",
 ]

@@ -73,6 +73,7 @@ fn make_specta_builder<R: tauri::Runtime>() -> tauri_specta::Builder<R> {
             commands::set_included_bundle_ids::<tauri::Wry>,
             commands::list_default_ignored_bundle_ids::<tauri::Wry>,
             commands::inspect_meeting_accessibility::<tauri::Wry>,
+            commands::list_meeting_participants::<tauri::Wry>,
             commands::send_meeting_chat_message::<tauri::Wry>,
             commands::capture_meeting_chat_messages::<tauri::Wry>,
             commands::get_preferred_languages::<tauri::Wry>,

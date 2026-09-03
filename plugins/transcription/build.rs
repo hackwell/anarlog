@@ -26,6 +26,7 @@ const COMMANDS: &[&str] = &[
     "extract_voiceprint_candidates",
     "promote_voiceprint_candidates",
     "cleanup_expired_voiceprint_candidates",
+    "audio_peaks",
 ];
 
 fn main() {

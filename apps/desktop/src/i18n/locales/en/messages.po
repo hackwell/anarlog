@@ -50,6 +50,12 @@ msgstr "{0} could not be installed"
 msgid "{0} is ready to use"
 msgstr "{0} is ready to use"
 
+#. placeholder {0}: formatClock(progress * waveform.durationMs)
+#. placeholder {1}: formatClock(waveform.durationMs)
+#: src/session/components/note-input/transcript/screens/empty.tsx
+msgid "{0} of {1} processed"
+msgstr "{0} of {1} processed"
+
 #. placeholder {0}: issue.user?.login
 #: src/task/resource-view.tsx
 msgid "{0} opened on"
@@ -60,7 +66,7 @@ msgstr "{0} opened on"
 msgid "{0} pending edits"
 msgstr "{0} pending edits"
 
-#. placeholder {0}: Math.round((percentage ?? 0) * 100)
+#. placeholder {0}: Math.round(progress * 100)
 #: src/session/components/note-input/transcript/screens/empty.tsx
 msgid "{0}% complete"
 msgstr "{0}% complete"
@@ -236,6 +242,10 @@ msgstr "Add notes about this contact..."
 #: src/contacts/details.tsx
 msgid "Add organization"
 msgstr "Add organization"
+
+#: src/settings/general/meeting-settings.tsx
+msgid "Add participants from the meeting window"
+msgstr "Add participants from the meeting window"
 
 #: src/contacts/new-person-form.tsx
 msgid "Add person"
@@ -520,6 +530,10 @@ msgstr "Capture meeting chat in Memos"
 #: src/settings/general/meeting-settings.tsx
 msgid "Capture slides from the meeting window"
 msgstr "Capture slides from the meeting window"
+
+#: src/settings/general/permissions.tsx
+msgid "Capture slides from the meeting window while recording."
+msgstr "Capture slides from the meeting window while recording."
 
 #: src/onboarding/folder-location.tsx
 msgid "Change"
@@ -1903,6 +1917,10 @@ msgstr "My automations"
 msgid "Name"
 msgstr "Name"
 
+#: src/settings/general/meeting-settings.tsx
+msgid "Names shown on the meeting's video tiles become participants of this recording. Needs Accessibility access."
+msgstr "Names shown on the meeting's video tiles become participants of this recording. Needs Accessibility access."
+
 #: src/settings/automations/workflow-builder.tsx
 msgid "Needs setup"
 msgstr "Needs setup"
@@ -2639,6 +2657,10 @@ msgstr "Save draft"
 #: src/settings/general/meeting-settings.tsx
 msgid "Save visible chat from supported meetings using Accessibility."
 msgstr "Save visible chat from supported meetings using Accessibility."
+
+#: src/settings/general/permissions.tsx
+msgid "Screen recording"
+msgstr "Screen recording"
 
 #: src/session/components/note-input/transcript/renderer/index.tsx
 msgid "Scroll to bottom"
