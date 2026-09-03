@@ -86,6 +86,14 @@ async inspectMeetingAccessibility() : Promise<Result<MeetingAccessibilityInspect
     else return { status: "error", error: e  as any };
 }
 },
+async listMeetingParticipants() : Promise<Result<MeetingParticipant[], string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("plugin:detect|list_meeting_participants") };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
 async sendMeetingChatMessage(message: string, micActiveBundleIds: string[]) : Promise<Result<MeetingChatSendResult, string>> {
     try {
     return { status: "ok", data: await TAURI_INVOKE("plugin:detect|send_meeting_chat_message", { message, micActiveBundleIds }) };
@@ -161,6 +169,10 @@ export type MeetingCapturedChatMessage = { id: string; platform: MeetingPlatform
 export type MeetingChatCaptureResult = { app: MeetingApp | null; platform: MeetingPlatform; surface: MeetingSurface; contextId: string | null; messages: MeetingCapturedChatMessage[]; warnings: string[] }
 export type MeetingChatDirection = "incoming" | "outgoing"
 export type MeetingChatSendResult = { sent: boolean; app: MeetingApp | null; platform: MeetingPlatform; surface: MeetingSurface; inputLabel: string | null; sendAction: string | null; warnings: string[] }
+/**
+ * A person shown on the meeting window's video tiles.
+ */
+export type MeetingParticipant = { name: string; isSelf: boolean; app: MeetingApp }
 export type MeetingParticipantStream = { id: string; platform: MeetingPlatform; surface: MeetingSurface; participantName: string | null; label: string | null; bounds: AxRect | null; confidence: number; isActiveSpeaker: boolean; signals: string[] }
 export type MeetingPlatform = "zoom" | "googleMeet" | "microsoftTeams" | "slack" | "discord" | "webex" | "unknown"
 export type MeetingSurface = "native" | "web" | "unknown"

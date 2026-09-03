@@ -12,6 +12,7 @@ mod context;
 mod linux;
 #[cfg(any(test, target_os = "macos", target_os = "linux"))]
 mod node;
+mod participants;
 #[cfg(any(test, target_os = "macos", target_os = "linux"))]
 mod platform;
 mod types;
@@ -67,7 +68,7 @@ use types::{
 use types::{AxChatElement, SlackHuddleRoot};
 pub use types::{
     AxInsets, AxRect, MeetingAccessibilityInspection, MeetingApp, MeetingCapturedChatMessage,
-    MeetingChatCaptureResult, MeetingChatDirection, MeetingChatSendResult,
+    MeetingChatCaptureResult, MeetingChatDirection, MeetingChatSendResult, MeetingParticipant,
     MeetingParticipantStream, MeetingPlatform, MeetingSurface,
 };
 
@@ -105,6 +106,81 @@ pub fn inspect_meeting_accessibility() -> Vec<MeetingAccessibilityInspection> {
         .into_iter()
         .map(|(app, pid)| inspect_app(app, pid, accessibility_trusted))
         .collect()
+}
+
+// Names on the Teams video tiles, read without the depth and vocabulary limits
+// of the meeting inspection: Teams nests its call UI 20 to 30 levels deep and
+// labels it in the UI language, so the inspection never scopes it. Teams only
+// until the inspection itself learns these trees.
+#[cfg(target_os = "macos")]
+pub fn list_meeting_participants() -> Vec<MeetingParticipant> {
+    const TEAMS_BUNDLES: &[&str] = &["com.microsoft.teams2", "com.microsoft.teams"];
+    const MAX_DEPTH: usize = 40;
+    const MAX_NODES: usize = 4000;
+
+    if !macos_accessibility_client::accessibility::application_is_trusted() {
+        return Vec::new();
+    }
+    let mut seen_pids = HashSet::new();
+    let mut participants = Vec::new();
+    for (app, pid) in TEAMS_BUNDLES
+        .iter()
+        .flat_map(|bundle| running_apps_for_bundle(bundle))
+        .filter(|(_, pid)| seen_pids.insert(*pid))
+    {
+        let ax_app = ax::UiElement::with_app_pid(pid);
+        let _ = ax_app.set_messaging_timeout_secs(0.6);
+        let mut tiles: Vec<(String, String)> = Vec::new();
+        let mut visited = 0;
+        collect_tile_descriptions(&ax_app, 0, MAX_DEPTH, MAX_NODES, &mut visited, &mut tiles);
+        let found = participants::extract_participants(
+            tiles
+                .iter()
+                .map(|(role, description)| (role.as_str(), description.as_str())),
+            &app,
+        );
+        for participant in found {
+            if !participants.iter().any(|known: &MeetingParticipant| {
+                known.name.eq_ignore_ascii_case(&participant.name)
+            }) {
+                participants.push(participant);
+            }
+        }
+    }
+    participants
+}
+
+#[cfg(not(target_os = "macos"))]
+pub fn list_meeting_participants() -> Vec<MeetingParticipant> {
+    Vec::new()
+}
+
+#[cfg(target_os = "macos")]
+fn collect_tile_descriptions(
+    element: &ax::UiElement,
+    depth: usize,
+    max_depth: usize,
+    max_nodes: usize,
+    visited: &mut usize,
+    tiles: &mut Vec<(String, String)>,
+) {
+    if depth > max_depth || *visited >= max_nodes {
+        return;
+    }
+    *visited += 1;
+    let role = element.role().ok().map(|role| role.to_string());
+    if let Some(role) = role.as_deref()
+        && participants::TILE_ROLES.contains(&role)
+        && let Some(description) = string_attr(element, ax::attr::desc())
+    {
+        tiles.push((role.to_string(), description));
+    }
+    let Ok(children) = element.children() else {
+        return;
+    };
+    for child in children.iter() {
+        collect_tile_descriptions(child, depth + 1, max_depth, max_nodes, visited, tiles);
+    }
 }
 
 #[cfg(target_os = "linux")]

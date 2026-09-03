@@ -160,6 +160,18 @@ pub(crate) async fn inspect_meeting_accessibility<R: tauri::Runtime>(
 
 #[tauri::command]
 #[specta::specta]
+pub(crate) async fn list_meeting_participants<R: tauri::Runtime>(
+    _app: tauri::AppHandle<R>,
+) -> Result<Vec<anlg_detect::MeetingParticipant>, String> {
+    Ok(
+        tauri::async_runtime::spawn_blocking(anlg_detect::list_meeting_participants)
+            .await
+            .map_err(|error| error.to_string())?,
+    )
+}
+
+#[tauri::command]
+#[specta::specta]
 pub(crate) async fn send_meeting_chat_message<R: tauri::Runtime>(
     app: tauri::AppHandle<R>,
     message: String,

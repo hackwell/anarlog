@@ -88,6 +88,15 @@ pub struct MeetingAccessibilityInspection {
     pub warnings: Vec<String>,
 }
 
+/// A person shown on the meeting window's video tiles.
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize, specta::Type)]
+#[serde(rename_all = "camelCase")]
+pub struct MeetingParticipant {
+    pub name: String,
+    pub is_self: bool,
+    pub app: MeetingApp,
+}
+
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize, specta::Type)]
 #[serde(rename_all = "camelCase")]
 pub struct MeetingChatSendResult {

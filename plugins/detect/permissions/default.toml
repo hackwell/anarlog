@@ -7,6 +7,7 @@ permissions = [
     "allow-set-competing-application-termination-paused",
     "allow-list-mic-using-applications",
     "allow-inspect-meeting-accessibility",
+    "allow-list-meeting-participants",
     "allow-send-meeting-chat-message",
     "allow-capture-meeting-chat-messages",
     "allow-set-respect-do-not-disturb",
