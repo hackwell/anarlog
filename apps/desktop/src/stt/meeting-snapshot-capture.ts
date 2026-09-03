@@ -54,6 +54,7 @@ export function startMeetingSnapshotCapture({
   // and resumed continues counting where it left off.
   let keptCount: number | null = null;
   let lastCaptureError = "";
+  let noTargetLogged = false;
   let interval: ReturnType<typeof setInterval> | null = null;
 
   const captureOnce = async () => {
@@ -87,14 +88,29 @@ export function startMeetingSnapshotCapture({
     if (keptCount >= MAX_MEETING_SNAPSHOTS) return;
 
     const target = await findMeetingWindow();
-    if (!target || stopped || !(await captureIsEnabled())) return;
+    if (!target) {
+      if (!noTargetLogged) {
+        noTargetLogged = true;
+        console.info("[listener] no meeting window to capture slides from");
+      }
+      return;
+    }
+    if (stopped || !(await captureIsEnabled())) return;
 
     const captured = await screenCommands.captureTargetWindowContext(
       {
         windowId: null,
         pid: target.pid,
         appName: target.app.name,
-        title: target.windowTitle,
+        title: target.windowTitle ?? null,
+        contentRect: target.contentFrame
+          ? {
+              x: Math.round(target.contentFrame.x),
+              y: Math.round(target.contentFrame.y),
+              width: Math.round(target.contentFrame.width),
+              height: Math.round(target.contentFrame.height),
+            }
+          : null,
       },
       { imagePolicy: { maxLongSide: MAX_LONG_SIDE } },
     );
@@ -216,24 +232,30 @@ export function startMeetingSnapshotCapture({
   };
 }
 
-// A window with no title means no meeting is actually open (the detect
-// plugin still returns an entry for every running browser/Slack/Discord),
-// so an untitled inspection is never a capture target. Among titled
-// inspections, the meeting app that is on the mic is preferred, but any
-// titled window will do when none match the mic.
+// The detect plugin returns an entry for every running browser/Slack/Discord,
+// so a bare entry is not evidence of a meeting. Two things are: the app is on
+// the mic, or the AX inspection resolved a meeting window title. The title is
+// missing for large pages (the Zoom web client blows the AX node cap), which is
+// why mic use alone is enough. Without a title the capture side picks the
+// app's frontmost window by pid.
+// ponytail: frontmost window of the pid, not the meeting tab, when a browser
+// has several windows open; add a title heuristic if that bites.
 async function findMeetingWindow(): Promise<MeetingAccessibilityInspection | null> {
   const inspected = await detectCommands.inspectMeetingAccessibility();
   if (inspected.status === "error" || inspected.data.length === 0) return null;
-  const titled = inspected.data.filter(
-    (entry) =>
-      typeof entry.windowTitle === "string" && entry.windowTitle.trim() !== "",
-  );
-  if (titled.length === 0) return null;
   const micApps = await detectCommands.listMicUsingApplications();
   const micIds = new Set(
     micApps.status === "ok" ? micApps.data.map((app) => app.id) : [],
   );
-  return titled.find((entry) => micIds.has(entry.app.id)) ?? titled[0] ?? null;
+  const onMic = inspected.data.find((entry) => micIds.has(entry.app.id));
+  if (onMic) return onMic;
+  return (
+    inspected.data.find(
+      (entry) =>
+        typeof entry.windowTitle === "string" &&
+        entry.windowTitle.trim() !== "",
+    ) ?? null
+  );
 }
 
 // Only kept frames are read: OCR at accurate level costs a few hundred ms, and

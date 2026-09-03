@@ -556,6 +556,7 @@ fn inspection_from_nodes(
         surface,
         accessibility_trusted,
         window_title,
+        content_frame: None,
         participant_streams,
         active_speakers,
         warnings,

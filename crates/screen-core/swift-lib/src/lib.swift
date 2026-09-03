@@ -14,7 +14,10 @@ import Vision
 // Returns the PNG as base64, or an empty string when anything fails so the
 // caller can fall back.
 @_cdecl("_sck_capture_window_png_base64")
-public func _sck_capture_window_png_base64(windowId: UInt32, maxLongSide: UInt32) -> SRString {
+public func _sck_capture_window_png_base64(
+  windowId: UInt32, maxLongSide: UInt32,
+  sourceX: Int32, sourceY: Int32, sourceWidth: UInt32, sourceHeight: UInt32
+) -> SRString {
   let semaphore = DispatchSemaphore(value: 0)
   var result = ""
 
@@ -29,9 +32,21 @@ public func _sck_capture_window_png_base64(windowId: UInt32, maxLongSide: UInt32
 
       let filter = SCContentFilter(desktopIndependentWindow: window)
       let configuration = SCStreamConfiguration()
+      // sourceRect is in points relative to the window's own origin.
+      var sourceRect = CGRect(origin: .zero, size: window.frame.size)
+      if sourceWidth > 0 && sourceHeight > 0 {
+        let requested = CGRect(
+          x: CGFloat(sourceX), y: CGFloat(sourceY),
+          width: CGFloat(sourceWidth), height: CGFloat(sourceHeight))
+        let clipped = requested.intersection(sourceRect)
+        if clipped.width >= 1, clipped.height >= 1 {
+          sourceRect = clipped
+          configuration.sourceRect = clipped
+        }
+      }
       let scale = filter.pointPixelScale
-      let pixelWidth = max(1.0, window.frame.width * CGFloat(scale))
-      let pixelHeight = max(1.0, window.frame.height * CGFloat(scale))
+      let pixelWidth = max(1.0, sourceRect.width * CGFloat(scale))
+      let pixelHeight = max(1.0, sourceRect.height * CGFloat(scale))
       let longSide = max(pixelWidth, pixelHeight)
       let shrink =
         maxLongSide > 0 && longSide > CGFloat(maxLongSide)

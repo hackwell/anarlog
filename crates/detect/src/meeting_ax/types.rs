@@ -78,6 +78,9 @@ pub struct MeetingAccessibilityInspection {
     pub surface: MeetingSurface,
     pub accessibility_trusted: bool,
     pub window_title: Option<String>,
+    /// Screen-space frame of the browser's web content, so a capture can leave
+    /// out tab strip, toolbar and bookmarks. `None` for native apps.
+    pub content_frame: Option<AxRect>,
     pub participant_streams: Vec<MeetingParticipantStream>,
     pub active_speakers: Vec<String>,
     pub warnings: Vec<String>,

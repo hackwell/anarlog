@@ -12,15 +12,29 @@ use xcap::{Monitor, Window, XCapError};
 mod macos {
     use swift_rs::{SRData, SRString, swift};
 
-    swift!(fn _sck_capture_window_png_base64(window_id: u32, max_long_side: u32) -> SRString);
+    swift!(fn _sck_capture_window_png_base64(
+        window_id: u32,
+        max_long_side: u32,
+        source_x: i32,
+        source_y: i32,
+        source_width: u32,
+        source_height: u32
+    ) -> SRString);
     swift!(fn _vision_recognize_text(png: &SRData) -> SRString);
 
     /// PNG bytes of exactly this window via ScreenCaptureKit, or `None` when
     /// the window is gone, access is missing, or the call timed out.
-    pub fn capture_window_png(window_id: u32, max_long_side: u32) -> Option<Vec<u8>> {
+    pub fn capture_window_png(
+        window_id: u32,
+        max_long_side: u32,
+        source: Option<(i32, i32, u32, u32)>,
+    ) -> Option<Vec<u8>> {
         use base64::Engine;
 
-        let encoded = unsafe { _sck_capture_window_png_base64(window_id, max_long_side) };
+        let (x, y, width, height) = source.unwrap_or_default();
+        let encoded = unsafe {
+            _sck_capture_window_png_base64(window_id, max_long_side, x, y, width, height)
+        };
         let encoded = encoded.as_str();
         if encoded.is_empty() {
             return None;
@@ -146,6 +160,9 @@ pub struct WindowCaptureTarget {
     pub pid: u32,
     pub app_name: Option<String>,
     pub title: Option<String>,
+    /// Screen-space region to keep, e.g. a browser's web content without its
+    /// toolbars. Clipped to the window; ignored when it barely overlaps.
+    pub content_rect: Option<CaptureRect>,
 }
 
 #[derive(Debug, thiserror::Error)]
@@ -222,7 +239,7 @@ where
             let Some(window) = resolve_exact_target_window(target)? else {
                 return Ok(None);
             };
-            capture_window_source(&window, image_policy.clone()).map(Some)
+            capture_window_source(&window, image_policy.clone(), target.content_rect).map(Some)
         }
         CaptureStage::SamePidWindow => {
             let Some(target) = target else {
@@ -231,13 +248,13 @@ where
             let Some(window) = resolve_same_pid_window(target)? else {
                 return Ok(None);
             };
-            capture_window_source(&window, image_policy.clone()).map(Some)
+            capture_window_source(&window, image_policy.clone(), target.content_rect).map(Some)
         }
         CaptureStage::FrontmostWindow => {
             let Some(window) = resolve_frontmost_window()? else {
                 return Ok(None);
             };
-            capture_window_source(&window, image_policy.clone()).map(Some)
+            capture_window_source(&window, image_policy.clone(), None).map(Some)
         }
         CaptureStage::PrimaryDisplay => {
             let Some(monitor) = resolve_primary_monitor()? else {
@@ -409,6 +426,7 @@ fn same_pid_match_score(target: &WindowCaptureTarget, candidate: &WindowCandidat
 fn capture_window_source(
     window: &Window,
     image_policy: WindowContextImagePolicy,
+    content_rect: Option<CaptureRect>,
 ) -> Result<WindowContextImage> {
     let metadata = window_metadata(window)?;
     let monitor = window.current_monitor()?;
@@ -418,11 +436,24 @@ fn capture_window_source(
         return Err(Error::InvalidWindowBounds);
     }
 
+    let source = content_rect.and_then(|content| content_source_rect(metadata.rect, content));
+    let subject_rect = source.unwrap_or(metadata.rect);
+
     #[cfg(target_os = "macos")]
-    if let Some(bytes) = macos::capture_window_png(metadata.id, image_policy.max_long_side)
-        && let Ok(dimensions) = image::ImageReader::new(std::io::Cursor::new(&bytes))
-            .with_guessed_format()
-            .and_then(|reader| reader.into_dimensions().map_err(std::io::Error::other))
+    if let Some(bytes) = macos::capture_window_png(
+        metadata.id,
+        image_policy.max_long_side,
+        source.map(|rect| {
+            (
+                rect.x - metadata.rect.x,
+                rect.y - metadata.rect.y,
+                rect.width,
+                rect.height,
+            )
+        }),
+    ) && let Ok(dimensions) = image::ImageReader::new(std::io::Cursor::new(&bytes))
+        .with_guessed_format()
+        .and_then(|reader| reader.into_dimensions().map_err(std::io::Error::other))
     {
         return Ok(WindowContextImage {
             image_bytes: bytes,
@@ -431,12 +462,12 @@ fn capture_window_source(
             width: dimensions.0,
             height: dimensions.1,
             strategy: CaptureStrategy::WindowOnly,
-            crop: metadata.rect,
+            crop: subject_rect,
             subject: CaptureSubject::Window(metadata),
         });
     }
 
-    let (crop, strategy) = compute_capture_rect(metadata.rect, monitor_rect)?;
+    let (crop, strategy) = compute_capture_rect(subject_rect, monitor_rect)?;
     let local_x = (crop.x - monitor_rect.x) as u32;
     let local_y = (crop.y - monitor_rect.y) as u32;
 
@@ -526,6 +557,34 @@ fn monitor_rect(monitor: &Monitor) -> Result<CaptureRect> {
         y: monitor.y()?,
         width: monitor.width()?,
         height: monitor.height()?,
+    })
+}
+
+// Too small an overlap means the rect belongs to another window of the same
+// app (the frame comes from AX, the window from the window list); capture the
+// whole window rather than a sliver of it.
+fn content_source_rect(window: CaptureRect, content: CaptureRect) -> Option<CaptureRect> {
+    const MIN_SIDE: u32 = 200;
+    let left = max(window.x, content.x);
+    let top = max(window.y, content.y);
+    let right = min(
+        window.x as i64 + window.width as i64,
+        content.x as i64 + content.width as i64,
+    );
+    let bottom = min(
+        window.y as i64 + window.height as i64,
+        content.y as i64 + content.height as i64,
+    );
+    let width = u32::try_from(right - left as i64).ok()?;
+    let height = u32::try_from(bottom - top as i64).ok()?;
+    if width < MIN_SIDE || height < MIN_SIDE {
+        return None;
+    }
+    Some(CaptureRect {
+        x: left,
+        y: top,
+        width,
+        height,
     })
 }
 
@@ -656,11 +715,61 @@ fn unix_ms(value: SystemTime) -> i64 {
 
 #[cfg(test)]
 mod tests {
+    #[test]
+    fn content_source_rect_clips_to_the_window() {
+        let window = CaptureRect {
+            x: 100,
+            y: 50,
+            width: 1200,
+            height: 800,
+        };
+        let content = CaptureRect {
+            x: 100,
+            y: 130,
+            width: 1400,
+            height: 720,
+        };
+        assert_eq!(
+            content_source_rect(window, content),
+            Some(CaptureRect {
+                x: 100,
+                y: 130,
+                width: 1200,
+                height: 720
+            })
+        );
+    }
+
+    #[test]
+    fn content_source_rect_rejects_a_sliver_or_another_window() {
+        let window = CaptureRect {
+            x: 0,
+            y: 0,
+            width: 1200,
+            height: 800,
+        };
+        let elsewhere = CaptureRect {
+            x: 2000,
+            y: 0,
+            width: 800,
+            height: 600,
+        };
+        assert_eq!(content_source_rect(window, elsewhere), None);
+        let sliver = CaptureRect {
+            x: 1100,
+            y: 0,
+            width: 800,
+            height: 600,
+        };
+        assert_eq!(content_source_rect(window, sliver), None);
+    }
+
     use super::{
         CaptureRect, CaptureStage, CaptureStrategy, Error, WindowCandidate, WindowCaptureTarget,
-        WindowContextImagePolicy, clamp_rect_around_window, compute_capture_rect, encode_png,
-        execute_capture_plan, same_pid_match_score, select_exact_target_candidate,
-        select_frontmost_candidate, select_same_pid_best_match_candidate,
+        WindowContextImagePolicy, clamp_rect_around_window, compute_capture_rect,
+        content_source_rect, encode_png, execute_capture_plan, same_pid_match_score,
+        select_exact_target_candidate, select_frontmost_candidate,
+        select_same_pid_best_match_candidate,
     };
     use image::RgbaImage;
 
@@ -757,6 +866,7 @@ mod tests {
             pid: 42,
             app_name: Some("Arc".to_string()),
             title: Some("PR Review".to_string()),
+            content_rect: None,
         };
         let candidates = vec![
             (
@@ -787,6 +897,7 @@ mod tests {
             pid: 42,
             app_name: Some("Arc".to_string()),
             title: Some("PR Review".to_string()),
+            content_rect: None,
         };
         let app_match = candidate(1, 42, Some("Arc"), Some("Inbox"), Some(false));
         let title_match = candidate(2, 42, Some("Other"), Some("PR Review"), Some(false));
@@ -804,6 +915,7 @@ mod tests {
             pid: 42,
             app_name: Some("Arc".to_string()),
             title: Some("PR Review".to_string()),
+            content_rect: None,
         };
         let candidates = vec![
             (

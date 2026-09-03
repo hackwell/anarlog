@@ -78,6 +78,7 @@ const inspection = {
   surface: "native",
   accessibilityTrusted: true,
   windowTitle: "Zoom Meeting",
+  contentFrame: null,
   participantStreams: [],
   activeSpeakers: [],
   warnings: [],
@@ -155,7 +156,13 @@ describe("startMeetingSnapshotCapture", () => {
     await flush();
 
     expect(mocks.capture).toHaveBeenCalledWith(
-      { windowId: null, pid: 42, appName: "zoom.us", title: "Zoom Meeting" },
+      {
+        windowId: null,
+        pid: 42,
+        appName: "zoom.us",
+        title: "Zoom Meeting",
+        contentRect: null,
+      },
       { imagePolicy: { maxLongSide: 1600 } },
     );
     expect(mocks.attachmentSave).toHaveBeenCalledWith(
@@ -254,6 +261,54 @@ describe("startMeetingSnapshotCapture", () => {
     await stop();
   });
 
+  test("captures an untitled window when its app is on the mic", async () => {
+    mocks.inspect.mockResolvedValue({
+      status: "ok",
+      data: [{ ...inspection, windowTitle: null }],
+    });
+    const stop = startMeetingSnapshotCapture({ sessionId: "session-1" });
+    await flush();
+
+    expect(mocks.capture).toHaveBeenCalledWith(
+      {
+        windowId: null,
+        pid: 42,
+        appName: "zoom.us",
+        title: null,
+        contentRect: null,
+      },
+      { imagePolicy: { maxLongSide: 1600 } },
+    );
+    expect(mocks.persist).toHaveBeenCalledWith(
+      "session-1",
+      expect.objectContaining({ windowTitle: "" }),
+    );
+    await stop();
+  });
+
+  test("passes the browser content frame as capture region", async () => {
+    mocks.inspect.mockResolvedValue({
+      status: "ok",
+      data: [
+        {
+          ...inspection,
+          windowTitle: null,
+          contentFrame: { x: 10.4, y: 120.6, width: 1580, height: 900.2 },
+        },
+      ],
+    });
+    const stop = startMeetingSnapshotCapture({ sessionId: "session-1" });
+    await flush();
+
+    expect(mocks.capture).toHaveBeenCalledWith(
+      expect.objectContaining({
+        contentRect: { x: 10, y: 121, width: 1580, height: 900 },
+      }),
+      { imagePolicy: { maxLongSide: 1600 } },
+    );
+    await stop();
+  });
+
   test("captures a titled window even without a mic match", async () => {
     mocks.inspect.mockResolvedValue({
       status: "ok",
@@ -267,7 +322,7 @@ describe("startMeetingSnapshotCapture", () => {
     await flush();
 
     expect(mocks.capture).toHaveBeenCalledWith(
-      { windowId: null, pid: 42, appName: "zoom.us", title: "Zoom Meeting" },
+      expect.objectContaining({ pid: 42, title: "Zoom Meeting" }),
       { imagePolicy: { maxLongSide: 1600 } },
     );
     await stop();

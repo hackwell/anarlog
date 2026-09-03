@@ -1517,12 +1517,16 @@ fn inspect_app(
     let mut warnings = Vec::new();
     let bundle_platform = classify_bundle(&app.id);
     let mut window_title = None;
+    let mut content_frame = None;
     let mut nodes = Vec::new();
     let mut scoped_platform = None;
 
     if accessibility_trusted {
         let ax_app = ax::UiElement::with_app_pid(pid);
         let _ = ax_app.set_messaging_timeout_secs(0.6);
+        if is_browser_bundle(&app.id) {
+            content_frame = browser_content_frame(&ax_app);
+        }
         if bundle_platform == MeetingPlatform::Slack {
             let mut roots = collect_slack_huddle_roots(&ax_app, &mut warnings);
             match roots.len() {
@@ -1616,10 +1620,38 @@ fn inspect_app(
         surface,
         accessibility_trusted,
         window_title,
+        content_frame,
         participant_streams,
         active_speakers,
         warnings,
     }
+}
+
+// The web area of the focused window, else of the first window that exposes
+// one. Cheap on purpose: no node walk, so it still resolves for pages whose AX
+// tree exceeds the snapshot limits (the Zoom web client does).
+#[cfg(target_os = "macos")]
+fn browser_content_frame(ax_app: &ax::UiElement) -> Option<AxRect> {
+    if let Some(frame) = focused_web_area_element(ax_app).and_then(|area| element_rect(&area)) {
+        return Some(frame.into());
+    }
+    let mut windows = Vec::new();
+    let mut visited = 0;
+    collect_window_elements(ax_app, 0, &mut visited, &mut windows);
+    windows
+        .iter()
+        .find_map(|window| active_web_area_element(window, None).0)
+        .and_then(|area| element_rect(&area))
+        .map(AxRect::from)
+}
+
+#[cfg(target_os = "macos")]
+fn element_rect(element: &ax::UiElement) -> Option<cg::Rect> {
+    element
+        .frame()
+        .ok()
+        .and_then(|frame| frame.cg_rect())
+        .or_else(|| rect_from_position_and_size(element))
 }
 
 #[cfg(target_os = "macos")]
@@ -1713,12 +1745,7 @@ fn snapshot_node(element: &ax::UiElement, index: usize) -> AxNode {
     let placeholder = string_attr(element, ax::attr::placeholder_value());
     let enabled = element.is_enabled().ok().map(|enabled| enabled.value());
     let settable_value = element.is_settable(ax::attr::value()).unwrap_or(false);
-    let bounds = element
-        .frame()
-        .ok()
-        .and_then(|frame| frame.cg_rect())
-        .or_else(|| rect_from_position_and_size(element))
-        .map(AxRect::from);
+    let bounds = element_rect(element).map(AxRect::from);
     let text = searchable_node_text(
         &role,
         &title,
