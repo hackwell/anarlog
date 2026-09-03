@@ -31,6 +31,7 @@ Default permissions for the plugin
 - `allow-extract-voiceprint-candidates`
 - `allow-promote-voiceprint-candidates`
 - `allow-cleanup-expired-voiceprint-candidates`
+- `allow-audio-peaks`
 
 ## Permission Table
 
@@ -40,6 +41,32 @@ Default permissions for the plugin
 <th>Description</th>
 </tr>
 
+
+<tr>
+<td>
+
+`transcription:allow-audio-peaks`
+
+</td>
+<td>
+
+Enables the audio_peaks command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`transcription:deny-audio-peaks`
+
+</td>
+<td>
+
+Denies the audio_peaks command without any pre-configured scope.
+
+</td>
+</tr>
 
 <tr>
 <td>

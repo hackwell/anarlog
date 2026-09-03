@@ -205,6 +205,18 @@ async cleanupExpiredVoiceprintCandidates() : Promise<Result<number, string>> {
     if(e instanceof Error) throw e;
     else return { status: "error", error: e  as any };
 }
+},
+/**
+ * Loudness outline of an audio file, for drawing a progress waveform.
+ * Decodes the file once as a stream; callers cache the result per session.
+ */
+async audioPeaks(audioPath: string, buckets: number) : Promise<Result<AudioPeaks, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("plugin:transcription|audio_peaks", { audioPath, buckets }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
 }
 }
 
@@ -231,6 +243,11 @@ transcriptionEvent: "plugin:transcription:transcription-event"
 
 /** user-defined types **/
 
+export type AudioPeaks = { 
+/**
+ * Loudness per bucket, scaled so the loudest bucket is 1.
+ */
+peaks: number[]; durationMs: number }
 export type BatchAlternatives = { transcript: string; confidence: number; words?: BatchWord[] }
 export type BatchChannel = { alternatives: BatchAlternatives[] }
 export type BatchErrorCode = "unknown" | "timed_out" | "audio_metadata_join_failed" | "audio_metadata_read_failed" | "batch_capability_unsupported" | "direct_batch_unsupported" | "progressive_batch_unsupported" | "direct_request_failed" | "progressive_actor_spawn_failed" | "progressive_start_cancelled" | "progressive_stopped_without_completion_signal" | "progressive_finished_without_status" | "progressive_start_failed" | "progressive_stream_error" | "progressive_stream_timeout"
