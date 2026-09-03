@@ -208,6 +208,31 @@ describe("ToastNotifications", () => {
     );
   });
 
+  it("updates a downloading update toast in place as its progress changes", () => {
+    mocks.update.status = "downloading";
+    mocks.update.version = "1.8.0";
+    mocks.update.progress = 0.42;
+
+    const view = render(<ToastNotifications />);
+    act(() => vi.advanceTimersByTime(500));
+
+    expect(mocks.loading).toHaveBeenCalledWith(
+      "Downloading Session Echo 1.8.0 (42%)",
+      expect.objectContaining({ id: "desktop-update:1.8.0:downloading" }),
+    );
+
+    mocks.update.progress = 0.88;
+    view.rerender(<ToastNotifications />);
+
+    // Same id, no dismissal in between: Sonner replaces the text instead of
+    // tearing the toast down and animating a new one in.
+    expect(mocks.loading).toHaveBeenLastCalledWith(
+      "Downloading Session Echo 1.8.0 (88%)",
+      expect.objectContaining({ id: "desktop-update:1.8.0:downloading" }),
+    );
+    expect(mocks.dismiss).not.toHaveBeenCalled();
+  });
+
   it("lets users dismiss a model download toast until the next download", () => {
     mocks.notifications.hasActiveDownload = true;
     mocks.notifications.downloadingModel = "apple-speech";
