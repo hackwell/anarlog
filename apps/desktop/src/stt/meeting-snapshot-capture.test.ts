@@ -142,7 +142,10 @@ describe("startMeetingSnapshotCapture", () => {
     mocks.catalog.mockResolvedValue(undefined);
     mocks.persist.mockResolvedValue("doc-1");
     mocks.loadRecords.mockResolvedValue([]);
-    mocks.recognize.mockResolvedValue({ status: "ok", data: "Q3 roadmap\n" });
+    mocks.recognize.mockResolvedValue({
+      status: "ok",
+      data: "Q3 roadmap\n- Onboarding v2\n",
+    });
     mocks.decode.mockResolvedValue(frame(10));
     mocks.attachmentRemove.mockResolvedValue({ status: "ok", data: null });
   });
@@ -179,7 +182,7 @@ describe("startMeetingSnapshotCapture", () => {
         windowTitle: "Zoom Meeting",
         width: 1600,
         height: 900,
-        text: "Q3 roadmap",
+        text: "Q3 roadmap\n- Onboarding v2",
       }),
     );
     await stop();
@@ -218,7 +221,10 @@ describe("startMeetingSnapshotCapture", () => {
     const stop = startMeetingSnapshotCapture({ sessionId: "session-1" });
     await flush();
     mocks.decode.mockResolvedValue(frame(200));
-    mocks.recognize.mockResolvedValue({ status: "ok", data: "Hiring plan" });
+    mocks.recognize.mockResolvedValue({
+      status: "ok",
+      data: "Hiring plan for the fourth quarter",
+    });
 
     await vi.advanceTimersByTimeAsync(MEETING_SNAPSHOT_INTERVAL_MS);
     expect(mocks.attachmentSave).toHaveBeenCalledTimes(1);

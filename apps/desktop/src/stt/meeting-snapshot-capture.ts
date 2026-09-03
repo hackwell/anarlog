@@ -12,6 +12,8 @@ import { useTabs } from "~/store/zustand/tabs";
 import {
   decodeToGreyThumbnail,
   frameDifference,
+  hasNewSlideText,
+  slideTextLines,
 } from "~/stt/meeting-snapshot-diff";
 import {
   MAX_MEETING_SNAPSHOTS,
@@ -54,7 +56,7 @@ export function startMeetingSnapshotCapture({
   let stopped = false;
   let inFlight: Promise<void> | null = null;
   let permissionChecked = false;
-  let lastKept: { lines: Set<string>; atMs: number } | null = null;
+  let lastKept: { lines: string[]; atMs: number } | null = null;
   let lastGrey: Uint8Array | null = null;
   // Browsers whose UI is itself a web page (Vivaldi) only expose the page's
   // insets while focus is inside the page. Keep the last known ones per
@@ -165,11 +167,8 @@ export function startMeetingSnapshotCapture({
     // tick. A frame counts as a slide when it shows text the last kept frame
     // did not. Image-only slides are the known blind spot.
     const text = await recognizeText(captured.data.dataBase64);
-    const lines = textLines(text);
-    if (
-      lines.length === 0 ||
-      (lastKept && lines.every((line) => lastKept!.lines.has(line)))
-    ) {
+    const lines = slideTextLines(text);
+    if (!hasNewSlideText(lastKept?.lines ?? null, lines)) {
       return;
     }
 
@@ -237,7 +236,7 @@ export function startMeetingSnapshotCapture({
       }
       return;
     }
-    lastKept = { lines: new Set(lines), atMs: capturedAtMs };
+    lastKept = { lines, atMs: capturedAtMs };
     keptCount++;
   };
 
@@ -298,13 +297,6 @@ type CaptureInsets = {
   bottom: number;
   right: number;
 };
-
-function textLines(text: string) {
-  return text
-    .split("\n")
-    .map((line) => line.trim())
-    .filter((line) => line !== "");
-}
 
 // Only frames whose pixels changed are read: OCR at accurate level costs a
 // few hundred ms, and most ticks are discarded as unchanged.
