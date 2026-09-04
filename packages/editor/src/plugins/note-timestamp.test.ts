@@ -1,5 +1,5 @@
 import { EditorState, type Transaction } from "prosemirror-state";
-import { EditorView } from "prosemirror-view";
+import { type DecorationSet, EditorView } from "prosemirror-view";
 import { afterEach, describe, expect, it } from "vitest";
 
 import { schema } from "../note/schema";
@@ -421,6 +421,36 @@ describe("noteTimestampPlugin decorations", () => {
 
     expect(activated).toEqual([724_000]);
     expect(label?.getAttribute("aria-label")).toBe("Jump to this point");
+  });
+
+  it("keeps the same widget across recomputations of an unchanged state", () => {
+    // ProseMirror keeps a widget's DOM only when the old and new decoration
+    // compare equal; without a stable spec key every label in the document is
+    // rebuilt on every keystroke.
+    const plugin = noteTimestampPlugin(() => ({
+      getRecordedAtMs: () => null,
+      formatLabel: (ms) => `label-${ms}`,
+      onActivate: () => {},
+    }));
+    const state = EditorState.create({
+      doc: schema.node("doc", null, [
+        schema.node("paragraph", { recordedAtMs: 724_000 }, [
+          schema.text("clarify pricing"),
+        ]),
+      ]),
+      plugins: [plugin],
+    });
+
+    const decorate = () =>
+      (
+        plugin.props.decorations?.call(plugin, state) as DecorationSet | null
+      )?.find() ?? [];
+    const first = decorate();
+    const second = decorate();
+
+    expect(first).toHaveLength(1);
+    expect(second).toHaveLength(1);
+    expect(first[0]!.type.eq(second[0]!.type)).toBe(true);
   });
 
   it("renders no label for an anchored paragraph that is empty", () => {

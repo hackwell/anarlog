@@ -172,9 +172,19 @@ export function noteTimestampPlugin(
                   onActivate,
                   activateLabel,
                 ),
-              // The label sits in the margin, not in the text: it must never
-              // take the caret or move it when the user walks the line.
-              { side: -1, ignoreSelection: true, marks: [] },
+              {
+                // The label sits in the margin, not in the text: it must never
+                // take the caret or move it when the user walks the line.
+                side: -1,
+                ignoreSelection: true,
+                marks: [],
+                // WidgetType.eq falls back to comparing toDOM identity, and
+                // toDOM is a fresh closure on every decoration pass, so without
+                // a key every label in the document is torn down and rebuilt on
+                // each keystroke — restarting its reveal transition and costing
+                // an order of magnitude in a long note.
+                key: `note-timestamp-${recordedAtMs}`,
+              },
             ),
           );
         });
