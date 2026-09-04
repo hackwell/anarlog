@@ -1096,11 +1096,16 @@ describe("annotateNoteMarkdown", () => {
   it("leaves paragraphs without an anchor alone", () => {
     const markdown = annotateNoteMarkdown(
       jsonSnapshot([
+        {
+          type: "paragraph",
+          attrs: { recordedAtMs: 724_000 },
+          content: [{ type: "text", text: "clarify pricing" }],
+        },
         { type: "paragraph", content: [{ type: "text", text: "prepared" }] },
       ]),
     );
 
-    expect(markdown.trim()).toBe("prepared");
+    expect(markdown.trim()).toBe("[12:04] clarify pricing\n\nprepared");
   });
 
   it("returns the stored markdown for a markdown note", () => {
@@ -1152,7 +1157,8 @@ import {
 import { formatRecordingPosition } from "~/session/components/note-input/use-note-timestamp-config";
 
 // The markdown schema has no anchor attribute, so json2md drops the positions.
-// Writing them into the text is what puts them in front of the model.
+// The label is prefixed to each already-serialized block rather than injected
+// into a text node, because the markdown serializer escapes square brackets.
 export function annotateNoteMarkdown(snapshot: {
   rawContent: string;
   rawContentFormat: string;
