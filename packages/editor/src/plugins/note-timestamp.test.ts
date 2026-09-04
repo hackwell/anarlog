@@ -1,11 +1,47 @@
 import { EditorState, type Transaction } from "prosemirror-state";
-import { describe, expect, it } from "vitest";
+import { EditorView } from "prosemirror-view";
+import { afterEach, describe, expect, it } from "vitest";
 
 import { schema } from "../note/schema";
 import {
   type NoteTimestampConfig,
   noteTimestampPlugin,
 } from "./note-timestamp";
+
+const views: EditorView[] = [];
+
+afterEach(() => {
+  for (const view of views) {
+    view.destroy();
+  }
+  views.length = 0;
+  document.body.innerHTML = "";
+});
+
+function mount(
+  config: NoteTimestampConfig,
+  doc?: ReturnType<typeof schema.node>,
+) {
+  const state = EditorState.create({
+    doc:
+      doc ??
+      schema.node("doc", null, [
+        schema.node("paragraph", { recordedAtMs: 724_000 }, [
+          schema.text("clarify pricing"),
+        ]),
+        schema.node("paragraph", null, [schema.text("no anchor")]),
+      ]),
+    plugins: [noteTimestampPlugin(() => config)],
+  });
+  const view = new EditorView(
+    document.body.appendChild(document.createElement("div")),
+    {
+      state,
+    },
+  );
+  views.push(view);
+  return view;
+}
 
 function createState(
   config: NoteTimestampConfig | undefined,
@@ -324,5 +360,85 @@ describe("noteTimestampPlugin stamping", () => {
     const listItem = bulletList.child(0);
     const para = listItem.child(0);
     expect(para.attrs.recordedAtMs).toBe(724_000);
+  });
+
+  it("splits right before a mention, keeping the anchor on the half that holds it", () => {
+    // node.textContent ignores inline atoms, so a paragraph holding only a
+    // mention used to read as empty and get misclassified by the split logic.
+    const doc = schema.node("doc", null, [
+      schema.node("paragraph", { recordedAtMs: 60_000 }, [
+        schema.node("mention-@", { id: "u1", type: "user", label: "alice" }),
+      ]),
+    ]);
+    const state = createState(recording, doc);
+
+    const nextState = state.applyTransaction(state.tr.split(1)).state;
+
+    expect(nextState.doc.childCount).toBe(2);
+    // The new empty half never earned its anchor.
+    expect(nextState.doc.child(0).attrs.recordedAtMs).toBeNull();
+    // The half still holding the mention keeps its anchor.
+    expect(nextState.doc.child(1).attrs.recordedAtMs).toBe(60_000);
+  });
+});
+
+describe("noteTimestampPlugin decorations", () => {
+  it("renders one label for the anchored paragraph only", () => {
+    const view = mount({
+      getRecordedAtMs: () => null,
+      formatLabel: (ms) => `label-${ms}`,
+      onActivate: () => {},
+    });
+
+    const labels = view.dom.querySelectorAll("button.note-timestamp");
+
+    expect(labels).toHaveLength(1);
+    expect(labels[0]?.textContent).toBe("label-724000");
+    expect(labels[0]?.getAttribute("data-recorded-at-ms")).toBe("724000");
+    expect(view.dom.querySelectorAll("p")).toHaveLength(2);
+  });
+
+  it("renders nothing when jumping is unavailable", () => {
+    const view = mount({
+      getRecordedAtMs: () => null,
+      formatLabel: () => "12:04",
+    });
+
+    expect(view.dom.querySelectorAll("button.note-timestamp")).toHaveLength(0);
+  });
+
+  it("jumps to the stored position when the label is clicked", () => {
+    const activated: number[] = [];
+    const view = mount({
+      getRecordedAtMs: () => null,
+      formatLabel: () => "12:04",
+      onActivate: (ms) => activated.push(ms),
+      activateLabel: "Jump to this point",
+    });
+
+    const label = view.dom.querySelector("button.note-timestamp");
+    label?.dispatchEvent(new MouseEvent("mousedown", { bubbles: true }));
+
+    expect(activated).toEqual([724_000]);
+    expect(label?.getAttribute("aria-label")).toBe("Jump to this point");
+  });
+
+  it("renders no label for an anchored paragraph that is empty", () => {
+    // Task 2's normalization only runs while a recording is active, so a
+    // paragraph split after recording ends can keep an inherited anchor
+    // while holding no content. A label beside an empty line is wrong.
+    const doc = schema.node("doc", null, [
+      schema.node("paragraph", { recordedAtMs: 724_000 }, []),
+    ]);
+    const view = mount(
+      {
+        getRecordedAtMs: () => null,
+        formatLabel: (ms) => `label-${ms}`,
+        onActivate: () => {},
+      },
+      doc,
+    );
+
+    expect(view.dom.querySelectorAll("button.note-timestamp")).toHaveLength(0);
   });
 });

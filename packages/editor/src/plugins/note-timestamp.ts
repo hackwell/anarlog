@@ -1,4 +1,5 @@
 import { Plugin, PluginKey, type Transaction } from "prosemirror-state";
+import { Decoration, DecorationSet } from "prosemirror-view";
 
 import { getChangedTextblockRanges } from "./changed-ranges";
 
@@ -56,11 +57,11 @@ export function noteTimestampPlugin(
           if (node.type !== newState.schema.nodes.paragraph) {
             return true;
           }
-          if (node.attrs.recordedAtMs === null && node.textContent.length > 0) {
+          if (node.attrs.recordedAtMs === null && node.content.size > 0) {
             updates.push({ pos, recordedAtMs });
           } else if (
             node.attrs.recordedAtMs !== null &&
-            node.textContent.length === 0
+            node.content.size === 0
           ) {
             emptyAnchored.push(pos);
           }
@@ -90,7 +91,7 @@ export function noteTimestampPlugin(
             return false;
           }
 
-          if (node.textContent.length === 0) {
+          if (node.content.size === 0) {
             const start = mapPositionForward(transactions, pos);
             if (!start.deleted) {
               legitimateAnchored.add(start.pos);
@@ -138,5 +139,76 @@ export function noteTimestampPlugin(
 
       return tr;
     },
+    props: {
+      decorations(state) {
+        const config = getConfig();
+        if (!config?.onActivate) {
+          return null;
+        }
+
+        const { onActivate, formatLabel, activateLabel } = config;
+        const decorations: Decoration[] = [];
+
+        // Shallow on purpose, unlike the stamping side above: a paragraph
+        // nested in a list item or blockquote still gets stamped, but its
+        // label would collide with the list marker, so it stays unlabeled.
+        state.doc.forEach((node, offset) => {
+          const recordedAtMs = node.attrs.recordedAtMs;
+          if (
+            node.type !== state.schema.nodes.paragraph ||
+            typeof recordedAtMs !== "number" ||
+            node.content.size === 0
+          ) {
+            return;
+          }
+
+          decorations.push(
+            Decoration.widget(
+              offset + 1,
+              () =>
+                createLabel(
+                  recordedAtMs,
+                  formatLabel,
+                  onActivate,
+                  activateLabel,
+                ),
+              // The label sits in the margin, not in the text: it must never
+              // take the caret or move it when the user walks the line.
+              { side: -1, ignoreSelection: true, marks: [] },
+            ),
+          );
+        });
+
+        return decorations.length > 0
+          ? DecorationSet.create(state.doc, decorations)
+          : null;
+      },
+    },
   });
+}
+
+function createLabel(
+  recordedAtMs: number,
+  formatLabel: (recordedAtMs: number) => string,
+  onActivate: (recordedAtMs: number) => void,
+  activateLabel: string | undefined,
+) {
+  const button = document.createElement("button");
+  button.className = "note-timestamp";
+  button.type = "button";
+  button.contentEditable = "false";
+  button.tabIndex = -1;
+  button.dataset.recordedAtMs = String(recordedAtMs);
+  button.textContent = formatLabel(recordedAtMs);
+  if (activateLabel) {
+    button.setAttribute("aria-label", activateLabel);
+    button.title = activateLabel;
+  }
+  // mousedown, so the editor never moves the caret into the margin first.
+  button.addEventListener("mousedown", (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    onActivate(recordedAtMs);
+  });
+  return button;
 }
