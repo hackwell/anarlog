@@ -98,6 +98,8 @@ vi.mock("~/audio-player", () => ({
   useAudioPlayer: () => ({
     audioExists: false,
     audioExistsResolved: true,
+    seek: vi.fn(),
+    start: vi.fn(),
   }),
 }));
 
@@ -146,6 +148,10 @@ vi.mock("~/templates", () => ({
 
 vi.mock("~/stt/contexts", () => ({
   useListener: () => "inactive",
+}));
+
+vi.mock("~/stt/queries", () => ({
+  useSessionTranscriptMetadata: () => [],
 }));
 
 vi.mock("~/session/hooks/useCreatePreMeetingBrief", () => ({
@@ -258,6 +264,17 @@ describe("RawEditor", () => {
       type: "doc",
       content: [{ type: "paragraph" }],
     });
+  });
+
+  it("hands the note editor a timestamp config", () => {
+    render(<RawEditor sessionId="session-1" />);
+
+    const config = hoisted.noteEditorProps[hoisted.noteEditorProps.length - 1]
+      ?.timestampConfig as { getRecordedAtMs: () => number | null } | undefined;
+
+    expect(typeof config?.getRecordedAtMs).toBe("function");
+    // No recording and no audio in this test: nothing to anchor, nothing to jump to.
+    expect(config?.getRecordedAtMs()).toBeNull();
   });
 
   it("removes a legacy session title from the memo body", () => {
