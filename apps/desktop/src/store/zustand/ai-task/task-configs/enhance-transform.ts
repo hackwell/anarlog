@@ -16,6 +16,7 @@ import { sessionEventSchema } from "@anlg/store";
 
 import type { TaskArgsMap, TaskArgsMapTransformed, TaskConfig } from ".";
 import { collectEnhanceImageContext } from "./enhance-images";
+import { annotateNoteMarkdown } from "./note-timestamp-markdown";
 
 import { loadHumansByIds } from "~/contacts/queries";
 import { normalizeSummaryLengthMode } from "~/services/enhancer/summary-length";
@@ -350,13 +351,15 @@ function getSessionContext(
     memoMd: transcript.memo,
   }));
 
+  const memoMarkdown = annotateNoteMarkdown(snapshot);
+
   return {
     preMeetingMemo: transcriptsMeta[0]?.memoMd ?? "",
     postMeetingMemo: meetingChatContext
-      ? [snapshot.rawMarkdown, meetingChatContext]
+      ? [memoMarkdown, meetingChatContext]
           .filter((value) => value.trim())
           .join("\n\n")
-      : snapshot.rawMarkdown,
+      : memoMarkdown,
     session: getSessionData(snapshot),
     participants: getParticipants(snapshot),
     transcriptsMeta,
