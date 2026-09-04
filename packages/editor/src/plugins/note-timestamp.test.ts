@@ -214,6 +214,37 @@ describe("noteTimestampPlugin stamping", () => {
     expect(newBlockquote.child(1).attrs.recordedAtMs).toBeNull();
   });
 
+  it("keeps an emptied paragraph's anchor when the same transaction splits an unrelated paragraph sharing its value", () => {
+    // Paragraph A (top-level) and paragraph C (nested in a blockquote) both
+    // pre-anchored to the same value, as the plugin's own stamping routinely
+    // produces. One transaction empties A and splits C at the end, both in
+    // a single dispatch, so no per-node fact can be read off an aggregate.
+    const doc = schema.node("doc", null, [
+      schema.node("paragraph", { recordedAtMs: 60_000 }, [
+        schema.text("hello"),
+      ]),
+      schema.node("blockquote", null, [
+        schema.node("paragraph", { recordedAtMs: 60_000 }, [
+          schema.text("world"),
+        ]),
+      ]),
+    ]);
+    const state = createState(recording, doc);
+
+    const nextState = state.applyTransaction(
+      state.tr.delete(1, 6).split(9),
+    ).state;
+
+    // Paragraph A only lost its text; it earned its anchor and keeps it.
+    expect(nextState.doc.child(0).attrs.recordedAtMs).toBe(60_000);
+
+    // Paragraph C's new empty half from the split never earned its anchor.
+    const blockquote = nextState.doc.child(1);
+    expect(blockquote.childCount).toBe(2);
+    expect(blockquote.child(0).attrs.recordedAtMs).toBe(60_000);
+    expect(blockquote.child(1).attrs.recordedAtMs).toBeNull();
+  });
+
   it("stamps nested paragraph inside bullet list when text is typed", () => {
     // Paragraph nested inside listItem of a bulletList
     const doc = schema.node("doc", null, [

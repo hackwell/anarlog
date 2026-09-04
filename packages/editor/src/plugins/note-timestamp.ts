@@ -1,4 +1,5 @@
 import { Plugin, PluginKey } from "prosemirror-state";
+import { Mapping } from "prosemirror-transform";
 
 import { getChangedTextblockRanges } from "./changed-ranges";
 
@@ -37,9 +38,7 @@ export function noteTimestampPlugin(
       }
 
       const updates: { pos: number; recordedAtMs: number | null }[] = [];
-
-      // Collect empty paragraphs that need normalization before computing counts
-      const emptyAnchored: Array<{ pos: number; value: number }> = [];
+      const emptyAnchored: number[] = [];
       for (const range of ranges) {
         newState.doc.nodesBetween(range.from, range.to, (node, pos) => {
           if (node.type !== newState.schema.nodes.paragraph) {
@@ -47,56 +46,43 @@ export function noteTimestampPlugin(
           }
           if (node.attrs.recordedAtMs === null && node.textContent.length > 0) {
             updates.push({ pos, recordedAtMs });
-          }
-          if (
+          } else if (
             node.attrs.recordedAtMs !== null &&
             node.textContent.length === 0
           ) {
-            emptyAnchored.push({ pos, value: node.attrs.recordedAtMs });
+            emptyAnchored.push(pos);
           }
           return false;
         });
       }
 
-      // Only count if there are empty anchored paragraphs to evaluate
+      // ProseMirror's split copies a node's attributes onto both halves, so an empty
+      // paragraph carrying an anchor may be one the user never typed into. Map every
+      // anchored paragraph from the old document forward through this transaction's
+      // combined mapping: an empty candidate whose position is not the image of one
+      // of those survivors is a node this transaction created, so only it is cleared.
       if (emptyAnchored.length > 0) {
-        // Count occurrences of each timestamp value in old and new documents.
-        // Use descendants() to visit nested paragraphs in blockquotes, lists, etc.
-        const countInOld = new Map<number, number>();
-        const countInNew = new Map<number, number>();
+        const mapping = new Mapping();
+        for (const transaction of transactions) {
+          mapping.appendMapping(transaction.mapping);
+        }
 
-        oldState.doc.descendants((node) => {
-          if (
-            node.type === oldState.schema.nodes.paragraph &&
-            typeof node.attrs.recordedAtMs === "number"
-          ) {
-            countInOld.set(
-              node.attrs.recordedAtMs,
-              (countInOld.get(node.attrs.recordedAtMs) ?? 0) + 1,
-            );
+        const survivingAnchored = new Set<number>();
+        oldState.doc.descendants((node, pos) => {
+          if (node.type !== oldState.schema.nodes.paragraph) {
+            return true;
           }
+          if (node.attrs.recordedAtMs !== null) {
+            const result = mapping.mapResult(pos, 1);
+            if (!result.deleted) {
+              survivingAnchored.add(result.pos);
+            }
+          }
+          return false;
         });
 
-        newState.doc.descendants((node) => {
-          if (
-            node.type === newState.schema.nodes.paragraph &&
-            typeof node.attrs.recordedAtMs === "number"
-          ) {
-            countInNew.set(
-              node.attrs.recordedAtMs,
-              (countInNew.get(node.attrs.recordedAtMs) ?? 0) + 1,
-            );
-          }
-        });
-
-        // Split copies attributes onto both halves. Clear an empty anchored paragraph
-        // only when its value count increased, indicating a split-created copy.
-        // Preserve anchors on existing paragraphs that lost content via deletion
-        // (count unchanged) versus newly created nodes from split (count increased).
-        for (const { pos, value } of emptyAnchored) {
-          const oldCount = countInOld.get(value) ?? 0;
-          const newCount = countInNew.get(value) ?? 0;
-          if (newCount > oldCount) {
+        for (const pos of emptyAnchored) {
+          if (!survivingAnchored.has(pos)) {
             updates.push({ pos, recordedAtMs: null });
           }
         }
