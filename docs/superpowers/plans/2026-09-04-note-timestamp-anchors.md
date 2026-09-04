@@ -178,7 +178,7 @@ MSG
 - Produces:
   - `export type NoteTimestampConfig = { getRecordedAtMs: () => number | null; formatLabel: (recordedAtMs: number) => string; onActivate?: (recordedAtMs: number) => void; activateLabel?: string }`
   - `export function noteTimestampPlugin(getConfig: () => NoteTimestampConfig | undefined): Plugin`
-  - `export const noteTimestampPluginKey: PluginKey<DecorationSet>`
+  - `export const noteTimestampPluginKey: PluginKey` — the plugin keeps no state of its own; decorations are derived from the document in Task 3, so the key is an identity only
   - `export const MAX_STAMPED_TEXTBLOCKS = 3`
 
 - [ ] **Step 1: Write the failing test**
