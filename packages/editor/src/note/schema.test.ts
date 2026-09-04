@@ -52,4 +52,31 @@ describe("note schema paragraph anchors", () => {
 
     expect(parsed.child(0).attrs.recordedAtMs).toBeNull();
   });
+
+  it("ignores an empty attribute in parsed HTML", () => {
+    const container = document.createElement("div");
+    container.innerHTML = '<p data-recorded-at-ms="">typed</p>';
+
+    const parsed = DOMParser.fromSchema(schema).parse(container);
+
+    expect(parsed.child(0).attrs.recordedAtMs).toBeNull();
+  });
+
+  it("ignores a whitespace-only attribute in parsed HTML", () => {
+    const container = document.createElement("div");
+    container.innerHTML = '<p data-recorded-at-ms="   ">typed</p>';
+
+    const parsed = DOMParser.fromSchema(schema).parse(container);
+
+    expect(parsed.child(0).attrs.recordedAtMs).toBeNull();
+  });
+
+  it("ignores a negative attribute in parsed HTML", () => {
+    const container = document.createElement("div");
+    container.innerHTML = '<p data-recorded-at-ms="-1000">typed</p>';
+
+    const parsed = DOMParser.fromSchema(schema).parse(container);
+
+    expect(parsed.child(0).attrs.recordedAtMs).toBeNull();
+  });
 });

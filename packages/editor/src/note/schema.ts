@@ -56,7 +56,9 @@ const nodes: Record<string, NodeSpec> = {
         tag: "p",
         getAttrs(dom) {
           const raw = (dom as HTMLElement).getAttribute("data-recorded-at-ms");
-          const recordedAtMs = raw === null ? Number.NaN : Number(raw);
+          // Number("") and Number("  ") are 0, so a blank attribute on
+          // hand-written or foreign HTML would invent a 0:00 anchor.
+          const recordedAtMs = raw?.trim() ? Number(raw) : Number.NaN;
           return {
             recordedAtMs:
               Number.isFinite(recordedAtMs) && recordedAtMs >= 0
