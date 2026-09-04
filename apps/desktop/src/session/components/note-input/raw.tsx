@@ -17,6 +17,7 @@ import { CreateBriefSuggestion } from "./create-brief-suggestion";
 import { useNoteFileHandlerConfig } from "./file-handler";
 import { MeetingChatHighlights } from "./meeting-chat-highlights";
 import { SnapshotStrip } from "./snapshot-strip";
+import { useNoteTimestampConfig } from "./use-note-timestamp-config";
 
 import { useAudioPlayer } from "~/audio-player";
 import { useSessionEventParticipants } from "~/calendar/queries";
@@ -115,6 +116,7 @@ export const RawEditor = forwardRef<
     const resolveAttachment = useAttachmentResolver(sessionId);
     const { audioDropTargetProps, fileHandlerConfig, isAudioDragActive } =
       useNoteFileHandlerConfig(sessionId);
+    const timestampConfig = useNoteTimestampConfig(sessionId);
     const initialContent = useMemo<JSONContent>(
       () => removeDocumentTitle(parseJsonContent(rawMd), sessionTitle),
       [rawMd, sessionTitle],
@@ -274,6 +276,7 @@ export const RawEditor = forwardRef<
               onNavigateToTitle={onNavigateToTitle}
               onLinkOpen={openEditorLink}
               fileHandlerConfig={fileHandlerConfig}
+              timestampConfig={timestampConfig}
               taskSource={taskSource}
               extraNodeViews={extraNodeViews}
               showFormatToolbar={showFormatToolbar}

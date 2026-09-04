@@ -1,0 +1,40 @@
+.prosemirror-editor {
+  /* The renderer may wrap the widget in its own element(s) before our button,
+     so match by descendant, not direct child. */
+  p:has(.note-timestamp) {
+    position: relative;
+  }
+
+  /* The note surface clips horizontally and leaves only its own small padding
+     beside the text, so a label in the left margin is cut off. It sits at the
+     line's right end instead, inside the box that clips. */
+  .note-timestamp {
+    position: absolute;
+    right: 0.125rem;
+    top: 0.15em;
+    padding: 0 0.25rem;
+    border: none;
+    border-radius: 0.25rem;
+    background: var(--color-background, #fff);
+    font-size: 0.75rem;
+    font-variant-numeric: tabular-nums;
+    line-height: 1.4;
+    color: var(--color-muted-foreground, #6b7280);
+    cursor: pointer;
+    /* Dim rather than hidden: a hover-only label in the right margin is not
+       discoverable, and these times are the whole point of the feature. */
+    opacity: 0.4;
+    transition: opacity 120ms ease-out;
+    user-select: none;
+  }
+
+  p:hover .note-timestamp,
+  p:focus-within .note-timestamp {
+    opacity: 1;
+  }
+
+  .note-timestamp:hover {
+    color: var(--color-sidebar-selected, #589eec);
+    text-decoration: underline;
+  }
+}

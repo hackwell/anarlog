@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { sonnerToast, TOAST_DURATIONS } from "@anlg/ui/components/ui/toast";
 
@@ -253,14 +253,13 @@ export function ToastNotifications() {
     return null;
   }
 
-  const descriptionKey =
-    typeof displayToast.description === "string"
-      ? displayToast.description
-      : displayToast.id;
+  // Keyed by identity only: a changed description updates the live toast (see
+  // SonnerNotification) instead of replacing the component, which would dismiss
+  // and re-create the toast on every download percent.
   const previewKey =
     devtoolsPreview && devtoolsToast
       ? `${devtoolsToast.id}:${devtoolsPreview.key}`
-      : `${displayToast.id}:${descriptionKey}`;
+      : displayToast.id;
 
   return (
     <SonnerNotification
@@ -282,46 +281,60 @@ function SonnerNotification({
 }) {
   const toastRef = useLatestRef(toast);
   const onDismissRef = useLatestRef(onDismiss);
+  // Once false it stays false for this toast's life: neither the primary
+  // action nor unmounting is a dismissal the user asked to remember.
+  const persistDismissalRef = useRef(true);
+  // Everything the toast puts on screen. Sonner replaces a toast's content
+  // when called again with the same id, so a new percentage updates the
+  // visible toast in place.
+  const presentation = [
+    toast.id,
+    typeof toast.description === "string" ? toast.description : "",
+    toast.variant ?? "",
+    toast.loading ? "loading" : "",
+    toast.primaryAction?.label ?? "",
+    toast.lifecycle.type,
+  ].join("\u0000");
 
-  useMountEffect(() => {
-    let shouldPersistDismissal = true;
-    const dismissible = toast.lifecycle.type === "persistent";
+  useEffect(() => {
+    const current = toastRef.current;
+    const dismissible = current.lifecycle.type === "persistent";
     const options = {
-      id: toast.id,
-      duration: toast.variant === "error" ? TOAST_DURATIONS.error : Infinity,
+      id: current.id,
+      duration: current.variant === "error" ? TOAST_DURATIONS.error : Infinity,
       closeButton: dismissible,
       dismissible,
-      icon: toast.icon,
-      action: toast.primaryAction
+      icon: current.icon,
+      action: current.primaryAction
         ? {
-            label: toast.primaryAction.label,
+            label: current.primaryAction.label,
             onClick: () => {
-              shouldPersistDismissal = false;
+              persistDismissalRef.current = false;
               void toastRef.current.primaryAction?.onClick();
             },
           }
         : undefined,
       onDismiss: () => {
-        if (shouldPersistDismissal) {
+        if (persistDismissalRef.current) {
           onDismissRef.current?.();
         }
       },
     };
 
-    if (toast.loading) {
-      sonnerToast.loading(toast.description, options);
-    } else if (toast.variant === "error") {
-      sonnerToast.error(toast.description, options);
-    } else if (toast.variant === "warning") {
-      sonnerToast.warning(toast.description, options);
+    if (current.loading) {
+      sonnerToast.loading(current.description, options);
+    } else if (current.variant === "error") {
+      sonnerToast.error(current.description, options);
+    } else if (current.variant === "warning") {
+      sonnerToast.warning(current.description, options);
     } else {
-      sonnerToast.message(toast.description, options);
+      sonnerToast.message(current.description, options);
     }
+  }, [presentation, onDismissRef, toastRef]);
 
-    return () => {
-      shouldPersistDismissal = false;
-      sonnerToast.dismiss(toast.id);
-    };
+  useMountEffect(() => () => {
+    persistDismissalRef.current = false;
+    sonnerToast.dismiss(toastRef.current.id);
   });
 
   return null;

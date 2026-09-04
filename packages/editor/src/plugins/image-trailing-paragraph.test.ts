@@ -25,7 +25,7 @@ describe("imageTrailingParagraphPlugin", () => {
             editorWidth: 80,
           },
         },
-        { type: "paragraph" },
+        { type: "paragraph", attrs: { recordedAtMs: null } },
       ],
     });
   });

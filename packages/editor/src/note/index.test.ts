@@ -25,7 +25,13 @@ import { schema } from "./schema";
 
 const baseDoc: JSONContent = {
   type: "doc",
-  content: [{ type: "paragraph", content: [{ type: "text", text: "old" }] }],
+  content: [
+    {
+      type: "paragraph",
+      attrs: { recordedAtMs: null },
+      content: [{ type: "text", text: "old" }],
+    },
+  ],
 };
 
 const nextDoc: JSONContent = {

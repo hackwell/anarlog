@@ -12,7 +12,7 @@ describe("normalizeTitleHeadingDoc", () => {
       type: "doc",
       content: [
         { type: "heading", attrs: { level: 1 } },
-        { type: "paragraph" },
+        { type: "paragraph", attrs: { recordedAtMs: null } },
       ],
     });
   });
@@ -33,6 +33,7 @@ describe("normalizeTitleHeadingDoc", () => {
         },
         {
           type: "paragraph",
+          attrs: { recordedAtMs: null },
           content: [{ type: "text", text: "Follow up" }],
         },
       ],
@@ -78,7 +79,7 @@ describe("titleHeadingPlugin", () => {
       type: "doc",
       content: [
         { type: "heading", attrs: { level: 1 } },
-        { type: "paragraph" },
+        { type: "paragraph", attrs: { recordedAtMs: null } },
       ],
     });
   });

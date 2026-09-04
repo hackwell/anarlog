@@ -54,3 +54,18 @@ export const useListener = <T,>(
 
   return useStore(store, useShallow(selector));
 };
+
+// For reading store state imperatively (e.g. at keystroke time) without
+// subscribing the caller to every change — use this instead of `useListener`
+// when the read must not trigger a re-render.
+export const useListenerStore = () => {
+  const store = useContext(ListenerContext);
+
+  if (!store) {
+    throw new Error(
+      "'useListenerStore' must be used within a 'ListenerProvider'",
+    );
+  }
+
+  return store;
+};

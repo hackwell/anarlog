@@ -62,6 +62,8 @@ import {
   type LinkOpenHandler,
   linkBoundaryGuardPlugin,
   linkOpenPlugin,
+  type NoteTimestampConfig,
+  noteTimestampPlugin,
   placeholderPlugin,
   type PersistentPlaceholderFunction,
   searchPlugin,
@@ -100,6 +102,7 @@ import {
 export type {
   MentionConfig,
   FileHandlerConfig,
+  NoteTimestampConfig,
   PlaceholderFunction,
   PersistentPlaceholderFunction,
 };
@@ -169,6 +172,7 @@ export interface NoteEditorProps {
   placeholderComponent?: PlaceholderFunction;
   persistentPlaceholderComponent?: PersistentPlaceholderFunction;
   fileHandlerConfig?: FileHandlerConfig;
+  timestampConfig?: NoteTimestampConfig;
   onNavigateToTitle?: (pixelWidth?: number) => void;
   onLinkOpen?: LinkOpenHandler;
   linkedItemOpenBehavior?: LinkedItemOpenBehavior;
@@ -582,6 +586,7 @@ export const NoteEditor = forwardRef<NoteEditorRef, NoteEditorProps>(
       placeholderComponent,
       persistentPlaceholderComponent,
       fileHandlerConfig,
+      timestampConfig,
       onNavigateToTitle,
       onLinkOpen,
       linkedItemOpenBehavior = "current",
@@ -681,6 +686,11 @@ export const NoteEditor = forwardRef<NoteEditorRef, NoteEditorProps>(
     );
     const onUpdateRef = useRef(onUpdate);
     onUpdateRef.current = onUpdate;
+    const timestampConfigRef = useRef(timestampConfig);
+    timestampConfigRef.current = timestampConfig;
+    // Only presence enters the plugin deps: rebuilding the plugin list would
+    // create a fresh history() and drop the undo stack.
+    const hasTimestampConfig = Boolean(timestampConfig);
     const notifyDocumentChange = useCallback((doc: PMNode) => {
       const callback = onDocumentChangeRef.current;
       if (!callback) {
@@ -740,6 +750,9 @@ export const NoteEditor = forwardRef<NoteEditorRef, NoteEditorProps>(
         clipboardPlugin(),
         hashtagPlugin(),
         imageTrailingParagraphPlugin(),
+        ...(hasTimestampConfig
+          ? [noteTimestampPlugin(() => timestampConfigRef.current)]
+          : []),
         searchPlugin(),
         placeholderPlugin(placeholderComponent, persistentPlaceholderComponent),
         clearMarksOnEnterPlugin(),
@@ -757,6 +770,7 @@ export const NoteEditor = forwardRef<NoteEditorRef, NoteEditorProps>(
         placeholderComponent,
         persistentPlaceholderComponent,
         fileHandlerConfig,
+        hasTimestampConfig,
         mentionConfig,
         sessionMentionDropConfig,
         onNavigateToTitle,

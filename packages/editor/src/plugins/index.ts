@@ -13,6 +13,10 @@ export {
 export { type FileHandlerConfig, fileHandlerPlugin } from "./file-handler";
 export { findHashtags, hashtagPlugin, hashtagPluginKey } from "./hashtag";
 export {
+  type NoteTimestampConfig,
+  noteTimestampPlugin,
+} from "./note-timestamp";
+export {
   ensureImageTrailingParagraphs,
   imageTrailingParagraphPlugin,
 } from "./image-trailing-paragraph";

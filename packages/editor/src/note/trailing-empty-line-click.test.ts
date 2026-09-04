@@ -21,9 +21,10 @@ describe("handleTrailingEmptyLineMouseDown", () => {
       content: [
         {
           type: "paragraph",
+          attrs: { recordedAtMs: null },
           content: [{ type: "text", text: "Follow up" }],
         },
-        { type: "paragraph" },
+        { type: "paragraph", attrs: { recordedAtMs: null } },
       ],
     });
     expect(getState().selection.from).toBe(getState().doc.content.size - 1);
@@ -47,7 +48,7 @@ describe("handleTrailingEmptyLineMouseDown", () => {
           attrs: { level: 1 },
           content: [{ type: "text", text: "Weekly sync" }],
         },
-        { type: "paragraph" },
+        { type: "paragraph", attrs: { recordedAtMs: null } },
       ],
     });
     expect(getState().selection.from).toBe(getState().doc.content.size - 1);
