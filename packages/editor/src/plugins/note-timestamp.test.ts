@@ -142,4 +142,49 @@ describe("noteTimestampPlugin stamping", () => {
     // Paragraph should keep its recordedAtMs
     expect(currentState.doc.child(0).attrs.recordedAtMs).toBe(stampedValue);
   });
+
+  it("counter-example: keeps anchor when deleting from first of two pre-anchored paragraphs", () => {
+    // Two paragraphs both pre-anchored to the same value
+    const doc = schema.node("doc", null, [
+      schema.node("paragraph", { recordedAtMs: 60_000 }, [
+        schema.text("hello"),
+      ]),
+      schema.node("paragraph", { recordedAtMs: 60_000 }, [
+        schema.text("world"),
+      ]),
+    ]);
+    const state = createState(recording, doc);
+
+    // Delete all text from first paragraph while recording
+    const para = state.doc.child(0);
+    const endPos = 1 + para.content.size;
+    const nextState = state.applyTransaction(state.tr.delete(1, endPos)).state;
+
+    // First paragraph should keep its anchor even though count is unchanged
+    expect(nextState.doc.child(0).attrs.recordedAtMs).toBe(60_000);
+    // Second paragraph unchanged
+    expect(nextState.doc.child(1).attrs.recordedAtMs).toBe(60_000);
+  });
+
+  it("pre-anchored split clears the new empty half", () => {
+    // One paragraph pre-anchored
+    const doc = schema.node("doc", null, [
+      schema.node("paragraph", { recordedAtMs: 60_000 }, [
+        schema.text("hello"),
+      ]),
+    ]);
+    const state = createState(recording, doc);
+
+    // Split at the end while recording
+    const para = state.doc.child(0);
+    const nextState = state.applyTransaction(
+      state.tr.split(para.nodeSize - 1),
+    ).state;
+
+    expect(nextState.doc.childCount).toBe(2);
+    // First paragraph keeps its anchor
+    expect(nextState.doc.child(0).attrs.recordedAtMs).toBe(60_000);
+    // Second (new empty) paragraph gets cleared because count increased
+    expect(nextState.doc.child(1).attrs.recordedAtMs).toBeNull();
+  });
 });

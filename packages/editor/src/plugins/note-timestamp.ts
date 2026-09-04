@@ -21,7 +21,7 @@ export function noteTimestampPlugin(
 ) {
   return new Plugin({
     key: noteTimestampPluginKey,
-    appendTransaction(transactions, _oldState, newState) {
+    appendTransaction(transactions, oldState, newState) {
       if (!transactions.some((transaction) => transaction.docChanged)) {
         return null;
       }
@@ -37,6 +37,9 @@ export function noteTimestampPlugin(
       }
 
       const updates: { pos: number; recordedAtMs: number | null }[] = [];
+
+      // Collect empty paragraphs that need normalization before computing counts
+      const emptyAnchored: Array<{ pos: number; value: number }> = [];
       for (const range of ranges) {
         newState.doc.nodesBetween(range.from, range.to, (node, pos) => {
           if (node.type !== newState.schema.nodes.paragraph) {
@@ -45,29 +48,51 @@ export function noteTimestampPlugin(
           if (node.attrs.recordedAtMs === null && node.textContent.length > 0) {
             updates.push({ pos, recordedAtMs });
           }
-          // Split copies attributes onto both halves. Detect the newly created empty
-          // half by checking if another paragraph shares this timestamp. Preserve
-          // anchors on existing paragraphs that lost content (e.g., via deletion).
           if (
             node.attrs.recordedAtMs !== null &&
             node.textContent.length === 0
           ) {
-            let countWithTimestamp = 0;
-            newState.doc.forEach((n) => {
-              if (
-                n.type === newState.schema.nodes.paragraph &&
-                n.attrs.recordedAtMs === node.attrs.recordedAtMs
-              ) {
-                countWithTimestamp++;
-              }
-            });
-
-            if (countWithTimestamp > 1) {
-              updates.push({ pos, recordedAtMs: null });
-            }
+            emptyAnchored.push({ pos, value: node.attrs.recordedAtMs });
           }
           return false;
         });
+      }
+
+      // Count occurrences of each timestamp value in old and new documents
+      const countInOld = new Map<number, number>();
+      const countInNew = new Map<number, number>();
+
+      oldState.doc.forEach((node) => {
+        if (
+          node.type === oldState.schema.nodes.paragraph &&
+          typeof node.attrs.recordedAtMs === "number"
+        ) {
+          countInOld.set(
+            node.attrs.recordedAtMs,
+            (countInOld.get(node.attrs.recordedAtMs) ?? 0) + 1,
+          );
+        }
+      });
+
+      newState.doc.forEach((node) => {
+        if (
+          node.type === newState.schema.nodes.paragraph &&
+          typeof node.attrs.recordedAtMs === "number"
+        ) {
+          countInNew.set(
+            node.attrs.recordedAtMs,
+            (countInNew.get(node.attrs.recordedAtMs) ?? 0) + 1,
+          );
+        }
+      });
+
+      // Clear empty paragraphs only if their count increased (split-created copies)
+      for (const { pos, value } of emptyAnchored) {
+        const oldCount = countInOld.get(value) ?? 0;
+        const newCount = countInNew.get(value) ?? 0;
+        if (newCount > oldCount) {
+          updates.push({ pos, recordedAtMs: null });
+        }
       }
 
       if (updates.length === 0) {
