@@ -6,6 +6,7 @@ import {
 } from "@anlg/editor/markdown";
 
 import { formatRecordingPosition } from "~/session/components/note-input/use-note-timestamp-config";
+import type { NoteContentFormat } from "~/session/content-queries";
 
 // The markdown schema has no anchor attribute, so a whole-document json2md call
 // drops the positions, and embedding a "[12:04] " label into a text node would
@@ -14,10 +15,10 @@ import { formatRecordingPosition } from "~/session/components/note-input/use-not
 // resulting markdown block, never through a ProseMirror text node.
 export function annotateNoteMarkdown(snapshot: {
   rawContent: string;
-  rawContentFormat: string;
+  rawContentFormat: NoteContentFormat;
   rawMarkdown: string;
 }): string {
-  if (snapshot.rawContentFormat !== "json") {
+  if (snapshot.rawContentFormat === "markdown") {
     return snapshot.rawMarkdown;
   }
 

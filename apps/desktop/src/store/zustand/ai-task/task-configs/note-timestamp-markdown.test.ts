@@ -5,7 +5,7 @@ import { annotateNoteMarkdown } from "./note-timestamp-markdown";
 function jsonSnapshot(content: unknown[]) {
   return {
     rawContent: JSON.stringify({ type: "doc", content }),
-    rawContentFormat: "json",
+    rawContentFormat: "prosemirror_json" as const,
     rawMarkdown: "ignored",
   };
 }
@@ -72,7 +72,7 @@ describe("annotateNoteMarkdown", () => {
     expect(
       annotateNoteMarkdown({
         rawContent: "{ not json",
-        rawContentFormat: "json",
+        rawContentFormat: "prosemirror_json",
         rawMarkdown: "stored",
       }),
     ).toBe("stored");
@@ -141,7 +141,7 @@ describe("annotateNoteMarkdown", () => {
           },
         ],
       }),
-      rawContentFormat: "json",
+      rawContentFormat: "prosemirror_json",
       rawMarkdown: "stored",
     });
 

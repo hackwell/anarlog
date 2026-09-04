@@ -45,6 +45,10 @@ type ParticipantJson = {
   job_title: string;
 };
 
+// The only two values `session_documents.body_format` ever holds. Named so a
+// consumer branching on the format cannot invent a third spelling.
+export type NoteContentFormat = "prosemirror_json" | "markdown";
+
 export type SessionContentSnapshot = {
   sessionId: string;
   ownerUserId: string;
@@ -56,7 +60,7 @@ export type SessionContentSnapshot = {
   rawNoteId: string | null;
   rawTemplateId: string;
   rawContent: string;
-  rawContentFormat: string;
+  rawContentFormat: NoteContentFormat;
   rawMarkdown: string;
   enhancedNotes: Array<{
     id: string;
@@ -271,12 +275,18 @@ function mapSessionContentRow(
     rawNoteId: row.raw_note_id || null,
     rawTemplateId: row.raw_template_id,
     rawContent: row.raw_body,
-    rawContentFormat: row.raw_body_format,
+    rawContentFormat: toNoteContentFormat(row.raw_body_format),
     rawMarkdown: bodyToMarkdown(row.raw_body, row.raw_body_format),
     enhancedNotes,
     transcripts,
     participants,
   };
+}
+
+// The column is a plain TEXT with no CHECK, and `prosemirror_json` is its
+// default, so anything that is not markdown is read back as the JSON dialect.
+function toNoteContentFormat(format: string): NoteContentFormat {
+  return format === "markdown" ? "markdown" : "prosemirror_json";
 }
 
 function bodyToMarkdown(body: string, format: string): string {
