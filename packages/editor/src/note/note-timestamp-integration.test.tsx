@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
 import { NoteEditor } from "./index";
@@ -47,5 +47,40 @@ describe("NoteEditor timestampConfig", () => {
     label.dispatchEvent(new MouseEvent("mousedown", { bubbles: true }));
 
     expect(onActivate).toHaveBeenCalledWith(724_000);
+  });
+
+  it("renders the label inside the anchored paragraph as the app renders it", async () => {
+    // Scoped to this render's own container (rather than the shared `screen`)
+    // since this file's earlier tests don't unmount between cases, and this
+    // test reuses the same "Jump" label name.
+    const { container } = render(
+      <NoteEditor
+        initialContent={anchoredContent}
+        enforceTitleHeading={false}
+        timestampConfig={{
+          getRecordedAtMs: () => null,
+          formatLabel: () => "12:04",
+          onActivate: vi.fn(),
+          activateLabel: "Jump",
+        }}
+      />,
+    );
+
+    const label = await within(container).findByRole("button", {
+      name: "Jump",
+    });
+    const paragraph = container.querySelector(
+      'p[data-recorded-at-ms="724000"]',
+    );
+    expect(paragraph).not.toBeNull();
+
+    // The label's own stylesheet (note-timestamp.css) targets it as a
+    // descendant of this paragraph, not a direct child: the real renderer
+    // (@handlewithcare/react-prosemirror's NativeWidgetView) wraps the widget
+    // in its own span before inserting our button. A vanilla EditorView would
+    // insert the widget as a direct child, so this assertion only fails here,
+    // against the app's actual render path.
+    expect(paragraph?.contains(label)).toBe(true);
+    expect(paragraph?.querySelector(":scope > .note-timestamp")).toBeNull();
   });
 });

@@ -1,5 +1,7 @@
 .prosemirror-editor {
-  p:has(> .note-timestamp) {
+  /* The renderer may wrap the widget in its own element(s) before our button,
+     so match by descendant, not direct child. */
+  p:has(.note-timestamp) {
     position: relative;
   }
 
@@ -20,8 +22,8 @@
     user-select: none;
   }
 
-  p:hover > .note-timestamp,
-  p:focus-within > .note-timestamp {
+  p:hover .note-timestamp,
+  p:focus-within .note-timestamp {
     opacity: 1;
   }
 
