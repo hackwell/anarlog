@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { annotateNoteMarkdown } from "./note-timestamp-markdown";
 
@@ -11,6 +11,10 @@ function jsonSnapshot(content: unknown[]) {
 }
 
 describe("annotateNoteMarkdown", () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
   it("prefixes an anchored paragraph with its position", () => {
     const markdown = annotateNoteMarkdown(
       jsonSnapshot([
@@ -114,5 +118,113 @@ describe("annotateNoteMarkdown", () => {
     );
 
     expect(markdown.trim()).toBe("[12:04] clarify pricing\n\n- follow up");
+  });
+
+  it("falls back to the stored markdown when a content element is malformed", () => {
+    const consoleWarn = vi.spyOn(console, "warn").mockImplementation(() => {});
+
+    const markdown = annotateNoteMarkdown({
+      rawContent: JSON.stringify({
+        type: "doc",
+        content: [
+          null,
+          {
+            type: "paragraph",
+            attrs: { recordedAtMs: 724_000 },
+            content: [{ type: "text", text: "clarify pricing" }],
+          },
+        ],
+      }),
+      rawContentFormat: "json",
+      rawMarkdown: "stored",
+    });
+
+    expect(markdown).toBe("stored");
+    expect(consoleWarn).toHaveBeenCalledWith(
+      "[enhance] failed to annotate note positions",
+      expect.any(TypeError),
+    );
+  });
+
+  it("falls back to the stored markdown when a node beside an anchor cannot be serialized", () => {
+    const consoleWarn = vi.spyOn(console, "warn").mockImplementation(() => {});
+    // json2md logs its own internal parse failure via console.error before
+    // returning "" — expected noise from the unrecognized node type, not a
+    // symptom of this test.
+    vi.spyOn(console, "error").mockImplementation(() => {});
+
+    const markdown = annotateNoteMarkdown(
+      jsonSnapshot([
+        {
+          type: "paragraph",
+          attrs: { recordedAtMs: 724_000 },
+          content: [{ type: "text", text: "clarify pricing" }],
+        },
+        {
+          type: "notARealNodeType",
+          content: [{ type: "text", text: "mystery" }],
+        },
+      ]),
+    );
+
+    expect(markdown).toBe("ignored");
+    expect(consoleWarn).toHaveBeenCalledWith(
+      "[enhance] failed to annotate note positions",
+      expect.any(Error),
+    );
+  });
+
+  it("annotates normally when an anchored paragraph sits beside a legitimately empty paragraph", () => {
+    const markdown = annotateNoteMarkdown(
+      jsonSnapshot([
+        {
+          type: "paragraph",
+          attrs: { recordedAtMs: 724_000 },
+          content: [{ type: "text", text: "clarify pricing" }],
+        },
+        { type: "paragraph" },
+      ]),
+    );
+
+    expect(markdown).toBe("[12:04] clarify pricing\n\n");
+  });
+
+  it("pins the output of two adjacent top-level bullet lists", () => {
+    // Two same-type lists serialized as separate top-level blocks and joined
+    // by a blank line: each keeps its own "- " marker rather than merging
+    // into one list with both items. Pinned so a serializer change is caught.
+    const markdown = annotateNoteMarkdown(
+      jsonSnapshot([
+        {
+          type: "paragraph",
+          attrs: { recordedAtMs: 724_000 },
+          content: [{ type: "text", text: "clarify pricing" }],
+        },
+        {
+          type: "bulletList",
+          content: [
+            {
+              type: "listItem",
+              content: [
+                { type: "paragraph", content: [{ type: "text", text: "one" }] },
+              ],
+            },
+          ],
+        },
+        {
+          type: "bulletList",
+          content: [
+            {
+              type: "listItem",
+              content: [
+                { type: "paragraph", content: [{ type: "text", text: "two" }] },
+              ],
+            },
+          ],
+        },
+      ]),
+    );
+
+    expect(markdown).toBe("[12:04] clarify pricing\n\n- one\n\n- two");
   });
 });

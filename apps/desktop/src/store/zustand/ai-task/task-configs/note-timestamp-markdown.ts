@@ -20,13 +20,16 @@ export function annotateNoteMarkdown(snapshot: {
     return snapshot.rawMarkdown;
   }
 
-  const document = parseJsonContent(snapshot.rawContent);
-  const content = document.content;
-  if (!content || !content.some(hasAnchor)) {
-    return snapshot.rawMarkdown;
-  }
-
+  // Everything downstream of parsing — including the anchor scan — must stay
+  // inside the try: parseJsonContent only checks that content is an array,
+  // not that its elements are well-formed nodes, so a malformed element can
+  // throw while hasAnchor walks it.
   try {
+    const content = parseJsonContent(snapshot.rawContent).content;
+    if (!content || !content.some(hasAnchor)) {
+      return snapshot.rawMarkdown;
+    }
+
     return content.map(serializeBlock).join("\n\n");
   } catch (error) {
     console.warn("[enhance] failed to annotate note positions", error);
@@ -44,6 +47,14 @@ function hasAnchor(node: JSONContent): boolean {
 
 function serializeBlock(node: JSONContent): string {
   const block = json2md({ type: "doc", content: [node] }).trim();
+  // json2md swallows its own errors and returns "" rather than throwing, so a
+  // node the serializer can't handle would otherwise contribute a silent hole
+  // to the joined output instead of triggering the fallback. A node that has
+  // no content of its own producing "" is normal (an empty paragraph); one
+  // that has content but serialized to nothing did not survive conversion.
+  if (block === "" && node.content && node.content.length > 0) {
+    throw new Error(`failed to serialize note block of type "${node.type}"`);
+  }
   return hasAnchor(node)
     ? `[${formatRecordingPosition(node.attrs?.recordedAtMs as number)}] ${block}`
     : block;
