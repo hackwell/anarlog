@@ -10,6 +10,12 @@ function jsonSnapshot(content: unknown[]) {
   };
 }
 
+const anchoredParagraph = {
+  type: "paragraph",
+  attrs: { recordedAtMs: 724_000 },
+  content: [{ type: "text", text: "clarify pricing" }],
+};
+
 describe("annotateNoteMarkdown", () => {
   afterEach(() => {
     vi.restoreAllMocks();
@@ -226,5 +232,96 @@ describe("annotateNoteMarkdown", () => {
     );
 
     expect(markdown).toBe("[12:04] clarify pricing\n\n- one\n\n- two");
+  });
+
+  it("falls back to the stored markdown when a top-level element is a bare string", () => {
+    const consoleWarn = vi.spyOn(console, "warn").mockImplementation(() => {});
+
+    const markdown = annotateNoteMarkdown(
+      jsonSnapshot([anchoredParagraph, "loose string"]),
+    );
+
+    expect(markdown).toBe("ignored");
+    expect(consoleWarn).toHaveBeenCalledWith(
+      "[enhance] failed to annotate note positions",
+      expect.any(Error),
+    );
+  });
+
+  it("falls back to the stored markdown when a top-level element is a bare number", () => {
+    const consoleWarn = vi.spyOn(console, "warn").mockImplementation(() => {});
+
+    const markdown = annotateNoteMarkdown(
+      jsonSnapshot([anchoredParagraph, 42]),
+    );
+
+    expect(markdown).toBe("ignored");
+    expect(consoleWarn).toHaveBeenCalledWith(
+      "[enhance] failed to annotate note positions",
+      expect.any(Error),
+    );
+  });
+
+  it("falls back to the stored markdown when a top-level element has no type", () => {
+    const consoleWarn = vi.spyOn(console, "warn").mockImplementation(() => {});
+
+    const markdown = annotateNoteMarkdown(
+      jsonSnapshot([anchoredParagraph, { foo: "bar" }]),
+    );
+
+    expect(markdown).toBe("ignored");
+    expect(consoleWarn).toHaveBeenCalledWith(
+      "[enhance] failed to annotate note positions",
+      expect.any(Error),
+    );
+  });
+
+  it("annotates normally when a whitespace-only paragraph sits beside an anchor", () => {
+    const markdown = annotateNoteMarkdown(
+      jsonSnapshot([
+        anchoredParagraph,
+        { type: "paragraph", content: [{ type: "text", text: "   " }] },
+      ]),
+    );
+
+    expect(markdown).toBe("[12:04] clarify pricing\n\n");
+  });
+
+  it("annotates normally when a hardBreak-only paragraph sits beside an anchor", () => {
+    const markdown = annotateNoteMarkdown(
+      jsonSnapshot([
+        anchoredParagraph,
+        { type: "paragraph", content: [{ type: "hardBreak" }] },
+      ]),
+    );
+
+    expect(markdown).toBe("[12:04] clarify pricing\n\n");
+  });
+
+  it("falls back to the stored markdown when real text sits next to a malformed nested child", () => {
+    const consoleWarn = vi.spyOn(console, "warn").mockImplementation(() => {});
+    // The malformed nested child fails the whole paragraph's construction in
+    // prosemirror-model, which json2md swallows internally via console.error
+    // — expected noise from this scenario, not a symptom of the test.
+    vi.spyOn(console, "error").mockImplementation(() => {});
+
+    const markdown = annotateNoteMarkdown(
+      jsonSnapshot([
+        anchoredParagraph,
+        {
+          type: "paragraph",
+          content: [
+            { type: "text", text: "real text" },
+            { type: "notARealNodeType" },
+          ],
+        },
+      ]),
+    );
+
+    expect(markdown).toBe("ignored");
+    expect(consoleWarn).toHaveBeenCalledWith(
+      "[enhance] failed to annotate note positions",
+      expect.any(Error),
+    );
   });
 });
