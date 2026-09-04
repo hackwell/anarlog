@@ -50,9 +50,27 @@ const nodes: Record<string, NodeSpec> = {
   paragraph: {
     content: "inline*",
     group: "block",
-    parseDOM: [{ tag: "p" }],
-    toDOM() {
-      return ["p", 0];
+    attrs: { recordedAtMs: { default: null } },
+    parseDOM: [
+      {
+        tag: "p",
+        getAttrs(dom) {
+          const raw = (dom as HTMLElement).getAttribute("data-recorded-at-ms");
+          const recordedAtMs = raw === null ? Number.NaN : Number(raw);
+          return {
+            recordedAtMs:
+              Number.isFinite(recordedAtMs) && recordedAtMs >= 0
+                ? recordedAtMs
+                : null,
+          };
+        },
+      },
+    ],
+    toDOM(node) {
+      const { recordedAtMs } = node.attrs;
+      return typeof recordedAtMs === "number"
+        ? ["p", { "data-recorded-at-ms": String(recordedAtMs) }, 0]
+        : ["p", 0];
     },
   },
 

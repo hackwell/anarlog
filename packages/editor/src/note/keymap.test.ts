@@ -86,6 +86,7 @@ describe("buildInputRules", () => {
       content: [
         {
           type: "paragraph",
+          attrs: { recordedAtMs: null },
           content: [{ type: "text", text: "→" }],
         },
       ],
@@ -104,6 +105,7 @@ describe("buildInputRules", () => {
       content: [
         {
           type: "paragraph",
+          attrs: { recordedAtMs: null },
           content: [{ type: "text", text: "wait—" }],
         },
       ],
@@ -122,6 +124,7 @@ describe("buildInputRules", () => {
       content: [
         {
           type: "paragraph",
+          attrs: { recordedAtMs: null },
           content: [{ type: "text", text: "--" }],
         },
       ],
@@ -137,7 +140,10 @@ describe("buildInputRules", () => {
     expect(handled).toBe(true);
     expect(state.doc.toJSON()).toEqual({
       type: "doc",
-      content: [{ type: "horizontalRule" }, { type: "paragraph" }],
+      content: [
+        { type: "horizontalRule" },
+        { type: "paragraph", attrs: { recordedAtMs: null } },
+      ],
     });
   });
 
@@ -153,6 +159,7 @@ describe("buildInputRules", () => {
       content: [
         {
           type: "paragraph",
+          attrs: { recordedAtMs: null },
           content: [{ type: "text", text: "©" }],
         },
       ],
@@ -227,6 +234,7 @@ describe("buildKeymap", () => {
               content: [
                 {
                   type: "paragraph",
+                  attrs: { recordedAtMs: null },
                   content: [{ type: "text", text: "onetwo" }],
                 },
               ],
@@ -270,6 +278,7 @@ describe("buildKeymap", () => {
               content: [
                 {
                   type: "paragraph",
+                  attrs: { recordedAtMs: null },
                   content: [{ type: "text", text: "one" }],
                 },
               ],
@@ -278,6 +287,7 @@ describe("buildKeymap", () => {
         },
         {
           type: "paragraph",
+          attrs: { recordedAtMs: null },
           content: [{ type: "text", text: "two" }],
         },
       ],
@@ -316,6 +326,7 @@ describe("buildKeymap", () => {
       content: [
         {
           type: "paragraph",
+          attrs: { recordedAtMs: null },
           content: [{ type: "text", text: "two" }],
         },
         {
@@ -332,6 +343,7 @@ describe("buildKeymap", () => {
               content: [
                 {
                   type: "paragraph",
+                  attrs: { recordedAtMs: null },
                   content: [{ type: "text", text: "three" }],
                 },
               ],
@@ -389,6 +401,7 @@ describe("buildKeymap", () => {
               content: [
                 {
                   type: "paragraph",
+                  attrs: { recordedAtMs: null },
                   content: [{ type: "text", text: "one" }],
                 },
               ],
@@ -404,6 +417,7 @@ describe("buildKeymap", () => {
               content: [
                 {
                   type: "paragraph",
+                  attrs: { recordedAtMs: null },
                   content: [{ type: "text", text: "twothree" }],
                 },
               ],

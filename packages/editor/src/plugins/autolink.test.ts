@@ -15,6 +15,7 @@ describe("autolinkPlugin", () => {
       content: [
         {
           type: "paragraph",
+          attrs: { recordedAtMs: null },
           content: [
             {
               type: "text",
@@ -42,6 +43,7 @@ describe("autolinkPlugin", () => {
       content: [
         {
           type: "paragraph",
+          attrs: { recordedAtMs: null },
           content: [
             { type: "text", text: "See " },
             {
@@ -72,6 +74,7 @@ describe("autolinkPlugin", () => {
       content: [
         {
           type: "paragraph",
+          attrs: { recordedAtMs: null },
           content: [{ type: "text", text: "email support@x.com" }],
         },
       ],
@@ -90,6 +93,7 @@ describe("autolinkPlugin", () => {
       content: [
         {
           type: "paragraph",
+          attrs: { recordedAtMs: null },
           content: [
             {
               type: "text",
@@ -119,6 +123,7 @@ describe("autolinkPlugin", () => {
       content: [
         {
           type: "paragraph",
+          attrs: { recordedAtMs: null },
           content: [
             {
               type: "text",
@@ -162,6 +167,7 @@ describe("autolinkPlugin", () => {
       content: [
         {
           type: "paragraph",
+          attrs: { recordedAtMs: null },
           content: [
             {
               type: "text",
@@ -203,6 +209,7 @@ describe("autolinkPlugin", () => {
       content: [
         {
           type: "paragraph",
+          attrs: { recordedAtMs: null },
           content: [
             {
               type: "text",
