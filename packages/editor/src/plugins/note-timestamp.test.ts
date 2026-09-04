@@ -102,4 +102,44 @@ describe("noteTimestampPlugin stamping", () => {
 
     expect(state.doc.child(0).attrs.recordedAtMs).toBeUndefined();
   });
+
+  it("keeps recordedAtMs when all text is deleted while recording runs", () => {
+    let state = type(createState(recording), 1, "text to delete");
+    const stampedValue = state.doc.child(0).attrs.recordedAtMs;
+    const para = state.doc.child(0);
+
+    // Delete all text in the paragraph
+    const endPos = 1 + para.content.size;
+    state = state.applyTransaction(state.tr.delete(1, endPos)).state;
+
+    // Paragraph should keep its recordedAtMs even though it's now empty
+    expect(state.doc.child(0).attrs.recordedAtMs).toBe(stampedValue);
+  });
+
+  it("keeps recordedAtMs when all text is deleted while no recording runs", () => {
+    let recordingActive = true;
+    const toggleableRecording: () => NoteTimestampConfig | undefined = () =>
+      recordingActive ? recording : undefined;
+
+    const state = EditorState.create({
+      doc: schema.node("doc", null, [schema.node("paragraph")]),
+      plugins: [noteTimestampPlugin(toggleableRecording)],
+    });
+
+    let currentState = type(state, 1, "text to delete");
+    const stampedValue = currentState.doc.child(0).attrs.recordedAtMs;
+    const para = currentState.doc.child(0);
+
+    // Turn off recording
+    recordingActive = false;
+
+    // Delete all text while no recording
+    const endPos = 1 + para.content.size;
+    currentState = currentState.applyTransaction(
+      currentState.tr.delete(1, endPos),
+    ).state;
+
+    // Paragraph should keep its recordedAtMs
+    expect(currentState.doc.child(0).attrs.recordedAtMs).toBe(stampedValue);
+  });
 });

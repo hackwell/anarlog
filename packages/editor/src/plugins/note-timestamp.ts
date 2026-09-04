@@ -42,16 +42,29 @@ export function noteTimestampPlugin(
           if (node.type !== newState.schema.nodes.paragraph) {
             return true;
           }
-          // Stamp paragraphs with content that haven't been stamped yet
           if (node.attrs.recordedAtMs === null && node.textContent.length > 0) {
             updates.push({ pos, recordedAtMs });
           }
-          // Clear recordedAtMs on empty paragraphs (created by split, etc.)
+          // Split copies attributes onto both halves. Detect the newly created empty
+          // half by checking if another paragraph shares this timestamp. Preserve
+          // anchors on existing paragraphs that lost content (e.g., via deletion).
           if (
             node.attrs.recordedAtMs !== null &&
             node.textContent.length === 0
           ) {
-            updates.push({ pos, recordedAtMs: null });
+            let countWithTimestamp = 0;
+            newState.doc.forEach((n) => {
+              if (
+                n.type === newState.schema.nodes.paragraph &&
+                n.attrs.recordedAtMs === node.attrs.recordedAtMs
+              ) {
+                countWithTimestamp++;
+              }
+            });
+
+            if (countWithTimestamp > 1) {
+              updates.push({ pos, recordedAtMs: null });
+            }
           }
           return false;
         });
