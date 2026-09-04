@@ -148,6 +148,11 @@ vi.mock("~/templates", () => ({
 
 vi.mock("~/stt/contexts", () => ({
   useListener: () => "inactive",
+  useListenerStore: () => ({
+    getState: () => ({
+      live: { sessionId: null, status: "inactive", seconds: 0 },
+    }),
+  }),
 }));
 
 vi.mock("~/stt/queries", () => ({

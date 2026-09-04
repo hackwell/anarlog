@@ -4,7 +4,7 @@ import { useCallback, useMemo, useRef } from "react";
 import type { NoteTimestampConfig } from "@anlg/editor/note";
 
 import { useAudioPlayer } from "~/audio-player";
-import { useListener } from "~/stt/contexts";
+import { useListenerStore } from "~/stt/contexts";
 import { useSessionTranscriptMetadata } from "~/stt/queries";
 import { sessionTimelineBaseMs } from "~/stt/transcript-timeline";
 
@@ -25,23 +25,40 @@ export function formatRecordingPosition(recordedAtMs: number): string {
 
 export function useNoteTimestampConfig(sessionId: string): NoteTimestampConfig {
   const transcripts = useSessionTranscriptMetadata(sessionId);
-  const sessionMode = useListener((state) => state.getSessionMode(sessionId));
+  const listenerStore = useListenerStore();
   const { seek, start, audioExists } = useAudioPlayer();
-  // The recording's zero point is the same base the transcript view uses when a
-  // word click seeks the audio: the earliest transcript that has words, so a
+  // The transcript base is the same one the transcript view uses when a word
+  // click seeks the audio: the earliest transcript that has words, so a
   // still-wordless leading row never becomes the anchor for a resumed session.
-  const baseMs = useMemo(
+  const transcriptBaseMs = useMemo(
     () => sessionTimelineBaseMs(transcripts),
     [transcripts],
   );
-  // "active" is the live-recording session mode (see ~/store/zustand/listener/general.ts);
-  // "running_batch", "finalizing" and "inactive" are not a live capture in progress.
-  const isRecording = sessionMode === "active";
 
-  const getRecordedAtMs = useCallback(
-    () => (isRecording && baseMs !== null ? Date.now() - baseMs : null),
-    [isRecording, baseMs],
-  );
+  // Read live capture state imperatively (getState, not a selector) so a
+  // second-by-second tick during recording never re-renders the note editor.
+  const getRecordedAtMs = useCallback(() => {
+    const { live } = listenerStore.getState();
+    const isRecording =
+      live.sessionId === sessionId && live.status === "active";
+    if (!isRecording) {
+      return null;
+    }
+
+    // The capture's own elapsed time is a zero point that exists from the
+    // first keystroke, unlike a transcript row, which only appears once
+    // there is a first STT delta (live) or after transcription runs (batch).
+    // `live.seconds` only advances on a one-second interval timer, so this
+    // can be off by up to a second; labels are minute:second, well within
+    // that tolerance.
+    const captureStartMs = Date.now() - live.seconds * 1000;
+    const baseMs =
+      transcriptBaseMs !== null
+        ? Math.min(captureStartMs, transcriptBaseMs)
+        : captureStartMs;
+
+    return Date.now() - baseMs;
+  }, [listenerStore, sessionId, transcriptBaseMs]);
 
   // Assigned during render so the callback identity (fixed at plugin
   // registration) can still read the current value.
