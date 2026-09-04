@@ -86,7 +86,10 @@ export function noteTimestampPlugin(
         }
       });
 
-      // Clear empty paragraphs only if their count increased (split-created copies)
+      // Split copies attributes onto both halves. Clear an empty anchored paragraph
+      // only when its value count increased, indicating a split-created copy.
+      // Preserve anchors on existing paragraphs that lost content via deletion
+      // (count unchanged) versus newly created nodes from split (count increased).
       for (const { pos, value } of emptyAnchored) {
         const oldCount = countInOld.get(value) ?? 0;
         const newCount = countInNew.get(value) ?? 0;
