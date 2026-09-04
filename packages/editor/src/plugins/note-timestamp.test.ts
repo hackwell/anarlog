@@ -196,7 +196,8 @@ describe("noteTimestampPlugin stamping", () => {
     const endPos = 1 + para.content.size;
     const nextState = state.applyTransaction(state.tr.delete(1, endPos)).state;
 
-    // First paragraph should keep its anchor even though count is unchanged
+    // The first paragraph only lost its text, so it is still the paragraph
+    // that earned the anchor and keeps it.
     expect(nextState.doc.child(0).attrs.recordedAtMs).toBe(60_000);
     // Second paragraph unchanged
     expect(nextState.doc.child(1).attrs.recordedAtMs).toBe(60_000);
@@ -220,7 +221,8 @@ describe("noteTimestampPlugin stamping", () => {
     expect(nextState.doc.childCount).toBe(2);
     // First paragraph keeps its anchor
     expect(nextState.doc.child(0).attrs.recordedAtMs).toBe(60_000);
-    // Second (new empty) paragraph gets cleared because count increased
+    // The new empty half holds none of the original's content, so it never
+    // earned the anchor it inherited.
     expect(nextState.doc.child(1).attrs.recordedAtMs).toBeNull();
   });
 
@@ -362,6 +364,76 @@ describe("noteTimestampPlugin stamping", () => {
     expect(para.attrs.recordedAtMs).toBe(724_000);
   });
 
+  it("clears the new empty half of an end-split with no recording running", () => {
+    // Enter at the end of an anchored line a week after the meeting: the new
+    // half is text the user has not written yet, so it must carry no time.
+    const doc = schema.node("doc", null, [
+      schema.node("paragraph", { recordedAtMs: 60_000 }, [
+        schema.text("hello"),
+      ]),
+    ]);
+    const state = createState(
+      { ...recording, getRecordedAtMs: () => null },
+      doc,
+    );
+
+    const para = state.doc.child(0);
+    const nextState = state.applyTransaction(
+      state.tr.split(para.nodeSize - 1),
+    ).state;
+
+    expect(nextState.doc.childCount).toBe(2);
+    expect(nextState.doc.child(0).attrs.recordedAtMs).toBe(60_000);
+    expect(nextState.doc.child(1).attrs.recordedAtMs).toBeNull();
+  });
+
+  it("clears the new empty half of a start-split with no recording running", () => {
+    const doc = schema.node("doc", null, [
+      schema.node("paragraph", { recordedAtMs: 60_000 }, [
+        schema.text("hello"),
+      ]),
+    ]);
+    const state = createState(
+      { ...recording, getRecordedAtMs: () => null },
+      doc,
+    );
+
+    const nextState = state.applyTransaction(state.tr.split(1)).state;
+
+    expect(nextState.doc.childCount).toBe(2);
+    expect(nextState.doc.child(0).attrs.recordedAtMs).toBeNull();
+    expect(nextState.doc.child(1).attrs.recordedAtMs).toBe(60_000);
+  });
+
+  it("normalizes nothing when a bulk rewrite splits with no recording running", () => {
+    // The MAX_STAMPED_TEXTBLOCKS bail still covers the clearing pass: a
+    // template application is not the user pressing Enter.
+    const doc = schema.node("doc", null, [
+      schema.node("paragraph", { recordedAtMs: 60_000 }, [
+        schema.text("hello"),
+      ]),
+    ]);
+    const state = createState(
+      { ...recording, getRecordedAtMs: () => null },
+      doc,
+    );
+
+    const replacement = schema.node("doc", null, [
+      schema.node("paragraph", { recordedAtMs: 60_000 }, []),
+      schema.node("paragraph", { recordedAtMs: 60_000 }, []),
+      schema.node("paragraph", { recordedAtMs: 60_000 }, []),
+      schema.node("paragraph", { recordedAtMs: 60_000 }, []),
+    ]);
+    const nextState = state.applyTransaction(
+      state.tr.replaceWith(0, state.doc.content.size, replacement.content),
+    ).state;
+
+    const anchors: unknown[] = [];
+    nextState.doc.forEach((node) => anchors.push(node.attrs.recordedAtMs));
+
+    expect(anchors).toEqual([60_000, 60_000, 60_000, 60_000]);
+  });
+
   it("splits right before a mention, keeping the anchor on the half that holds it", () => {
     // node.textContent ignores inline atoms, so a paragraph holding only a
     // mention used to read as empty and get misclassified by the split logic.
@@ -454,9 +526,10 @@ describe("noteTimestampPlugin decorations", () => {
   });
 
   it("renders no label for an anchored paragraph that is empty", () => {
-    // Task 2's normalization only runs while a recording is active, so a
-    // paragraph split after recording ends can keep an inherited anchor
-    // while holding no content. A label beside an empty line is wrong.
+    // Normalization only reaches paragraphs a transaction touched, so a note
+    // loaded from storage — or one whose bulk rewrite bailed on
+    // MAX_STAMPED_TEXTBLOCKS — can still hold an anchored empty paragraph.
+    // A label beside an empty line is wrong.
     const doc = schema.node("doc", null, [
       schema.node("paragraph", { recordedAtMs: 724_000 }, []),
     ]);

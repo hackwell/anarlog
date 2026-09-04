@@ -40,15 +40,18 @@ export function noteTimestampPlugin(
         return null;
       }
 
-      const recordedAtMs = getConfig()?.getRecordedAtMs() ?? null;
-      if (recordedAtMs === null || !Number.isFinite(recordedAtMs)) {
-        return null;
-      }
-
       const ranges = getChangedTextblockRanges(newState.doc, transactions);
       if (ranges.length === 0 || ranges.length > MAX_STAMPED_TEXTBLOCKS) {
         return null;
       }
+
+      // Stamping needs a running clock, but clearing a split's inherited anchor
+      // does not — and a split after the recording ends leaks a time onto a half
+      // the user never typed into, which the label and the summary would then
+      // assert. So only the stamping half of the pass is gated on a recording.
+      const running = getConfig()?.getRecordedAtMs() ?? null;
+      const recordedAtMs =
+        running !== null && Number.isFinite(running) ? running : null;
 
       const updates: { pos: number; recordedAtMs: number | null }[] = [];
       const emptyAnchored: number[] = [];
@@ -58,7 +61,9 @@ export function noteTimestampPlugin(
             return true;
           }
           if (node.attrs.recordedAtMs === null && node.content.size > 0) {
-            updates.push({ pos, recordedAtMs });
+            if (recordedAtMs !== null) {
+              updates.push({ pos, recordedAtMs });
+            }
           } else if (
             node.attrs.recordedAtMs !== null &&
             node.content.size === 0
