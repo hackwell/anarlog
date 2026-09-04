@@ -263,9 +263,11 @@ describe("noteTimestampPlugin stamping", () => {
 
     const next = state.applyTransaction(transaction).state;
 
-    expect(
-      next.doc.children.every((node) => node.attrs.recordedAtMs == null),
-    ).toBe(true);
+    const anchors: unknown[] = [];
+    next.doc.forEach((node) => anchors.push(node.attrs.recordedAtMs));
+
+    expect(anchors).toHaveLength(5);
+    expect(anchors.every((value) => value == null)).toBe(true);
   });
 
   it("never stamps a heading", () => {
