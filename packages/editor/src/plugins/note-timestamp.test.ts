@@ -214,6 +214,68 @@ describe("noteTimestampPlugin stamping", () => {
     expect(newBlockquote.child(1).attrs.recordedAtMs).toBeNull();
   });
 
+  it("splits at the start of an anchored paragraph's content, clearing the new empty first half", () => {
+    // Enter with the caret before the first character: the empty half comes
+    // out first and the content half second, the mirror image of an end-split.
+    const doc = schema.node("doc", null, [
+      schema.node("paragraph", { recordedAtMs: 60_000 }, [
+        schema.text("hello"),
+      ]),
+    ]);
+    const state = createState(recording, doc);
+
+    const nextState = state.applyTransaction(state.tr.split(1)).state;
+
+    expect(nextState.doc.childCount).toBe(2);
+    // First (new empty) paragraph never earned its anchor.
+    expect(nextState.doc.child(0).attrs.recordedAtMs).toBeNull();
+    // Second paragraph still holds "hello" and keeps its anchor.
+    expect(nextState.doc.child(1).attrs.recordedAtMs).toBe(60_000);
+  });
+
+  it("splits at the start of an anchored paragraph preceded by a sibling", () => {
+    const doc = schema.node("doc", null, [
+      schema.node("paragraph", null, [schema.text("intro")]),
+      schema.node("paragraph", { recordedAtMs: 60_000 }, [
+        schema.text("hello"),
+      ]),
+    ]);
+    const state = createState(recording, doc);
+
+    // The second paragraph starts right after the first one closes.
+    const secondStart = state.doc.child(0).nodeSize;
+    const nextState = state.applyTransaction(
+      state.tr.split(secondStart + 1),
+    ).state;
+
+    expect(nextState.doc.childCount).toBe(3);
+    // The new empty half never earned its anchor.
+    expect(nextState.doc.child(1).attrs.recordedAtMs).toBeNull();
+    // The half still holding "hello" keeps its anchor.
+    expect(nextState.doc.child(2).attrs.recordedAtMs).toBe(60_000);
+  });
+
+  it("splits at the start of an anchored paragraph nested in a blockquote", () => {
+    const doc = schema.node("doc", null, [
+      schema.node("blockquote", null, [
+        schema.node("paragraph", { recordedAtMs: 60_000 }, [
+          schema.text("quoted text"),
+        ]),
+      ]),
+    ]);
+    const state = createState(recording, doc);
+
+    // Blockquote starts at 0, content at 1, paragraph content starts at 2.
+    const nextState = state.applyTransaction(state.tr.split(2)).state;
+
+    const newBlockquote = nextState.doc.child(0);
+    expect(newBlockquote.childCount).toBe(2);
+    // The new empty half never earned its anchor.
+    expect(newBlockquote.child(0).attrs.recordedAtMs).toBeNull();
+    // The half still holding "quoted text" keeps its anchor.
+    expect(newBlockquote.child(1).attrs.recordedAtMs).toBe(60_000);
+  });
+
   it("keeps an emptied paragraph's anchor when the same transaction splits an unrelated paragraph sharing its value", () => {
     // Paragraph A (top-level) and paragraph C (nested in a blockquote) both
     // pre-anchored to the same value, as the plugin's own stamping routinely
