@@ -324,4 +324,168 @@ describe("annotateNoteMarkdown", () => {
       expect.any(Error),
     );
   });
+
+  it("annotates an anchored paragraph nested in a bullet-list item", () => {
+    const markdown = annotateNoteMarkdown(
+      jsonSnapshot([
+        {
+          type: "bulletList",
+          content: [
+            {
+              type: "listItem",
+              content: [
+                {
+                  type: "paragraph",
+                  attrs: { recordedAtMs: 724_000 },
+                  content: [{ type: "text", text: "follow up" }],
+                },
+              ],
+            },
+          ],
+        },
+      ]),
+    );
+
+    expect(markdown).toBe("- [12:04] follow up");
+  });
+
+  it("leaves an unanchored sibling list item untouched", () => {
+    const markdown = annotateNoteMarkdown(
+      jsonSnapshot([
+        {
+          type: "bulletList",
+          content: [
+            {
+              type: "listItem",
+              content: [
+                {
+                  type: "paragraph",
+                  attrs: { recordedAtMs: 724_000 },
+                  content: [{ type: "text", text: "follow up" }],
+                },
+              ],
+            },
+            {
+              type: "listItem",
+              content: [
+                {
+                  type: "paragraph",
+                  content: [{ type: "text", text: "prepared beforehand" }],
+                },
+              ],
+            },
+          ],
+        },
+      ]),
+    );
+
+    expect(markdown).toBe("- [12:04] follow up\n\n- prepared beforehand");
+  });
+
+  it("annotates a top-level paragraph and a nested list item in the same note", () => {
+    const markdown = annotateNoteMarkdown(
+      jsonSnapshot([
+        anchoredParagraph,
+        {
+          type: "bulletList",
+          content: [
+            {
+              type: "listItem",
+              content: [
+                {
+                  type: "paragraph",
+                  attrs: { recordedAtMs: 61_000 },
+                  content: [{ type: "text", text: "follow up" }],
+                },
+              ],
+            },
+          ],
+        },
+      ]),
+    );
+
+    expect(markdown).toBe("[12:04] clarify pricing\n\n- [1:01] follow up");
+  });
+
+  it("annotates an anchored paragraph nested in a blockquote", () => {
+    const markdown = annotateNoteMarkdown(
+      jsonSnapshot([
+        {
+          type: "blockquote",
+          content: [
+            {
+              type: "paragraph",
+              attrs: { recordedAtMs: 724_000 },
+              content: [{ type: "text", text: "quoted" }],
+            },
+          ],
+        },
+      ]),
+    );
+
+    expect(markdown).toBe("> [12:04] quoted");
+  });
+
+  it("keeps a nested anchored item's own emphasis intact", () => {
+    const markdown = annotateNoteMarkdown(
+      jsonSnapshot([
+        {
+          type: "bulletList",
+          content: [
+            {
+              type: "listItem",
+              content: [
+                {
+                  type: "paragraph",
+                  attrs: { recordedAtMs: 724_000 },
+                  content: [
+                    {
+                      type: "text",
+                      text: "pricing",
+                      marks: [{ type: "bold" }],
+                    },
+                    { type: "text", text: " see [1]" },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      ]),
+    );
+
+    expect(markdown).toBe("- [12:04] **pricing** see \\[1\\]");
+  });
+
+  it("falls back to the stored markdown when a nested anchor sits beside a malformed sibling", () => {
+    const consoleWarn = vi.spyOn(console, "warn").mockImplementation(() => {});
+    vi.spyOn(console, "error").mockImplementation(() => {});
+
+    const markdown = annotateNoteMarkdown(
+      jsonSnapshot([
+        {
+          type: "bulletList",
+          content: [
+            {
+              type: "listItem",
+              content: [
+                {
+                  type: "paragraph",
+                  attrs: { recordedAtMs: 724_000 },
+                  content: [{ type: "text", text: "follow up" }],
+                },
+                { type: "notARealNodeType" },
+              ],
+            },
+          ],
+        },
+      ]),
+    );
+
+    expect(markdown).toBe("ignored");
+    expect(consoleWarn).toHaveBeenCalledWith(
+      "[enhance] failed to annotate note positions",
+      expect.any(Error),
+    );
+  });
 });
