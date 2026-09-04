@@ -58,43 +58,47 @@ export function noteTimestampPlugin(
         });
       }
 
-      // Count occurrences of each timestamp value in old and new documents
-      const countInOld = new Map<number, number>();
-      const countInNew = new Map<number, number>();
+      // Only count if there are empty anchored paragraphs to evaluate
+      if (emptyAnchored.length > 0) {
+        // Count occurrences of each timestamp value in old and new documents.
+        // Use descendants() to visit nested paragraphs in blockquotes, lists, etc.
+        const countInOld = new Map<number, number>();
+        const countInNew = new Map<number, number>();
 
-      oldState.doc.forEach((node) => {
-        if (
-          node.type === oldState.schema.nodes.paragraph &&
-          typeof node.attrs.recordedAtMs === "number"
-        ) {
-          countInOld.set(
-            node.attrs.recordedAtMs,
-            (countInOld.get(node.attrs.recordedAtMs) ?? 0) + 1,
-          );
-        }
-      });
+        oldState.doc.descendants((node) => {
+          if (
+            node.type === oldState.schema.nodes.paragraph &&
+            typeof node.attrs.recordedAtMs === "number"
+          ) {
+            countInOld.set(
+              node.attrs.recordedAtMs,
+              (countInOld.get(node.attrs.recordedAtMs) ?? 0) + 1,
+            );
+          }
+        });
 
-      newState.doc.forEach((node) => {
-        if (
-          node.type === newState.schema.nodes.paragraph &&
-          typeof node.attrs.recordedAtMs === "number"
-        ) {
-          countInNew.set(
-            node.attrs.recordedAtMs,
-            (countInNew.get(node.attrs.recordedAtMs) ?? 0) + 1,
-          );
-        }
-      });
+        newState.doc.descendants((node) => {
+          if (
+            node.type === newState.schema.nodes.paragraph &&
+            typeof node.attrs.recordedAtMs === "number"
+          ) {
+            countInNew.set(
+              node.attrs.recordedAtMs,
+              (countInNew.get(node.attrs.recordedAtMs) ?? 0) + 1,
+            );
+          }
+        });
 
-      // Split copies attributes onto both halves. Clear an empty anchored paragraph
-      // only when its value count increased, indicating a split-created copy.
-      // Preserve anchors on existing paragraphs that lost content via deletion
-      // (count unchanged) versus newly created nodes from split (count increased).
-      for (const { pos, value } of emptyAnchored) {
-        const oldCount = countInOld.get(value) ?? 0;
-        const newCount = countInNew.get(value) ?? 0;
-        if (newCount > oldCount) {
-          updates.push({ pos, recordedAtMs: null });
+        // Split copies attributes onto both halves. Clear an empty anchored paragraph
+        // only when its value count increased, indicating a split-created copy.
+        // Preserve anchors on existing paragraphs that lost content via deletion
+        // (count unchanged) versus newly created nodes from split (count increased).
+        for (const { pos, value } of emptyAnchored) {
+          const oldCount = countInOld.get(value) ?? 0;
+          const newCount = countInNew.get(value) ?? 0;
+          if (newCount > oldCount) {
+            updates.push({ pos, recordedAtMs: null });
+          }
         }
       }
 

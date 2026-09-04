@@ -187,4 +187,49 @@ describe("noteTimestampPlugin stamping", () => {
     // Second (new empty) paragraph gets cleared because count increased
     expect(nextState.doc.child(1).attrs.recordedAtMs).toBeNull();
   });
+
+  it("splits nested paragraph inside blockquote at the end, clearing new empty half", () => {
+    // Paragraph nested inside blockquote, pre-anchored to 60_000
+    const doc = schema.node("doc", null, [
+      schema.node("blockquote", null, [
+        schema.node("paragraph", { recordedAtMs: 60_000 }, [
+          schema.text("quoted text"),
+        ]),
+      ]),
+    ]);
+    const state = createState(recording, doc);
+
+    // Find the paragraph inside the blockquote and split at its end
+    const blockquote = state.doc.child(0);
+    const para = blockquote.child(0);
+    // Position: blockquote starts at 1, content at 2, para is 1 + para.content.size
+    const splitPos = 2 + para.content.size;
+    const nextState = state.applyTransaction(state.tr.split(splitPos)).state;
+
+    const newBlockquote = nextState.doc.child(0);
+    expect(newBlockquote.childCount).toBe(2);
+    // First paragraph keeps its anchor
+    expect(newBlockquote.child(0).attrs.recordedAtMs).toBe(60_000);
+    // Second (new empty) paragraph gets cleared
+    expect(newBlockquote.child(1).attrs.recordedAtMs).toBeNull();
+  });
+
+  it("stamps nested paragraph inside bullet list when text is typed", () => {
+    // Paragraph nested inside listItem of a bulletList
+    const doc = schema.node("doc", null, [
+      schema.node("bulletList", null, [
+        schema.node("listItem", null, [schema.node("paragraph")]),
+      ]),
+    ]);
+    let state = createState(recording, doc);
+
+    // Type text in the nested paragraph (position 3 is inside the paragraph)
+    state = state.applyTransaction(state.tr.insertText("list item", 3)).state;
+
+    // The nested paragraph should be stamped
+    const bulletList = state.doc.child(0);
+    const listItem = bulletList.child(0);
+    const para = listItem.child(0);
+    expect(para.attrs.recordedAtMs).toBe(724_000);
+  });
 });
