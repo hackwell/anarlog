@@ -2,7 +2,7 @@ import { renderHook } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const mocks = vi.hoisted(() => ({
-  transcripts: [] as { startedAt: number }[],
+  transcripts: [] as { startedAt: number; hasWords: boolean }[],
   sessionMode: "inactive" as string,
   audioExists: false,
   seek: vi.fn(),
@@ -30,7 +30,6 @@ vi.mock("~/audio-player", () => ({
 }));
 
 import {
-  earliestTranscriptStartedAtMs,
   formatRecordingPosition,
   useNoteTimestampConfig,
 } from "./use-note-timestamp-config";
@@ -58,25 +57,6 @@ describe("formatRecordingPosition", () => {
   });
 });
 
-describe("earliestTranscriptStartedAtMs", () => {
-  it("returns the earliest usable start", () => {
-    expect(
-      earliestTranscriptStartedAtMs([{ startedAt: 500 }, { startedAt: 100 }]),
-    ).toBe(100);
-  });
-
-  it("ignores unusable starts", () => {
-    expect(earliestTranscriptStartedAtMs([{ startedAt: 0 }])).toBeNull();
-    expect(earliestTranscriptStartedAtMs([])).toBeNull();
-    expect(
-      earliestTranscriptStartedAtMs([
-        { startedAt: Number.NaN },
-        { startedAt: 400 },
-      ]),
-    ).toBe(400);
-  });
-});
-
 describe("useNoteTimestampConfig", () => {
   beforeEach(() => {
     mocks.transcripts = [];
@@ -91,7 +71,7 @@ describe("useNoteTimestampConfig", () => {
   });
 
   it("returns null when no recording is running", () => {
-    mocks.transcripts = [{ startedAt: 1_000 }];
+    mocks.transcripts = [{ startedAt: 1_000, hasWords: true }];
     mocks.sessionMode = "inactive";
 
     const { result } = renderHook(() => useNoteTimestampConfig("session-1"));
@@ -110,7 +90,23 @@ describe("useNoteTimestampConfig", () => {
 
   it("computes the position from the earliest transcript start while recording", () => {
     vi.spyOn(Date, "now").mockReturnValue(100_000);
-    mocks.transcripts = [{ startedAt: 95_000 }, { startedAt: 96_000 }];
+    mocks.transcripts = [
+      { startedAt: 95_000, hasWords: true },
+      { startedAt: 96_000, hasWords: true },
+    ];
+    mocks.sessionMode = "active";
+
+    const { result } = renderHook(() => useNoteTimestampConfig("session-1"));
+
+    expect(result.current.getRecordedAtMs()).toBe(5_000);
+  });
+
+  it("bases the position on the earliest transcript that has words, not a wordless leading row", () => {
+    vi.spyOn(Date, "now").mockReturnValue(100_000);
+    mocks.transcripts = [
+      { startedAt: 90_000, hasWords: false },
+      { startedAt: 95_000, hasWords: true },
+    ];
     mocks.sessionMode = "active";
 
     const { result } = renderHook(() => useNoteTimestampConfig("session-1"));

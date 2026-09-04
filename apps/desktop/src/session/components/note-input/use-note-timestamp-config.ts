@@ -6,6 +6,7 @@ import type { NoteTimestampConfig } from "@anlg/editor/note";
 import { useAudioPlayer } from "~/audio-player";
 import { useListener } from "~/stt/contexts";
 import { useSessionTranscriptMetadata } from "~/stt/queries";
+import { sessionTimelineBaseMs } from "~/stt/transcript-timeline";
 
 export function formatRecordingPosition(recordedAtMs: number): string {
   if (!Number.isFinite(recordedAtMs)) {
@@ -22,24 +23,15 @@ export function formatRecordingPosition(recordedAtMs: number): string {
     : `${minutes}:${seconds}`;
 }
 
-export function earliestTranscriptStartedAtMs(
-  transcripts: { startedAt: number }[],
-): number | null {
-  const starts = transcripts
-    .map((transcript) => transcript.startedAt)
-    .filter((startedAt) => Number.isFinite(startedAt) && startedAt > 0);
-
-  return starts.length > 0 ? Math.min(...starts) : null;
-}
-
 export function useNoteTimestampConfig(sessionId: string): NoteTimestampConfig {
   const transcripts = useSessionTranscriptMetadata(sessionId);
   const sessionMode = useListener((state) => state.getSessionMode(sessionId));
   const { seek, start, audioExists } = useAudioPlayer();
-  // The recording's zero point is the earliest transcript start, the same base
-  // the transcript uses when a word click seeks the audio.
+  // The recording's zero point is the same base the transcript view uses when a
+  // word click seeks the audio: the earliest transcript that has words, so a
+  // still-wordless leading row never becomes the anchor for a resumed session.
   const baseMs = useMemo(
-    () => earliestTranscriptStartedAtMs(transcripts),
+    () => sessionTimelineBaseMs(transcripts),
     [transcripts],
   );
   // "active" is the live-recording session mode (see ~/store/zustand/listener/general.ts);

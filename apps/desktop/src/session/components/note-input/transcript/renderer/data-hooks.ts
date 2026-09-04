@@ -18,6 +18,7 @@ import {
   getRenderTranscriptRequestKey,
   renderTranscriptSegments,
 } from "~/stt/render-transcript";
+import { sessionTimelineBaseMs } from "~/stt/transcript-timeline";
 
 export function useRenderedTranscriptSegments(transcriptId: string): Segment[] {
   return useRenderedTranscriptData(transcriptId).segments;
@@ -106,21 +107,8 @@ export function getTranscriptTimelineOffsetMs(
     hasWords: boolean;
   }>,
 ): number {
-  const candidates = sessionTranscripts.filter(
-    (current) => Number.isFinite(current.startedAt) && current.startedAt > 0,
-  );
-  const withWords = candidates.filter((current) => current.hasWords);
-  const pool = withWords.length > 0 ? withWords : candidates;
-  if (pool.length === 0) {
-    return 0;
-  }
-
-  const earliestStartedAt = Math.min(
-    ...pool.map((current) => current.startedAt),
-  );
-  return Number.isFinite(earliestStartedAt)
-    ? Math.max(0, transcriptStartedAt - earliestStartedAt)
-    : 0;
+  const baseMs = sessionTimelineBaseMs(sessionTranscripts);
+  return baseMs === null ? 0 : Math.max(0, transcriptStartedAt - baseMs);
 }
 
 export function useTranscriptTimelineMetadata(
