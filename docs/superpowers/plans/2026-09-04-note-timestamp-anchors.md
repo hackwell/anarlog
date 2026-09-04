@@ -27,11 +27,13 @@
 ### Task 1: `recordedAtMs` attribute on the note paragraph
 
 **Files:**
+
 - Modify: `packages/editor/src/note/schema.ts:50-57`
 - Test: `packages/editor/src/note/schema.test.ts` (create)
 - Fixture churn (update, do not rewrite): every test that compares a document built with the note schema against a literal. Known candidates: `packages/editor/src/markdown.test.ts`, `packages/editor/src/note/index.test.ts`, `packages/editor/src/note/keymap.test.ts`, `packages/editor/src/note/title-layout.test.ts`, `packages/editor/src/note/trailing-empty-line-click.test.ts`, `packages/editor/src/plugins/image-trailing-paragraph.test.ts`, `packages/editor/src/plugins/autolink.test.ts`, plus desktop tests that mount the real editor (`apps/desktop/src/session/components/note-input/raw.test.tsx`, `apps/desktop/src/editor-bridge/task-storage.test.ts`).
 
 **Interfaces:**
+
 - Consumes: nothing.
 - Produces: `schema.nodes.paragraph` with `attrs.recordedAtMs: number | null`, serialized as `data-recorded-at-ms` in the DOM.
 
@@ -63,9 +65,9 @@ describe("note schema paragraph anchors", () => {
       DOMSerializer.fromSchema(schema).serializeFragment(doc.content),
     );
 
-    expect(container.querySelector("p")?.getAttribute("data-recorded-at-ms")).toBe(
-      "724000",
-    );
+    expect(
+      container.querySelector("p")?.getAttribute("data-recorded-at-ms"),
+    ).toBe("724000");
 
     const parsed = DOMParser.fromSchema(schema).parse(container);
 
@@ -81,9 +83,9 @@ describe("note schema paragraph anchors", () => {
       DOMSerializer.fromSchema(schema).serializeFragment(doc.content),
     );
 
-    expect(container.querySelector("p")?.hasAttribute("data-recorded-at-ms")).toBe(
-      false,
-    );
+    expect(
+      container.querySelector("p")?.hasAttribute("data-recorded-at-ms"),
+    ).toBe(false);
   });
 
   it("ignores a non-numeric attribute in parsed HTML", () => {
@@ -107,32 +109,32 @@ Expected: FAIL — `paragraph.attrs.recordedAtMs` is `undefined`, the serialized
 In `packages/editor/src/note/schema.ts`, replace the `paragraph` spec:
 
 ```ts
-  paragraph: {
-    content: "inline*",
-    group: "block",
-    attrs: { recordedAtMs: { default: null } },
-    parseDOM: [
-      {
-        tag: "p",
-        getAttrs(dom) {
-          const raw = (dom as HTMLElement).getAttribute("data-recorded-at-ms");
-          const recordedAtMs = raw === null ? Number.NaN : Number(raw);
-          return {
-            recordedAtMs:
-              Number.isFinite(recordedAtMs) && recordedAtMs >= 0
-                ? recordedAtMs
-                : null,
-          };
-        },
+paragraph: {
+  content: "inline*",
+  group: "block",
+  attrs: { recordedAtMs: { default: null } },
+  parseDOM: [
+    {
+      tag: "p",
+      getAttrs(dom) {
+        const raw = (dom as HTMLElement).getAttribute("data-recorded-at-ms");
+        const recordedAtMs = raw === null ? Number.NaN : Number(raw);
+        return {
+          recordedAtMs:
+            Number.isFinite(recordedAtMs) && recordedAtMs >= 0
+              ? recordedAtMs
+              : null,
+        };
       },
-    ],
-    toDOM(node) {
-      const { recordedAtMs } = node.attrs;
-      return typeof recordedAtMs === "number"
-        ? ["p", { "data-recorded-at-ms": String(recordedAtMs) }, 0]
-        : ["p", 0];
     },
+  ],
+  toDOM(node) {
+    const { recordedAtMs } = node.attrs;
+    return typeof recordedAtMs === "number"
+      ? ["p", { "data-recorded-at-ms": String(recordedAtMs) }, 0]
+      : ["p", 0];
   },
+},
 ```
 
 - [ ] **Step 4: Run the test to verify it passes**
@@ -166,10 +168,12 @@ MSG
 ### Task 2: Stamp anchors while a recording runs
 
 **Files:**
+
 - Create: `packages/editor/src/plugins/note-timestamp.ts`
 - Test: `packages/editor/src/plugins/note-timestamp.test.ts` (create)
 
 **Interfaces:**
+
 - Consumes: `schema.nodes.paragraph.attrs.recordedAtMs` (Task 1); `getChangedTextblockRanges(doc, transactions)` from `./changed-ranges`.
 - Produces:
   - `export type NoteTimestampConfig = { getRecordedAtMs: () => number | null; formatLabel: (recordedAtMs: number) => string; onActivate?: (recordedAtMs: number) => void; activateLabel?: string }`
@@ -186,9 +190,15 @@ import { EditorState, type Transaction } from "prosemirror-state";
 import { describe, expect, it } from "vitest";
 
 import { schema } from "../note/schema";
-import { type NoteTimestampConfig, noteTimestampPlugin } from "./note-timestamp";
+import {
+  type NoteTimestampConfig,
+  noteTimestampPlugin,
+} from "./note-timestamp";
 
-function createState(config: NoteTimestampConfig | undefined, doc = schema.node("doc", null, [schema.node("paragraph")])) {
+function createState(
+  config: NoteTimestampConfig | undefined,
+  doc = schema.node("doc", null, [schema.node("paragraph")]),
+) {
   return EditorState.create({
     doc,
     plugins: [noteTimestampPlugin(() => config)],
@@ -240,7 +250,9 @@ describe("noteTimestampPlugin stamping", () => {
   it("leaves a new empty paragraph unstamped until it gets text", () => {
     let state = type(createState(recording), 1, "first line");
     // Enter at the end of the line: the new paragraph is still empty.
-    state = state.applyTransaction(state.tr.split(state.doc.child(0).nodeSize - 1)).state;
+    state = state.applyTransaction(
+      state.tr.split(state.doc.child(0).nodeSize - 1),
+    ).state;
 
     expect(state.doc.childCount).toBe(2);
     expect(state.doc.child(1).attrs.recordedAtMs).toBeNull();
@@ -271,7 +283,9 @@ describe("noteTimestampPlugin stamping", () => {
   });
 
   it("never stamps a heading", () => {
-    const doc = schema.node("doc", null, [schema.node("heading", { level: 2 })]);
+    const doc = schema.node("doc", null, [
+      schema.node("heading", { level: 2 }),
+    ]);
     const state = type(createState(recording, doc), 1, "Agenda");
 
     expect(state.doc.child(0).attrs.recordedAtMs).toBeUndefined();
@@ -386,12 +400,14 @@ MSG
 ### Task 3: Show the anchor and jump to it
 
 **Files:**
+
 - Modify: `packages/editor/src/plugins/note-timestamp.ts`
 - Modify: `packages/editor/src/plugins/note-timestamp.test.ts`
 - Create: `packages/editor/src/styles/prosemirror/nodes/note-timestamp.css`
 - Modify: `packages/editor/src/styles/prosemirror.css:8` (add the import next to `hashtag.css`)
 
 **Interfaces:**
+
 - Consumes: `NoteTimestampConfig`, `noteTimestampPlugin` (Task 2).
 - Produces: the plugin's `props.decorations`, rendering `button.note-timestamp` with `data-recorded-at-ms` for every anchored paragraph, and calling `config.onActivate(recordedAtMs)` on click.
 
@@ -425,9 +441,12 @@ function mount(config: NoteTimestampConfig) {
     ]),
     plugins: [noteTimestampPlugin(() => config)],
   });
-  const view = new EditorView(document.body.appendChild(document.createElement("div")), {
-    state,
-  });
+  const view = new EditorView(
+    document.body.appendChild(document.createElement("div")),
+    {
+      state,
+    },
+  );
   views.push(view);
   return view;
 }
@@ -635,12 +654,14 @@ MSG
 ### Task 4: Expose the plugin through `NoteEditor`
 
 **Files:**
+
 - Modify: `packages/editor/src/plugins/index.ts` (add the export next to `hashtagPlugin`)
 - Modify: `packages/editor/src/note/index.tsx:100-105` (the `export type` block)
 - Modify: `packages/editor/src/note/index.tsx:162-185` (props), `:584` (destructure), `:682-683` (ref), `:725-770` (plugin list and deps)
 - Test: `packages/editor/src/note/note-timestamp-integration.test.tsx` (create)
 
 **Interfaces:**
+
 - Consumes: `noteTimestampPlugin`, `NoteTimestampConfig` (Tasks 2 and 3).
 - Produces: `NoteEditorProps.timestampConfig?: NoteTimestampConfig`, re-exported as a type from `@anlg/editor/note` (the package has no root entry point, only the subpaths listed in its `package.json` `exports`).
 
@@ -732,11 +753,11 @@ export {
 
 ```ts
 // next to onUpdateRef
-    const timestampConfigRef = useRef(timestampConfig);
-    timestampConfigRef.current = timestampConfig;
-    // Only presence enters the plugin deps: rebuilding the plugin list would
-    // create a fresh history() and drop the undo stack.
-    const hasTimestampConfig = Boolean(timestampConfig);
+const timestampConfigRef = useRef(timestampConfig);
+timestampConfigRef.current = timestampConfig;
+// Only presence enters the plugin deps: rebuilding the plugin list would
+// create a fresh history() and drop the undo stack.
+const hasTimestampConfig = Boolean(timestampConfig);
 ```
 
 ```ts
@@ -793,11 +814,13 @@ MSG
 ### Task 5: Supply the clock, the label and the seek from the desktop app
 
 **Files:**
+
 - Create: `apps/desktop/src/session/components/note-input/use-note-timestamp-config.ts`
 - Create: `apps/desktop/src/session/components/note-input/use-note-timestamp-config.test.ts`
 - Modify: `apps/desktop/src/session/components/note-input/raw.tsx` (call the hook next to `useNoteFileHandlerConfig(sessionId)` at `:117`, pass `timestampConfig` to the rendered `NoteEditor`)
 
 **Interfaces:**
+
 - Consumes: `type NoteTimestampConfig` from `@anlg/editor/note` and `NoteEditorProps.timestampConfig` (Task 4); `useSessionTranscriptMetadata` from `~/stt/queries`; `useListener` from `~/stt/contexts`; `useAudioPlayer` from `~/audio-player`.
 - Produces:
   - `export function formatRecordingPosition(recordedAtMs: number): string`
@@ -942,13 +965,13 @@ In `apps/desktop/src/session/components/note-input/raw.tsx`, next to the file
 handler config:
 
 ```ts
-    const timestampConfig = useNoteTimestampConfig(sessionId);
+const timestampConfig = useNoteTimestampConfig(sessionId);
 ```
 
 and on the rendered `NoteEditor`:
 
 ```tsx
-        timestampConfig={timestampConfig}
+timestampConfig = { timestampConfig };
 ```
 
 Add the import with the other local hook imports.
@@ -969,17 +992,17 @@ Then assert the config reaches the editor, using the props the existing
 `NoteEditor` mock already collects in `hoisted.noteEditorProps`:
 
 ```ts
-  it("hands the note editor a timestamp config", () => {
-    renderRawEditor();
+it("hands the note editor a timestamp config", () => {
+  renderRawEditor();
 
-    const config = hoisted.noteEditorProps.at(-1)?.timestampConfig as
-      | { getRecordedAtMs: () => number | null }
-      | undefined;
+  const config = hoisted.noteEditorProps.at(-1)?.timestampConfig as
+    | { getRecordedAtMs: () => number | null }
+    | undefined;
 
-    expect(typeof config?.getRecordedAtMs).toBe("function");
-    // No recording and no audio in this test: nothing to anchor, nothing to jump to.
-    expect(config?.getRecordedAtMs()).toBeNull();
-  });
+  expect(typeof config?.getRecordedAtMs).toBe("function");
+  // No recording and no audio in this test: nothing to anchor, nothing to jump to.
+  expect(config?.getRecordedAtMs()).toBeNull();
+});
 ```
 
 Use the file's own render helper instead of `renderRawEditor()` if it is named
@@ -1028,11 +1051,13 @@ MSG
 ### Task 6: Carry the positions into the summary prompt
 
 **Files:**
+
 - Create: `apps/desktop/src/store/zustand/ai-task/task-configs/note-timestamp-markdown.ts`
 - Create: `apps/desktop/src/store/zustand/ai-task/task-configs/note-timestamp-markdown.test.ts`
 - Modify: `apps/desktop/src/store/zustand/ai-task/task-configs/enhance-transform.ts:342-365` (`getSessionContext`)
 
 **Interfaces:**
+
 - Consumes: `parseJsonContent`, `json2md`, `type JSONContent` from `@anlg/editor/markdown`; the `recordedAtMs` attribute (Task 1); `formatRecordingPosition` from `~/session/components/note-input/use-note-timestamp-config` (Task 5).
 - Produces: `export function annotateNoteMarkdown(snapshot: { rawContent: string; rawContentFormat: string; rawMarkdown: string }): string`
 
@@ -1118,7 +1143,11 @@ Expected: FAIL — module not found.
 Create `apps/desktop/src/store/zustand/ai-task/task-configs/note-timestamp-markdown.ts`:
 
 ```ts
-import { json2md, parseJsonContent, type JSONContent } from "@anlg/editor/markdown";
+import {
+  json2md,
+  parseJsonContent,
+  type JSONContent,
+} from "@anlg/editor/markdown";
 
 import { formatRecordingPosition } from "~/session/components/note-input/use-note-timestamp-config";
 

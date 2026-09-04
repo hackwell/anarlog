@@ -25,17 +25,17 @@ click jump the audio there, and hand the times to the summary model.
 
 ## Existing building blocks
 
-| Need | Existing piece |
-| --- | --- |
-| Audio timeline base | `useSessionTranscriptMetadata(sessionId)` (`stt/queries.ts:197`), rows ordered by `started_at_ms`; the first row's `startedAt` is the timeline zero |
-| The same base used for seeking | `getTranscriptTimelineOffsetMs` (`session/components/note-input/transcript/renderer/data-hooks.ts`): `offset = transcriptStartedAt - earliestStartedAt`, so an absolute instant maps to `absolute - earliestStartedAt` |
-| Seek + play | `useAudioPlayer()` → `seek(sec)`, `start()`, `audioExists` (`audio-player/provider.tsx:74-90`) |
-| Is a recording running | `useListener((state) => state.getSessionMode(sessionId))` → `"running_active"` while live (`store/zustand/listener/general.ts:249`) |
-| Stamping attributes onto nodes as they appear | `taskIdentityPlugin()` (`packages/editor/src/plugins/task-identity.ts`) |
-| Which textblocks a transaction touched | `getChangedTextblockRanges(doc, transactions)` (`packages/editor/src/plugins/changed-ranges.ts:36`) |
-| Optional plugin driven by a config prop | `fileHandlerConfig` / `mentionConfig` in `packages/editor/src/note/index.tsx:725-770` |
-| Config hook per session | `useNoteFileHandlerConfig(sessionId)`, used in `session/components/note-input/raw.tsx:117` |
-| Note editor already has the audio player in scope | `raw.tsx:113` (`useAudioPlayer()`) |
+| Need                                              | Existing piece                                                                                                                                                                                                         |
+| ------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Audio timeline base                               | `useSessionTranscriptMetadata(sessionId)` (`stt/queries.ts:197`), rows ordered by `started_at_ms`; the first row's `startedAt` is the timeline zero                                                                    |
+| The same base used for seeking                    | `getTranscriptTimelineOffsetMs` (`session/components/note-input/transcript/renderer/data-hooks.ts`): `offset = transcriptStartedAt - earliestStartedAt`, so an absolute instant maps to `absolute - earliestStartedAt` |
+| Seek + play                                       | `useAudioPlayer()` → `seek(sec)`, `start()`, `audioExists` (`audio-player/provider.tsx:74-90`)                                                                                                                         |
+| Is a recording running                            | `useListener((state) => state.getSessionMode(sessionId))` → `"running_active"` while live (`store/zustand/listener/general.ts:249`)                                                                                    |
+| Stamping attributes onto nodes as they appear     | `taskIdentityPlugin()` (`packages/editor/src/plugins/task-identity.ts`)                                                                                                                                                |
+| Which textblocks a transaction touched            | `getChangedTextblockRanges(doc, transactions)` (`packages/editor/src/plugins/changed-ranges.ts:36`)                                                                                                                    |
+| Optional plugin driven by a config prop           | `fileHandlerConfig` / `mentionConfig` in `packages/editor/src/note/index.tsx:725-770`                                                                                                                                  |
+| Config hook per session                           | `useNoteFileHandlerConfig(sessionId)`, used in `session/components/note-input/raw.tsx:117`                                                                                                                             |
+| Note editor already has the audio player in scope | `raw.tsx:113` (`useAudioPlayer()`)                                                                                                                                                                                     |
 
 ## Design
 
@@ -115,7 +115,7 @@ second, less reliable clock.
 
 `getSessionContext` in `enhance-transform.ts` currently passes
 `snapshot.rawMarkdown` as `postMeetingMemo`. When the snapshot is JSON, the note
-is annotated first: each stamped paragraph gets a `[12:04] ` prefix on its first
+is annotated first: each stamped paragraph gets a `[12:04]` prefix on its first
 text node, then `json2md` renders it. The prompt templates stay untouched; a
 transcript in the same prompt already carries times, so the model reads the
 prefixes without being told.
