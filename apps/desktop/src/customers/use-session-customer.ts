@@ -186,6 +186,10 @@ export function useSessionCustomer(sessionId: string): SessionCustomer {
 
     writtenRef.current = { sessionId, organizationId: write };
     void updateSession({ organization_id: write }).catch((error) => {
+      // The guard only exists to keep one in-flight write from being sent
+      // twice; a write that failed was never sent, so releasing it here
+      // leaves the assignment to be retried instead of suppressed.
+      writtenRef.current = null;
       console.error("[customers] failed to assign session customer", error);
     });
   }, [write, sessionId, updateSession]);
