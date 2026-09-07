@@ -353,7 +353,10 @@ async fn build_session_document(
             doc_type: "session".to_string(),
             language: None,
             title: fallback_title(&title, "Untitled"),
-            content: merge_content(organization_name.as_deref()),
+            // A locked note keeps its content behind device authentication.
+            // Its title is the one deliberate exception, shown on the lock
+            // screen; its customer is shown nowhere, so it stays out too.
+            content: String::new(),
             created_at: session_search_timestamp(&event_json, &created_at),
             facets: Vec::new(),
         }));
@@ -928,6 +931,34 @@ mod tests {
         let IndexAction::Upsert(document) = action else {
             panic!("expected an upsert action");
         };
+        assert_eq!(document.content, "");
+    }
+
+    #[tokio::test]
+    async fn a_locked_sessions_customer_stays_out_of_the_index() {
+        let db = anlg_db_core::Db::connect_memory_plain().await.unwrap();
+        anlg_db_app::prepare_schema(&db).await.unwrap();
+        sqlx::query("INSERT INTO organizations (id, name) VALUES ('org-1', 'Müller GmbH')")
+            .execute(db.pool())
+            .await
+            .unwrap();
+        sqlx::query(
+            "INSERT INTO sessions (id, title, organization_id, locked)
+             VALUES ('session-1', 'Kickoff', 'org-1', 1)",
+        )
+        .execute(db.pool())
+        .await
+        .unwrap();
+
+        let mut connection = db.pool().acquire().await.unwrap();
+        let action = build_session_document(&mut connection, "session-1")
+            .await
+            .unwrap();
+
+        let IndexAction::Upsert(document) = action else {
+            panic!("expected an upsert action");
+        };
+        assert_eq!(document.title, "Kickoff");
         assert_eq!(document.content, "");
     }
 
