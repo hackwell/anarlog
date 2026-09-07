@@ -1,5 +1,5 @@
 import { t } from "@lingui/core/macro";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { Input } from "@anlg/ui/components/ui/input";
 
@@ -13,8 +13,18 @@ export function OwnEmailDomainsRow() {
   const [draft, setDraft] = useState(() =>
     parseOwnDomains(value ?? "[]").join(", "),
   );
+  const isEditingRef = useRef(false);
+
+  // The first-run seed writes this setting after mount, so a field left open
+  // from before the seed ran must pick up that value instead of blurring its
+  // stale empty draft back over it.
+  useEffect(() => {
+    if (isEditingRef.current) return;
+    setDraft(parseOwnDomains(value ?? "[]").join(", "));
+  }, [value]);
 
   const commit = () => {
+    isEditingRef.current = false;
     const domains = parseOwnDomains(JSON.stringify(draft.split(",")));
     setDraft(domains.join(", "));
     setOwnEmailDomains(serializeOwnDomains(domains));
@@ -31,6 +41,9 @@ export function OwnEmailDomainsRow() {
           className={SETTING_CONTROL_CLASS}
           value={draft}
           onChange={(event) => setDraft(event.target.value)}
+          onFocus={() => {
+            isEditingRef.current = true;
+          }}
           onBlur={commit}
         />
       )}
