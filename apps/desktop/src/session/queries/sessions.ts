@@ -24,6 +24,7 @@ type SessionSqlRow = {
   raw_body_format: string;
   raw_template_id: string;
   locked: boolean | number;
+  organization_id: string;
 };
 
 type SessionSummarySqlRow = {
@@ -59,6 +60,7 @@ const SESSION_SELECT_SQL = `
     sessions.event_json,
     sessions.title,
     sessions.locked,
+    sessions.organization_id,
     COALESCE(note.body, '') AS raw_body,
     COALESCE(note.body_format, 'prosemirror_json') AS raw_body_format,
     COALESCE(note.template_id, '') AS raw_template_id
@@ -253,6 +255,7 @@ export function updateSession(
       ["created_at", changes.created_at],
       ["folder_path", changes.folder_id],
       ["event_json", changes.event_json],
+      ["organization_id", changes.organization_id],
       [
         "locked",
         changes.locked === undefined ? undefined : Number(changes.locked),
@@ -362,5 +365,6 @@ function mapSessionRow(row: SessionSqlRow): SessionRecord {
     raw_md: rawMd,
     raw_template_id: row.raw_template_id,
     locked: isLockedFlag(row.locked),
+    organization_id: row.organization_id,
   };
 }

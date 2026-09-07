@@ -76,6 +76,30 @@ describe("session SQLite queries", () => {
     );
   });
 
+  it("reads the customer back on the session record", async () => {
+    mocks.loading = true;
+    mocks.execute.mockResolvedValue([
+      {
+        id: "customer-session",
+        owner_user_id: "user-1",
+        created_at: "2026-08-24T09:00:00.000Z",
+        folder_path: "",
+        event_json: "{}",
+        title: "Planning",
+        raw_body: "",
+        raw_body_format: "prosemirror_json",
+        raw_template_id: "",
+        locked: 0,
+        organization_id: "org-7",
+      },
+    ]);
+
+    await preloadSession("customer-session");
+    const { result } = renderHook(() => useSession("customer-session"));
+
+    expect(result.current?.organization_id).toBe("org-7");
+  });
+
   it("deduplicates concurrent session preloads", async () => {
     mocks.execute.mockResolvedValue([]);
 

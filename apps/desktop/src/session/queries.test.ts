@@ -124,6 +124,18 @@ describe("session SQLite operations", () => {
     expect(statements[0].params).toContain(1);
   });
 
+  it("persists a customer on the session row", async () => {
+    await updateSession("session-1", { organization_id: "org-7" });
+
+    const statements = mocks.executeTransaction.mock.calls[0][0] as Array<{
+      sql: string;
+      params: unknown[];
+    }>;
+    expect(statements).toHaveLength(1);
+    expect(statements[0].sql).toContain("organization_id = ?");
+    expect(statements[0].params).toContain("org-7");
+  });
+
   it("stores a memo template without clearing it on later edits", async () => {
     await updateSession("session-1", {
       raw_md: '{"type":"doc"}',
