@@ -401,7 +401,9 @@ pub const APP_MIGRATION_STEPS: &[anlg_db_migrate::MigrationStep] = &[
     },
     anlg_db_migrate::MigrationStep {
         id: "20260907120000_session_organization",
-        scope: anlg_db_migrate::MigrationScope::Plain,
+        scope: anlg_db_migrate::MigrationScope::CloudsyncAlter {
+            table_name: "sessions",
+        },
         sql: include_str!("../migrations/20260907120000_session_organization.sql"),
     },
 ];
