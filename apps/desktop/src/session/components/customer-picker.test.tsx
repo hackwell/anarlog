@@ -285,6 +285,52 @@ describe("CustomerPicker", () => {
     expect(screen.queryByRole("option", { name: "No customer" })).toBeNull();
   });
 
+  it("lists the no-customer entry last so it is not preselected by default", () => {
+    mocks.organizationId = "org-mueller";
+
+    render(<CustomerPicker sessionId="s1" />);
+
+    fireEvent.click(screen.getByRole("combobox", { name: "Customer: Müller" }));
+
+    const optionNames = screen
+      .getAllByRole("option")
+      .map((option) => option.getAttribute("aria-label") ?? option.textContent);
+
+    expect(optionNames[optionNames.length - 1]).toBe("No customer");
+  });
+
+  it("does not clear the customer when Enter is pressed right after opening", () => {
+    mocks.organizationId = "org-mueller";
+
+    render(<CustomerPicker sessionId="s1" />);
+
+    fireEvent.click(screen.getByRole("combobox", { name: "Customer: Müller" }));
+    fireEvent.keyDown(
+      screen.getByPlaceholderText("Search or create customer"),
+      {
+        key: "Enter",
+      },
+    );
+
+    expect(mocks.clear).not.toHaveBeenCalled();
+  });
+
+  it("finds the no-customer entry by its visible label, not an internal id", () => {
+    mocks.organizationId = "org-mueller";
+
+    render(<CustomerPicker sessionId="s1" />);
+
+    fireEvent.click(screen.getByRole("combobox", { name: "Customer: Müller" }));
+    fireEvent.change(screen.getByPlaceholderText("Search or create customer"), {
+      // Present in the "No customer" label's space but not in the old
+      // "no-customer" literal's hyphen — a stand-in for the translated
+      // label a German reader would actually type.
+      target: { value: "o cu" },
+    });
+
+    expect(screen.getByRole("option", { name: "No customer" })).not.toBeNull();
+  });
+
   it("speaks the assigned customer as the trigger's accessible name", () => {
     mocks.organizationId = "org-mueller";
 

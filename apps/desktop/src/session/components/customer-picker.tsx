@@ -101,6 +101,9 @@ export function CustomerPicker({
     !organizations.some(
       (org) => org.name.toLowerCase() === trimmedQuery.toLowerCase(),
     );
+  // cmdk filters CommandItem by its `value`, so this has to be the label the
+  // person is reading, not an internal literal that never translates.
+  const noCustomerLabel = t`No customer`;
 
   const handleOpenChange = useCallback((nextOpen: boolean) => {
     setOpen(nextOpen);
@@ -257,20 +260,6 @@ export function CustomerPicker({
                 <CommandEmpty className="text-muted-foreground py-0 text-left text-sm">
                   {trimmedQuery ? t`No customers found.` : t`No customers yet.`}
                 </CommandEmpty>
-                {organizationId !== "" ? (
-                  <CommandGroup>
-                    <CommandItem
-                      value="no-customer"
-                      onSelect={handleClear}
-                      className="cursor-pointer"
-                    >
-                      <Prohibit className="size-4 shrink-0 opacity-70" />
-                      <span className="min-w-0 flex-1 truncate">
-                        {t`No customer`}
-                      </span>
-                    </CommandItem>
-                  </CommandGroup>
-                ) : null}
                 {organizations.length > 0 ? (
                   <CommandGroup>
                     {organizations.map((org) => (
@@ -301,6 +290,20 @@ export function CustomerPicker({
                       <Plus className="size-4 shrink-0" />
                       <span className="min-w-0 flex-1 truncate">
                         {t`Create "${domain}" as customer`}
+                      </span>
+                    </CommandItem>
+                  </CommandGroup>
+                ) : null}
+                {organizationId !== "" ? (
+                  <CommandGroup>
+                    <CommandItem
+                      value={noCustomerLabel}
+                      onSelect={handleClear}
+                      className="cursor-pointer"
+                    >
+                      <Prohibit className="size-4 shrink-0 opacity-70" />
+                      <span className="min-w-0 flex-1 truncate">
+                        {noCustomerLabel}
                       </span>
                     </CommandItem>
                   </CommandGroup>
