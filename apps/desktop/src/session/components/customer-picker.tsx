@@ -179,6 +179,14 @@ export function CustomerPicker({
   const triggerLabel = assignedOrganizationMissing
     ? t`Customer no longer exists`
     : currentName || t`Customer`;
+  // An invariant aria-label would override the visible text, leaving a screen
+  // reader announcing "Assign customer" over the name of the customer that is
+  // already assigned.
+  const triggerAriaLabel = assignedOrganizationMissing
+    ? t`Customer no longer exists`
+    : currentName
+      ? t`Customer: ${currentName}`
+      : t`Assign customer`;
 
   return (
     <Popover open={open} onOpenChange={handleOpenChange}>
@@ -188,7 +196,7 @@ export function CustomerPicker({
           data-tauri-drag-region="false"
           role="combobox"
           aria-expanded={open}
-          aria-label={t`Assign customer`}
+          aria-label={triggerAriaLabel}
           title={triggerLabel}
           className={cn([
             "flex h-7 items-center gap-1 rounded-full px-1.5",

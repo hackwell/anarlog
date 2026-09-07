@@ -143,7 +143,7 @@ describe("CustomerPicker", () => {
 
     render(<CustomerPicker sessionId="s1" />);
 
-    fireEvent.click(screen.getByRole("combobox", { name: "Assign customer" }));
+    fireEvent.click(screen.getByRole("combobox", { name: "Customer: Müller" }));
     fireEvent.click(screen.getByRole("option", { name: "Schmidt" }));
 
     expect(mocks.assign).toHaveBeenCalledWith("org-schmidt");
@@ -191,7 +191,9 @@ describe("CustomerPicker", () => {
 
     render(<CustomerPicker sessionId="s1" />);
 
-    const trigger = screen.getByRole("combobox", { name: "Assign customer" });
+    const trigger = screen.getByRole("combobox", {
+      name: "Customer no longer exists",
+    });
 
     expect(trigger.textContent).toBe("Customer no longer exists");
     expect(screen.queryByText("Customer")).toBeNull();
@@ -259,5 +261,18 @@ describe("CustomerPicker", () => {
     rerender(<CustomerPicker sessionId="s1" />);
 
     expect(screen.getByRole("button", { name: /Müller/ })).not.toBeNull();
+  });
+
+  it("speaks the assigned customer as the trigger's accessible name", () => {
+    mocks.organizationId = "org-mueller";
+
+    render(<CustomerPicker sessionId="s1" />);
+
+    expect(
+      screen.getByRole("combobox", { name: "Customer: Müller" }),
+    ).not.toBeNull();
+    expect(
+      screen.queryByRole("combobox", { name: "Assign customer" }),
+    ).toBeNull();
   });
 });
