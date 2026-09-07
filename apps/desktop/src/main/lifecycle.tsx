@@ -7,6 +7,7 @@ import { useSessionTab } from "~/chat/components/use-session-tab";
 import { buildChatTools } from "~/chat/tools";
 import { searchContacts } from "~/contacts/queries";
 import { useRegisterTools } from "~/contexts/tool";
+import { useSeedOwnEmailDomain } from "~/customers/own-domains";
 import { takePendingOnboardingSession } from "~/onboarding/pending-session";
 import { useSearchEngine } from "~/search/contexts/engine";
 import { initEnhancerService } from "~/services/enhancer";
@@ -47,8 +48,14 @@ export function ClassicMainServices() {
       <MainListenerControlBridge />
       <ToolRegistration />
       <EnhancerInit />
+      <OwnEmailDomainSeed />
     </>
   );
+}
+
+function OwnEmailDomainSeed() {
+  useSeedOwnEmailDomain();
+  return null;
 }
 
 function ToolRegistration() {

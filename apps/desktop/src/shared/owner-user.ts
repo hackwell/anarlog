@@ -35,3 +35,28 @@ export function useOwnerUserId(): string | null {
   });
   return data ?? null;
 }
+
+type OwnerUserEmailSqlRow = {
+  email: string;
+};
+
+// The signed-in user is the one `humans` row that owns itself; every other
+// contact carries the owner's id, not its own.
+const OWNER_USER_EMAIL_SQL = `
+  SELECT email
+  FROM humans
+  WHERE id = owner_user_id
+    AND id <> ''
+    AND email <> ''
+    AND deleted_at IS NULL
+  ORDER BY updated_at DESC, id
+  LIMIT 1
+`;
+
+export function useOwnerUserEmail(): string {
+  const { data = "" } = useLiveQuery<OwnerUserEmailSqlRow, string>({
+    sql: OWNER_USER_EMAIL_SQL,
+    mapRows: (rows) => rows[0]?.email.trim() ?? "",
+  });
+  return data;
+}
