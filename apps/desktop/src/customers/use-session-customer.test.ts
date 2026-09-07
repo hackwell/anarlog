@@ -1,10 +1,31 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
+
+const dbMocks = vi.hoisted(() => ({
+  capturedSql: null as string | null,
+  capturedMapRows: null as
+    | ((rows: Array<Record<string, unknown>>) => unknown)
+    | null,
+}));
+
+vi.mock("~/db", () => ({
+  executeTransaction: vi.fn(),
+  liveQueryClient: { execute: vi.fn() },
+  useLiveQuery: (options: {
+    sql: string;
+    mapRows?: (rows: Array<Record<string, unknown>>) => unknown;
+  }) => {
+    dbMocks.capturedSql = options.sql;
+    dbMocks.capturedMapRows = options.mapRows ?? null;
+    return { data: undefined };
+  },
+}));
 
 import { resolveSessionCustomer } from "./resolve";
 import {
   decideSessionCustomer,
   dedupeParticipants,
   selectResolverParticipants,
+  useRecentOrganizationIds,
 } from "./use-session-customer";
 
 import type { SessionParticipantRecord } from "~/session/queries";
@@ -90,9 +111,22 @@ function participant(
 
 describe("dedupeParticipants", () => {
   it("collapses a repeated participant by human_id", () => {
-    const anna = participant({ humanId: "human-anna", email: "anna@kunde.de" });
+    // A calendar invite's two rows for the same person rarely agree on
+    // anything but the human_id — different row ids, sometimes a different
+    // display name (nickname vs. full name).
+    const anna = participant({
+      humanId: "human-anna",
+      email: "anna@kunde.de",
+      name: "Anna",
+    });
+    const annaAgain = participant({
+      id: "participant-2",
+      humanId: "human-anna",
+      email: "anna@kunde.de",
+      name: "Anna Müller",
+    });
 
-    expect(dedupeParticipants([anna, anna])).toEqual([anna]);
+    expect(dedupeParticipants([anna, annaAgain])).toEqual([anna]);
   });
 
   it("collapses a repeated participant by lower-cased email when human_id is empty", () => {
@@ -140,5 +174,76 @@ describe("dedupeParticipants", () => {
 
     expect(twice).toEqual(once);
     expect(twice.kind).toBe("none");
+  });
+});
+
+describe("useRecentOrganizationIds", () => {
+  it("groups by organization in a subquery the outer LIMIT sits outside of", () => {
+    // The cap must count organizations, not session rows — an organization
+    // whose one meeting predates twenty other, unrelated sessions still has
+    // to reach the tie-break. That only holds if grouping happens before the
+    // LIMIT, so this pins the query's shape: the raw `sessions` table is
+    // read and grouped by `organization_id` first, and only that grouped
+    // result is capped.
+    useRecentOrganizationIds();
+    const sql = dbMocks.capturedSql;
+    if (!sql) {
+      throw new Error(
+        "useRecentOrganizationIds did not send a query to useLiveQuery",
+      );
+    }
+
+    const fromSessions = sql.indexOf("FROM sessions");
+    const groupBy = sql.indexOf("GROUP BY organization_id");
+    const limit = sql.indexOf("LIMIT");
+
+    expect(fromSessions).toBeGreaterThan(-1);
+    expect(groupBy).toBeGreaterThan(fromSessions);
+    expect(limit).toBeGreaterThan(groupBy);
+  });
+
+  it("keeps an older organization's id alongside twenty newer sessions from a different one", () => {
+    // This vitest suite has no SQLite engine behind `useLiveQuery` (it is
+    // mocked, like every other live-query hook's test in this codebase), so
+    // the SQL text itself cannot be executed here — the shape test above
+    // is what actually guards the query. This test instead computes, by
+    // hand, what the query's `GROUP BY organization_id` / `MAX(created_at)`
+    // / `ORDER BY ... DESC` is specified to produce for this table — one row
+    // per organization, holding its most recent session, most recent first
+    // — and confirms the hook forwards that list, including the older
+    // organization, unchanged.
+    const sessions = [
+      ...Array.from({ length: 20 }, (_, day) => ({
+        organizationId: "org-frequent",
+        createdAt: new Date(Date.UTC(2026, 7, day + 1)).toISOString(),
+      })),
+      {
+        organizationId: "org-occasional",
+        createdAt: new Date(Date.UTC(2026, 0, 1)).toISOString(),
+      },
+    ];
+
+    const lastUsedAt = new Map<string, string>();
+    for (const session of sessions) {
+      const current = lastUsedAt.get(session.organizationId);
+      if (current === undefined || session.createdAt > current) {
+        lastUsedAt.set(session.organizationId, session.createdAt);
+      }
+    }
+    const groupedAndOrderedRows = [...lastUsedAt.entries()]
+      .sort(([, a], [, b]) => (a < b ? 1 : a > b ? -1 : 0))
+      .map(([organization_id]) => ({ organization_id }));
+
+    useRecentOrganizationIds();
+    const mapRows = dbMocks.capturedMapRows;
+    if (!mapRows) {
+      throw new Error(
+        "useRecentOrganizationIds did not send a query to useLiveQuery",
+      );
+    }
+
+    const recentOrganizationIds = mapRows(groupedAndOrderedRows);
+
+    expect(recentOrganizationIds).toEqual(["org-frequent", "org-occasional"]);
   });
 });

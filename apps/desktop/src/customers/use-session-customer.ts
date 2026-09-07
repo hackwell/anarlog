@@ -88,19 +88,26 @@ const EMPTY_RECENT_ORGANIZATION_IDS: string[] = [];
 
 type RecentOrganizationSqlRow = { organization_id: string };
 
-function useRecentOrganizationIds(): string[] {
+export function useRecentOrganizationIds(): string[] {
   const { data = EMPTY_RECENT_ORGANIZATION_IDS } = useLiveQuery<
     RecentOrganizationSqlRow,
     string[]
   >({
+    // The cap must count organizations, not session rows: an org whose most
+    // recent meeting predates twenty other, unrelated sessions still has to
+    // reach the tie-break, so grouping happens before the LIMIT applies.
     sql: `
       SELECT organization_id
-      FROM sessions
-      WHERE deleted_at IS NULL AND organization_id != ''
-      ORDER BY created_at DESC, id
+      FROM (
+        SELECT organization_id, MAX(created_at) AS last_used_at
+        FROM sessions
+        WHERE deleted_at IS NULL AND organization_id != ''
+        GROUP BY organization_id
+      )
+      ORDER BY last_used_at DESC, organization_id
       LIMIT ${RECENT_ORGANIZATION_LIMIT}
     `,
-    mapRows: (rows) => [...new Set(rows.map((row) => row.organization_id))],
+    mapRows: (rows) => rows.map((row) => row.organization_id),
   });
   return data;
 }
