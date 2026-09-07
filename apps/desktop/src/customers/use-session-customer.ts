@@ -170,15 +170,20 @@ export function useSessionCustomer(sessionId: string): SessionCustomer {
     [resolverParticipants, knownContacts, ownDomains, recentOrganizationIds],
   );
 
+  // The in-memory dismissal decision does not survive a restart; the
+  // persisted flag on the session record does. Either one means the same
+  // thing to the resolver: this meeting's "no customer" answer stands.
+  const cleared = answered.cleared || session?.customer_cleared === true;
+
   const decision = useMemo(
     () =>
       decideSessionCustomer({
         stored,
         resolution,
         dismissed: answered.dismissedSuggestion,
-        cleared: answered.cleared,
+        cleared,
       }),
-    [stored, resolution, answered],
+    [stored, resolution, answered.dismissedSuggestion, cleared],
   );
 
   // Guards against writing the same automatic assignment twice while this
@@ -212,7 +217,12 @@ export function useSessionCustomer(sessionId: string): SessionCustomer {
   const assign = useCallback(
     (organizationId: string) => {
       markCustomerAssigned(sessionId);
-      void updateSession({ organization_id: organizationId }).catch((error) => {
+      // A deliberate assignment must outrank an earlier clear, or the
+      // persisted flag would keep fighting this and every future pick.
+      void updateSession({
+        organization_id: organizationId,
+        customer_cleared: false,
+      }).catch((error) => {
         console.error("[customers] failed to assign session customer", error);
       });
     },
@@ -221,7 +231,10 @@ export function useSessionCustomer(sessionId: string): SessionCustomer {
 
   const clear = useCallback(() => {
     markCustomerCleared(sessionId);
-    void updateSession({ organization_id: "" }).catch((error) => {
+    void updateSession({
+      organization_id: "",
+      customer_cleared: true,
+    }).catch((error) => {
       console.error("[customers] failed to clear session customer", error);
     });
   }, [sessionId, updateSession]);

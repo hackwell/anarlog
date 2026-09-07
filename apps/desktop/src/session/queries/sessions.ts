@@ -25,6 +25,7 @@ type SessionSqlRow = {
   raw_template_id: string;
   locked: boolean | number;
   organization_id: string;
+  customer_cleared: boolean | number | null;
 };
 
 type SessionSummarySqlRow = {
@@ -61,6 +62,11 @@ const SESSION_SELECT_SQL = `
     sessions.title,
     sessions.locked,
     sessions.organization_id,
+    CASE
+      WHEN json_valid(sessions.metadata_json)
+      THEN json_extract(sessions.metadata_json, '$.customerCleared')
+      ELSE NULL
+    END AS customer_cleared,
     COALESCE(note.body, '') AS raw_body,
     COALESCE(note.body_format, 'prosemirror_json') AS raw_body_format,
     COALESCE(note.template_id, '') AS raw_template_id
@@ -266,6 +272,16 @@ export function updateSession(
       params.push(value);
     }
 
+    // `customer_cleared` lives inside metadata_json, not a column of its own,
+    // so it needs json_set/json_remove rather than the `column = ?` pairs
+    // above — those would stomp the rest of the JSON document.
+    const customerClearedAssignment = buildCustomerClearedAssignment(
+      changes.customer_cleared,
+    );
+    if (customerClearedAssignment) {
+      assignments.push(customerClearedAssignment);
+    }
+
     const statements: Array<{ sql: string; params: unknown[] }> = [];
     if (assignments.length > 0) {
       statements.push({
@@ -311,6 +327,21 @@ export function updateSession(
 
     if (statements.length > 0) await executeTransaction(statements);
   });
+}
+
+// json_set/json_remove over a CASE-guarded fallback keeps every other key in
+// metadata_json untouched, the same pattern `contacts/queries.ts` uses for
+// its own metadata fields.
+function buildCustomerClearedAssignment(
+  customerCleared: boolean | undefined,
+): string | null {
+  if (customerCleared === undefined) return null;
+
+  const validMetadata =
+    "CASE WHEN json_valid(metadata_json) THEN metadata_json ELSE '{}' END";
+  return customerCleared
+    ? `metadata_json = json_set(${validMetadata}, '$.customerCleared', json('true'))`
+    : `metadata_json = json_remove(${validMetadata}, '$.customerCleared')`;
 }
 
 function useHeldLiveQueryRows<T>(
@@ -366,5 +397,6 @@ function mapSessionRow(row: SessionSqlRow): SessionRecord {
     raw_template_id: row.raw_template_id,
     locked: isLockedFlag(row.locked),
     organization_id: row.organization_id,
+    customer_cleared: isLockedFlag(row.customer_cleared),
   };
 }

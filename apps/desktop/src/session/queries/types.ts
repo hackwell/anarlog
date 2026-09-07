@@ -9,12 +9,16 @@ export type SessionRecord = {
   raw_template_id: string;
   locked: boolean;
   organization_id: string;
+  // Persisted twin of the in-memory dismissal in `customers/session-decisions.ts`:
+  // survives a restart because an unwatched wrong assignment must not come back.
+  customer_cleared: boolean;
 };
 
 export type SessionChanges = Partial<
   Pick<
     SessionRecord,
     | "created_at"
+    | "customer_cleared"
     | "event_json"
     | "folder_id"
     | "locked"
