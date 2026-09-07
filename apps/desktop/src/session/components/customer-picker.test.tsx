@@ -73,6 +73,12 @@ describe("CustomerPicker", () => {
     render(<CustomerPicker sessionId="s1" />);
 
     const suggestion = await screen.findByRole("button", { name: /Müller/ });
+    // A suggestion is never applied on its own — only a confirm click writes
+    // it. If a future change applied it on mount, this would still pass
+    // without the assertion below.
+    expect(mocks.assign).not.toHaveBeenCalled();
+    expect(mocks.createOrganization).not.toHaveBeenCalled();
+
     suggestion.click();
 
     expect(mocks.assign).toHaveBeenCalledWith("org-mueller");
@@ -87,7 +93,13 @@ describe("CustomerPicker", () => {
 
     render(<CustomerPicker sessionId="s1" />);
 
-    (await screen.findByRole("button", { name: /verwerfen|dismiss/i })).click();
+    const dismiss = await screen.findByRole("button", {
+      name: /verwerfen|dismiss/i,
+    });
+    expect(mocks.assign).not.toHaveBeenCalled();
+    expect(mocks.createOrganization).not.toHaveBeenCalled();
+
+    dismiss.click();
 
     expect(mocks.dismissSuggestion).toHaveBeenCalled();
   });
@@ -149,5 +161,52 @@ describe("CustomerPicker", () => {
     await vi.waitFor(() => {
       expect(mocks.assign).toHaveBeenCalledWith("org-new");
     });
+  });
+
+  it("assigns an existing customer instead of creating a duplicate from a domain suggestion", async () => {
+    mocks.suggestion = { kind: "suggest_create", domain: "kunde.de" };
+    mocks.organizations = [
+      ...mocks.organizations,
+      { id: "org-existing", name: "kunde.de" },
+    ];
+
+    render(<CustomerPicker sessionId="s1" />);
+
+    const suggestion = await screen.findByRole("button", {
+      name: /kunde\.de/,
+    });
+    fireEvent.click(suggestion);
+
+    expect(mocks.assign).toHaveBeenCalledWith("org-existing");
+    expect(mocks.createOrganization).not.toHaveBeenCalled();
+  });
+
+  it("shows a distinct state when the assigned customer no longer exists", () => {
+    mocks.organizationId = "org-deleted";
+
+    render(<CustomerPicker sessionId="s1" />);
+
+    const trigger = screen.getByRole("combobox", { name: "Assign customer" });
+
+    expect(trigger.textContent).toBe("Customer no longer exists");
+    expect(screen.queryByText("Customer")).toBeNull();
+  });
+
+  it("does not offer a suggestion that cannot be resolved to a customer name", () => {
+    mocks.suggestion = {
+      kind: "suggest",
+      organizationId: "org-deleted",
+      reason: "domain_match",
+    };
+
+    render(<CustomerPicker sessionId="s1" />);
+
+    expect(
+      screen.queryByRole("button", { name: /verwerfen|dismiss/i }),
+    ).toBeNull();
+    expect(screen.queryByText("org-deleted")).toBeNull();
+    expect(
+      screen.getByRole("combobox", { name: "Assign customer" }),
+    ).not.toBeNull();
   });
 });

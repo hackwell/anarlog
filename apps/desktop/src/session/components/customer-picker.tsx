@@ -1,5 +1,12 @@
 import { useLingui } from "@lingui/react/macro";
-import { Buildings, Check, Plus, Sparkle, X } from "@phosphor-icons/react";
+import {
+  Buildings,
+  Check,
+  Plus,
+  Sparkle,
+  Warning,
+  X,
+} from "@phosphor-icons/react";
 import { useCallback, useMemo, useState } from "react";
 
 import {
@@ -42,10 +49,31 @@ export function CustomerPicker({
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
 
-  const currentName = useMemo(
-    () => organizations.find((org) => org.id === organizationId)?.name ?? "",
+  const currentOrganization = useMemo(
+    () => organizations.find((org) => org.id === organizationId),
     [organizations, organizationId],
   );
+  const currentName = currentOrganization?.name ?? "";
+  // useOrganizations() filters out soft-deleted rows, so a stored
+  // organization_id that no longer resolves means the customer behind it was
+  // deleted, not that the meeting is unassigned. Those must look different:
+  // an invisible assignment is exactly the risk this control exists to avoid.
+  const assignedOrganizationMissing =
+    organizationId !== "" && !currentOrganization;
+
+  // A `suggest` resolution can point at a deleted organization (the known
+  // contact's organization_id still references it). Never show a raw id to a
+  // person: if it cannot be resolved to a name, the suggestion is dropped
+  // rather than offered.
+  const suggestionOrganizationName = useMemo(() => {
+    if (!suggestion || suggestion.kind !== "suggest") return undefined;
+    return organizations.find((org) => org.id === suggestion.organizationId)
+      ?.name;
+  }, [suggestion, organizations]);
+  const showSuggestion =
+    organizationId === "" &&
+    suggestion !== null &&
+    (suggestion.kind !== "suggest" || suggestionOrganizationName !== undefined);
 
   const trimmedQuery = query.trim();
   // Named to match the suggestion chip's create label below: both read from
@@ -78,9 +106,13 @@ export function CustomerPicker({
     (name: string) => {
       setOpen(false);
       setQuery("");
-      void createOrganization({ name }).then((newOrganizationId) => {
-        assign(newOrganizationId);
-      });
+      void createOrganization({ name })
+        .then((newOrganizationId) => {
+          assign(newOrganizationId);
+        })
+        .catch((error) => {
+          console.error("[customer-picker] failed to create customer", error);
+        });
     },
     [assign],
   );
@@ -92,33 +124,46 @@ export function CustomerPicker({
       return;
     }
     if (suggestion.kind === "suggest_create") {
-      void createOrganization({ name: suggestion.domain }).then(
-        (newOrganizationId) => {
-          assign(newOrganizationId);
-        },
+      // Same duplicate guard the list's create entry applies: the resolver
+      // only matches on contact email domains, so it can still offer
+      // "create" for a domain that already has an organization of that name
+      // (no known contact at that domain yet). Assign the existing one
+      // instead of creating a second organization with the same name.
+      const existing = organizations.find(
+        (org) => org.name.toLowerCase() === suggestion.domain.toLowerCase(),
       );
+      if (existing) {
+        assign(existing.id);
+        return;
+      }
+
+      void createOrganization({ name: suggestion.domain })
+        .then((newOrganizationId) => {
+          assign(newOrganizationId);
+        })
+        .catch((error) => {
+          console.error("[customer-picker] failed to create customer", error);
+        });
     }
-  }, [suggestion, assign]);
+  }, [suggestion, assign, organizations]);
 
   // A suggestion is never silently applied: only a confirm click writes it.
   // Dismissing it drops back to the quiet placeholder below, from where the
   // full list is still reachable.
-  if (organizationId === "" && suggestion) {
-    const suggestedName =
-      suggestion.kind === "suggest"
-        ? (organizations.find((org) => org.id === suggestion.organizationId)
-            ?.name ?? suggestion.organizationId)
-        : "";
-
+  if (showSuggestion && suggestion) {
     return (
       <CustomerSuggestionChip
         suggestion={suggestion}
-        organizationName={suggestedName}
+        organizationName={suggestionOrganizationName ?? ""}
         onConfirm={handleConfirmSuggestion}
         onDismiss={dismissSuggestion}
       />
     );
   }
+
+  const triggerLabel = assignedOrganizationMissing
+    ? t`Customer no longer exists`
+    : currentName || t`Customer`;
 
   return (
     <Popover open={open} onOpenChange={handleOpenChange}>
@@ -129,18 +174,34 @@ export function CustomerPicker({
           role="combobox"
           aria-expanded={open}
           aria-label={t`Assign customer`}
-          title={currentName || t`Customer`}
+          title={triggerLabel}
           className={cn([
             "flex h-7 items-center gap-1 rounded-full px-1.5",
-            "max-w-full min-w-0",
-            "text-muted-foreground hover:bg-accent hover:text-foreground transition-colors",
+            "max-w-full min-w-0 transition-colors",
             "focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-hidden",
-            open && "bg-accent text-foreground",
+            assignedOrganizationMissing
+              ? ["text-destructive", "hover:bg-destructive/10"]
+              : [
+                  "text-muted-foreground",
+                  "hover:bg-accent hover:text-foreground",
+                  open && "bg-accent text-foreground",
+                ],
           ])}
         >
-          <Buildings className="size-4 shrink-0" aria-hidden="true" />
-          <span className="min-w-0 truncate text-xs text-neutral-600 dark:text-neutral-300">
-            {currentName || t`Customer`}
+          {assignedOrganizationMissing ? (
+            <Warning className="size-4 shrink-0" aria-hidden="true" />
+          ) : (
+            <Buildings className="size-4 shrink-0" aria-hidden="true" />
+          )}
+          <span
+            className={cn([
+              "min-w-0 truncate text-xs",
+              assignedOrganizationMissing
+                ? "text-destructive"
+                : "text-neutral-600 dark:text-neutral-300",
+            ])}
+          >
+            {triggerLabel}
           </span>
         </button>
       </PopoverTrigger>
@@ -209,8 +270,8 @@ export function CustomerPicker({
   );
 }
 
-// Mirrors the tag row's suggest-and-confirm chip so a customer suggestion
-// looks like an interaction the user has already learned, not a new one.
+// Same chip shape as the tag row's suggestions (Sparkle confirm + X dismiss):
+// a suggestion is proposed, never applied, until this button is clicked.
 function CustomerSuggestionChip({
   suggestion,
   organizationName,

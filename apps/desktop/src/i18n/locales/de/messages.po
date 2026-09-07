@@ -1000,6 +1000,10 @@ msgstr "Aktueller Standard"
 msgid "Customer"
 msgstr "Kunde"
 
+#: src/session/components/customer-picker.tsx
+msgid "Customer no longer exists"
+msgstr "Kunde existiert nicht mehr"
+
 #: src/templates/template-sidebar.tsx
 msgid "Customized"
 msgstr "Angepasst"
