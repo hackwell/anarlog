@@ -78,7 +78,13 @@ export function selectResolverParticipants(
 ): CustomerParticipant[] {
   return dedupeParticipants(participants).map((participant) => ({
     email: participant.email,
-    organization_id: participant.organizationId,
+    // Soft-deleting an organization leaves `humans.organization_id` pointing
+    // at it, so the id alone still looks live while the name — joined with
+    // `deleted_at IS NULL` — is already gone. A contact whose organization no
+    // longer resolves is not evidence for anything.
+    organization_id: participant.organizationName.trim()
+      ? participant.organizationId
+      : "",
     organization_name: participant.organizationName,
   }));
 }

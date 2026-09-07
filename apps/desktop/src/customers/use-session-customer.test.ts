@@ -177,6 +177,33 @@ describe("dedupeParticipants", () => {
   });
 });
 
+describe("selectResolverParticipants", () => {
+  it("does not treat a contact of a deleted organization as evidence", () => {
+    // The id survives a soft delete on the organization; only the joined
+    // name goes away. Assigning on the id alone would file the meeting
+    // under a customer the picker can then only show as gone.
+    const anna = participant({
+      humanId: "human-anna",
+      email: "anna@kunde.de",
+      organizationId: "org-geloescht",
+      organizationName: "",
+    });
+
+    expect(selectResolverParticipants([anna])).toEqual([
+      { email: "anna@kunde.de", organization_id: "", organization_name: "" },
+    ]);
+
+    expect(
+      resolveSessionCustomer({
+        participants: selectResolverParticipants([anna]),
+        knownContacts: [],
+        ownDomains: ["flagbit.de"],
+        recentOrganizationIds: [],
+      }).kind,
+    ).not.toBe("assign");
+  });
+});
+
 describe("useRecentOrganizationIds", () => {
   it("groups by organization in a subquery the outer LIMIT sits outside of", () => {
     // The cap must count organizations, not session rows — an organization
