@@ -326,9 +326,13 @@ async fn build_session_document(
     id: &str,
 ) -> WorkerResult<IndexAction> {
     let Some(session) = sqlx::query(
-        "SELECT title, created_at, event_json, locked
+        "SELECT sessions.title, sessions.created_at, sessions.event_json, sessions.locked,
+                organizations.name AS organization_name
          FROM sessions
-         WHERE id = ? AND deleted_at IS NULL",
+         LEFT JOIN organizations
+           ON organizations.id = sessions.organization_id
+          AND organizations.deleted_at IS NULL
+         WHERE sessions.id = ? AND sessions.deleted_at IS NULL",
     )
     .bind(id)
     .fetch_optional(&mut *connection)
@@ -336,6 +340,8 @@ async fn build_session_document(
     else {
         return Ok(IndexAction::Remove(id.to_string()));
     };
+
+    let organization_name: Option<String> = session.get("organization_name");
 
     let locked: i64 = session.get("locked");
     if locked != 0 {
@@ -347,7 +353,7 @@ async fn build_session_document(
             doc_type: "session".to_string(),
             language: None,
             title: fallback_title(&title, "Untitled"),
-            content: String::new(),
+            content: merge_content(organization_name.as_deref()),
             created_at: session_search_timestamp(&event_json, &created_at),
             facets: Vec::new(),
         }));
@@ -398,8 +404,11 @@ async fn build_session_document(
     .await?;
 
     let mut content_parts = Vec::with_capacity(
-        1 + enhanced_bodies.len() + meeting_chat_messages.len() + transcripts.len(),
+        2 + enhanced_bodies.len() + meeting_chat_messages.len() + transcripts.len(),
     );
+    if let Some(organization_name) = organization_name {
+        content_parts.push(organization_name);
+    }
     if let Some(raw_body) = raw_body {
         content_parts.push(extract_plain_text(&raw_body));
     }
@@ -846,6 +855,80 @@ mod tests {
             "zoom Ada 10:42 AM Here is the doc https://example.com/spec"
         );
         assert_eq!(flatten_meeting_chat("plain chat"), "plain chat");
+    }
+
+    #[tokio::test]
+    async fn indexes_the_assigned_organizations_name_into_the_sessions_content() {
+        let db = anlg_db_core::Db::connect_memory_plain().await.unwrap();
+        anlg_db_app::prepare_schema(&db).await.unwrap();
+        sqlx::query("INSERT INTO organizations (id, name) VALUES ('org-1', 'Müller GmbH')")
+            .execute(db.pool())
+            .await
+            .unwrap();
+        sqlx::query(
+            "INSERT INTO sessions (id, title, organization_id)
+             VALUES ('session-1', 'Kickoff', 'org-1')",
+        )
+        .execute(db.pool())
+        .await
+        .unwrap();
+
+        let mut connection = db.pool().acquire().await.unwrap();
+        let action = build_session_document(&mut connection, "session-1")
+            .await
+            .unwrap();
+
+        let IndexAction::Upsert(document) = action else {
+            panic!("expected an upsert action");
+        };
+        assert!(
+            document.content.contains("Müller GmbH"),
+            "expected content {:?} to contain the organization name",
+            document.content
+        );
+    }
+
+    #[tokio::test]
+    async fn leaves_an_unassigned_sessions_content_unchanged() {
+        let db = anlg_db_core::Db::connect_memory_plain().await.unwrap();
+        anlg_db_app::prepare_schema(&db).await.unwrap();
+        sqlx::query("INSERT INTO sessions (id, title) VALUES ('session-1', 'Standalone')")
+            .execute(db.pool())
+            .await
+            .unwrap();
+
+        let mut connection = db.pool().acquire().await.unwrap();
+        let action = build_session_document(&mut connection, "session-1")
+            .await
+            .unwrap();
+
+        let IndexAction::Upsert(document) = action else {
+            panic!("expected an upsert action");
+        };
+        assert_eq!(document.content, "");
+    }
+
+    #[tokio::test]
+    async fn a_session_whose_organization_no_longer_exists_does_not_throw_or_add_content() {
+        let db = anlg_db_core::Db::connect_memory_plain().await.unwrap();
+        anlg_db_app::prepare_schema(&db).await.unwrap();
+        sqlx::query(
+            "INSERT INTO sessions (id, title, organization_id)
+             VALUES ('session-1', 'Ghost customer', 'org-does-not-exist')",
+        )
+        .execute(db.pool())
+        .await
+        .unwrap();
+
+        let mut connection = db.pool().acquire().await.unwrap();
+        let action = build_session_document(&mut connection, "session-1")
+            .await
+            .unwrap();
+
+        let IndexAction::Upsert(document) = action else {
+            panic!("expected an upsert action");
+        };
+        assert_eq!(document.content, "");
     }
 
     #[test]
