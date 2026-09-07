@@ -9,6 +9,7 @@ const mocks = vi.hoisted(() => ({
   organizationId: "",
   suggestion: null as CustomerResolution | null,
   assign: vi.fn(),
+  clear: vi.fn(),
   dismissSuggestion: vi.fn(),
   organizations: [] as Array<{ id: string; name: string }>,
   organizationsLoading: false,
@@ -22,6 +23,7 @@ vi.mock("~/customers/use-session-customer", () => ({
     organizationId: mocks.organizationId,
     suggestion: mocks.suggestion,
     assign: mocks.assign,
+    clear: mocks.clear,
     dismissSuggestion: mocks.dismissSuggestion,
   }),
 }));
@@ -40,6 +42,7 @@ describe("CustomerPicker", () => {
     mocks.organizationId = "";
     mocks.suggestion = null;
     mocks.assign.mockClear();
+    mocks.clear.mockClear();
     mocks.dismissSuggestion.mockClear();
     mocks.organizations = [
       { id: "org-mueller", name: "Müller" },
@@ -261,6 +264,25 @@ describe("CustomerPicker", () => {
     rerender(<CustomerPicker sessionId="s1" />);
 
     expect(screen.getByRole("button", { name: /Müller/ })).not.toBeNull();
+  });
+
+  it("lets the user take the customer off a meeting", () => {
+    mocks.organizationId = "org-mueller";
+
+    render(<CustomerPicker sessionId="s1" />);
+
+    fireEvent.click(screen.getByRole("combobox", { name: "Customer: Müller" }));
+    fireEvent.click(screen.getByRole("option", { name: "No customer" }));
+
+    expect(mocks.clear).toHaveBeenCalled();
+  });
+
+  it("offers nothing to clear on a meeting that has no customer", () => {
+    render(<CustomerPicker sessionId="s1" />);
+
+    fireEvent.click(screen.getByRole("combobox", { name: "Assign customer" }));
+
+    expect(screen.queryByRole("option", { name: "No customer" })).toBeNull();
   });
 
   it("speaks the assigned customer as the trigger's accessible name", () => {

@@ -3,6 +3,7 @@ import {
   Buildings,
   Check,
   Plus,
+  Prohibit,
   Sparkle,
   Warning,
   X,
@@ -49,7 +50,7 @@ export function CustomerPicker({
   align?: "start" | "end";
 }) {
   const { t } = useLingui();
-  const { organizationId, suggestion, assign, dismissSuggestion } =
+  const { organizationId, suggestion, assign, clear, dismissSuggestion } =
     useSessionCustomer(sessionId);
   const {
     data: organizations = EMPTY_ORGANIZATIONS,
@@ -116,6 +117,12 @@ export function CustomerPicker({
     },
     [assign],
   );
+
+  const handleClear = useCallback(() => {
+    setOpen(false);
+    setQuery("");
+    clear();
+  }, [clear]);
 
   const handleCreate = useCallback(
     (name: string) => {
@@ -250,6 +257,20 @@ export function CustomerPicker({
                 <CommandEmpty className="text-muted-foreground py-0 text-left text-sm">
                   {trimmedQuery ? t`No customers found.` : t`No customers yet.`}
                 </CommandEmpty>
+                {organizationId !== "" ? (
+                  <CommandGroup>
+                    <CommandItem
+                      value="no-customer"
+                      onSelect={handleClear}
+                      className="cursor-pointer"
+                    >
+                      <Prohibit className="size-4 shrink-0 opacity-70" />
+                      <span className="min-w-0 flex-1 truncate">
+                        {t`No customer`}
+                      </span>
+                    </CommandItem>
+                  </CommandGroup>
+                ) : null}
                 {organizations.length > 0 ? (
                   <CommandGroup>
                     {organizations.map((org) => (

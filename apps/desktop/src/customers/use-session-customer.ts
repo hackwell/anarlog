@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 
 import { useOwnDomains } from "./own-domains";
 import {
@@ -6,6 +6,12 @@ import {
   type CustomerResolution,
   resolveSessionCustomer,
 } from "./resolve";
+import {
+  markCustomerAssigned,
+  markCustomerCleared,
+  markSuggestionDismissed,
+  useSessionCustomerDecision,
+} from "./session-decisions";
 
 import { useHumans } from "~/contacts/queries";
 import { useLiveQuery } from "~/db";
@@ -17,6 +23,7 @@ export type SessionCustomer = {
   organizationId: string; // "" when unassigned
   suggestion: CustomerResolution | null; // null when there is nothing to offer
   assign: (organizationId: string) => void;
+  clear: () => void;
   dismissSuggestion: () => void;
 };
 
@@ -24,10 +31,18 @@ export function decideSessionCustomer(input: {
   stored: string;
   resolution: CustomerResolution;
   dismissed: boolean;
+  cleared: boolean;
 }): { write: string | null; suggestion: CustomerResolution | null } {
   // A stored customer is a person's answer, even when it came from an earlier
   // automatic assignment. Nothing recomputes over it.
   if (input.stored.trim() !== "") {
+    return { write: null, suggestion: null };
+  }
+
+  // "This meeting has no customer" is an answer too, and the only correction
+  // the user has when the rules get it wrong. Without remembering it, the
+  // resolver reassigns the meeting the moment it is reopened.
+  if (input.cleared) {
     return { write: null, suggestion: null };
   }
 
@@ -126,13 +141,7 @@ export function useSessionCustomer(sessionId: string): SessionCustomer {
   const recentOrganizationIds = useRecentOrganizationIds();
   const updateSession = useUpdateSession(sessionId);
 
-  // Dismissal is scoped to the session it was raised for, not to how long the
-  // hook instance happens to live, so switching sessions on the same
-  // component instance clears it without an extra effect.
-  const [dismissedForSessionId, setDismissedForSessionId] = useState<
-    string | null
-  >(null);
-  const dismissed = dismissedForSessionId === sessionId;
+  const answered = useSessionCustomerDecision(sessionId);
 
   const stored = session?.organization_id ?? "";
 
@@ -162,8 +171,14 @@ export function useSessionCustomer(sessionId: string): SessionCustomer {
   );
 
   const decision = useMemo(
-    () => decideSessionCustomer({ stored, resolution, dismissed }),
-    [stored, resolution, dismissed],
+    () =>
+      decideSessionCustomer({
+        stored,
+        resolution,
+        dismissed: answered.dismissedSuggestion,
+        cleared: answered.cleared,
+      }),
+    [stored, resolution, answered],
   );
 
   // Guards against writing the same automatic assignment twice while this
@@ -196,21 +211,30 @@ export function useSessionCustomer(sessionId: string): SessionCustomer {
 
   const assign = useCallback(
     (organizationId: string) => {
+      markCustomerAssigned(sessionId);
       void updateSession({ organization_id: organizationId }).catch((error) => {
         console.error("[customers] failed to assign session customer", error);
       });
     },
-    [updateSession],
+    [sessionId, updateSession],
   );
 
+  const clear = useCallback(() => {
+    markCustomerCleared(sessionId);
+    void updateSession({ organization_id: "" }).catch((error) => {
+      console.error("[customers] failed to clear session customer", error);
+    });
+  }, [sessionId, updateSession]);
+
   const dismissSuggestion = useCallback(() => {
-    setDismissedForSessionId(sessionId);
+    markSuggestionDismissed(sessionId);
   }, [sessionId]);
 
   return {
     organizationId: stored,
     suggestion: decision.suggestion,
     assign,
+    clear,
     dismissSuggestion,
   };
 }

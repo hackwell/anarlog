@@ -43,6 +43,7 @@ describe("decideSessionCustomer", () => {
         stored: "",
         resolution: assignResolution,
         dismissed: false,
+        cleared: false,
       }),
     ).toEqual({ write: "org-mueller", suggestion: null });
   });
@@ -53,6 +54,7 @@ describe("decideSessionCustomer", () => {
         stored: "org-andere",
         resolution: assignResolution,
         dismissed: false,
+        cleared: false,
       }),
     ).toEqual({ write: null, suggestion: null });
   });
@@ -65,7 +67,12 @@ describe("decideSessionCustomer", () => {
     } as const;
 
     expect(
-      decideSessionCustomer({ stored: "", resolution, dismissed: false }),
+      decideSessionCustomer({
+        stored: "",
+        resolution,
+        dismissed: false,
+        cleared: false,
+      }),
     ).toEqual({ write: null, suggestion: resolution });
   });
 
@@ -76,7 +83,23 @@ describe("decideSessionCustomer", () => {
     } as const;
 
     expect(
-      decideSessionCustomer({ stored: "", resolution, dismissed: true }),
+      decideSessionCustomer({
+        stored: "",
+        resolution,
+        dismissed: true,
+        cleared: false,
+      }),
+    ).toEqual({ write: null, suggestion: null });
+  });
+
+  it("does not reassign a meeting the user took the customer off", () => {
+    expect(
+      decideSessionCustomer({
+        stored: "",
+        resolution: assignResolution,
+        dismissed: false,
+        cleared: true,
+      }),
     ).toEqual({ write: null, suggestion: null });
   });
 
@@ -86,6 +109,7 @@ describe("decideSessionCustomer", () => {
         stored: "",
         resolution: { kind: "none" },
         dismissed: false,
+        cleared: false,
       }),
     ).toEqual({ write: null, suggestion: null });
   });

@@ -2026,6 +2026,10 @@ msgid "No content."
 msgstr "Kein Inhalt."
 
 #: src/session/components/customer-picker.tsx
+msgid "No customer"
+msgstr "Kein Kunde"
+
+#: src/session/components/customer-picker.tsx
 msgid "No customers found."
 msgstr "Keine Kunden gefunden."
 
