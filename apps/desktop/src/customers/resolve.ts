@@ -10,7 +10,11 @@ export type KnownContact = { email: string; organization_id: string };
 
 export type CustomerResolution =
   | { kind: "assign"; organizationId: string; reason: "known_contact" }
-  | { kind: "suggest"; organizationId: string; reason: "domain_match" }
+  | {
+      kind: "suggest";
+      organizationId: string;
+      reason: "domain_match" | "known_contact";
+    }
   | { kind: "suggest_create"; domain: string }
   | { kind: "none" };
 
@@ -45,8 +49,12 @@ export function resolveSessionCustomer(input: {
   if (headcount.size > 0) {
     const winner = pickOrganization(headcount, recentOrganizationIds);
     if (winner) {
+      // Without a configured own domain there is no internal/external
+      // distinction, so "external participant filed under an organization"
+      // is not evidence — colleagues filed under our own company look
+      // exactly the same. Ask instead of writing it silently.
       return {
-        kind: "assign",
+        kind: ownDomains.length > 0 ? "assign" : "suggest",
         organizationId: winner,
         reason: "known_contact",
       };

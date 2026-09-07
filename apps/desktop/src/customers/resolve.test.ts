@@ -180,4 +180,25 @@ describe("resolveSessionCustomer", () => {
       }),
     ).toEqual({ kind: "suggest_create", domain: "kunde.de" });
   });
+
+  it("never assigns an internal meeting while no own domain is configured", () => {
+    // Colleagues filed as contacts of our own company are indistinguishable
+    // from a customer's people until the own domains are known, so this
+    // must never be written silently.
+    const resolution = resolveSessionCustomer({
+      ...base,
+      participants: [
+        from("joerg@flagbit.de", "org-flagbit", "Flagbit"),
+        from("mara@flagbit.de", "org-flagbit", "Flagbit"),
+      ],
+      ownDomains: [],
+    });
+
+    expect(resolution.kind).not.toBe("assign");
+    expect(resolution).toEqual({
+      kind: "suggest",
+      organizationId: "org-flagbit",
+      reason: "known_contact",
+    });
+  });
 });
