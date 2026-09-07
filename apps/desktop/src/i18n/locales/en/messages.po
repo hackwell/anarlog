@@ -379,6 +379,10 @@ msgstr "Ask Session Echo AI anything"
 msgid "Ask Session Echo anything"
 msgstr "Ask Session Echo anything"
 
+#: src/session/components/customer-picker.tsx
+msgid "Assign customer"
+msgstr "Assign customer"
+
 #: src/task/resource-view.tsx
 msgid "Assignees:"
 msgstr "Assignees:"
@@ -951,6 +955,10 @@ msgstr "Could not update the note date."
 msgid "Could not use the selected model"
 msgstr "Could not use the selected model"
 
+#: src/session/components/customer-picker.tsx
+msgid "Create \"{domain}\" as customer"
+msgstr "Create \"{domain}\" as customer"
+
 #: src/session/components/folder-picker.tsx
 msgid "Create \"{folderName}\""
 msgstr "Create \"{folderName}\""
@@ -987,6 +995,10 @@ msgstr "Crisp"
 #: src/templates/auto-form.tsx
 msgid "Current default"
 msgstr "Current default"
+
+#: src/session/components/customer-picker.tsx
+msgid "Customer"
+msgstr "Customer"
 
 #: src/templates/template-sidebar.tsx
 msgid "Customized"
@@ -1123,6 +1135,10 @@ msgstr "Disable"
 #: src/imports/screen.tsx
 msgid "Disconnect"
 msgstr "Disconnect"
+
+#: src/session/components/customer-picker.tsx
+msgid "Dismiss suggestion"
+msgstr "Dismiss suggestion"
 
 #. placeholder {0}: entry.name
 #: src/session/components/tag-row.tsx
@@ -2001,6 +2017,14 @@ msgstr "No community templates available"
 msgid "No content."
 msgstr "No content."
 
+#: src/session/components/customer-picker.tsx
+msgid "No customers found."
+msgstr "No customers found."
+
+#: src/session/components/customer-picker.tsx
+msgid "No customers yet."
+msgstr "No customers yet."
+
 #: src/task/resource-view.tsx
 msgid "No description provided."
 msgstr "No description provided."
@@ -2717,6 +2741,10 @@ msgstr "Search notes and meetings..."
 #: src/contacts/details.tsx
 msgid "Search or add company"
 msgstr "Search or add company"
+
+#: src/session/components/customer-picker.tsx
+msgid "Search or create customer"
+msgstr "Search or create customer"
 
 #: src/session/components/folder-picker.tsx
 msgid "Search or create folder"

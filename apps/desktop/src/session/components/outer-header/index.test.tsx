@@ -52,6 +52,14 @@ vi.mock("../folder-picker", () => ({
   ),
 }));
 
+vi.mock("../customer-picker", () => ({
+  CustomerPicker: () => (
+    <button type="button" role="combobox" aria-label="Assign customer">
+      Customer
+    </button>
+  ),
+}));
+
 vi.mock("./metadata", () => ({
   MetadataButton: () => (
     <button
@@ -565,7 +573,7 @@ describe("OuterHeader", () => {
     },
   );
 
-  it("places stop immediately before the folder while listening", () => {
+  it("places stop immediately before the customer control while listening", () => {
     mocks.sessionModes = { "session-1": "active" };
 
     const { container } = render(
@@ -581,16 +589,21 @@ describe("OuterHeader", () => {
     );
 
     const stop = screen.getByRole("button", { name: "Stop" });
+    const customer = screen.getByRole("combobox", { name: "Assign customer" });
     const folder = screen.getByRole("combobox", { name: "Select folder" });
     const actionStrip = container.firstElementChild?.lastElementChild;
     const actionChildren = [...(actionStrip?.children ?? [])];
     const stopIndex = actionChildren.findIndex((child) => child.contains(stop));
+    const customerIndex = actionChildren.findIndex((child) =>
+      child.contains(customer),
+    );
     const folderIndex = actionChildren.findIndex((child) =>
       child.contains(folder),
     );
 
     expect(actionStrip?.contains(stop)).toBe(true);
-    expect(stopIndex).toBe(folderIndex - 1);
+    expect(stopIndex).toBe(customerIndex - 1);
+    expect(customerIndex).toBe(folderIndex - 1);
     expect(screen.getByRole("group", { name: "Session note views" })).not.toBe(
       stop.closest("[role='group']"),
     );

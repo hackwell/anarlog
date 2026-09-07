@@ -5,6 +5,7 @@ import { useCallback, useRef, useState } from "react";
 import { commands as openerCommands } from "@anlg/plugin-opener2";
 import { cn, safeParseDate } from "@anlg/utils";
 
+import { CustomerPicker } from "../customer-picker";
 import { FolderPicker } from "../folder-picker";
 import { TranscriptEditButton } from "../note-input/transcript";
 import { RecordingIcon, useHasTranscript } from "../shared";
@@ -103,6 +104,7 @@ export function OuterHeader({
           transcriptEditMode={transcriptEditMode}
           onTranscriptEditModeChange={onTranscriptEditModeChange}
         />
+        <CustomerPicker sessionId={sessionId} align="end" />
         <FolderPicker sessionId={sessionId} align="end" />
         <MetadataButton sessionId={sessionId} />
         <CopyViewButton sessionId={sessionId} currentView={currentView} />

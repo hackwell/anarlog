@@ -379,6 +379,10 @@ msgstr "Session Echo AI etwas fragen"
 msgid "Ask Session Echo anything"
 msgstr "Session Echo etwas fragen"
 
+#: src/session/components/customer-picker.tsx
+msgid "Assign customer"
+msgstr "Kunde zuordnen"
+
 #: src/task/resource-view.tsx
 msgid "Assignees:"
 msgstr "Zugewiesen an:"
@@ -951,6 +955,10 @@ msgstr "Datum der Notiz konnte nicht aktualisiert werden."
 msgid "Could not use the selected model"
 msgstr "Ausgewähltes Modell konnte nicht verwendet werden"
 
+#: src/session/components/customer-picker.tsx
+msgid "Create \"{domain}\" as customer"
+msgstr "\"{domain}\" als Kunde anlegen"
+
 #: src/session/components/folder-picker.tsx
 msgid "Create \"{folderName}\""
 msgstr "\"{folderName}\" erstellen"
@@ -987,6 +995,10 @@ msgstr "Knapp"
 #: src/templates/auto-form.tsx
 msgid "Current default"
 msgstr "Aktueller Standard"
+
+#: src/session/components/customer-picker.tsx
+msgid "Customer"
+msgstr "Kunde"
 
 #: src/templates/template-sidebar.tsx
 msgid "Customized"
@@ -1123,6 +1135,10 @@ msgstr "Deaktivieren"
 #: src/imports/screen.tsx
 msgid "Disconnect"
 msgstr "Trennen"
+
+#: src/session/components/customer-picker.tsx
+msgid "Dismiss suggestion"
+msgstr "Vorschlag verwerfen"
 
 #. placeholder {0}: entry.name
 #: src/session/components/tag-row.tsx
@@ -2001,6 +2017,14 @@ msgstr "Keine Community-Vorlagen verfügbar"
 msgid "No content."
 msgstr "Kein Inhalt."
 
+#: src/session/components/customer-picker.tsx
+msgid "No customers found."
+msgstr "Keine Kunden gefunden."
+
+#: src/session/components/customer-picker.tsx
+msgid "No customers yet."
+msgstr "Noch keine Kunden."
+
 #: src/task/resource-view.tsx
 msgid "No description provided."
 msgstr "Keine Beschreibung vorhanden."
@@ -2717,6 +2741,10 @@ msgstr "Notizen und Meetings durchsuchen …"
 #: src/contacts/details.tsx
 msgid "Search or add company"
 msgstr "Unternehmen suchen oder hinzufügen"
+
+#: src/session/components/customer-picker.tsx
+msgid "Search or create customer"
+msgstr "Kunde suchen oder erstellen"
 
 #: src/session/components/folder-picker.tsx
 msgid "Search or create folder"
