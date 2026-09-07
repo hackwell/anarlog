@@ -43,6 +43,7 @@ vi.mock("./meeting-settings", () => ({
   },
 }));
 vi.mock("./notification", () => ({ NotificationSettingsView: () => null }));
+vi.mock("./own-email-domains", () => ({ OwnEmailDomainsRow: () => null }));
 vi.mock("./permissions", () => ({ Permissions: () => null }));
 vi.mock("./spoken-languages", () => ({ SpokenLanguagesView: () => null }));
 vi.mock("./storage", () => ({ StorageSettingsView: () => null }));

@@ -16,6 +16,7 @@ import {
 import { MainLanguageView } from "./main-language";
 import { MeetingSettingsView } from "./meeting-settings";
 import { NotificationSettingsView } from "./notification";
+import { OwnEmailDomainsRow } from "./own-email-domains";
 import { Permissions } from "./permissions";
 import { SpokenLanguagesView } from "./spoken-languages";
 import { StorageSettingsView } from "./storage";
@@ -295,6 +296,8 @@ function SettingsSectionContent({
           </div>
 
           <StorageSettingsView />
+
+          <OwnEmailDomainsRow />
         </>
       )}
 

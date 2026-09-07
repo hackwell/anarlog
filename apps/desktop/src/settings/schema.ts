@@ -166,6 +166,11 @@ export const SETTING_DEFINITIONS = {
     path: ["general", "cloud_sync_enabled"],
     default: true as boolean,
   },
+  own_email_domains: {
+    type: "string",
+    path: ["general", "own_email_domains"],
+    default: "[]" as string,
+  },
   ai_language: {
     type: "string",
     path: ["language", "ai_language"],

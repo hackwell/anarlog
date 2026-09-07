@@ -1808,6 +1808,10 @@ msgstr "Meeting-Historie importiert"
 msgid "Meetings"
 msgstr "Meetings"
 
+#: src/settings/general/own-email-domains.tsx
+msgid "Meetings that involve only these domains count as internal and don't get a customer."
+msgstr "Termine, an denen nur diese Domains beteiligt sind, gelten als intern und bekommen keinen Kunden."
+
 #: src/contacts/organization-details.tsx
 msgid "member"
 msgstr "Mitglied"
@@ -2266,6 +2270,10 @@ msgstr "Name der Organisation"
 #: src/settings/general/permissions.tsx
 msgid "Others"
 msgstr "Andere"
+
+#: src/settings/general/own-email-domains.tsx
+msgid "Our own email domains"
+msgstr "Unsere eigenen E-Mail-Domains"
 
 #: src/shared/control.tsx
 msgid "Page not found"
