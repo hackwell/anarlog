@@ -781,12 +781,12 @@ export function serializeOwnDomains(domains: readonly string[]): string {
 }
 
 export function useOwnDomains(): string[] {
-  const raw = useStoredSettingValue("own_email_domains");
-  return useMemo(() => parseOwnDomains(raw ?? "[]"), [raw]);
+  const { value } = useStoredSettingValue("own_email_domains");
+  return useMemo(() => parseOwnDomains(value ?? "[]"), [value]);
 }
 ```
 
-If `useStoredSettingValue` has a different call shape in `apps/desktop/src/settings/queries.ts:80`, follow that file rather than this sketch, and keep the returned type `string[]`.
+`useStoredSettingValue` returns `{ value, hasValue }` (`apps/desktop/src/settings/queries.ts:80-91`), which is why the value is destructured rather than used directly. Keep the returned type `string[]`.
 
 - [ ] **Step 5: Run the test to verify it passes**
 
