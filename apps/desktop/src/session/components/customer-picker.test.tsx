@@ -11,6 +11,7 @@ const mocks = vi.hoisted(() => ({
   assign: vi.fn(),
   dismissSuggestion: vi.fn(),
   organizations: [] as Array<{ id: string; name: string }>,
+  organizationsLoading: false,
   createOrganization: vi.fn((_args: { name: string }) =>
     Promise.resolve("org-new"),
   ),
@@ -26,7 +27,10 @@ vi.mock("~/customers/use-session-customer", () => ({
 }));
 
 vi.mock("~/contacts/queries", () => ({
-  useOrganizations: () => mocks.organizations,
+  useOrganizationsQuery: () => ({
+    data: mocks.organizations,
+    isLoading: mocks.organizationsLoading,
+  }),
   createOrganization: (args: { name: string }) =>
     mocks.createOrganization(args),
 }));
@@ -41,6 +45,7 @@ describe("CustomerPicker", () => {
       { id: "org-mueller", name: "Müller" },
       { id: "org-schmidt", name: "Schmidt" },
     ];
+    mocks.organizationsLoading = false;
     mocks.createOrganization.mockClear();
     mocks.createOrganization.mockResolvedValue("org-new");
     globalThis.ResizeObserver = class {
@@ -208,5 +213,51 @@ describe("CustomerPicker", () => {
     expect(
       screen.getByRole("combobox", { name: "Assign customer" }),
     ).not.toBeNull();
+  });
+
+  it("stays in the quiet neutral state for an assigned customer while organizations are still loading", () => {
+    // A cold mount's first live-query snapshot has no rows yet: that must
+    // never be read as "the assigned organization was deleted".
+    mocks.organizationId = "org-mueller";
+    mocks.organizations = [];
+    mocks.organizationsLoading = true;
+
+    render(<CustomerPicker sessionId="s1" />);
+
+    const trigger = screen.getByRole("combobox", { name: "Assign customer" });
+
+    expect(trigger.textContent).not.toBe("Customer no longer exists");
+    expect(trigger.textContent).toBe("Customer");
+  });
+
+  it("withholds rather than drops a suggestion while organizations are still loading, and shows it once loaded", () => {
+    mocks.suggestion = {
+      kind: "suggest",
+      organizationId: "org-mueller",
+      reason: "domain_match",
+    };
+    mocks.organizations = [];
+    mocks.organizationsLoading = true;
+
+    const { rerender } = render(<CustomerPicker sessionId="s1" />);
+
+    // Observable at this seam: no dismiss button (no chip rendered yet), and
+    // the trigger reads the same quiet placeholder an unassigned meeting
+    // with no suggestion shows — not an error state, not the resolved chip.
+    // What is not directly observable here is the internal "still deciding"
+    // state itself, only its two possible renders before/after the query
+    // settles.
+    expect(
+      screen.queryByRole("button", { name: /verwerfen|dismiss/i }),
+    ).toBeNull();
+    expect(
+      screen.getByRole("combobox", { name: "Assign customer" }).textContent,
+    ).toBe("Customer");
+
+    mocks.organizations = [{ id: "org-mueller", name: "Müller" }];
+    mocks.organizationsLoading = false;
+    rerender(<CustomerPicker sessionId="s1" />);
+
+    expect(screen.getByRole("button", { name: /Müller/ })).not.toBeNull();
   });
 });

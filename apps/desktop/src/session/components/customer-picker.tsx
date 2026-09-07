@@ -25,7 +25,11 @@ import {
 } from "@anlg/ui/components/ui/popover";
 import { cn } from "@anlg/utils";
 
-import { createOrganization, useOrganizations } from "~/contacts/queries";
+import {
+  createOrganization,
+  type OrganizationRecord,
+  useOrganizationsQuery,
+} from "~/contacts/queries";
 import type { CustomerResolution } from "~/customers/resolve";
 import { useSessionCustomer } from "~/customers/use-session-customer";
 
@@ -34,6 +38,8 @@ const filterOrganizations = (value: string, search: string) => {
   const needle = search.toLocaleLowerCase();
   return haystack.includes(needle) ? 1 : 0;
 };
+
+const EMPTY_ORGANIZATIONS: OrganizationRecord[] = [];
 
 export function CustomerPicker({
   sessionId,
@@ -45,7 +51,10 @@ export function CustomerPicker({
   const { t } = useLingui();
   const { organizationId, suggestion, assign, dismissSuggestion } =
     useSessionCustomer(sessionId);
-  const organizations = useOrganizations();
+  const {
+    data: organizations = EMPTY_ORGANIZATIONS,
+    isLoading: organizationsLoading,
+  } = useOrganizationsQuery();
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
 
@@ -54,17 +63,23 @@ export function CustomerPicker({
     [organizations, organizationId],
   );
   const currentName = currentOrganization?.name ?? "";
-  // useOrganizations() filters out soft-deleted rows, so a stored
-  // organization_id that no longer resolves means the customer behind it was
-  // deleted, not that the meeting is unassigned. Those must look different:
-  // an invisible assignment is exactly the risk this control exists to avoid.
+  // The live query's first snapshot is a loading placeholder with no rows,
+  // not "these organizations don't exist" — a stored organization_id looks
+  // exactly like a deleted one during that round trip. Only claim the
+  // customer is gone once the query has actually settled; until then this
+  // stays in the same quiet state an unassigned meeting shows.
   const assignedOrganizationMissing =
-    organizationId !== "" && !currentOrganization;
+    organizationId !== "" && !currentOrganization && !organizationsLoading;
 
   // A `suggest` resolution can point at a deleted organization (the known
   // contact's organization_id still references it). Never show a raw id to a
   // person: if it cannot be resolved to a name, the suggestion is dropped
-  // rather than offered.
+  // rather than offered. While organizations are still loading this is
+  // indistinguishable from "not resolvable yet" — the chip simply waits
+  // (falling through to the quiet placeholder below) and appears on its own
+  // once the query settles and the name resolves; it is never permanently
+  // dropped by the loading window itself, only by a genuinely missing
+  // organization.
   const suggestionOrganizationName = useMemo(() => {
     if (!suggestion || suggestion.kind !== "suggest") return undefined;
     return organizations.find((org) => org.id === suggestion.organizationId)

@@ -240,11 +240,13 @@ export function useHumans(): HumanRecord[] {
   return data;
 }
 
-export function useOrganizations(): OrganizationRecord[] {
-  const { data = EMPTY_ORGANIZATIONS } = useLiveQuery<
-    OrganizationSqlRow,
-    OrganizationRecord[]
-  >({
+// The raw live-query result, isLoading included: useOrganizations() below
+// applies its own default and drops isLoading, which is fine for callers
+// that only need the list, but a caller that must tell "not loaded yet"
+// apart from "genuinely no rows" (e.g. deciding whether a stored
+// organization_id refers to a deleted organization) needs this instead.
+export function useOrganizationsQuery() {
+  return useLiveQuery<OrganizationSqlRow, OrganizationRecord[]>({
     sql: `
       SELECT id, owner_user_id, created_at, name, memo, pinned, pin_order,
         ${AVATAR_SQL}
@@ -254,6 +256,10 @@ export function useOrganizations(): OrganizationRecord[] {
     `,
     mapRows: (rows) => rows.map(mapOrganizationRow),
   });
+}
+
+export function useOrganizations(): OrganizationRecord[] {
+  const { data = EMPTY_ORGANIZATIONS } = useOrganizationsQuery();
   return data;
 }
 
