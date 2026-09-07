@@ -4,7 +4,7 @@
 
 **Goal:** A recorded meeting carries the customer it belongs to, filled from its participants without manual work in the common case, and filterable in the sidebar.
 
-**Architecture:** The customer is an existing `organizations` row, stored on the session in a new `organization_id` column. A pure resolver reads the session's participants, the known contacts and the configured own-domains and returns one of four outcomes: assign, suggest, suggest-create, or nothing. Only a participant who is a known contact of an organization causes an automatic assignment; every weaker signal is a suggestion a person confirms.
+**Architecture:** The customer is an existing `organizations` row, stored on the session in a new `organization_id` column. A pure resolver reads the session's participants, the known contacts, the configured own-domains and the recently used customers, and returns one of four outcomes: assign, suggest, suggest-create, or nothing. An automatic assignment needs known contacts of an organization; where two organizations sit in one meeting the one with more participants wins, and a tie goes to the customer used most recently. Every weaker signal is only a suggestion a person confirms.
 
 **Tech Stack:** SQLite via `plugins/db` with Rust-side migrations (`crates/db-app`), React 19 + Zustand + TanStack Query on the desktop side, live queries through `@anlg/db-react`, lingui for copy, vitest for tests.
 
@@ -14,7 +14,10 @@
 
 - The customer is an `organizations` row. No new entity, no free-text customer names.
 - **The stored value is the truth.** The resolver never overwrites a value that is already set — not on reopen, not on a participant change, not ever.
-- **Assign only on evidence.** A participant who is a known contact with an `organization_id` assigns. A bare email-domain match only suggests. A wrongly assigned meeting is worse than an unassigned one, because nobody notices it.
+- **Assign only on evidence.** Participants who are known contacts with an `organization_id` assign. A bare email-domain match only suggests. A wrongly assigned meeting is worse than an unassigned one, because nobody notices it.
+- **Two organizations in one meeting:** the one with more participants wins. On a tie, the customer that was assigned to a session most recently wins.
+- The rules run whenever a meeting is opened, old recordings included. There is no batch pass over existing data.
+- The customer gets no surface of its own in the sidebar. It sits on the meeting and must be findable through search.
 - Public mail providers (gmail.com and friends) never produce a domain match or a create suggestion.
 - New SQLite migrations must be downgrade-safe: additive only, new columns nullable or with a DEFAULT (`AGENTS.md`).
 - User-visible strings in `apps/desktop` go through lingui (`t` / `<Trans>`), never raw literals.
@@ -318,6 +321,8 @@ export function resolveSessionCustomer(input: {
   participants: readonly CustomerParticipant[];
   knownContacts: readonly KnownContact[];
   ownDomains: readonly string[];
+  /** Organization ids, most recently assigned to a session first. */
+  recentOrganizationIds: readonly string[];
 }): CustomerResolution;
 ```
 
@@ -331,6 +336,7 @@ import { describe, expect, it } from "vitest";
 import { resolveSessionCustomer } from "./resolve";
 
 const own = ["flagbit.de"];
+const base = { knownContacts: [], ownDomains: own, recentOrganizationIds: [] };
 
 const us = {
   email: "joerg@flagbit.de",
@@ -338,20 +344,18 @@ const us = {
   organization_name: "",
 };
 
+const from = (email: string, organizationId = "", name = "") => ({
+  email,
+  organization_id: organizationId,
+  organization_name: name,
+});
+
 describe("resolveSessionCustomer", () => {
   it("assigns when a participant is a known contact of an organization", () => {
     expect(
       resolveSessionCustomer({
-        participants: [
-          us,
-          {
-            email: "anna@kunde.de",
-            organization_id: "org-mueller",
-            organization_name: "Müller",
-          },
-        ],
-        knownContacts: [],
-        ownDomains: own,
+        ...base,
+        participants: [us, from("anna@kunde.de", "org-mueller", "Müller")],
       }),
     ).toEqual({
       kind: "assign",
@@ -360,17 +364,63 @@ describe("resolveSessionCustomer", () => {
     });
   });
 
+  it("gives the meeting to the organization with more participants", () => {
+    expect(
+      resolveSessionCustomer({
+        ...base,
+        participants: [
+          us,
+          from("anna@kunde.de", "org-mueller", "Müller"),
+          from("bea@kunde.de", "org-mueller", "Müller"),
+          from("cem@agentur.de", "org-agentur", "Agentur"),
+        ],
+      }),
+    ).toEqual({
+      kind: "assign",
+      organizationId: "org-mueller",
+      reason: "known_contact",
+    });
+  });
+
+  it("breaks a tie with the most recently used customer", () => {
+    expect(
+      resolveSessionCustomer({
+        ...base,
+        participants: [
+          us,
+          from("anna@kunde.de", "org-mueller", "Müller"),
+          from("cem@agentur.de", "org-agentur", "Agentur"),
+        ],
+        recentOrganizationIds: ["org-agentur", "org-mueller"],
+      }),
+    ).toEqual({
+      kind: "assign",
+      organizationId: "org-agentur",
+      reason: "known_contact",
+    });
+  });
+
+  it("assigns nothing on a tie no recent use can settle", () => {
+    expect(
+      resolveSessionCustomer({
+        ...base,
+        participants: [
+          us,
+          from("anna@kunde.de", "org-mueller", "Müller"),
+          from("cem@agentur.de", "org-agentur", "Agentur"),
+        ],
+      }),
+    ).toEqual({ kind: "none" });
+  });
+
   it("only suggests when the domain matches a known contact's organization", () => {
     expect(
       resolveSessionCustomer({
-        participants: [
-          us,
-          { email: "neu@kunde.de", organization_id: "", organization_name: "" },
-        ],
+        ...base,
+        participants: [us, from("neu@kunde.de")],
         knownContacts: [
           { email: "anna@kunde.de", organization_id: "org-mueller" },
         ],
-        ownDomains: own,
       }),
     ).toEqual({
       kind: "suggest",
@@ -382,12 +432,8 @@ describe("resolveSessionCustomer", () => {
   it("suggests creating an organization for an unknown external domain", () => {
     expect(
       resolveSessionCustomer({
-        participants: [
-          us,
-          { email: "neu@fremd.de", organization_id: "", organization_name: "" },
-        ],
-        knownContacts: [],
-        ownDomains: own,
+        ...base,
+        participants: [us, from("neu@fremd.de")],
       }),
     ).toEqual({ kind: "suggest_create", domain: "fremd.de" });
   });
@@ -395,53 +441,33 @@ describe("resolveSessionCustomer", () => {
   it("says nothing for an internal meeting", () => {
     expect(
       resolveSessionCustomer({
-        participants: [us, { ...us, email: "maja@flagbit.de" }],
-        knownContacts: [],
-        ownDomains: own,
+        ...base,
+        participants: [us, from("maja@flagbit.de")],
       }),
     ).toEqual({ kind: "none" });
   });
 
   it("says nothing when there are no participants", () => {
-    expect(
-      resolveSessionCustomer({
-        participants: [],
-        knownContacts: [],
-        ownDomains: own,
-      }),
-    ).toEqual({ kind: "none" });
+    expect(resolveSessionCustomer({ ...base, participants: [] })).toEqual({
+      kind: "none",
+    });
   });
 
   it("never matches or proposes on a freemailer domain", () => {
     expect(
       resolveSessionCustomer({
-        participants: [
-          us,
-          {
-            email: "anna@gmail.com",
-            organization_id: "",
-            organization_name: "",
-          },
-        ],
+        ...base,
+        participants: [us, from("anna@gmail.com")],
         knownContacts: [{ email: "bea@gmail.com", organization_id: "org-x" }],
-        ownDomains: own,
       }),
     ).toEqual({ kind: "none" });
   });
 
-  it("still assigns a freemailer participant who is a known contact", () => {
+  it("still counts a freemailer participant who is a known contact", () => {
     expect(
       resolveSessionCustomer({
-        participants: [
-          us,
-          {
-            email: "anna@gmail.com",
-            organization_id: "org-mueller",
-            organization_name: "Müller",
-          },
-        ],
-        knownContacts: [],
-        ownDomains: own,
+        ...base,
+        participants: [us, from("anna@gmail.com", "org-mueller", "Müller")],
       }),
     ).toEqual({
       kind: "assign",
@@ -450,25 +476,17 @@ describe("resolveSessionCustomer", () => {
     });
   });
 
-  it("prefers the evidence over the inference", () => {
+  it("prefers the counted evidence over a domain inference", () => {
     expect(
       resolveSessionCustomer({
+        ...base,
         participants: [
-          {
-            email: "anna@kunde.de",
-            organization_id: "org-mueller",
-            organization_name: "Müller",
-          },
-          {
-            email: "bea@andere.de",
-            organization_id: "",
-            organization_name: "",
-          },
+          from("anna@kunde.de", "org-mueller", "Müller"),
+          from("bea@andere.de"),
         ],
         knownContacts: [
           { email: "cem@andere.de", organization_id: "org-andere" },
         ],
-        ownDomains: own,
       }),
     ).toEqual({
       kind: "assign",
@@ -480,15 +498,8 @@ describe("resolveSessionCustomer", () => {
   it("ignores our own people when they carry an organization", () => {
     expect(
       resolveSessionCustomer({
-        participants: [
-          {
-            email: "joerg@flagbit.de",
-            organization_id: "org-flagbit",
-            organization_name: "Flagbit",
-          },
-        ],
-        knownContacts: [],
-        ownDomains: own,
+        ...base,
+        participants: [from("joerg@flagbit.de", "org-flagbit", "Flagbit")],
       }),
     ).toEqual({ kind: "none" });
   });
@@ -496,14 +507,8 @@ describe("resolveSessionCustomer", () => {
   it("falls back to the first external participant when nothing is configured", () => {
     expect(
       resolveSessionCustomer({
-        participants: [
-          {
-            email: "anna@kunde.de",
-            organization_id: "",
-            organization_name: "",
-          },
-        ],
-        knownContacts: [],
+        ...base,
+        participants: [from("anna@kunde.de")],
         ownDomains: [],
       }),
     ).toEqual({ kind: "suggest_create", domain: "kunde.de" });
@@ -543,8 +548,10 @@ export function resolveSessionCustomer(input: {
   participants: readonly CustomerParticipant[];
   knownContacts: readonly KnownContact[];
   ownDomains: readonly string[];
+  recentOrganizationIds: readonly string[];
 }): CustomerResolution {
-  const { participants, knownContacts, ownDomains } = input;
+  const { participants, knownContacts, ownDomains, recentOrganizationIds } =
+    input;
 
   const external = participants.filter(
     (participant) => !isOwnDomain(emailDomain(participant.email), ownDomains),
@@ -553,17 +560,28 @@ export function resolveSessionCustomer(input: {
     return NONE;
   }
 
-  // A participant the user has already filed under an organization is evidence.
+  // Participants the user has already filed under an organization are evidence.
   // Everything below is an inference and only ever suggests.
-  const known = external.find(
-    (participant) => participant.organization_id.trim() !== "",
-  );
-  if (known) {
-    return {
-      kind: "assign",
-      organizationId: known.organization_id,
-      reason: "known_contact",
-    };
+  const headcount = new Map<string, number>();
+  for (const participant of external) {
+    const organizationId = participant.organization_id.trim();
+    if (organizationId) {
+      headcount.set(organizationId, (headcount.get(organizationId) ?? 0) + 1);
+    }
+  }
+
+  if (headcount.size > 0) {
+    const winner = pickOrganization(headcount, recentOrganizationIds);
+    if (winner) {
+      return {
+        kind: "assign",
+        organizationId: winner,
+        reason: "known_contact",
+      };
+    }
+    // A tie nothing can settle: two customers with equal standing in one
+    // meeting, neither used recently. Guessing here would be silently wrong.
+    return NONE;
   }
 
   const organizationByDomain = new Map<string, string>();
@@ -600,12 +618,34 @@ export function resolveSessionCustomer(input: {
 
   return NONE;
 }
+
+function pickOrganization(
+  headcount: ReadonlyMap<string, number>,
+  recentOrganizationIds: readonly string[],
+): string | null {
+  const best = Math.max(...headcount.values());
+  const leaders = [...headcount.entries()]
+    .filter(([, count]) => count === best)
+    .map(([organizationId]) => organizationId);
+
+  if (leaders.length === 1) {
+    return leaders[0] ?? null;
+  }
+
+  for (const organizationId of recentOrganizationIds) {
+    if (leaders.includes(organizationId)) {
+      return organizationId;
+    }
+  }
+
+  return null;
+}
 ```
 
 - [ ] **Step 4: Run the test to verify it passes**
 
 Run: `pnpm -F desktop exec vitest run src/customers/resolve.test.ts`
-Expected: PASS (10 tests)
+Expected: PASS (13 tests)
 
 - [ ] **Step 5: Commit**
 
@@ -794,7 +834,7 @@ MSG
 
 **Interfaces:**
 
-- Consumes: `resolveSessionCustomer`, `CustomerResolution` (Task 3); `useOwnDomains` (Task 4); `useSessionParticipants` from `~/session/queries/participants` (its rows already carry `email`, `organization_id` and `organization_name`); `useHumans` from `~/contacts/queries`; `useSession` and `useUpdateSession` from `~/session/queries`; `organization_id` on the session (Task 1).
+- Consumes: `resolveSessionCustomer`, `CustomerResolution` (Task 3); `useOwnDomains` (Task 4); the recently used customers (a live query over `sessions` with a non-empty `organization_id`, most recent first, capped at 20 — feeds `recentOrganizationIds`); `useSessionParticipants` from `~/session/queries/participants` (its rows already carry `email`, `organization_id` and `organization_name`); `useHumans` from `~/contacts/queries`; `useSession` and `useUpdateSession` from `~/session/queries`; `organization_id` on the session (Task 1).
 - Produces:
 
 ```ts
@@ -1025,39 +1065,43 @@ MSG
 
 ---
 
-### Task 7: Filter the sidebar by customer
+### Task 7: Make the customer findable through search
 
 **Files:**
 
-- Modify: `apps/desktop/src/sidebar/index.tsx` and the session list query it drives
-- Test: alongside the sidebar's existing tests
+- Modify: the session search indexing path (`apps/desktop/src/**` — find it from `search_index_dirty` / `search_index_state` usage, and from the `plugins/tantivy` consumer)
+- Test: alongside the indexing code's existing tests
 
 **Interfaces:**
 
-- Consumes: `sessions.organization_id` (Task 1), `useOrganizations` from `~/contacts/queries`.
-- Produces: a customer filter in the sidebar; selecting one narrows the session list to that customer.
+- Consumes: `sessions.organization_id` (Task 1), `useOrganizations` from `~/contacts/queries` for the name.
 
-- [ ] **Step 1: Write the failing test**
+The sidebar deliberately gets no customer surface. The customer lives on the meeting, so search is the only way to reach it — which makes this task the one that decides whether stage 1 is useful at all.
 
-Assert the behaviour at the query seam the sidebar already uses for its other filters: with a customer selected, the session list request carries that `organization_id`; with none selected, it does not. Follow the file's existing filter tests rather than inventing a harness.
+- [ ] **Step 1: Find the indexing seam**
 
-- [ ] **Step 2: Run the test to verify it fails**
+Run: `grep -rn "search_index_dirty\|search_index_state" apps/desktop/src crates plugins --include="*.ts" --include="*.rs" | head -20`
 
-Run: `pnpm -F desktop exec vitest run src/sidebar/index.test.tsx`
-Expected: FAIL
+Read whichever module assembles a session's indexed text. Report in your notes which file it is before changing anything.
 
-- [ ] **Step 3: Add the filter**
+- [ ] **Step 2: Write the failing test**
 
-Reuse the sidebar's existing filter chip row (the participant chips at the top are the precedent). One chip per organization that actually has sessions, most recent first, single select, clearing on a second click.
+Assert at that module's own seam that a session assigned to an organization contributes the organization's **name** to its indexed text, and that an unassigned session's indexed text is unchanged from today. Follow the file's existing test harness; do not build a new one.
 
-Copy, through lingui: `` t`Kunde` `` as the group label.
+- [ ] **Step 3: Run the test to verify it fails**
 
-- [ ] **Step 4: Run the test to verify it passes**
+Run the focused test file for that module.
+Expected: FAIL — the organization name is not part of the indexed text.
 
-Run: `pnpm -F desktop exec vitest run src/sidebar/index.test.tsx`
+- [ ] **Step 4: Add the customer name to the indexed text**
+
+Join the organization name into the session's indexed text. Index the **name**, not the id: nobody searches for `org-7`. A session whose organization no longer exists contributes nothing extra and must not throw.
+
+- [ ] **Step 5: Run the test to verify it passes**
+
 Expected: PASS
 
-- [ ] **Step 5: Run the full checks**
+- [ ] **Step 6: Run the full checks**
 
 Run: `pnpm -F desktop typecheck`
 Run: `pnpm -F desktop test`
@@ -1066,12 +1110,12 @@ Run: `pnpm -F desktop i18n:check`
 Run: `pnpm exec dprint fmt && pnpm fmt:check`
 Expected: green.
 
-- [ ] **Step 6: Commit**
+- [ ] **Step 7: Commit**
 
 ```bash
 git add apps/desktop/src
 git commit -m "$(cat <<'MSG'
-feat(sidebar): filter meetings by customer
+feat(search): find meetings by their customer
 
 Claude-Session: https://claude.ai/code/session_01P6ex7vfLmxLKM3LjCmPGin
 MSG
@@ -1089,4 +1133,5 @@ The rules depend on real calendar data, which no test in this repo carries. Chec
 3. Open a meeting whose only participants are on your own domains. Nothing is shown and nothing is assigned.
 4. Change the customer of an already assigned meeting, close it, reopen it. The change survives — nothing recomputes over it.
 5. Add a gmail.com participant to a meeting. No customer is proposed from it.
-6. Select a customer in the sidebar. Only that customer's meetings remain.
+6. Search for a customer's name. Their meetings appear, including one whose title never mentions them.
+7. Open a meeting with two external organizations, two people from one and one from the other. The larger one is assigned.

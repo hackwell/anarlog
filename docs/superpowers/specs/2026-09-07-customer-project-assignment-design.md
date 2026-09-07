@@ -107,7 +107,10 @@ domain, editable in Settings › General.
 
 In order, first match wins:
 
-1. A participant is a known contact with an `organization_id` → **assign**.
+1. Participants who are known contacts with an `organization_id` → **assign** the
+   organization with the most such participants. A tie goes to the customer
+   assigned to a session most recently; a tie nothing can settle assigns
+   nothing and offers both.
 2. No such contact, but a participant's email domain matches the domain of a
    contact belonging to an organization → **suggest**.
 3. Neither, and at least one participant is outside our own domains → **suggest
@@ -149,8 +152,9 @@ the interface; the column stays behind for downgrade safety only.
   confirm or dismiss — the interaction the tag suggestions already use, so
   nothing new to learn.
 - Assigned meeting: customer and project shown, both changeable.
-- The sidebar's folder list becomes a customer list, expandable to that
-  customer's projects.
+- The sidebar gets no customer surface. The customer lives on the meeting and
+  is reachable through search, which is what makes indexing its name part of
+  stage 1 rather than a nicety.
 
 A suggestion is never silently applied except in the two deterministic cases
 (known contact, series already assigned).
@@ -167,8 +171,10 @@ starts seeing the project — jour fixe, workshop and ad-hoc call as one thread.
 
 ## Staging
 
-**Stage 1 — customer.** The two session columns, the own-domains setting, the
-four customer rules, the header control, and a customer filter in the sidebar.
+**Stage 1 — customer.** The `organization_id` column, the own-domains setting,
+the customer rules, the header control, and the customer's name in the search
+index. No sidebar surface and no `project_id` yet: a column without a consumer
+is not worth a migration.
 No project table yet. Deliberately small and deterministic; two weeks of real
 use show how well domain matching does here before anything is built on top.
 
@@ -188,9 +194,10 @@ identifiers in the export path.
 - **Freemailer domains.** A customer contact writing from a gmail.com address
   would attach every unrelated gmail participant to that customer. Rule 2 and 3
   must skip a list of public mail providers.
-- **Two organizations in one meeting.** The rules pick the first match, which
-  may be the wrong one in a three-party meeting. Acceptable while the person can
-  override, but it is the case most likely to annoy.
+- **Two organizations in one meeting.** Settled by headcount, then by the most
+  recently used customer, then not at all. The remaining exposure is a
+  two-versus-one meeting where the larger party is not the customer — the
+  person overrides, and the override stands.
 - **The series rule inherits a mistake.** If a series was assigned to the wrong
   project, every later occurrence follows silently. Changing the project on one
   occurrence should ask whether the series should follow.
