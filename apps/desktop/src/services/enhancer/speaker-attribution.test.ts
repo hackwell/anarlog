@@ -187,6 +187,21 @@ describe("inferAutomaticSpeakerAssignments", () => {
     expect(automaticHumanIds(updates[0]!)).toEqual(["human-marco"]);
   });
 
+  it("writes no hints while the transcript's words are only in the live journal", async () => {
+    const snapshot = createOneOnOneSnapshot();
+    snapshot.transcripts[0]!.hasUnpersistedWords = true;
+
+    const updates = await inferAutomaticSpeakerAssignments({
+      generatedSummary:
+        "Marco (Speaker 1) confirmed he had already relaxed all limitations.",
+      model: {} as LanguageModel,
+      snapshot,
+      signal: new AbortController().signal,
+    });
+
+    expect(updates).toEqual([]);
+  });
+
   it("treats a calendar copy of the current user as the same 1:1", async () => {
     const snapshot = createOneOnOneSnapshot();
     snapshot.ownerEmail = "john@example.com";

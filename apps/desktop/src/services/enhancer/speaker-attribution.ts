@@ -509,6 +509,12 @@ function buildSpeakerHintUpdates(
       if (!transcriptMappings) {
         return [];
       }
+      // Hints anchored to a word that only exists in the live journal are
+      // dropped when the journal is folded, and the write's guard on the stored
+      // words would no longer match anyway.
+      if (transcript.hasUnpersistedWords) {
+        return [];
+      }
 
       const nextHints = transcript.speaker_hints.filter(
         (hint) => hint.type !== AUTOMATIC_SPEAKER_ASSIGNMENT,

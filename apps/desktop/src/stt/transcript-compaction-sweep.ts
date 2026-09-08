@@ -98,7 +98,13 @@ async function sweep(): Promise<TranscriptCompactionSweepResult> {
     const snapshot = await listenerCommands.getCaptureSnapshot();
     if (snapshot.status === "error") {
       // Without the listener's view we cannot tell a stranded transcript from
-      // one being written right now, so we fold nothing.
+      // one being written right now, so we fold nothing. Logged because a
+      // listener that keeps failing disables this repair for the whole session,
+      // and a silent safety net cannot be diagnosed from a user's report.
+      console.warn(
+        "[transcript] compaction sweep skipped: the capture snapshot is unavailable",
+        snapshot.error,
+      );
       return empty;
     }
     busySessionIds = [
@@ -145,6 +151,11 @@ async function sweep(): Promise<TranscriptCompactionSweepResult> {
       continue;
     }
     try {
+      // Safe against a live writer because both run through the same
+      // `transcript:<id>` write-queue key, which is process-local: captures are
+      // driven only from the main webview, where this sweep also mounts. The
+      // compare-and-set on `content_revision` does not cover this on its own —
+      // journal appends never bump it.
       await flushLiveTranscriptDeltasToDatabase(transcriptId);
       failureCounts.delete(transcriptId);
       compacted += 1;
@@ -161,7 +172,14 @@ async function sweep(): Promise<TranscriptCompactionSweepResult> {
     }
   }
 
-  return { compacted, failed, skipped };
+  const result = { compacted, failed, skipped };
+  if (compacted > 0 || failed > 0) {
+    console.info(
+      "[transcript] compaction sweep folded stranded journals",
+      result,
+    );
+  }
+  return result;
 }
 
 export function useTranscriptCompactionSweep() {
