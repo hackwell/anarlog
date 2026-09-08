@@ -115,9 +115,23 @@ export async function loadPendingAutoEnhanceJobs(): Promise<
           FROM transcripts AS transcript
           WHERE transcript.session_id = session.id
             AND transcript.deleted_at IS NULL
-            AND json_valid(transcript.words_json)
-            AND json_type(transcript.words_json) = 'array'
-            AND json_array_length(transcript.words_json) > 0
+            AND (
+              (
+                json_valid(transcript.words_json)
+                AND json_type(transcript.words_json) = 'array'
+                AND json_array_length(transcript.words_json) > 0
+              )
+              OR EXISTS (
+                SELECT 1
+                FROM transcript_live_deltas AS delta
+                WHERE delta.transcript_id = transcript.id
+                  AND json_valid(delta.delta_json)
+                  AND COALESCE(
+                    json_array_length(delta.delta_json, '$.new_words'),
+                    0
+                  ) > 0
+              )
+            )
         )
       ORDER BY setting.updated_at, session_id
     `,

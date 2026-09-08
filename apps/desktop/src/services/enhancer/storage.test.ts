@@ -208,6 +208,16 @@ describe("enhancer SQLite storage", () => {
     expect(params).toEqual([22, 22, "auto_enhance_pending:%"]);
   });
 
+  it("accepts a transcript whose words are still in the live journal", async () => {
+    mocks.execute.mockResolvedValueOnce([]);
+
+    await loadPendingAutoEnhanceJobs();
+
+    const sql = String(mocks.execute.mock.calls[0]?.[0]);
+    expect(sql).toContain("transcript_live_deltas");
+    expect(sql).toContain("json_array_length(transcript.words_json) > 0");
+  });
+
   it("does not create a summary for a deleted session", async () => {
     mocks.loadSessionContentSnapshot.mockResolvedValue(null);
 
