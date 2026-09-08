@@ -154,3 +154,40 @@ describe("runTranscriptCompactionSweep", () => {
     expect(mocks.flush).not.toHaveBeenCalledWith("transcript-1");
   });
 });
+
+describe("runTranscriptCompactionSweep deadline", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    resetTranscriptCompactionSweepState();
+  });
+
+  it("abandons a wedged sweep instead of blocking every later pass", async () => {
+    vi.useFakeTimers();
+    mocks.getCaptureSnapshot.mockReturnValue(new Promise(() => {}));
+
+    const wedged = runTranscriptCompactionSweep();
+    await vi.advanceTimersByTimeAsync(60_000);
+
+    await expect(wedged).resolves.toEqual({
+      compacted: 0,
+      failed: 0,
+      skipped: 0,
+    });
+
+    mocks.getCaptureSnapshot.mockResolvedValue({
+      status: "ok",
+      data: { activeSessionId: null, finalizingSessionIds: [] },
+    });
+    mocks.execute.mockResolvedValueOnce([
+      { transcript_id: "transcript-1", session_id: "session-1" },
+    ]);
+    mocks.flush.mockResolvedValue(undefined);
+
+    await expect(runTranscriptCompactionSweep()).resolves.toEqual({
+      compacted: 1,
+      failed: 0,
+      skipped: 0,
+    });
+    vi.useRealTimers();
+  });
+});

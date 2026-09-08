@@ -12,6 +12,10 @@ const SWEEP_INTERVAL_MS = 5 * 60_000;
 const SWEEP_QUIET_PERIOD_MS = 60_000;
 const MAX_TRANSCRIPTS_PER_SWEEP = 20;
 const MAX_SWEEP_FAILURES = 3;
+// The sweep exists to repair what other paths failed to finish, so it must not
+// be the thing that gets stuck: a wedged listener call or database read would
+// otherwise leave `sweepInFlight` pending and silently disable every later pass.
+const SWEEP_DEADLINE_MS = 60_000;
 
 const STRANDED_TRANSCRIPTS_SQL = `
   SELECT DISTINCT
@@ -57,10 +61,34 @@ export function selectStrandedTranscriptIds(
 }
 
 export function runTranscriptCompactionSweep(): Promise<TranscriptCompactionSweepResult> {
-  sweepInFlight ??= sweep().finally(() => {
+  sweepInFlight ??= withSweepDeadline(sweep()).finally(() => {
     sweepInFlight = null;
   });
   return sweepInFlight;
+}
+
+function withSweepDeadline(
+  running: Promise<TranscriptCompactionSweepResult>,
+): Promise<TranscriptCompactionSweepResult> {
+  return new Promise<TranscriptCompactionSweepResult>((resolve) => {
+    const timeoutId = setTimeout(() => {
+      console.error(
+        `[transcript] compaction sweep exceeded ${SWEEP_DEADLINE_MS}ms and was abandoned`,
+      );
+      resolve({ compacted: 0, failed: 0, skipped: 0 });
+    }, SWEEP_DEADLINE_MS);
+    running.then(
+      (result) => {
+        clearTimeout(timeoutId);
+        resolve(result);
+      },
+      (error: unknown) => {
+        clearTimeout(timeoutId);
+        console.error("[transcript] compaction sweep failed", error);
+        resolve({ compacted: 0, failed: 0, skipped: 0 });
+      },
+    );
+  });
 }
 
 async function sweep(): Promise<TranscriptCompactionSweepResult> {
