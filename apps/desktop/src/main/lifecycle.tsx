@@ -16,6 +16,7 @@ import { useDesktopTabLifecycle } from "~/shared/desktop-tab-lifecycle";
 import { useTabs } from "~/store/zustand/tabs";
 import { LiveCaptureRecovery } from "~/stt/live-capture-recovery";
 import { ScheduledMeetingAutoStart } from "~/stt/scheduled-auto-start";
+import { useTranscriptCompactionSweep } from "~/stt/transcript-compaction-sweep";
 import { MainListenerControlBridge } from "~/stt/window-control";
 import { sessionHasTags, useTagSuggestions } from "~/tags/suggestion-store";
 
@@ -49,12 +50,18 @@ export function ClassicMainServices() {
       <ToolRegistration />
       <EnhancerInit />
       <OwnEmailDomainSeed />
+      <TranscriptCompactionSweep />
     </>
   );
 }
 
 function OwnEmailDomainSeed() {
   useSeedOwnEmailDomain();
+  return null;
+}
+
+function TranscriptCompactionSweep() {
+  useTranscriptCompactionSweep();
   return null;
 }
 
