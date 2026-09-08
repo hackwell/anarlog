@@ -42,102 +42,102 @@ The end-of-capture compaction currently runs only `if (!timedOut && options.afte
 Append these four tests inside the existing `describe("createTranscriptPersistenceWorker", …)` block in `apps/desktop/src/stt/transcript-persistence-worker.test.ts`, after `"bounds flush independently of the persist deadline"`:
 
 ```ts
-  it("compacts even after a persist timeout disabled the live write path", async () => {
-    vi.useFakeTimers();
-    const persist = vi.fn(() => new Promise<void>(() => {}));
-    const onError = vi.fn();
-    const afterFlush = vi.fn(async () => {});
-    const worker = createImmediateTranscriptPersistenceWorker(
-      persist,
-      onError,
-      { persistTimeoutMs: 50, flushTimeoutMs: 1_000, afterFlush },
-    );
-
-    worker.enqueue(delta("word-1"));
-    const flushed = worker.flush();
-    await vi.advanceTimersByTimeAsync(50);
-
-    await expect(flushed).resolves.toBeUndefined();
-    expect(afterFlush).toHaveBeenCalledOnce();
+it("compacts even after a persist timeout disabled the live write path", async () => {
+  vi.useFakeTimers();
+  const persist = vi.fn(() => new Promise<void>(() => {}));
+  const onError = vi.fn();
+  const afterFlush = vi.fn(async () => {});
+  const worker = createImmediateTranscriptPersistenceWorker(persist, onError, {
+    persistTimeoutMs: 50,
+    flushTimeoutMs: 1_000,
+    afterFlush,
   });
 
-  it("compacts even after the flush deadline expired", async () => {
-    vi.useFakeTimers();
-    const persist = vi.fn(() => new Promise<void>(() => {}));
-    const onError = vi.fn();
-    const afterFlush = vi.fn(async () => {});
-    const worker = createImmediateTranscriptPersistenceWorker(
-      persist,
-      onError,
-      { persistTimeoutMs: 1_000, flushTimeoutMs: 25, afterFlush },
-    );
+  worker.enqueue(delta("word-1"));
+  const flushed = worker.flush();
+  await vi.advanceTimersByTimeAsync(50);
 
-    worker.enqueue(delta("word-1"));
-    const flushed = worker.flush();
-    await vi.advanceTimersByTimeAsync(25);
+  await expect(flushed).resolves.toBeUndefined();
+  expect(afterFlush).toHaveBeenCalledOnce();
+});
 
-    await expect(flushed).resolves.toBeUndefined();
-    expect(afterFlush).toHaveBeenCalledOnce();
+it("compacts even after the flush deadline expired", async () => {
+  vi.useFakeTimers();
+  const persist = vi.fn(() => new Promise<void>(() => {}));
+  const onError = vi.fn();
+  const afterFlush = vi.fn(async () => {});
+  const worker = createImmediateTranscriptPersistenceWorker(persist, onError, {
+    persistTimeoutMs: 1_000,
+    flushTimeoutMs: 25,
+    afterFlush,
   });
 
-  it("retries a failing compaction and reports only the last failure", async () => {
-    const onError = vi.fn();
-    const afterFlush = vi
-      .fn<() => Promise<void>>()
-      .mockRejectedValueOnce(new Error("changed too frequently"))
-      .mockResolvedValueOnce(undefined);
-    const worker = createImmediateTranscriptPersistenceWorker(
-      async () => {},
-      onError,
-      { afterFlush },
-    );
+  worker.enqueue(delta("word-1"));
+  const flushed = worker.flush();
+  await vi.advanceTimersByTimeAsync(25);
 
-    await worker.flush();
+  await expect(flushed).resolves.toBeUndefined();
+  expect(afterFlush).toHaveBeenCalledOnce();
+});
 
-    expect(afterFlush).toHaveBeenCalledTimes(2);
-    expect(onError).not.toHaveBeenCalled();
-  });
+it("retries a failing compaction and reports only the last failure", async () => {
+  const onError = vi.fn();
+  const afterFlush = vi
+    .fn<() => Promise<void>>()
+    .mockRejectedValueOnce(new Error("changed too frequently"))
+    .mockResolvedValueOnce(undefined);
+  const worker = createImmediateTranscriptPersistenceWorker(
+    async () => {},
+    onError,
+    { afterFlush },
+  );
 
-  it("gives up on compaction after its attempt ceiling", async () => {
-    const onError = vi.fn();
-    const afterFlush = vi
-      .fn<() => Promise<void>>()
-      .mockRejectedValue(new Error("changed too frequently"));
-    const worker = createImmediateTranscriptPersistenceWorker(
-      async () => {},
-      onError,
-      { afterFlush, compactionAttempts: 2 },
-    );
+  await worker.flush();
 
-    await worker.flush();
+  expect(afterFlush).toHaveBeenCalledTimes(2);
+  expect(onError).not.toHaveBeenCalled();
+});
 
-    expect(afterFlush).toHaveBeenCalledTimes(2);
-    expect(onError).toHaveBeenCalledOnce();
-    expect(onError).toHaveBeenCalledWith(
-      expect.objectContaining({ message: "changed too frequently" }),
-    );
-  });
+it("gives up on compaction after its attempt ceiling", async () => {
+  const onError = vi.fn();
+  const afterFlush = vi
+    .fn<() => Promise<void>>()
+    .mockRejectedValue(new Error("changed too frequently"));
+  const worker = createImmediateTranscriptPersistenceWorker(
+    async () => {},
+    onError,
+    { afterFlush, compactionAttempts: 2 },
+  );
 
-  it("bounds a hung compaction by its own deadline", async () => {
-    vi.useFakeTimers();
-    const onError = vi.fn();
-    const afterFlush = vi.fn(() => new Promise<void>(() => {}));
-    const worker = createImmediateTranscriptPersistenceWorker(
-      async () => {},
-      onError,
-      { afterFlush, compactionTimeoutMs: 30, compactionAttempts: 1 },
-    );
+  await worker.flush();
 
-    const flushed = worker.flush();
-    await vi.advanceTimersByTimeAsync(30);
+  expect(afterFlush).toHaveBeenCalledTimes(2);
+  expect(onError).toHaveBeenCalledOnce();
+  expect(onError).toHaveBeenCalledWith(
+    expect.objectContaining({ message: "changed too frequently" }),
+  );
+});
 
-    await expect(flushed).resolves.toBeUndefined();
-    expect(onError).toHaveBeenCalledWith(
-      expect.objectContaining({
-        message: "Transcript compaction timed out after 30ms",
-      }),
-    );
-  });
+it("bounds a hung compaction by its own deadline", async () => {
+  vi.useFakeTimers();
+  const onError = vi.fn();
+  const afterFlush = vi.fn(() => new Promise<void>(() => {}));
+  const worker = createImmediateTranscriptPersistenceWorker(
+    async () => {},
+    onError,
+    { afterFlush, compactionTimeoutMs: 30, compactionAttempts: 1 },
+  );
+
+  const flushed = worker.flush();
+  await vi.advanceTimersByTimeAsync(30);
+
+  await expect(flushed).resolves.toBeUndefined();
+  expect(onError).toHaveBeenCalledWith(
+    expect.objectContaining({
+      message: "Transcript compaction timed out after 30ms",
+    }),
+  );
+});
 ```
 
 - [ ] **Step 2: Run the tests to verify they fail**
@@ -157,17 +157,17 @@ const TRANSCRIPT_COMPACTION_ATTEMPTS = 3;
 Extend the options type (currently `afterFlush`, `batchWindowMs`, `persistTimeoutMs`, `flushTimeoutMs`) with:
 
 ```ts
-    compactionTimeoutMs?: number;
-    compactionAttempts?: number;
+compactionTimeoutMs?: number;
+compactionAttempts?: number;
 ```
 
 and, next to the existing `const flushTimeoutMs = …` line:
 
 ```ts
-  const compactionTimeoutMs =
-    options.compactionTimeoutMs ?? TRANSCRIPT_COMPACTION_TIMEOUT_MS;
-  const compactionAttempts =
-    options.compactionAttempts ?? TRANSCRIPT_COMPACTION_ATTEMPTS;
+const compactionTimeoutMs =
+  options.compactionTimeoutMs ?? TRANSCRIPT_COMPACTION_TIMEOUT_MS;
+const compactionAttempts =
+  options.compactionAttempts ?? TRANSCRIPT_COMPACTION_ATTEMPTS;
 ```
 
 - [ ] **Step 4: Add the compaction runner**
@@ -175,44 +175,44 @@ and, next to the existing `const flushTimeoutMs = …` line:
 In the same file, after the `stopAfterTimeout` helper, add:
 
 ```ts
-  // The live write path and the end-of-capture fold fail independently: a
-  // stalled delta write says nothing about whether the journal can be folded
-  // afterwards, so compaction gets its own deadline instead of inheriting the
-  // flush budget the drain may already have spent.
-  const compactWithinDeadline = (afterFlush: () => Promise<void>) =>
-    new Promise<void>((resolve, reject) => {
-      const timeoutId = setTimeout(() => {
-        reject(
-          new TranscriptPersistenceTimeoutError(
-            `Transcript compaction timed out after ${compactionTimeoutMs}ms`,
-          ),
-        );
-      }, compactionTimeoutMs);
-      Promise.resolve()
-        .then(afterFlush)
-        .then(
-          () => {
-            clearTimeout(timeoutId);
-            resolve();
-          },
-          (error: unknown) => {
-            clearTimeout(timeoutId);
-            reject(error as Error);
-          },
-        );
-    });
-  const compact = async (afterFlush: () => Promise<void>) => {
-    let lastError: unknown;
-    for (let attempt = 1; attempt <= compactionAttempts; attempt += 1) {
-      try {
-        await compactWithinDeadline(afterFlush);
-        return;
-      } catch (error) {
-        lastError = error;
-      }
+// The live write path and the end-of-capture fold fail independently: a
+// stalled delta write says nothing about whether the journal can be folded
+// afterwards, so compaction gets its own deadline instead of inheriting the
+// flush budget the drain may already have spent.
+const compactWithinDeadline = (afterFlush: () => Promise<void>) =>
+  new Promise<void>((resolve, reject) => {
+    const timeoutId = setTimeout(() => {
+      reject(
+        new TranscriptPersistenceTimeoutError(
+          `Transcript compaction timed out after ${compactionTimeoutMs}ms`,
+        ),
+      );
+    }, compactionTimeoutMs);
+    Promise.resolve()
+      .then(afterFlush)
+      .then(
+        () => {
+          clearTimeout(timeoutId);
+          resolve();
+        },
+        (error: unknown) => {
+          clearTimeout(timeoutId);
+          reject(error as Error);
+        },
+      );
+  });
+const compact = async (afterFlush: () => Promise<void>) => {
+  let lastError: unknown;
+  for (let attempt = 1; attempt <= compactionAttempts; attempt += 1) {
+    try {
+      await compactWithinDeadline(afterFlush);
+      return;
+    } catch (error) {
+      lastError = error;
     }
-    reportError(lastError);
-  };
+  }
+  reportError(lastError);
+};
 ```
 
 - [ ] **Step 5: Run compaction unconditionally at the end of flush**
@@ -220,22 +220,22 @@ In the same file, after the `stopAfterTimeout` helper, add:
 In `flush`, replace the drain loop's early `return` on a flush timeout with `break`, so the timeout ends draining without skipping the fold:
 
 ```ts
-        if (result === flushTimedOut) {
-          stopAfterTimeout(
-            new TranscriptPersistenceTimeoutError(
-              `Transcript persistence flush timed out after ${flushTimeoutMs}ms`,
-            ),
-          );
-          break;
-        }
+if (result === flushTimedOut) {
+  stopAfterTimeout(
+    new TranscriptPersistenceTimeoutError(
+      `Transcript persistence flush timed out after ${flushTimeoutMs}ms`,
+    ),
+  );
+  break;
+}
 ```
 
 Then replace the whole `if (!timedOut && options.afterFlush) { … }` block that follows the loop with:
 
 ```ts
-      if (options.afterFlush) {
-        await compact(options.afterFlush);
-      }
+if (options.afterFlush) {
+  await compact(options.afterFlush);
+}
 ```
 
 The `flushTimedOut` symbol and the shared `timeout` promise stay as they are — they still bound draining.
@@ -454,9 +454,9 @@ import { useEffect } from "react";
 
 import { commands as listenerCommands } from "@anlg/plugin-transcription";
 
-import { liveQueryClient } from "~/db";
-
 import { flushLiveTranscriptDeltasToDatabase } from "./queries";
+
+import { liveQueryClient } from "~/db";
 
 const SWEEP_INTERVAL_MS = 5 * 60_000;
 // A capture that is starting may not be in the listener snapshot yet, so a
@@ -530,11 +530,16 @@ async function sweep(): Promise<TranscriptCompactionSweepResult> {
       ...snapshot.data.finalizingSessionIds,
     ];
   } catch (error) {
-    console.error("[transcript] compaction sweep could not read the capture snapshot", error);
+    console.error(
+      "[transcript] compaction sweep could not read the capture snapshot",
+      error,
+    );
     return empty;
   }
 
-  const quietBefore = new Date(Date.now() - SWEEP_QUIET_PERIOD_MS).toISOString();
+  const quietBefore = new Date(
+    Date.now() - SWEEP_QUIET_PERIOD_MS,
+  ).toISOString();
   let rows: Array<{ transcript_id: string; session_id: string }>;
   try {
     rows = await liveQueryClient.execute<{
@@ -542,7 +547,10 @@ async function sweep(): Promise<TranscriptCompactionSweepResult> {
       session_id: string;
     }>(STRANDED_TRANSCRIPTS_SQL, [quietBefore]);
   } catch (error) {
-    console.error("[transcript] compaction sweep could not list stranded transcripts", error);
+    console.error(
+      "[transcript] compaction sweep could not list stranded transcripts",
+      error,
+    );
     return empty;
   }
 
@@ -565,9 +573,15 @@ async function sweep(): Promise<TranscriptCompactionSweepResult> {
       failureCounts.delete(transcriptId);
       compacted += 1;
     } catch (error) {
-      failureCounts.set(transcriptId, (failureCounts.get(transcriptId) ?? 0) + 1);
+      failureCounts.set(
+        transcriptId,
+        (failureCounts.get(transcriptId) ?? 0) + 1,
+      );
       failed += 1;
-      console.error(`[transcript] compaction sweep failed for ${transcriptId}`, error);
+      console.error(
+        `[transcript] compaction sweep failed for ${transcriptId}`,
+        error,
+      );
     }
   }
 
@@ -603,7 +617,7 @@ import { useTranscriptCompactionSweep } from "~/stt/transcript-compaction-sweep"
 Add the element to `ClassicMainServices`, after `<OwnEmailDomainSeed />`:
 
 ```tsx
-      <TranscriptCompactionSweep />
+<TranscriptCompactionSweep />;
 ```
 
 and the wrapper next to `OwnEmailDomainSeed`, following the same shape:
@@ -659,60 +673,60 @@ The merge lives in `queries.ts` today as a private function. It moves to a leaf 
 Add to `apps/desktop/src/session/content-queries.test.ts`, inside `describe("session content SQLite snapshots", …)`:
 
 ```ts
-  it("folds pending live deltas into the snapshot transcript", async () => {
-    mocks.execute.mockResolvedValueOnce([
-      {
-        id: "session-1",
-        owner_user_id: "user-1",
-        owner_email: null,
-        title: "Planning",
-        created_at: "2026-09-08T09:00:00.000Z",
-        event_json: "{}",
-        event_id: "",
-        raw_note_id: "session-1",
-        raw_template_id: "",
-        raw_body: "",
-        raw_body_format: "prosemirror_json",
-        enhanced_notes_json: "[]",
-        transcripts_json: JSON.stringify([
-          {
-            id: "transcript-1",
-            started_at_ms: 0,
-            ended_at_ms: null,
-            memo: "",
-            words_json: JSON.stringify([
-              { id: "word-1", text: "Hello", start_ms: 0, end_ms: 1, channel: 0 },
-            ]),
-            speaker_hints_json: "[]",
-            pending_deltas_json: JSON.stringify([
-              {
-                new_words: [
-                  {
-                    id: "word-2",
-                    text: "world",
-                    start_ms: 2,
-                    end_ms: 3,
-                    channel: 0,
-                    state: "final",
-                  },
-                ],
-                replaced_ids: [],
-                partials: [],
-              },
-            ]),
-          },
-        ]),
-        participants_json: "[]",
-      },
-    ]);
+it("folds pending live deltas into the snapshot transcript", async () => {
+  mocks.execute.mockResolvedValueOnce([
+    {
+      id: "session-1",
+      owner_user_id: "user-1",
+      owner_email: null,
+      title: "Planning",
+      created_at: "2026-09-08T09:00:00.000Z",
+      event_json: "{}",
+      event_id: "",
+      raw_note_id: "session-1",
+      raw_template_id: "",
+      raw_body: "",
+      raw_body_format: "prosemirror_json",
+      enhanced_notes_json: "[]",
+      transcripts_json: JSON.stringify([
+        {
+          id: "transcript-1",
+          started_at_ms: 0,
+          ended_at_ms: null,
+          memo: "",
+          words_json: JSON.stringify([
+            { id: "word-1", text: "Hello", start_ms: 0, end_ms: 1, channel: 0 },
+          ]),
+          speaker_hints_json: "[]",
+          pending_deltas_json: JSON.stringify([
+            {
+              new_words: [
+                {
+                  id: "word-2",
+                  text: "world",
+                  start_ms: 2,
+                  end_ms: 3,
+                  channel: 0,
+                  state: "final",
+                },
+              ],
+              replaced_ids: [],
+              partials: [],
+            },
+          ]),
+        },
+      ]),
+      participants_json: "[]",
+    },
+  ]);
 
-    const snapshot = await loadSessionContentSnapshot("session-1");
+  const snapshot = await loadSessionContentSnapshot("session-1");
 
-    expect(snapshot?.transcripts[0]?.words.map((word) => word.text)).toEqual([
-      "Hello",
-      "world",
-    ]);
-  });
+  expect(snapshot?.transcripts[0]?.words.map((word) => word.text)).toEqual([
+    "Hello",
+    "world",
+  ]);
+});
 ```
 
 - [ ] **Step 2: Run the test to verify it fails**
@@ -831,22 +845,22 @@ Expected: PASS, unchanged. This is a pure move; a failure here means the move wa
 In `apps/desktop/src/session/content-queries.ts`, add the field to `TranscriptJson`:
 
 ```ts
-  speaker_hints_json: string;
-  pending_deltas_json: string;
+speaker_hints_json: string;
+pending_deltas_json: string;
 ```
 
 and add it to the transcripts subquery's `json_object`, after `'speaker_hints_json', transcript.speaker_hints_json`:
 
 ```sql
-        'pending_deltas_json', COALESCE((
-          SELECT json_group_array(json(ordered_delta.delta_json))
-          FROM (
-            SELECT delta.delta_json
-            FROM transcript_live_deltas AS delta
-            WHERE delta.transcript_id = transcript.id
-            ORDER BY delta.sequence
-          ) AS ordered_delta
-        ), '[]')
+'pending_deltas_json', COALESCE((
+  SELECT json_group_array(json(ordered_delta.delta_json))
+  FROM (
+    SELECT delta.delta_json
+    FROM transcript_live_deltas AS delta
+    WHERE delta.transcript_id = transcript.id
+    ORDER BY delta.sequence
+  ) AS ordered_delta
+), '[]')
 ```
 
 - [ ] **Step 7: Apply the merge in the mapping**
@@ -860,32 +874,30 @@ import { materializeTranscriptSnapshot } from "~/stt/transcript-snapshot";
 and rewrite the transcript mapping in `mapSessionContentRow`:
 
 ```ts
-  const transcripts = parseJsonArray<TranscriptJson>(row.transcripts_json)
-    .map((transcript) => {
-      const merged = materializeTranscriptSnapshot(
-        transcript.words_json,
-        transcript.speaker_hints_json,
-        transcript.id,
-        transcript.pending_deltas_json,
-      );
-      return {
-        id: transcript.id,
-        started_at: Number(transcript.started_at_ms),
-        ended_at:
-          transcript.ended_at_ms == null
-            ? null
-            : Number(transcript.ended_at_ms),
-        memo: transcript.memo,
-        wordsJson: merged.wordsJson,
-        speakerHintsJson: merged.hintsJson,
-        words: parseJsonArray<WordWithId>(merged.wordsJson),
-        speaker_hints: parseJsonArray<SpeakerHintWithId>(merged.hintsJson),
-      };
-    })
-    .sort(
-      (left, right) =>
-        left.started_at - right.started_at || left.id.localeCompare(right.id),
+const transcripts = parseJsonArray<TranscriptJson>(row.transcripts_json)
+  .map((transcript) => {
+    const merged = materializeTranscriptSnapshot(
+      transcript.words_json,
+      transcript.speaker_hints_json,
+      transcript.id,
+      transcript.pending_deltas_json,
     );
+    return {
+      id: transcript.id,
+      started_at: Number(transcript.started_at_ms),
+      ended_at:
+        transcript.ended_at_ms == null ? null : Number(transcript.ended_at_ms),
+      memo: transcript.memo,
+      wordsJson: merged.wordsJson,
+      speakerHintsJson: merged.hintsJson,
+      words: parseJsonArray<WordWithId>(merged.wordsJson),
+      speaker_hints: parseJsonArray<SpeakerHintWithId>(merged.hintsJson),
+    };
+  })
+  .sort(
+    (left, right) =>
+      left.started_at - right.started_at || left.id.localeCompare(right.id),
+  );
 ```
 
 `materializeTranscriptSnapshot` returns the two input strings untouched when there are no deltas, so a compacted transcript takes the same path it does today.
@@ -931,15 +943,15 @@ git commit -m "fix(session): fold pending live deltas into the shared session sn
 Add to `apps/desktop/src/services/enhancer/storage.test.ts`, inside `describe("enhancer SQLite storage", …)` and next to the existing `loadPendingAutoEnhanceJobs` test around line 182:
 
 ```ts
-  it("accepts a transcript whose words are still in the live journal", async () => {
-    mocks.execute.mockResolvedValueOnce([]);
+it("accepts a transcript whose words are still in the live journal", async () => {
+  mocks.execute.mockResolvedValueOnce([]);
 
-    await loadPendingAutoEnhanceJobs();
+  await loadPendingAutoEnhanceJobs();
 
-    const sql = String(mocks.execute.mock.calls[0]?.[0]);
-    expect(sql).toContain("transcript_live_deltas");
-    expect(sql).toContain("json_array_length(transcript.words_json) > 0");
-  });
+  const sql = String(mocks.execute.mock.calls[0]?.[0]);
+  expect(sql).toContain("transcript_live_deltas");
+  expect(sql).toContain("json_array_length(transcript.words_json) > 0");
+});
 ```
 
 - [ ] **Step 2: Run the test to verify it fails**
@@ -952,29 +964,29 @@ Expected: FAIL — the SQL does not mention `transcript_live_deltas`.
 In `apps/desktop/src/services/enhancer/storage.ts`, replace the `AND EXISTS ( … )` block that requires words with:
 
 ```sql
-        AND EXISTS (
-          SELECT 1
-          FROM transcripts AS transcript
-          WHERE transcript.session_id = session.id
-            AND transcript.deleted_at IS NULL
-            AND (
-              (
-                json_valid(transcript.words_json)
-                AND json_type(transcript.words_json) = 'array'
-                AND json_array_length(transcript.words_json) > 0
-              )
-              OR EXISTS (
-                SELECT 1
-                FROM transcript_live_deltas AS delta
-                WHERE delta.transcript_id = transcript.id
-                  AND json_valid(delta.delta_json)
-                  AND COALESCE(
-                    json_array_length(delta.delta_json, '$.new_words'),
-                    0
-                  ) > 0
-              )
-            )
-        )
+AND EXISTS (
+  SELECT 1
+  FROM transcripts AS transcript
+  WHERE transcript.session_id = session.id
+    AND transcript.deleted_at IS NULL
+    AND (
+      (
+        json_valid(transcript.words_json)
+        AND json_type(transcript.words_json) = 'array'
+        AND json_array_length(transcript.words_json) > 0
+      )
+      OR EXISTS (
+        SELECT 1
+        FROM transcript_live_deltas AS delta
+        WHERE delta.transcript_id = transcript.id
+          AND json_valid(delta.delta_json)
+          AND COALESCE(
+            json_array_length(delta.delta_json, '$.new_words'),
+            0
+          ) > 0
+      )
+    )
+)
 ```
 
 - [ ] **Step 4: Run the tests to verify they pass**
