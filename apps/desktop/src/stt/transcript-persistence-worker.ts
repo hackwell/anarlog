@@ -19,6 +19,8 @@ const MAX_PENDING_REPLACED_IDS = 10_000;
 const TRANSCRIPT_BATCH_WINDOW_MS = 250;
 const TRANSCRIPT_PERSIST_TIMEOUT_MS = 15_000;
 const TRANSCRIPT_FLUSH_TIMEOUT_MS = 20_000;
+const TRANSCRIPT_COMPACTION_TIMEOUT_MS = 20_000;
+const TRANSCRIPT_COMPACTION_ATTEMPTS = 3;
 
 class TranscriptPersistenceTimeoutError extends Error {}
 
@@ -30,12 +32,18 @@ export function createTranscriptPersistenceWorker(
     batchWindowMs?: number;
     persistTimeoutMs?: number;
     flushTimeoutMs?: number;
+    compactionTimeoutMs?: number;
+    compactionAttempts?: number;
   } = {},
 ) {
   const batchWindowMs = options.batchWindowMs ?? TRANSCRIPT_BATCH_WINDOW_MS;
   const persistTimeoutMs =
     options.persistTimeoutMs ?? TRANSCRIPT_PERSIST_TIMEOUT_MS;
   const flushTimeoutMs = options.flushTimeoutMs ?? TRANSCRIPT_FLUSH_TIMEOUT_MS;
+  const compactionTimeoutMs =
+    options.compactionTimeoutMs ?? TRANSCRIPT_COMPACTION_TIMEOUT_MS;
+  const compactionAttempts =
+    options.compactionAttempts ?? TRANSCRIPT_COMPACTION_ATTEMPTS;
   let pendingWrite: PendingTranscriptWrite | null = null;
   let drainPromise: Promise<void> | null = null;
   let batchTimer: ReturnType<typeof setTimeout> | null = null;
@@ -66,6 +74,44 @@ export function createTranscriptPersistenceWorker(
     }
     reportError(error);
     cancelActivePersist?.(error);
+  };
+  // The live write path and the end-of-capture fold fail independently: a
+  // stalled delta write says nothing about whether the journal can be folded
+  // afterwards, so compaction gets its own deadline instead of inheriting the
+  // flush budget the drain may already have spent.
+  const compactWithinDeadline = (afterFlush: () => Promise<void>) =>
+    new Promise<void>((resolve, reject) => {
+      const timeoutId = setTimeout(() => {
+        reject(
+          new TranscriptPersistenceTimeoutError(
+            `Transcript compaction timed out after ${compactionTimeoutMs}ms`,
+          ),
+        );
+      }, compactionTimeoutMs);
+      Promise.resolve()
+        .then(afterFlush)
+        .then(
+          () => {
+            clearTimeout(timeoutId);
+            resolve();
+          },
+          (error: unknown) => {
+            clearTimeout(timeoutId);
+            reject(error as Error);
+          },
+        );
+    });
+  const compact = async (afterFlush: () => Promise<void>) => {
+    let lastError: unknown;
+    for (let attempt = 1; attempt <= compactionAttempts; attempt += 1) {
+      try {
+        await compactWithinDeadline(afterFlush);
+        return;
+      } catch (error) {
+        lastError = error;
+      }
+    }
+    reportError(lastError);
   };
   const persistWithinDeadline = (delta: LiveTranscriptDelta) =>
     new Promise<void>((resolve, reject) => {
@@ -208,30 +254,12 @@ export function createTranscriptPersistenceWorker(
               `Transcript persistence flush timed out after ${flushTimeoutMs}ms`,
             ),
           );
-          return;
+          break;
         }
       }
 
-      if (!timedOut && options.afterFlush) {
-        const result = await Promise.race([
-          Promise.resolve()
-            .then(options.afterFlush)
-            .then(
-              () => null,
-              (error) => {
-                reportError(error);
-                return null;
-              },
-            ),
-          timeout,
-        ]);
-        if (result === flushTimedOut) {
-          stopAfterTimeout(
-            new TranscriptPersistenceTimeoutError(
-              `Transcript persistence flush timed out after ${flushTimeoutMs}ms`,
-            ),
-          );
-        }
+      if (options.afterFlush) {
+        await compact(options.afterFlush);
       }
     } finally {
       clearTimeout(timeoutId!);

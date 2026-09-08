@@ -570,4 +570,101 @@ describe("createTranscriptPersistenceWorker", () => {
     await Promise.resolve();
     expect(onError).toHaveBeenCalledOnce();
   });
+
+  it("compacts even after a persist timeout disabled the live write path", async () => {
+    vi.useFakeTimers();
+    const persist = vi.fn(() => new Promise<void>(() => {}));
+    const onError = vi.fn();
+    const afterFlush = vi.fn(async () => {});
+    const worker = createImmediateTranscriptPersistenceWorker(
+      persist,
+      onError,
+      { persistTimeoutMs: 50, flushTimeoutMs: 1_000, afterFlush },
+    );
+
+    worker.enqueue(delta("word-1"));
+    const flushed = worker.flush();
+    await vi.advanceTimersByTimeAsync(50);
+
+    await expect(flushed).resolves.toBeUndefined();
+    expect(afterFlush).toHaveBeenCalledOnce();
+  });
+
+  it("compacts even after the flush deadline expired", async () => {
+    vi.useFakeTimers();
+    const persist = vi.fn(() => new Promise<void>(() => {}));
+    const onError = vi.fn();
+    const afterFlush = vi.fn(async () => {});
+    const worker = createImmediateTranscriptPersistenceWorker(
+      persist,
+      onError,
+      { persistTimeoutMs: 1_000, flushTimeoutMs: 25, afterFlush },
+    );
+
+    worker.enqueue(delta("word-1"));
+    const flushed = worker.flush();
+    await vi.advanceTimersByTimeAsync(25);
+
+    await expect(flushed).resolves.toBeUndefined();
+    expect(afterFlush).toHaveBeenCalledOnce();
+  });
+
+  it("retries a failing compaction and reports only the last failure", async () => {
+    const onError = vi.fn();
+    const afterFlush = vi
+      .fn<() => Promise<void>>()
+      .mockRejectedValueOnce(new Error("changed too frequently"))
+      .mockResolvedValueOnce(undefined);
+    const worker = createImmediateTranscriptPersistenceWorker(
+      async () => {},
+      onError,
+      { afterFlush },
+    );
+
+    await worker.flush();
+
+    expect(afterFlush).toHaveBeenCalledTimes(2);
+    expect(onError).not.toHaveBeenCalled();
+  });
+
+  it("gives up on compaction after its attempt ceiling", async () => {
+    const onError = vi.fn();
+    const afterFlush = vi
+      .fn<() => Promise<void>>()
+      .mockRejectedValue(new Error("changed too frequently"));
+    const worker = createImmediateTranscriptPersistenceWorker(
+      async () => {},
+      onError,
+      { afterFlush, compactionAttempts: 2 },
+    );
+
+    await worker.flush();
+
+    expect(afterFlush).toHaveBeenCalledTimes(2);
+    expect(onError).toHaveBeenCalledOnce();
+    expect(onError).toHaveBeenCalledWith(
+      expect.objectContaining({ message: "changed too frequently" }),
+    );
+  });
+
+  it("bounds a hung compaction by its own deadline", async () => {
+    vi.useFakeTimers();
+    const onError = vi.fn();
+    const afterFlush = vi.fn(() => new Promise<void>(() => {}));
+    const worker = createImmediateTranscriptPersistenceWorker(
+      async () => {},
+      onError,
+      { afterFlush, compactionTimeoutMs: 30, compactionAttempts: 1 },
+    );
+
+    const flushed = worker.flush();
+    await vi.advanceTimersByTimeAsync(30);
+
+    await expect(flushed).resolves.toBeUndefined();
+    expect(onError).toHaveBeenCalledWith(
+      expect.objectContaining({
+        message: "Transcript compaction timed out after 30ms",
+      }),
+    );
+  });
 });
