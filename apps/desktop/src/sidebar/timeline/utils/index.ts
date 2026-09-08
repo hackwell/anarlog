@@ -39,6 +39,7 @@ export type TimelineSessionRow = {
   event_json?: string | null;
   folder_id?: string | null;
   locked?: boolean | number | null;
+  organization_name?: string | null;
 };
 
 export type TimelineEventsTable =

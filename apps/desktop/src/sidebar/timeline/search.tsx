@@ -16,8 +16,10 @@ export function filterTimelineBuckets(
 
   const filtered: TimelineBucket[] = [];
   for (const bucket of buckets) {
-    const items = bucket.items.filter((item) =>
-      (item.data.title ?? "").toLowerCase().includes(needle),
+    const items = bucket.items.filter(
+      (item) =>
+        (item.data.title ?? "").toLowerCase().includes(needle) ||
+        searchableCustomer(item).includes(needle),
     );
 
     if (items.length > 0) {
@@ -26,6 +28,16 @@ export function filterTimelineBuckets(
   }
 
   return filtered;
+}
+
+// A locked meeting shows its title on the lock screen and nothing else, so its
+// customer must not be findable either — the same line the search indexer draws
+// in `build_session_document`.
+function searchableCustomer(item: TimelineBucket["items"][number]): string {
+  if (item.type !== "session" || item.data.locked) {
+    return "";
+  }
+  return (item.data.organization_name ?? "").toLowerCase();
 }
 
 /**

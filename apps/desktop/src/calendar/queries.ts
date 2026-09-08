@@ -158,15 +158,19 @@ export function useTimelineSessionsTable(): TimelineSessionsTable {
   >({
     sql: `
       SELECT
-        id,
-        title,
-        created_at,
-        event_json,
-        folder_path AS folder_id,
-        locked
-      FROM sessions
-      WHERE deleted_at IS NULL
-      ORDER BY created_at, id
+        session.id,
+        session.title,
+        session.created_at,
+        session.event_json,
+        session.folder_path AS folder_id,
+        session.locked,
+        COALESCE(organization.name, '') AS organization_name
+      FROM sessions AS session
+      LEFT JOIN organizations AS organization
+        ON organization.id = session.organization_id
+        AND organization.deleted_at IS NULL
+      WHERE session.deleted_at IS NULL
+      ORDER BY session.created_at, session.id
     `,
     mapRows: mapTimelineSessionRows,
   });

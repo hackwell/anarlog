@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest";
 
-import { filterBucketsByParticipant } from "./search";
+import { filterBucketsByParticipant, filterTimelineBuckets } from "./search";
 import type { TimelineBucket } from "./utils";
 
 const bucket = (
@@ -73,5 +73,64 @@ describe("filterBucketsByParticipant", () => {
   test("returns nothing when the person has no recordings", () => {
     const buckets = [bucket("Today", [["session", "a"]])];
     expect(filterBucketsByParticipant(buckets, new Set())).toEqual([]);
+  });
+});
+
+describe("filterTimelineBuckets", () => {
+  const meeting = (
+    id: string,
+    data: { organization_name?: string; locked?: boolean },
+  ): TimelineBucket => ({
+    label: "Today",
+    precision: "time",
+    items: [
+      {
+        type: "session",
+        id,
+        data: { title: id, created_at: "2026-08-31T09:00:00Z", ...data },
+      },
+    ],
+  });
+
+  test("finds a meeting by its title", () => {
+    const filtered = filterTimelineBuckets(
+      [meeting("Stackoverload Weekly", {})],
+      "weekly",
+    );
+
+    expect(filtered[0]?.items.map((item) => item.id)).toEqual([
+      "Stackoverload Weekly",
+    ]);
+  });
+
+  test("finds a meeting by the customer it belongs to", () => {
+    const filtered = filterTimelineBuckets(
+      [meeting("Stackoverload Weekly", { organization_name: "Müller GmbH" })],
+      "müller",
+    );
+
+    expect(filtered[0]?.items.map((item) => item.id)).toEqual([
+      "Stackoverload Weekly",
+    ]);
+  });
+
+  test("keeps a locked meeting's customer hidden", () => {
+    expect(
+      filterTimelineBuckets(
+        [
+          meeting("Stackoverload Weekly", {
+            organization_name: "Müller GmbH",
+            locked: true,
+          }),
+        ],
+        "müller",
+      ),
+    ).toEqual([]);
+  });
+
+  test("does not match a meeting without a customer", () => {
+    expect(
+      filterTimelineBuckets([meeting("Stackoverload Weekly", {})], "müller"),
+    ).toEqual([]);
   });
 });
