@@ -75,6 +75,13 @@ describe("session content SQLite snapshots", () => {
       "Hello",
       "world",
     ]);
+    expect(snapshot?.transcripts[0]?.hasUnpersistedWords).toBe(true);
+    // The compare-and-set guard has to stay the stored value, not the merge.
+    expect(
+      JSON.parse(snapshot?.transcripts[0]?.wordsJson ?? "[]").map(
+        (word: { text: string }) => word.text,
+      ),
+    ).toEqual(["Hello"]);
   });
 
   it("maps one canonical session content snapshot", async () => {

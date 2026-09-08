@@ -81,6 +81,7 @@ function createSnapshot(channel = 1): SessionContentSnapshot {
         memo: "",
         wordsJson: "original words",
         speakerHintsJson: JSON.stringify(speakerHints),
+        hasUnpersistedWords: false,
         words: [
           {
             id: "lex-1",

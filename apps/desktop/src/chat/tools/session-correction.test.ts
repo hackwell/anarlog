@@ -41,9 +41,11 @@ function summary(markdown: string, id = "note-1", title = "Summary") {
 function transcript({
   words,
   memo,
+  hasUnpersistedWords = false,
 }: {
   words: Array<Record<string, unknown>>;
   memo: string;
+  hasUnpersistedWords?: boolean;
 }) {
   return {
     id: "transcript-1",
@@ -51,6 +53,7 @@ function transcript({
     ended_at: 400,
     memo,
     wordsJson: JSON.stringify(words),
+    hasUnpersistedWords,
     words,
     speaker_hints: [],
   };
@@ -159,6 +162,27 @@ describe("session correction chat tool", () => {
     ]);
     expect(plan.updates[0]?.nextMemo).toBe("Speaker 1: It is Y");
     expect(source.memo).toBe("Speaker 1: It is X");
+  });
+
+  it("leaves a transcript alone while its words are only in the live journal", () => {
+    const plan = sessionCorrectionTestInternals.planTranscriptCorrections({
+      transcripts: [
+        transcript({
+          words: [
+            { id: "w1", text: "It", start_ms: 0, end_ms: 100, channel: 0 },
+            { id: "w2", text: "is", start_ms: 100, end_ms: 200, channel: 0 },
+            { id: "w3", text: "X", start_ms: 200, end_ms: 300, channel: 0 },
+          ],
+          memo: "Speaker 1: It is X",
+          hasUnpersistedWords: true,
+        }),
+      ] as any,
+      oldText: "X",
+      newText: "Y",
+    });
+
+    expect(plan.changes).toEqual([]);
+    expect(plan.updates).toEqual([]);
   });
 
   it("updates every repeated transcript phrase", () => {

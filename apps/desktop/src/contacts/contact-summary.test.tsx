@@ -346,6 +346,7 @@ function makeSnapshot({
             memo: "",
             wordsJson: "[]",
             speakerHintsJson: "[]",
+            hasUnpersistedWords: false,
             words: [{ id: "word-1", text: transcript } as never],
             speaker_hints: [],
           },

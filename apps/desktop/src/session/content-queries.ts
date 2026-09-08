@@ -78,8 +78,15 @@ export type SessionContentSnapshot = {
     started_at: number;
     ended_at: number | null;
     memo: string;
+    // The stored column values, byte for byte. Writers use them as the
+    // compare-and-set guard on `transcripts.words_json` / `speaker_hints_json`,
+    // so they must stay raw even when `words` below already shows the journal.
     wordsJson: string;
     speakerHintsJson: string;
+    // True while the live journal still holds words that `words_json` does not.
+    // A writer that would persist `words` back into the column must skip these:
+    // the fold would replay the journal over its edit.
+    hasUnpersistedWords: boolean;
     words: WordWithId[];
     speaker_hints: SpeakerHintWithId[];
   }>;
@@ -259,8 +266,9 @@ function mapSessionContentRow(
             ? null
             : Number(transcript.ended_at_ms),
         memo: transcript.memo,
-        wordsJson: merged.wordsJson,
-        speakerHintsJson: merged.hintsJson,
+        wordsJson: transcript.words_json,
+        speakerHintsJson: transcript.speaker_hints_json,
+        hasUnpersistedWords: merged.wordsJson !== transcript.words_json,
         words: parseJsonArray<WordWithId>(merged.wordsJson),
         speaker_hints: parseJsonArray<SpeakerHintWithId>(merged.hintsJson),
       };

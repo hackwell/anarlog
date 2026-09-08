@@ -359,6 +359,11 @@ function planTranscriptCorrections({
   const updates: TranscriptContentCorrection[] = [];
 
   for (const transcript of transcripts) {
+    // Correcting a transcript whose words are still only in the live journal
+    // would be undone the moment the journal is folded back over them.
+    if (transcript.hasUnpersistedWords) {
+      continue;
+    }
     const words = transcript.words as TranscriptWord[];
     const wordResult = replaceTranscriptWords(words, oldText, newText);
 
