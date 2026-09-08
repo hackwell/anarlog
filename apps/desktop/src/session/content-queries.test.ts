@@ -16,6 +16,67 @@ describe("session content SQLite snapshots", () => {
     vi.clearAllMocks();
   });
 
+  it("folds pending live deltas into the snapshot transcript", async () => {
+    mocks.execute.mockResolvedValueOnce([
+      {
+        id: "session-1",
+        owner_user_id: "user-1",
+        owner_email: null,
+        title: "Planning",
+        created_at: "2026-09-08T09:00:00.000Z",
+        event_json: "{}",
+        event_id: "",
+        raw_note_id: "session-1",
+        raw_template_id: "",
+        raw_body: "",
+        raw_body_format: "prosemirror_json",
+        enhanced_notes_json: "[]",
+        transcripts_json: JSON.stringify([
+          {
+            id: "transcript-1",
+            started_at_ms: 0,
+            ended_at_ms: null,
+            memo: "",
+            words_json: JSON.stringify([
+              {
+                id: "word-1",
+                text: "Hello",
+                start_ms: 0,
+                end_ms: 1,
+                channel: 0,
+              },
+            ]),
+            speaker_hints_json: "[]",
+            pending_deltas_json: JSON.stringify([
+              {
+                new_words: [
+                  {
+                    id: "word-2",
+                    text: "world",
+                    start_ms: 2,
+                    end_ms: 3,
+                    channel: 0,
+                    state: "final",
+                  },
+                ],
+                replaced_ids: [],
+                partials: [],
+              },
+            ]),
+          },
+        ]),
+        participants_json: "[]",
+      },
+    ]);
+
+    const snapshot = await loadSessionContentSnapshot("session-1");
+
+    expect(snapshot?.transcripts[0]?.words.map((word) => word.text)).toEqual([
+      "Hello",
+      "world",
+    ]);
+  });
+
   it("maps one canonical session content snapshot", async () => {
     mocks.execute.mockResolvedValueOnce([
       {

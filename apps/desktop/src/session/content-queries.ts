@@ -1,6 +1,7 @@
 import { json2md } from "@anlg/editor/markdown";
 
 import { liveQueryClient } from "~/db";
+import { materializeTranscriptSnapshot } from "~/stt/transcript-snapshot";
 import type { SpeakerHintWithId, WordWithId } from "~/stt/types";
 
 type SessionContentSqlRow = {
@@ -36,6 +37,7 @@ type TranscriptJson = {
   memo: string;
   words_json: string;
   speaker_hints_json: string;
+  pending_deltas_json: string;
 };
 
 type ParticipantJson = {
@@ -128,7 +130,16 @@ const SESSION_CONTENT_SQL = `
         'ended_at_ms', transcript.ended_at_ms,
         'memo', transcript.memo,
         'words_json', transcript.words_json,
-        'speaker_hints_json', transcript.speaker_hints_json
+        'speaker_hints_json', transcript.speaker_hints_json,
+        'pending_deltas_json', COALESCE((
+          SELECT json_group_array(json(ordered_delta.delta_json))
+          FROM (
+            SELECT delta.delta_json
+            FROM transcript_live_deltas AS delta
+            WHERE delta.transcript_id = transcript.id
+            ORDER BY delta.sequence
+          ) AS ordered_delta
+        ), '[]')
       ))
       FROM transcripts AS transcript
       WHERE transcript.session_id = session.id
@@ -233,19 +244,27 @@ function mapSessionContentRow(
     );
 
   const transcripts = parseJsonArray<TranscriptJson>(row.transcripts_json)
-    .map((transcript) => ({
-      id: transcript.id,
-      started_at: Number(transcript.started_at_ms),
-      ended_at:
-        transcript.ended_at_ms == null ? null : Number(transcript.ended_at_ms),
-      memo: transcript.memo,
-      wordsJson: transcript.words_json,
-      speakerHintsJson: transcript.speaker_hints_json,
-      words: parseJsonArray<WordWithId>(transcript.words_json),
-      speaker_hints: parseJsonArray<SpeakerHintWithId>(
+    .map((transcript) => {
+      const merged = materializeTranscriptSnapshot(
+        transcript.words_json,
         transcript.speaker_hints_json,
-      ),
-    }))
+        transcript.id,
+        transcript.pending_deltas_json,
+      );
+      return {
+        id: transcript.id,
+        started_at: Number(transcript.started_at_ms),
+        ended_at:
+          transcript.ended_at_ms == null
+            ? null
+            : Number(transcript.ended_at_ms),
+        memo: transcript.memo,
+        wordsJson: merged.wordsJson,
+        speakerHintsJson: merged.hintsJson,
+        words: parseJsonArray<WordWithId>(merged.wordsJson),
+        speaker_hints: parseJsonArray<SpeakerHintWithId>(merged.hintsJson),
+      };
+    })
     .sort(
       (left, right) =>
         left.started_at - right.started_at || left.id.localeCompare(right.id),
