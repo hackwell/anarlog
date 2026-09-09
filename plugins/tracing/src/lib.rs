@@ -73,12 +73,17 @@ impl Builder {
                         return Ok(());
                     }
                 };
+                // `sentry_layer()` sends nothing unless a Sentry client is bound to
+                // the hub, so a build without a DSN carries it at no cost. It is
+                // built per branch because the layer's type is tied to the
+                // subscriber it wraps.
                 match make_file_writer(&logs_dir) {
                     Ok((file_writer, guard)) => {
                         tracing_subscriber::Registry::default()
                             .with(env_filter)
                             .with(fmt::layer())
                             .with(fmt::layer().with_ansi(false).with_writer(file_writer))
+                            .with(sentry_layer())
                             .init();
                         app.manage(guard);
                     }
@@ -87,6 +92,7 @@ impl Builder {
                         tracing_subscriber::Registry::default()
                             .with(env_filter)
                             .with(fmt::layer())
+                            .with(sentry_layer())
                             .init();
                     }
                 }
@@ -95,6 +101,26 @@ impl Builder {
             })
             .build()
     }
+}
+
+/// Reports Rust errors to Sentry, and nothing at all when no Sentry client is
+/// configured. Console output forwarded from the webview is skipped: the
+/// browser SDK already reports those, with a JavaScript stack trace this side
+/// cannot reconstruct.
+fn sentry_layer<S>() -> sentry_tracing::SentryLayer<S>
+where
+    S: tracing::Subscriber + for<'a> tracing_subscriber::registry::LookupSpan<'a>,
+{
+    sentry_tracing::layer().event_filter(|metadata| {
+        if metadata.target() == WEBVIEW_CONSOLE_TARGET {
+            return sentry_tracing::EventFilter::Ignore;
+        }
+        match *metadata.level() {
+            tracing::Level::ERROR => sentry_tracing::EventFilter::Event,
+            tracing::Level::WARN | tracing::Level::INFO => sentry_tracing::EventFilter::Breadcrumb,
+            _ => sentry_tracing::EventFilter::Ignore,
+        }
+    })
 }
 
 pub fn init() -> tauri::plugin::TauriPlugin<tauri::Wry> {

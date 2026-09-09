@@ -36,6 +36,7 @@ import { initializeAppExitFlush } from "./shared/app-exit";
 import { initializeAppStoreBuild, isAppStoreBuild } from "./shared/app-store";
 import { useConfigValue } from "./shared/config";
 import { ErrorComponent, NotFoundComponent } from "./shared/control";
+import { initErrorReporting } from "./shared/error-reporting";
 import { LongLoadGate } from "./shared/long-load-gate";
 import { startInteractionProfiler } from "./shared/perf/interaction-profiler";
 import { bootstrapThemeFromSettings } from "./shared/theme/apply";
@@ -153,6 +154,11 @@ async function enableReactScanInDev() {
 }
 
 async function renderApp() {
+  // Started before anything renders so a failure during startup is reported too.
+  // It never rejects and never blocks: without a DSN it returns immediately.
+  await initErrorReporting().catch((error: unknown) => {
+    console.warn("Failed to start error reporting:", error);
+  });
   await Promise.all([
     bootstrapThemeFromSettings(),
     enableReactScanInDev(),

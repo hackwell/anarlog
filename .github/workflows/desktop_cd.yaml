@@ -187,6 +187,16 @@ jobs:
             echo "::error::Repository variable MICROSOFT_CLIENT_ID is not set; the build would ship without Microsoft 365 calendar support"
             exit 1
           fi
+      # Same shape, same failure mode: baked in at build time, so a missing
+      # variable is silent until an error goes unreported.
+      - name: Verify the Sentry DSN is available
+        env:
+          SENTRY_DSN: ${{ vars.SENTRY_DSN }}
+        run: |
+          if [[ -z "$SENTRY_DSN" ]]; then
+            echo "::error::Repository variable SENTRY_DSN is not set; the build would ship without error reporting"
+            exit 1
+          fi
       - run: ./scripts/version.sh "./apps/desktop/src-tauri/tauri.conf.json" "${{ needs.compute-version.outputs.version }}"
       - if: ${{ needs.compute-version.outputs.include_windows == 'true' }}
         name: Verify stable signing configuration
@@ -287,6 +297,7 @@ jobs:
           # build time because option_env! bakes it into the binary - a build
           # without it ships an app that cannot connect a Microsoft calendar.
           MICROSOFT_CLIENT_ID: ${{ vars.MICROSOFT_CLIENT_ID }}
+          SENTRY_DSN: ${{ vars.SENTRY_DSN }}
           APPLE_ID: ${{ secrets.APPLE_ID }}
           APPLE_PASSWORD: ${{ secrets.APPLE_PASSWORD }}
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
@@ -420,6 +431,7 @@ jobs:
           CARGO_PROFILE_RELEASE_DEBUG: line-tables-only
           APP_VERSION: ${{ needs.compute-version.outputs.version }}
           MICROSOFT_CLIENT_ID: ${{ vars.MICROSOFT_CLIENT_ID }}
+          SENTRY_DSN: ${{ vars.SENTRY_DSN }}
           TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
           TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
           VITE_APP_URL: https://sessionecho.flagbit.de
@@ -587,6 +599,7 @@ jobs:
           CARGO_PROFILE_RELEASE_DEBUG: line-tables-only
           APP_VERSION: ${{ needs.compute-version.outputs.version }}
           MICROSOFT_CLIENT_ID: ${{ vars.MICROSOFT_CLIENT_ID }}
+          SENTRY_DSN: ${{ vars.SENTRY_DSN }}
           TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
           TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
           VITE_APP_URL: https://sessionecho.flagbit.de

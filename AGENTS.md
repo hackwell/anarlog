@@ -28,6 +28,7 @@ SQLite is the primary data store (schema and migrations in `crates/db-app/`, des
 - Use `useForm` (tanstack-form) and `useQuery`/`useMutation` (tanstack-query) for form/mutation state. Avoid manual state management (e.g. `setError`).
 - For `plugins/db` live queries, keep schema creation, migrations, and DB initialization on the Rust side; TypeScript should only consume `execute`/`subscribe` APIs.
 - New SQLite migrations must be downgrade-safe (older builds tolerate newer schemas): additive only, new columns nullable or with a DEFAULT. If a migration can't be downgrade-safe, add a `-- breaking` line to the leading comment block of its `.sql` file so older builds refuse the database with an update prompt.
+- Error reporting goes to Sentry from both halves of the app and is always on. The DSN comes from `SENTRY_DSN` (env at run time, else baked in at build time via `option_env!`; `vite.config.ts` hands the same value to the webview). It lives in the gitignored `.env` locally and in the repository variable `SENTRY_DSN` in CI, where `desktop_cd.yaml` fails the release if it is missing. Everything sent is scrubbed twice: `redact_text` in `plugins/tracing/src/redaction.rs` and `scrubText` in `apps/desktop/src/shared/error-reporting.ts` — keep the two rule sets in step.
 - Branch naming: `fix/`, `chore/`, `refactor/` prefixes.
 
 ## Code Style

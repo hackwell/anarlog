@@ -14,6 +14,14 @@ const host = process.env.TAURI_DEV_HOST;
 
 // https://vite.dev/config/
 export default defineConfig(() => ({
+  // One name for both halves of the app: the Rust side reads SENTRY_DSN through
+  // option_env!, and this hands the same value to the webview. Empty means error
+  // reporting stays off.
+  define: {
+    "import.meta.env.VITE_SENTRY_DSN": JSON.stringify(
+      process.env.SENTRY_DSN ?? "",
+    ),
+  },
   plugins: [
     relayShim(),
     changelog(),

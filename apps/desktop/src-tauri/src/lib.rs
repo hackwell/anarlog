@@ -4,6 +4,7 @@ mod appearance;
 mod commands;
 mod db;
 mod embedded_cli;
+mod error_reporting;
 mod ext;
 mod search_index;
 mod startup;
@@ -78,6 +79,14 @@ pub fn main() {
 
     let context = tauri::generate_context!();
     let identifier = context.config().identifier.clone();
+
+    // Held for the rest of `main` so the guard can flush what is queued when the
+    // process ends. Started before the window and the plugins so a crash during
+    // startup still reports.
+    let _error_reporting = error_reporting::init(
+        &context.package_info().version.to_string(),
+        identifier.ends_with(".dev"),
+    );
 
     // The single-instance plugin only starts with the builder, which is too
     // late to keep a second launch from racing an in-flight startup migration.

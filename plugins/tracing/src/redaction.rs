@@ -10,6 +10,15 @@ static EMAIL_REGEX: LazyLock<Regex> = LazyLock::new(|| {
 static IP_REGEX: LazyLock<Regex> =
     LazyLock::new(|| Regex::new(r"\b(?:\d{1,3}\.){3}\d{1,3}\b").expect("Invalid regex"));
 
+/// The same scrubbing the log file gets, for callers that hand text to somewhere
+/// else — an error reporter, a support bundle. Resolves the home directory
+/// itself, so it can be called from anywhere.
+pub fn redact_text(value: &str) -> String {
+    static HOME_DIR: LazyLock<Option<String>> =
+        LazyLock::new(|| dirs::home_dir().map(|path| path.to_string_lossy().into_owned()));
+    redact_sensitive_text(value, HOME_DIR.as_deref())
+}
+
 fn redact_sensitive_text(value: &str, home_dir: Option<&str>) -> String {
     let mut redacted = value.to_string();
     if let Some(home) = home_dir {
