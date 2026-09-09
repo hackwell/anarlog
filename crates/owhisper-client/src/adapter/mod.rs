@@ -541,9 +541,13 @@ impl AdapterKind {
                 OPENAI_COMPATIBLE_MAX_UPLOAD_BYTES,
                 Duration::from_secs(10 * 60),
             ),
+            // OpenAI's transcription models cap a request at 1400s of audio, and
+            // a segment overshoots its requested length by a frame or two because
+            // MP3 frames do not divide evenly. 25 minutes sat above the cap and
+            // failed every segment; 20 leaves room for both.
             Self::OpenAI | Self::Groq | Self::Together | Self::Xai => (
                 OPENAI_COMPATIBLE_MAX_UPLOAD_BYTES,
-                Duration::from_secs(25 * 60),
+                Duration::from_secs(20 * 60),
             ),
             Self::Zai => (OPENAI_COMPATIBLE_MAX_UPLOAD_BYTES, Duration::from_secs(25)),
             Self::SiliconFlow => (50 * 1024 * 1024, Duration::from_secs(50 * 60)),

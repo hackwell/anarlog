@@ -538,3 +538,30 @@ fn test_append_provider_param_no_existing_provider() {
     assert!(url.contains("provider=anarlog"));
     assert_eq!(url.matches("provider=").count(), 1);
 }
+
+#[test]
+fn test_openai_batch_segments_stay_under_the_model_duration_cap() {
+    // OpenAI answers a longer request with "audio duration N seconds is longer
+    // than 1400 seconds which is the maximum for this model", and the segment
+    // encoder overshoots the requested length by a frame, so the plan has to sit
+    // strictly below the cap rather than on it.
+    const OPENAI_MODEL_DURATION_CAP: std::time::Duration = std::time::Duration::from_secs(1400);
+
+    for kind in [
+        AdapterKind::OpenAI,
+        AdapterKind::Groq,
+        AdapterKind::Together,
+        AdapterKind::Xai,
+        AdapterKind::OpenRouter,
+    ] {
+        let limit = kind
+            .batch_upload_limit()
+            .unwrap_or_else(|| panic!("{kind:?} splits long uploads"));
+        assert!(
+            limit.max_duration < OPENAI_MODEL_DURATION_CAP,
+            "{kind:?} plans {}s segments, which the model rejects at {}s",
+            limit.max_duration.as_secs(),
+            OPENAI_MODEL_DURATION_CAP.as_secs(),
+        );
+    }
+}
