@@ -260,6 +260,28 @@ jobs:
       - run: echo "SDKROOT=$(xcrun --sdk macosx --show-sdk-path)" >> $GITHUB_ENV
       - uses: ./.github/actions/pnpm_install
       - run: pnpm -F ui build
+      # Only used to hand Sentry the sourcemaps. The build step skips the upload
+      # without SENTRY_AUTH_TOKEN, so this stays harmless in a fork.
+      - name: Install the Sentry CLI
+        run: |
+          curl https://cli.sentry.dev/install -fsS | bash
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+      # Names the commit a new issue most likely came from. Needs the full
+      # history, which this job checks out with fetch-depth 0.
+      - name: Tell Sentry which commits this release contains
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_ORG: ${{ vars.SENTRY_ORG }}
+          VERSION: ${{ needs.compute-version.outputs.version }}
+        run: |
+          if [[ -z "$SENTRY_AUTH_TOKEN" ]]; then
+            echo "no SENTRY_AUTH_TOKEN, skipping the commit association"
+            exit 0
+          fi
+          ORG="${SENTRY_ORG:-flagbit-gmbh-co-kg-rc}"
+          sentry release create "$ORG/$VERSION" --project "${SENTRY_PROJECT:-sessionecho}" || true
+          sentry release set-commits "$ORG/$VERSION" --local || true
+          sentry release finalize "$ORG/$VERSION" || true
       - run: |
           TAURI_ENV_TARGET_TRIPLE=${{ matrix.target }} cargo xtask prepare-binaries
           ./scripts/sidecar.sh "./apps/desktop/${{ env.TAURI_CONF_PATH }}" "binaries/char-chrome-native-host"
@@ -298,6 +320,11 @@ jobs:
           # without it ships an app that cannot connect a Microsoft calendar.
           MICROSOFT_CLIENT_ID: ${{ vars.MICROSOFT_CLIENT_ID }}
           SENTRY_DSN: ${{ vars.SENTRY_DSN }}
+          # Unlike the DSN this one can write, so it is a secret. Without it the
+          # build simply ships without sourcemaps.
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_ORG: ${{ vars.SENTRY_ORG }}
+          SENTRY_PROJECT: ${{ vars.SENTRY_PROJECT }}
           APPLE_ID: ${{ secrets.APPLE_ID }}
           APPLE_PASSWORD: ${{ secrets.APPLE_PASSWORD }}
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}

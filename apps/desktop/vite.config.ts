@@ -88,6 +88,14 @@ const tauri: UserConfig = {
     target:
       process.env.TAURI_ENV_PLATFORM == "windows" ? "chrome105" : "safari13",
     minify: process.env.TAURI_ENV_DEBUG ? false : "terser",
-    sourcemap: !!process.env.TAURI_ENV_DEBUG,
+    // Maps are built for a release only when there is somewhere to send them.
+    // "hidden" keeps the bundle from pointing at them — Sentry matches them by
+    // the debug id injected before the upload — and before-bundle.mjs deletes
+    // them, so the app never ships its own source.
+    sourcemap: process.env.TAURI_ENV_DEBUG
+      ? true
+      : process.env.SENTRY_AUTH_TOKEN
+        ? "hidden"
+        : false,
   },
 };

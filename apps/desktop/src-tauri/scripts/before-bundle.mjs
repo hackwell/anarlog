@@ -2,6 +2,8 @@ import { spawn } from "node:child_process";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
+import { uploadSourcemaps } from "./sentry-sourcemaps.mjs";
+
 const scriptDir = path.dirname(fileURLToPath(import.meta.url));
 
 function runScript(scriptName) {
@@ -21,6 +23,10 @@ function runScript(scriptName) {
     });
   });
 }
+
+// Before the early exit below: the sourcemaps have to go, and be sent, on every
+// platform.
+uploadSourcemaps();
 
 if (process.platform === "win32") {
   console.log("[before-bundle] Windows detected, skipping shell bundle hooks.");
