@@ -240,6 +240,14 @@ impl Drop for CoreAudioListeners {
                 device_listener_ptr,
             ) {
                 Ok(()) => false,
+                // A device that has gone away cannot still be holding the
+                // listener context, so there is nothing to retain and nothing
+                // went wrong. The system object, unlike a device, never
+                // disappears, which is why its removal above keeps its error.
+                Err(error) if error == ca::hardware_err::BAD_OBJ => {
+                    tracing::debug!("input_device_vanished_before_listener_removal");
+                    false
+                }
                 Err(error) => {
                     tracing::error!(?error, "removing_device_listener_failed_retaining_context");
                     true

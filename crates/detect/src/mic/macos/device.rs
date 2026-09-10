@@ -103,13 +103,22 @@ pub(super) extern "C-unwind" fn system_listener(
 
         let previous_device = device_guard.take();
         let previous_removal_error = previous_device.as_ref().and_then(|device| {
-            device
-                .remove_prop_listener(
-                    &DEVICE_IS_RUNNING_SOMEWHERE,
-                    device_listener,
-                    data.device_listener_ptr,
-                )
-                .err()
+            match device.remove_prop_listener(
+                &DEVICE_IS_RUNNING_SOMEWHERE,
+                device_listener,
+                data.device_listener_ptr,
+            ) {
+                Ok(()) => None,
+                // The device is already gone — unplugged, or a wireless one that
+                // dropped — and it took its listeners with it. Nothing failed,
+                // and holding on to the dead device below would only make the
+                // next round try to remove the same listener again.
+                Err(error) if error == ca::hardware_err::BAD_OBJ => {
+                    tracing::debug!("previous_input_device_vanished_before_listener_removal");
+                    None
+                }
+                Err(error) => Some(error),
+            }
         });
         if let Some(error) = previous_removal_error {
             tracing::error!(
