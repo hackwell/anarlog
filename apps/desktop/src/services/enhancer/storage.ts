@@ -8,7 +8,7 @@ import { id } from "~/shared/utils";
 
 export type EnhancerNote = SessionContentSnapshot["enhancedNotes"][number];
 
-const PENDING_AUTO_ENHANCE_SETTING_PREFIX = "auto_enhance_pending:";
+export const PENDING_AUTO_ENHANCE_SETTING_PREFIX = "auto_enhance_pending:";
 
 export type PendingAutoEnhanceJob = {
   sessionId: string;
@@ -33,18 +33,8 @@ export function ensurePendingAutoEnhanceDocument(
   return ensureSummaryDocumentWithMetadata(sessionId, templateId, true);
 }
 
-export async function loadPendingAutoEnhanceJobs(): Promise<
-  PendingAutoEnhanceJob[]
-> {
-  const rows = await liveQueryClient.execute<{
-    session_id: string;
-    note_id: string;
-    template_id: string;
-    expected_body: string;
-    expected_content_format: string;
-    generation: string;
-  }>(
-    `
+// Exported so a test can run it against a real database rather than a mock.
+export const PENDING_AUTO_ENHANCE_SQL = `
       SELECT
         substr(setting.id, ?) AS session_id,
         document.id AS note_id,
@@ -134,13 +124,23 @@ export async function loadPendingAutoEnhanceJobs(): Promise<
             )
         )
       ORDER BY setting.updated_at, session_id
-    `,
-    [
-      PENDING_AUTO_ENHANCE_SETTING_PREFIX.length + 1,
-      PENDING_AUTO_ENHANCE_SETTING_PREFIX.length + 1,
-      `${PENDING_AUTO_ENHANCE_SETTING_PREFIX}%`,
-    ],
-  );
+`;
+
+export async function loadPendingAutoEnhanceJobs(): Promise<
+  PendingAutoEnhanceJob[]
+> {
+  const rows = await liveQueryClient.execute<{
+    session_id: string;
+    note_id: string;
+    template_id: string;
+    expected_body: string;
+    expected_content_format: string;
+    generation: string;
+  }>(PENDING_AUTO_ENHANCE_SQL, [
+    PENDING_AUTO_ENHANCE_SETTING_PREFIX.length + 1,
+    PENDING_AUTO_ENHANCE_SETTING_PREFIX.length + 1,
+    `${PENDING_AUTO_ENHANCE_SETTING_PREFIX}%`,
+  ]);
   return rows.map((row) => ({
     sessionId: row.session_id,
     noteId: row.note_id,

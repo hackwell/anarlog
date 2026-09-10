@@ -17,7 +17,8 @@ const MAX_SWEEP_FAILURES = 3;
 // otherwise leave `sweepInFlight` pending and silently disable every later pass.
 const SWEEP_DEADLINE_MS = 60_000;
 
-const STRANDED_TRANSCRIPTS_SQL = `
+// Exported so a test can run it against a real database rather than a mock.
+export const STRANDED_TRANSCRIPTS_SQL = `
   SELECT DISTINCT
     transcript.id AS transcript_id,
     transcript.session_id AS session_id

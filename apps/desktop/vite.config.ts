@@ -53,12 +53,34 @@ export default defineConfig(() => ({
   },
   test: {
     reporters: "default",
-    environment: "jsdom",
-    setupFiles: ["./src/test-setup.ts"],
     onConsoleLog: (_, type) => {
       return type === "stderr";
     },
     exclude: ["**/node_modules/**", "**/src-tauri/**"],
+    projects: [
+      {
+        extends: true,
+        test: {
+          name: "ui",
+          environment: "jsdom",
+          setupFiles: ["./src/test-setup.ts"],
+          exclude: [
+            "**/node_modules/**",
+            "**/src-tauri/**",
+            "**/*.sql.test.ts",
+          ],
+        },
+      },
+      {
+        extends: true,
+        test: {
+          name: "sql",
+          environment: "node",
+          setupFiles: [],
+          include: ["**/*.sql.test.ts"],
+        },
+      },
+    ],
   },
   ...tauri,
 }));

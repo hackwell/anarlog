@@ -100,7 +100,9 @@ export type SessionContentSnapshot = {
   }>;
 };
 
-const SESSION_CONTENT_SQL = `
+// Exported so a test can run this text against a real SQLite instead of a mock
+// that describes what its author believed SQLite returns.
+export const SESSION_CONTENT_SQL = `
   SELECT
     session.id,
     session.owner_user_id,
@@ -232,7 +234,7 @@ export async function loadActiveSessionIds(): Promise<string[]> {
   return rows.map((row) => row.id);
 }
 
-function mapSessionContentRow(
+export function mapSessionContentRow(
   row: SessionContentSqlRow,
 ): SessionContentSnapshot {
   const enhancedNotes = parseJsonArray<EnhancedNoteJson>(
