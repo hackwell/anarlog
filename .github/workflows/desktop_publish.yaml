@@ -210,12 +210,12 @@ jobs:
             --name "desktop-release-assets-x86_64-pc-windows-msvc" \
             --dir windows-candidate
       - shell: bash
-        run: cp windows-candidate/anarlog-windows-x86_64-setup.exe .
+        run: cp windows-candidate/session-echo-windows-x86_64-setup.exe .
       - shell: pwsh
         env:
           WINDOWS_SIGNER_ORGANIZATION: ${{ vars.WINDOWS_SIGNER_ORGANIZATION }}
         run: |
-          $signature = Get-AuthenticodeSignature "anarlog-windows-x86_64-setup.exe"
+          $signature = Get-AuthenticodeSignature "session-echo-windows-x86_64-setup.exe"
           if ($signature.Status -ne "Valid") {
             throw "Invalid Windows Authenticode signature: $($signature.Status)"
           }
@@ -590,7 +590,7 @@ jobs:
           } >> "$GITHUB_STEP_SUMMARY"
 
           if [[ "$INCLUDE_WINDOWS" == "true" ]]; then
-            package="anarlog-windows-x86_64-setup.exe"
+            package="session-echo-windows-x86_64-setup.exe"
             {
               echo "## Microsoft Store submission"
               echo "- Package URL: \`https://github.com/$RELEASES_REPOSITORY/releases/download/desktop_v$VERSION/$package\`"

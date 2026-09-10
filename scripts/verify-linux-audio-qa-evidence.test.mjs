@@ -22,13 +22,13 @@ const architectures = {
     publicPlatform: "debian-x86_64",
     updatePlatform: "linux-x86_64-deb",
     debianArch: "amd64",
-    assetId: "anarlog-linux-x86_64.deb",
+    assetId: "session-echo-linux-x86_64.deb",
   },
   arm64: {
     publicPlatform: "debian-aarch64",
     updatePlatform: "linux-aarch64-deb",
     debianArch: "arm64",
-    assetId: "anarlog-linux-aarch64.deb",
+    assetId: "session-echo-linux-aarch64.deb",
   },
 };
 const thresholds = linuxAudioQaPolicy.thresholds;

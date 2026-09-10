@@ -270,9 +270,9 @@ test("binds every release asset to a candidate run and detects replacement", asy
   await mkdir(assetDir);
 
   const contents = new Map([
-    ["anarlog-macos-aarch64.dmg", "macOS"],
-    ["anarlog-windows-x86_64-setup.exe", "Windows"],
-    ["anarlog-linux-x86_64.AppImage", "Linux"],
+    ["session-echo-macos-aarch64.dmg", "macOS"],
+    ["session-echo-windows-x86_64-setup.exe", "Windows"],
+    ["session-echo-linux-x86_64.AppImage", "Linux"],
   ]);
   for (const [id, content] of contents) {
     await writeFile(path.join(assetDir, id), content);
@@ -283,23 +283,25 @@ test("binds every release asset to a candidate run and detects replacement", asy
     status: "draft",
     assets: [
       {
-        id: "anarlog-linux-x86_64.AppImage",
+        id: "session-echo-linux-x86_64.AppImage",
         publicPlatform: "appimage-x86_64",
         updatePlatform: "linux-x86_64-appimage",
-        size: Buffer.byteLength(contents.get("anarlog-linux-x86_64.AppImage")),
+        size: Buffer.byteLength(
+          contents.get("session-echo-linux-x86_64.AppImage"),
+        ),
         signature: "linux-signature",
       },
       {
-        id: "anarlog-macos-aarch64.dmg",
+        id: "session-echo-macos-aarch64.dmg",
         publicPlatform: "dmg-aarch64",
-        size: Buffer.byteLength(contents.get("anarlog-macos-aarch64.dmg")),
+        size: Buffer.byteLength(contents.get("session-echo-macos-aarch64.dmg")),
       },
       {
-        id: "anarlog-windows-x86_64-setup.exe",
+        id: "session-echo-windows-x86_64-setup.exe",
         publicPlatform: "nsis-x86_64",
         updatePlatform: "windows-x86_64-nsis",
         size: Buffer.byteLength(
-          contents.get("anarlog-windows-x86_64-setup.exe"),
+          contents.get("session-echo-windows-x86_64-setup.exe"),
         ),
         signature: "windows-signature",
       },
@@ -323,9 +325,9 @@ test("binds every release asset to a candidate run and detects replacement", asy
   assert.deepEqual(
     manifest.assets.map((asset) => asset.id),
     [
-      "anarlog-linux-x86_64.AppImage",
-      "anarlog-macos-aarch64.dmg",
-      "anarlog-windows-x86_64-setup.exe",
+      "session-echo-linux-x86_64.AppImage",
+      "session-echo-macos-aarch64.dmg",
+      "session-echo-windows-x86_64-setup.exe",
     ],
   );
   await verifyManifest({
@@ -374,7 +376,7 @@ test("binds every release asset to a candidate run and detects replacement", asy
   );
 
   await writeFile(
-    path.join(assetDir, "anarlog-windows-x86_64-setup.exe"),
+    path.join(assetDir, "session-echo-windows-x86_64-setup.exe"),
     "replaced",
   );
   await assert.rejects(
@@ -399,9 +401,12 @@ test("rejects a release whose platform mapping moved after the candidate run", a
   const assetDir = path.join(directory, "assets");
   await mkdir(assetDir);
   const payload = "identical payload";
-  await writeFile(path.join(assetDir, "anarlog-macos-aarch64.dmg"), payload);
   await writeFile(
-    path.join(assetDir, "anarlog-windows-x86_64-setup.exe"),
+    path.join(assetDir, "session-echo-macos-aarch64.dmg"),
+    payload,
+  );
+  await writeFile(
+    path.join(assetDir, "session-echo-windows-x86_64-setup.exe"),
     payload,
   );
 
@@ -410,13 +415,13 @@ test("rejects a release whose platform mapping moved after the candidate run", a
     status: "draft",
     assets: [
       {
-        id: "anarlog-macos-aarch64.dmg",
+        id: "session-echo-macos-aarch64.dmg",
         publicPlatform: "dmg-aarch64",
         size: Buffer.byteLength(payload),
         signature: null,
       },
       {
-        id: "anarlog-windows-x86_64-setup.exe",
+        id: "session-echo-windows-x86_64-setup.exe",
         publicPlatform: "nsis-x86_64",
         updatePlatform: "windows-x86_64-nsis",
         size: Buffer.byteLength(payload),

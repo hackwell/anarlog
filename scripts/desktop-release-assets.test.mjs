@@ -67,7 +67,7 @@ test("stages every planned asset for a build target under its release name", asy
 
     assert.deepEqual(
       staged.map((asset) => asset.id),
-      ["anarlog-linux-x86_64.AppImage", "anarlog-linux-x86_64.deb"],
+      ["session-echo-linux-x86_64.AppImage", "session-echo-linux-x86_64.deb"],
     );
     assert.deepEqual(
       staged.map((asset) => asset.updatePlatform),
@@ -93,7 +93,7 @@ test("refuses to stage an updater artifact without its .sig", async () => {
     const outputDir = path.join(directory, "staged");
     await mkdir(outputDir);
     await fakeBundleTree(bundleRoot, "aarch64-apple-darwin", {
-      omitSignature: "anarlog-macos-aarch64.app.tar.gz",
+      omitSignature: "session-echo-macos-aarch64.app.tar.gz",
     });
 
     await assert.rejects(
@@ -102,7 +102,7 @@ test("refuses to stage an updater artifact without its .sig", async () => {
         buildTarget: "aarch64-apple-darwin",
         outputDir,
       }),
-      /anarlog-macos-aarch64\.app\.tar\.gz\.sig: Missing updater signature/,
+      /session-echo-macos-aarch64\.app\.tar\.gz\.sig: Missing updater signature/,
     );
   } finally {
     await rm(directory, { recursive: true, force: true });
@@ -184,7 +184,7 @@ test("fails when the matrix did not stage a selected platform", async () => {
 
     await assert.rejects(
       mergeStagedAssets({ assetDir, version: "1.4.14" }),
-      /did not stage: anarlog-linux-aarch64\.AppImage/,
+      /did not stage: session-echo-linux-aarch64\.AppImage/,
     );
   } finally {
     await rm(directory, { recursive: true, force: true });
@@ -205,7 +205,7 @@ test("merges a macOS-only release when Linux and Windows are excluded", async ()
     assert.deepEqual(
       release.assets.map((asset) => asset.id),
       publicAssetFiles({ includeLinux: false, includeWindows: false })
-        .concat(["anarlog-macos-aarch64.app.tar.gz"])
+        .concat(["session-echo-macos-aarch64.app.tar.gz"])
         .sort(),
     );
   } finally {
@@ -224,7 +224,7 @@ test("rejects a platform that was not selected for this release", async () => {
         version: "1.4.14",
         includeWindows: false,
       }),
-      /anarlog-windows-x86_64-setup\.exe is not part of the selected release plan/,
+      /session-echo-windows-x86_64-setup\.exe is not part of the selected release plan/,
     );
   } finally {
     await rm(directory, { recursive: true, force: true });
@@ -236,13 +236,13 @@ test("rejects a staged asset whose bytes changed after the build", async () => {
   try {
     const assetDir = await stageAll(directory, allTargets);
     await writeFile(
-      path.join(assetDir, "anarlog-windows-x86_64-setup.exe"),
+      path.join(assetDir, "session-echo-windows-x86_64-setup.exe"),
       "a much longer replacement payload",
     );
 
     await assert.rejects(
       mergeStagedAssets({ assetDir, version: "1.4.14" }),
-      /anarlog-windows-x86_64-setup\.exe is \d+ bytes, expected \d+/,
+      /session-echo-windows-x86_64-setup\.exe is \d+ bytes, expected \d+/,
     );
   } finally {
     await rm(directory, { recursive: true, force: true });
@@ -276,11 +276,11 @@ test("rejects an updater asset whose signature was stripped from the manifest", 
 
 test("public assets exclude the updater-only macOS archives", () => {
   assert.deepEqual(publicAssetFiles(), [
-    "anarlog-linux-aarch64.AppImage",
-    "anarlog-linux-aarch64.deb",
-    "anarlog-linux-x86_64.AppImage",
-    "anarlog-linux-x86_64.deb",
-    "anarlog-macos-aarch64.dmg",
-    "anarlog-windows-x86_64-setup.exe",
+    "session-echo-linux-aarch64.AppImage",
+    "session-echo-linux-aarch64.deb",
+    "session-echo-linux-x86_64.AppImage",
+    "session-echo-linux-x86_64.deb",
+    "session-echo-macos-aarch64.dmg",
+    "session-echo-windows-x86_64-setup.exe",
   ]);
 });

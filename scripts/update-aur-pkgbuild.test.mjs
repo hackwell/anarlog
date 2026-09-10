@@ -26,8 +26,8 @@ pkgrel=2
 arch=('x86_64' 'aarch64')
 _release="desktop_v\${pkgver}"
 source=("LICENSE-\${pkgver}::https://github.com/flagbit/session-echo/releases/download/\${_release}/LICENSE")
-source_x86_64=("anarlog-\${pkgver}-x86_64.deb::https://github.com/flagbit/session-echo/releases/download/\${_release}/anarlog-linux-x86_64.deb")
-source_aarch64=("anarlog-\${pkgver}-aarch64.deb::https://github.com/flagbit/session-echo/releases/download/\${_release}/anarlog-linux-aarch64.deb")
+source_x86_64=("anarlog-\${pkgver}-x86_64.deb::https://github.com/flagbit/session-echo/releases/download/\${_release}/session-echo-linux-x86_64.deb")
+source_aarch64=("anarlog-\${pkgver}-aarch64.deb::https://github.com/flagbit/session-echo/releases/download/\${_release}/session-echo-linux-aarch64.deb")
 sha256sums=('0000000000000000000000000000000000000000000000000000000000000001')
 sha256sums_x86_64=('0000000000000000000000000000000000000000000000000000000000000002')
 sha256sums_aarch64=('0000000000000000000000000000000000000000000000000000000000000003')
@@ -39,9 +39,9 @@ const SRCINFO = `pkgbase = anarlog-bin
 \tarch = x86_64
 \tsource = LICENSE-1.4.8::https://github.com/flagbit/session-echo/releases/download/desktop_v1.4.8/LICENSE
 \tsha256sums = 0000000000000000000000000000000000000000000000000000000000000001
-\tsource_x86_64 = anarlog-1.4.8-x86_64.deb::https://github.com/flagbit/session-echo/releases/download/desktop_v1.4.8/anarlog-linux-x86_64.deb
+\tsource_x86_64 = anarlog-1.4.8-x86_64.deb::https://github.com/flagbit/session-echo/releases/download/desktop_v1.4.8/session-echo-linux-x86_64.deb
 \tsha256sums_x86_64 = 0000000000000000000000000000000000000000000000000000000000000002
-\tsource_aarch64 = anarlog-1.4.8-aarch64.deb::https://github.com/flagbit/session-echo/releases/download/desktop_v1.4.8/anarlog-linux-aarch64.deb
+\tsource_aarch64 = anarlog-1.4.8-aarch64.deb::https://github.com/flagbit/session-echo/releases/download/desktop_v1.4.8/session-echo-linux-aarch64.deb
 \tsha256sums_aarch64 = 0000000000000000000000000000000000000000000000000000000000000003
 
 pkgname = anarlog-bin
@@ -82,7 +82,7 @@ test("rewrites expanded .SRCINFO source URLs and checksums", () => {
 
   assert.match(next, /^\tpkgver = 1\.5\.0$/m);
   assert.match(next, /^\tpkgrel = 1$/m);
-  assert.ok(next.includes("desktop_v1.5.0/anarlog-linux-x86_64.deb"));
+  assert.ok(next.includes("desktop_v1.5.0/session-echo-linux-x86_64.deb"));
   assert.ok(next.includes("anarlog-1.5.0-aarch64.deb"));
   assert.ok(next.includes("LICENSE-1.5.0::"));
   assert.ok(!next.includes("1.4.8"));

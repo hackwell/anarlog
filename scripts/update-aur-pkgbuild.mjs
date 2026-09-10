@@ -4,14 +4,23 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { parseArgs } from "node:util";
 
-import { releaseRepository } from "./desktop-release-plan.mjs";
+import {
+  releasePlatformPlan,
+  releaseRepository,
+} from "./desktop-release-plan.mjs";
 
 const REPO = releaseRepository();
 const SHA256_PATTERN = /^[0-9a-f]{64}$/;
-const DEB_ASSETS = {
-  x86_64: "anarlog-linux-x86_64.deb",
-  aarch64: "anarlog-linux-aarch64.deb",
-};
+// Read from the release plan rather than written out again: a second copy of an
+// asset name is a second thing to forget when the names change.
+const DEB_ASSETS = Object.fromEntries(
+  releasePlatformPlan.linux.assets
+    .filter((asset) => asset.bundle === "deb")
+    .map((asset) => [
+      asset.buildTarget.startsWith("x86_64") ? "x86_64" : "aarch64",
+      asset.file,
+    ]),
+);
 
 function replaceOnce(contents, pattern, replacement, label) {
   const matches = contents.match(new RegExp(pattern.source, "gm"));

@@ -68,15 +68,15 @@ test("maps every planned updater artifact to a signed download URL", async () =>
     assert.equal(latest.pub_date, "2026-08-27T09:15:00Z");
     assert.equal(latest.notes, notes);
     assert.deepEqual(latest.platforms["darwin-aarch64"], {
-      url: "https://github.com/flagbit/session-echo/releases/download/desktop_v1.4.14/anarlog-macos-aarch64.app.tar.gz",
+      url: "https://github.com/flagbit/session-echo/releases/download/desktop_v1.4.14/session-echo-macos-aarch64.app.tar.gz",
       signature,
     });
     assert.deepEqual(latest.platforms["linux-x86_64-deb"], {
-      url: "https://github.com/flagbit/session-echo/releases/download/desktop_v1.4.14/anarlog-linux-x86_64.deb",
+      url: "https://github.com/flagbit/session-echo/releases/download/desktop_v1.4.14/session-echo-linux-x86_64.deb",
       signature,
     });
     assert.deepEqual(latest.platforms["windows-x86_64-nsis"], {
-      url: "https://github.com/flagbit/session-echo/releases/download/desktop_v1.4.14/anarlog-windows-x86_64-setup.exe",
+      url: "https://github.com/flagbit/session-echo/releases/download/desktop_v1.4.14/session-echo-windows-x86_64-setup.exe",
       signature,
     });
     for (const platform of Object.values(latest.platforms)) {
@@ -169,12 +169,12 @@ test("covers macOS and Linux when Windows is excluded", async () => {
 
 test("fails loudly when an updater signature is missing", async () => {
   const { directory, assetDir } = await stageAssets({
-    omitSignatureFor: "anarlog-linux-aarch64.AppImage",
+    omitSignatureFor: "session-echo-linux-aarch64.AppImage",
   });
   try {
     await assert.rejects(
       buildLatestJson({ assetDir, version, notes, pubDate }),
-      /Missing updater signature anarlog-linux-aarch64\.AppImage\.sig/,
+      /Missing updater signature session-echo-linux-aarch64\.AppImage\.sig/,
     );
   } finally {
     await rm(directory, { recursive: true, force: true });
@@ -183,7 +183,7 @@ test("fails loudly when an updater signature is missing", async () => {
 
 test("never writes a latest.json when a signature is missing", async () => {
   const { directory, assetDir } = await stageAssets({
-    omitSignatureFor: "anarlog-macos-aarch64.app.tar.gz",
+    omitSignatureFor: "session-echo-macos-aarch64.app.tar.gz",
   });
   const output = path.join(directory, "latest.json");
   try {
@@ -201,12 +201,12 @@ test("rejects an empty updater signature", async () => {
   const { directory, assetDir } = await stageAssets();
   try {
     await writeFile(
-      path.join(assetDir, "anarlog-windows-x86_64-setup.exe.sig"),
+      path.join(assetDir, "session-echo-windows-x86_64-setup.exe.sig"),
       "   \n",
     );
     await assert.rejects(
       buildLatestJson({ assetDir, version, notes, pubDate }),
-      /anarlog-windows-x86_64-setup\.exe\.sig is empty/,
+      /session-echo-windows-x86_64-setup\.exe\.sig is empty/,
     );
   } finally {
     await rm(directory, { recursive: true, force: true });
@@ -215,12 +215,12 @@ test("rejects an empty updater signature", async () => {
 
 test("rejects a missing updater artifact", async () => {
   const { directory, assetDir } = await stageAssets({
-    omitArtifactFor: "anarlog-macos-aarch64.app.tar.gz",
+    omitArtifactFor: "session-echo-macos-aarch64.app.tar.gz",
   });
   try {
     await assert.rejects(
       buildLatestJson({ assetDir, version, notes, pubDate }),
-      /Missing updater artifact anarlog-macos-aarch64\.app\.tar\.gz/,
+      /Missing updater artifact session-echo-macos-aarch64\.app\.tar\.gz/,
     );
   } finally {
     await rm(directory, { recursive: true, force: true });
