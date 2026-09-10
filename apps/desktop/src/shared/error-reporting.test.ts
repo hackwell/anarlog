@@ -53,17 +53,52 @@ describe("scrubEvent", () => {
       server_name: "a-personal-machine.local",
     });
 
-    expect(event.message).toBe("failed for [EMAIL_REDACTED]");
-    expect(event.exception?.values?.[0]?.value).toBe(
+    expect(event).not.toBeNull();
+    expect(event!.message).toBe("failed for [EMAIL_REDACTED]");
+    expect(event!.exception?.values?.[0]?.value).toBe(
       "host [IP_REDACTED] refused",
     );
-    expect(event.breadcrumbs?.[0]?.message).toBe(
+    expect(event!.breadcrumbs?.[0]?.message).toBe(
       "retrying for [EMAIL_REDACTED]",
     );
-    expect(event.breadcrumbs?.[0]?.data?.detail).toEqual(["[EMAIL_REDACTED]"]);
-    expect(event.extra?.path).toBe("[EMAIL_REDACTED]");
+    expect(event!.breadcrumbs?.[0]?.data?.detail).toEqual(["[EMAIL_REDACTED]"]);
+    expect(event!.extra?.path).toBe("[EMAIL_REDACTED]");
     // The anonymous installation id survives; nothing else about the person does.
-    expect(event.user).toEqual({ id: "install-1" });
-    expect(event.server_name).toBeUndefined();
+    expect(event!.user).toEqual({ id: "install-1" });
+    expect(event!.server_name).toBeUndefined();
+  });
+});
+
+describe("repeat throttling", () => {
+  const failure = () =>
+    __testing.scrubEvent({
+      type: undefined,
+      exception: { values: [{ type: "SyntaxError", value: "same failure" }] },
+    } as never);
+
+  it("lets the first few of a repeating failure through and drops the rest", () => {
+    __testing.resetRepeatWindow();
+
+    expect(failure()).not.toBeNull();
+    expect(failure()).not.toBeNull();
+    expect(failure()).not.toBeNull();
+    expect(failure()).toBeNull();
+    expect(failure()).toBeNull();
+  });
+
+  it("does not throttle a different failure", () => {
+    __testing.resetRepeatWindow();
+
+    failure();
+    failure();
+    failure();
+    failure();
+
+    expect(
+      __testing.scrubEvent({
+        type: undefined,
+        exception: { values: [{ type: "TypeError", value: "another one" }] },
+      } as never),
+    ).not.toBeNull();
   });
 });

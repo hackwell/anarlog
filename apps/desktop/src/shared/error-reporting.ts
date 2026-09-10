@@ -72,7 +72,30 @@ export async function initErrorReporting() {
   }
 }
 
-function scrubEvent(event: Sentry.ErrorEvent): Sentry.ErrorEvent {
+// A failure inside a poll or a re-render does not happen once, it happens every
+// few seconds: the transcript parse bug sent 21 reports in 90 seconds. Sentry
+// groups them into one issue either way, so the repeats buy nothing and cost
+// quota. The first few of each kind still go, in case the repetition itself is
+// the story.
+const REPEAT_WINDOW_MS = 60_000;
+const REPEATS_PER_WINDOW = 3;
+const seen = new Map<string, { count: number; windowStartedAt: number }>();
+
+function isRepeat(event: Sentry.ErrorEvent): boolean {
+  const exception = event.exception?.values?.[0];
+  const key = `${exception?.type ?? ""}:${exception?.value ?? event.message ?? ""}`;
+  const now = Date.now();
+  const previous = seen.get(key);
+  if (!previous || now - previous.windowStartedAt > REPEAT_WINDOW_MS) {
+    seen.set(key, { count: 1, windowStartedAt: now });
+    return false;
+  }
+  previous.count += 1;
+  return previous.count > REPEATS_PER_WINDOW;
+}
+
+function scrubEvent(event: Sentry.ErrorEvent): Sentry.ErrorEvent | null {
+  if (isRepeat(event)) return null;
   if (event.message) event.message = scrubText(event.message);
   for (const exception of event.exception?.values ?? []) {
     if (exception.value) exception.value = scrubText(exception.value);
@@ -96,6 +119,7 @@ function scrubEvent(event: Sentry.ErrorEvent): Sentry.ErrorEvent {
 
 export const __testing = {
   scrubEvent,
+  resetRepeatWindow: () => seen.clear(),
   setHomePath: (path: string | null) => {
     homePath = path;
   },
