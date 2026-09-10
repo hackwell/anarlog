@@ -263,8 +263,18 @@ jobs:
       # Only used to hand Sentry the sourcemaps. The build step skips the upload
       # without SENTRY_AUTH_TOKEN, so this stays harmless in a fork.
       - name: Install the Sentry CLI
+        continue-on-error: true
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
         run: |
-          curl https://cli.sentry.dev/install -fsS | bash
+          if [[ -z "$SENTRY_AUTH_TOKEN" ]]; then
+            echo "no SENTRY_AUTH_TOKEN, nothing to upload; skipping the Sentry CLI"
+            exit 0
+          fi
+          if ! curl https://cli.sentry.dev/install -fsS | bash; then
+            echo "::warning::Could not install the Sentry CLI; this release ships without sourcemaps"
+            exit 0
+          fi
           echo "$HOME/.local/bin" >> "$GITHUB_PATH"
       # Names the commit a new issue most likely came from. Needs the full
       # history, which this job checks out with fetch-depth 0.
