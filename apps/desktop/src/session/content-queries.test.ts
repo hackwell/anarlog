@@ -47,7 +47,10 @@ describe("session content SQLite snapshots", () => {
               },
             ]),
             speaker_hints_json: "[]",
-            pending_deltas_json: JSON.stringify([
+            // Nested in a `json_object`, SQLite hands this back already parsed.
+            // The fixture said `JSON.stringify(...)` and so the test passed
+            // while production logged a syntax error on every load.
+            pending_deltas_json: [
               {
                 new_words: [
                   {
@@ -62,7 +65,7 @@ describe("session content SQLite snapshots", () => {
                 replaced_ids: [],
                 partials: [],
               },
-            ]),
+            ],
           },
         ]),
         participants_json: "[]",

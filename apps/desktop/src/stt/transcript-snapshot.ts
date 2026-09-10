@@ -21,7 +21,7 @@ export function materializeTranscriptSnapshot(
   wordsJson: string,
   hintsJson: string,
   transcriptId: string,
-  pendingDeltasJson: string,
+  pendingDeltasJson: string | readonly unknown[],
 ) {
   const deltas = parseLiveTranscriptDeltas(pendingDeltasJson, transcriptId);
   if (deltas.length === 0) return { wordsJson, hintsJson };
@@ -35,13 +35,20 @@ export function materializeTranscriptSnapshot(
   );
 }
 
+// The deltas reach this function in two shapes. Read from a column of their own
+// they arrive as text; nested inside a `json_object`, SQLite keeps the JSON
+// subtype through the COALESCE and hands back a parsed array instead. Passing
+// that array to JSON.parse stringifies it first — to "" when empty and to
+// "[object Object]" when not — which is how a delta-aware query came to report a
+// syntax error on every load and silently drop every pending word.
 export function parseLiveTranscriptDeltas(
-  value: string | undefined,
+  value: string | readonly unknown[] | undefined,
   transcriptId: string,
 ): LiveTranscriptDelta[] {
   if (!value) return [];
+  if (Array.isArray(value)) return value as LiveTranscriptDelta[];
   try {
-    const parsed = JSON.parse(value);
+    const parsed = JSON.parse(value as string);
     if (Array.isArray(parsed)) return parsed as LiveTranscriptDelta[];
   } catch (error) {
     console.error(

@@ -1,4 +1,5 @@
 import { json2md } from "@anlg/editor/markdown";
+import type { LiveTranscriptDelta } from "@anlg/plugin-transcription";
 
 import { liveQueryClient } from "~/db";
 import { materializeTranscriptSnapshot } from "~/stt/transcript-snapshot";
@@ -37,7 +38,8 @@ type TranscriptJson = {
   memo: string;
   words_json: string;
   speaker_hints_json: string;
-  pending_deltas_json: string;
+  // A nested `json_group_array` comes back parsed, not as text.
+  pending_deltas_json: LiveTranscriptDelta[];
 };
 
 type ParticipantJson = {
