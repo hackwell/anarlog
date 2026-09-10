@@ -3959,6 +3959,7 @@ dependencies = [
  "tempfile",
  "tokio",
  "tracing",
+ "uuid",
  "windows 0.62.2",
  "windows-registry 0.5.3",
 ]

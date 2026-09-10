@@ -106,6 +106,7 @@ strum = { workspace = true, features = ["derive"] }
 tauri-specta = { workspace = true, features = ["derive", "typescript"] }
 tokio = { workspace = true, features = ["rt-multi-thread", "macros"] }
 tracing = { workspace = true }
+uuid = { version = "1", features = ["v4"] }
 
 [features]
 default = []

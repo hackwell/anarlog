@@ -136,7 +136,16 @@ pub const JS_INIT_SCRIPT: &str = r#"
         const originalError = console.error.bind(console);
         
         const invoke = window.__TAURI__.core.invoke;
-        const log = (level, ...args) => invoke('plugin:tracing|do_log', { level, data: args });
+        // An Error keeps its name, message and stack on non-enumerable
+        // properties, so handing one straight to invoke serialises it to {} and
+        // the log line says nothing about what actually went wrong.
+        const forLog = (value) => {
+            const isError = value instanceof Error
+                || (value && typeof value.message === 'string' && typeof value.stack === 'string');
+            if (!isError) return value;
+            return { name: value.name, message: value.message, stack: value.stack };
+        };
+        const log = (level, ...args) => invoke('plugin:tracing|do_log', { level, data: args.map(forLog) });
         
         console.log = (...args) => { originalLog(...args); log('INFO', ...args); };
         console.debug = (...args) => { originalDebug(...args); log('DEBUG', ...args); };
@@ -173,6 +182,46 @@ mod tests {
         let context = Context::full(&runtime).unwrap();
         context.with(|_ctx| {});
         (runtime, context)
+    }
+
+    #[test]
+    fn console_forwarding_keeps_an_error_readable() {
+        let (_rt, ctx) = setup_runtime();
+        ctx.with(|ctx| {
+            let setup = r#"
+                globalThis.window = globalThis;
+                globalThis.setTimeout = function(fn, delay) { fn(); };
+                globalThis.console = {
+                    log: function() {}, debug: function() {}, info: function() {},
+                    warn: function() {}, error: function() {}
+                };
+                globalThis.captured = null;
+                globalThis.window.__TAURI__ = {
+                    core: {
+                        invoke: function(_cmd, payload) {
+                            globalThis.captured = payload;
+                            return Promise.resolve();
+                        }
+                    }
+                };
+            "#;
+            ctx.eval::<(), _>(setup).unwrap();
+            ctx.eval::<(), _>(super::JS_INIT_SCRIPT).unwrap();
+            ctx.eval::<(), _>("console.error('broke', new TypeError('bad shape'));")
+                .unwrap();
+
+            let name: String = ctx.eval("globalThis.captured.data[1].name").unwrap();
+            let message: String = ctx.eval("globalThis.captured.data[1].message").unwrap();
+            let has_stack: bool = ctx
+                .eval("typeof globalThis.captured.data[1].stack === 'string'")
+                .unwrap();
+            let plain: String = ctx.eval("globalThis.captured.data[0]").unwrap();
+
+            assert_eq!(name, "TypeError");
+            assert_eq!(message, "bad shape");
+            assert!(has_stack);
+            assert_eq!(plain, "broke", "ordinary arguments pass through unchanged");
+        });
     }
 
     #[test]

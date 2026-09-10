@@ -41,6 +41,9 @@ async setDismissedToasts(v: string[]) : Promise<Result<null, string>> {
 async getEnv(key: string) : Promise<string> {
     return await TAURI_INVOKE("get_env", { key });
 },
+async getInstallId() : Promise<string> {
+    return await TAURI_INVOKE("get_install_id");
+},
 async showDevtool() : Promise<boolean> {
     return await TAURI_INVOKE("show_devtool");
 },

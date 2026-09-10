@@ -13,6 +13,7 @@ import { useSearchEngine } from "~/search/contexts/engine";
 import { initEnhancerService } from "~/services/enhancer";
 import { useConfigValue } from "~/shared/config";
 import { useDesktopTabLifecycle } from "~/shared/desktop-tab-lifecycle";
+import { useErrorReportingTags } from "~/shared/error-reporting";
 import { useTabs } from "~/store/zustand/tabs";
 import { LiveCaptureRecovery } from "~/stt/live-capture-recovery";
 import { ScheduledMeetingAutoStart } from "~/stt/scheduled-auto-start";
@@ -51,8 +52,14 @@ export function ClassicMainServices() {
       <EnhancerInit />
       <OwnEmailDomainSeed />
       <TranscriptCompactionSweep />
+      <ErrorReportingTags />
     </>
   );
+}
+
+function ErrorReportingTags() {
+  useErrorReportingTags();
+  return null;
 }
 
 function OwnEmailDomainSeed() {

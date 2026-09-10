@@ -46,6 +46,12 @@ pub async fn get_env<R: tauri::Runtime>(_app: tauri::AppHandle<R>, key: String) 
     std::env::var(&key).unwrap_or_default()
 }
 
+#[tauri::command]
+#[specta::specta]
+pub async fn get_install_id<R: tauri::Runtime>(app: tauri::AppHandle<R>) -> String {
+    crate::error_reporting::install_id(&app.config().identifier).unwrap_or_default()
+}
+
 fn should_show_devtool(identifier: &str) -> bool {
     cfg!(any(debug_assertions, feature = "dev", feature = "devtools"))
         || identifier == STAGING_BUNDLE_ID

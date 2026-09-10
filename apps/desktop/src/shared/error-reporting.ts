@@ -1,6 +1,10 @@
 import * as Sentry from "@sentry/react";
 import { getVersion } from "@tauri-apps/api/app";
 import { homeDir } from "@tauri-apps/api/path";
+import { useEffect } from "react";
+
+import { useConfigValues } from "~/shared/config";
+import { commands } from "~/types/tauri.gen";
 
 const EMAIL = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g;
 const IPV4 = /\b(?:\d{1,3}\.){3}\d{1,3}\b/g;
@@ -38,9 +42,10 @@ export async function initErrorReporting() {
   const dsn = import.meta.env.VITE_SENTRY_DSN;
   if (!dsn) return;
 
-  const [version, home] = await Promise.all([
+  const [version, home, installId] = await Promise.all([
     getVersion().catch(() => "unknown"),
     homeDir().catch(() => null),
+    commands.getInstallId().catch(() => ""),
   ]);
   homePath = home?.replace(/\/$/, "") ?? null;
 
@@ -61,6 +66,10 @@ export async function initErrorReporting() {
     ],
     beforeSend: scrubEvent,
   });
+
+  if (installId) {
+    Sentry.setUser({ id: installId });
+  }
 }
 
 function scrubEvent(event: Sentry.ErrorEvent): Sentry.ErrorEvent {
@@ -78,7 +87,9 @@ function scrubEvent(event: Sentry.ErrorEvent): Sentry.ErrorEvent {
   // The webview reports the app's own file URLs, and the user's name is usually
   // in the path.
   if (event.request?.url) event.request.url = scrubText(event.request.url);
-  delete event.user;
+  // The anonymous installation id is the only thing worth keeping; anything
+  // else Sentry filled in about the person or the machine is not ours to send.
+  event.user = event.user?.id ? { id: event.user.id } : undefined;
   delete event.server_name;
   return event;
 }
@@ -89,3 +100,34 @@ export const __testing = {
     homePath = path;
   },
 };
+
+// The tags we actually want to filter by when a report comes in. A transcription
+// error whose provider and model are on the event is a one-line diagnosis; the
+// same error without them is a search through the code.
+export function useErrorReportingTags() {
+  const {
+    current_llm_provider,
+    current_llm_model,
+    current_stt_provider,
+    current_stt_model,
+  } = useConfigValues([
+    "current_llm_provider",
+    "current_llm_model",
+    "current_stt_provider",
+    "current_stt_model",
+  ] as const);
+
+  useEffect(() => {
+    Sentry.setTags({
+      "llm.provider": current_llm_provider ?? "",
+      "llm.model": current_llm_model ?? "",
+      "stt.provider": current_stt_provider ?? "",
+      "stt.model": current_stt_model ?? "",
+    });
+  }, [
+    current_llm_provider,
+    current_llm_model,
+    current_stt_provider,
+    current_stt_model,
+  ]);
+}

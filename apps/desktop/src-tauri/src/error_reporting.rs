@@ -15,9 +15,35 @@ fn dsn() -> Option<String> {
         .filter(|dsn| !dsn.is_empty())
 }
 
+const INSTALL_ID_FILENAME: &str = "install-id";
+
+/// A random identifier for this installation. It is what tells one machine
+/// reporting an error eleven times apart from eleven machines reporting it once
+/// — the only thing a user count can be built from without knowing anything
+/// about a person. Generated here, tied to no account, sent nowhere else.
+pub fn install_id(identifier: &str) -> Option<String> {
+    let dir = crate::db::desktop_db_dir(identifier)?;
+    let path = dir.join(INSTALL_ID_FILENAME);
+    if let Ok(existing) = std::fs::read_to_string(&path) {
+        let existing = existing.trim();
+        if !existing.is_empty() {
+            return Some(existing.to_owned());
+        }
+    }
+
+    let generated = uuid::Uuid::new_v4().to_string();
+    std::fs::create_dir_all(&dir).ok()?;
+    std::fs::write(&path, &generated).ok()?;
+    Some(generated)
+}
+
 /// Starts error reporting. The returned guard flushes pending events when it is
 /// dropped, so it has to live for as long as the process does.
-pub fn init(version: &str, is_dev_build: bool) -> Option<sentry::ClientInitGuard> {
+pub fn init(
+    version: &str,
+    is_dev_build: bool,
+    install_id: Option<String>,
+) -> Option<sentry::ClientInitGuard> {
     let dsn = dsn()?;
 
     // `ClientOptions` is non-exhaustive, so it is filled in field by field.
@@ -37,14 +63,31 @@ pub fn init(version: &str, is_dev_build: bool) -> Option<sentry::ClientInitGuard
     options.before_send = Some(Arc::new(|event| Some(scrub_event(event))));
     options.before_breadcrumb = Some(Arc::new(|breadcrumb| Some(scrub_breadcrumb(breadcrumb))));
 
-    Some(sentry::init((dsn, options)))
+    let guard = sentry::init((dsn, options));
+    if let Some(install_id) = install_id {
+        sentry::configure_scope(|scope| {
+            scope.set_user(Some(sentry::User {
+                id: Some(install_id),
+                ..Default::default()
+            }));
+        });
+    }
+    Some(guard)
 }
 
 fn scrub_event(mut event: Event<'static>) -> Event<'static> {
     // The hostname of a personal machine is usually its owner's name, and the
     // username is always one. Sentry fills both in by default.
     event.server_name = None;
-    event.user = None;
+    // The anonymous installation id is the only thing worth keeping here;
+    // username, email and IP are filled in by Sentry and are not ours to send.
+    if let Some(user) = event.user.as_mut() {
+        let id = user.id.take();
+        *user = sentry::protocol::User {
+            id,
+            ..Default::default()
+        };
+    }
 
     if let Some(message) = event.message.take() {
         event.message = Some(redact_text(&message));
@@ -101,11 +144,20 @@ mod tests {
         let mut event = Event::default();
         event.server_name = Some("Joergs-MacBook-Pro.local".into());
         event.message = Some("failed to reach person@example.com from 192.168.1.4".to_string());
+        event.user = Some(sentry::protocol::User {
+            id: Some("install-1".to_string()),
+            email: Some("person@example.com".to_string()),
+            username: Some("someone".to_string()),
+            ..Default::default()
+        });
 
         let scrubbed = scrub_event(event);
 
         assert!(scrubbed.server_name.is_none());
-        assert!(scrubbed.user.is_none());
+        let user = scrubbed.user.as_ref().expect("the installation id stays");
+        assert_eq!(user.id.as_deref(), Some("install-1"));
+        assert!(user.email.is_none(), "the address does not");
+        assert!(user.username.is_none(), "nor the name");
         let message = scrubbed.message.expect("message survives");
         assert!(!message.contains("person@example.com"), "{message}");
         assert!(!message.contains("192.168.1.4"), "{message}");

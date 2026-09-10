@@ -45,7 +45,11 @@ describe("scrubEvent", () => {
         },
       ],
       extra: { path: "person@example.com" },
-      user: { id: "someone" },
+      user: {
+        id: "install-1",
+        email: "person@example.com",
+        username: "someone",
+      },
       server_name: "a-personal-machine.local",
     });
 
@@ -58,7 +62,8 @@ describe("scrubEvent", () => {
     );
     expect(event.breadcrumbs?.[0]?.data?.detail).toEqual(["[EMAIL_REDACTED]"]);
     expect(event.extra?.path).toBe("[EMAIL_REDACTED]");
-    expect(event.user).toBeUndefined();
+    // The anonymous installation id survives; nothing else about the person does.
+    expect(event.user).toEqual({ id: "install-1" });
     expect(event.server_name).toBeUndefined();
   });
 });
