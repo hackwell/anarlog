@@ -644,6 +644,29 @@ mod test {
     }
 
     #[test]
+    fn main_capability_allows_the_window_commands_the_app_calls() {
+        let capability: serde_json::Value =
+            serde_json::from_str(include_str!("../capabilities/default.json")).unwrap();
+        let permissions = capability["permissions"].as_array().unwrap();
+
+        // Every one of these is called from the frontend, and a missing entry
+        // fails at run time as "not allowed by ACL" — a console error the user
+        // never sees while the feature quietly does nothing. The dock bounce
+        // shipped that way.
+        for expected in [
+            "core:window:allow-request-user-attention",
+            "core:window:allow-set-focus",
+            "core:window:allow-show",
+            "core:window:allow-minimize",
+        ] {
+            assert!(
+                permissions.iter().any(|permission| permission == expected),
+                "missing permission: {expected}"
+            );
+        }
+    }
+
+    #[test]
     fn export_types() {
         const OUTPUT_FILE: &str = "../src/types/tauri.gen.ts";
 
