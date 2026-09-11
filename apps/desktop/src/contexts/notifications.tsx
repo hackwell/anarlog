@@ -17,6 +17,7 @@ import {
 import { sonnerToast } from "@anlg/ui/components/ui/toast";
 
 import { useConfigValues } from "~/shared/config";
+import { stopTauriListener } from "~/shared/stop-tauri-listener";
 import type { DownloadProgress } from "~/sidebar/toast/types";
 import { useTabs } from "~/store/zustand/tabs";
 import { isConfiguredSttModel, isOnDeviceSttModel } from "~/stt/capabilities";
@@ -112,7 +113,7 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
     });
 
     return () => {
-      void unlisten.then((fn) => fn());
+      stopTauriListener(unlisten);
     };
   }, []);
 

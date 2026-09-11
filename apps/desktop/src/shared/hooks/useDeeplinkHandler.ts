@@ -17,6 +17,7 @@ import { useScheduleTaskRunCallback } from "~/services/task-scheduler";
 import { subscribeThenDrainDeepLinks } from "~/shared/deeplink";
 import { useLatestRef } from "~/shared/hooks/useLatestRef";
 import { useMountEffect } from "~/shared/hooks/useMountEffect";
+import { stopTauriListener } from "~/shared/stop-tauri-listener";
 import { useTabs } from "~/store/zustand/tabs";
 
 export function useDeeplinkHandler() {
@@ -95,7 +96,7 @@ export function useDeeplinkHandler() {
       for (const timeoutId of timeoutIds) {
         window.clearTimeout(timeoutId);
       }
-      void deepLinkSubscription.then((fn) => fn()).catch(() => {});
+      stopTauriListener(deepLinkSubscription);
     };
   });
 }

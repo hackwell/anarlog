@@ -30,6 +30,7 @@ import {
 } from "~/services/task-scheduler";
 import { useConfigValue } from "~/shared/config";
 import { useMountEffect } from "~/shared/hooks/useMountEffect";
+import { stopTauriListener } from "~/shared/stop-tauri-listener";
 
 const CALENDAR_SYNC_INTERVAL = 60 * 1000; // 60 sec
 const CALENDAR_SYNC_MAX_DURATION = 120 * 1000; // 2 min
@@ -104,8 +105,8 @@ export function TaskManager() {
     return () => {
       clearNextSync();
       manager.delListener(taskRunListenerId);
-      unlisten.then((fn) => fn());
-      unlistenMicrosoft.then((fn) => fn());
+      stopTauriListener(unlisten);
+      stopTauriListener(unlistenMicrosoft);
     };
   });
 

@@ -8,6 +8,8 @@ import {
   type LocalModel,
 } from "@anlg/plugin-local-stt";
 
+import { stopTauriListener } from "~/shared/stop-tauri-listener";
+
 export const localSttKeys = {
   all: ["local-stt"] as const,
   models: () => [...localSttKeys.all, "model"] as const,
@@ -101,7 +103,7 @@ export function useLocalModelDownload(
     });
 
     return () => {
-      void unlisten.then((fn) => fn());
+      stopTauriListener(unlisten);
     };
   }, [model, refetchDownloaded, refetchDownloading]);
 
