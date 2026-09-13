@@ -174,7 +174,6 @@ export function TrayLabelsSync() {
       minutes: t`m`,
       hours: t`h`,
       today: t`Today`,
-      tomorrow: t`Tomorrow`,
       agendaRecord: t`Start Recording`,
       agendaJoinAndRecord: t`Join & Record`,
       agendaPrepareNote: t`Prepare Note`,

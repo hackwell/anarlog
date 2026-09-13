@@ -3417,7 +3417,6 @@ msgstr "Tip: The Session Echo team loves our users!"
 msgid "Today"
 msgstr "Today"
 
-#: src/services/tray-schedule.tsx
 #: src/sidebar/timeline/utils/index.ts
 msgid "Tomorrow"
 msgstr "Tomorrow"

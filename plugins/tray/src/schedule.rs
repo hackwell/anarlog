@@ -35,7 +35,6 @@ pub struct TrayLabels {
     pub minutes: String,
     pub hours: String,
     pub today: String,
-    pub tomorrow: String,
     pub agenda_record: String,
     pub agenda_join_and_record: String,
     pub agenda_prepare_note: String,
@@ -72,7 +71,6 @@ impl Default for TrayLabels {
             minutes: "m".to_string(),
             hours: "h".to_string(),
             today: "Today".to_string(),
-            tomorrow: "Tomorrow".to_string(),
             agenda_record: "Start Recording".to_string(),
             agenda_join_and_record: "Join & Record".to_string(),
             agenda_prepare_note: "Prepare Note".to_string(),
@@ -169,18 +167,16 @@ pub fn agenda_sections(
     sections
 }
 
-fn agenda_day_label(event: &TrayScheduleEvent, now_ms: f64, labels: &TrayLabels) -> Option<String> {
-    if !event.day_start_ms.is_finite() || !event.previous_day_start_ms.is_finite() {
-        return None;
-    }
+/// The menu bar answers "what is left of today". An event whose day has not
+/// started yet is tomorrow's business, however few hours away it is, and showing
+/// it at six in the evening makes the glance say something about a day the
+/// person is not in yet.
+fn starts_today(event: &TrayScheduleEvent, now_ms: f64) -> bool {
+    event.day_start_ms.is_finite() && now_ms >= event.day_start_ms
+}
 
-    if now_ms >= event.day_start_ms {
-        Some(labels.today.clone())
-    } else if now_ms >= event.previous_day_start_ms {
-        Some(labels.tomorrow.clone())
-    } else {
-        None
-    }
+fn agenda_day_label(event: &TrayScheduleEvent, now_ms: f64, labels: &TrayLabels) -> Option<String> {
+    starts_today(event, now_ms).then(|| labels.today.clone())
 }
 
 pub fn menu_bar_title(
@@ -291,7 +287,7 @@ fn upcoming_event(events: &[TrayScheduleEvent], now_ms: f64) -> Option<&TraySche
         .filter(|event| {
             event.starts_at_ms.is_finite()
                 && event.starts_at_ms > now_ms
-                && event.starts_at_ms - now_ms <= DISPLAY_HORIZON_MS
+                && starts_today(event, now_ms)
         })
         .min_by(|left, right| {
             left.starts_at_ms
@@ -544,7 +540,7 @@ mod tests {
     }
 
     #[test]
-    fn groups_remaining_events_by_day_and_drops_what_has_finished() {
+    fn keeps_today_and_drops_what_finished_or_belongs_to_tomorrow() {
         let now = 1_000_000.0;
         let mut events = vec![
             event("Active", now - 1_000.0, Some(now + 60_000.0)),
@@ -558,38 +554,30 @@ mod tests {
             event.previous_day_start_ms = now - 86_400_000.0;
         }
 
+        // The last three start within minutes, but on a day that has not begun.
         assert_eq!(
             agenda_sections(&events, now, true, &TrayLabels::default()),
-            vec![
-                TrayAgendaSection {
-                    label: "Today".to_string(),
-                    events: vec![TrayAgendaEvent {
-                        id: "active".to_string(),
-                        label: "9:00 AM – 9:30 AM · Active".to_string(),
-                        has_meeting_link: false,
-                    }],
-                },
-                TrayAgendaSection {
-                    label: "Tomorrow".to_string(),
-                    events: vec![
-                        TrayAgendaEvent {
-                            id: "next".to_string(),
-                            label: "9:00 AM – 9:30 AM · Next".to_string(),
-                            has_meeting_link: false,
-                        },
-                        TrayAgendaEvent {
-                            id: "tomorrow-one".to_string(),
-                            label: "9:00 AM – 9:30 AM · Tomorrow one".to_string(),
-                            has_meeting_link: false,
-                        },
-                        TrayAgendaEvent {
-                            id: "tomorrow-two".to_string(),
-                            label: "9:00 AM – 9:30 AM · Tomorrow two".to_string(),
-                            has_meeting_link: false,
-                        },
-                    ],
-                },
-            ]
+            vec![TrayAgendaSection {
+                label: "Today".to_string(),
+                events: vec![TrayAgendaEvent {
+                    id: "active".to_string(),
+                    label: "9:00 AM – 9:30 AM · Active".to_string(),
+                    has_meeting_link: false,
+                }],
+            }]
+        );
+    }
+
+    #[test]
+    fn keeps_a_title_for_tomorrow_out_of_the_menu_bar() {
+        let now = 1_000_000.0;
+        let mut next_day = event("Morning sync", now + 60_000.0, None);
+        next_day.day_start_ms = now + 1.0;
+        next_day.previous_day_start_ms = now - 86_400_000.0;
+
+        assert_eq!(
+            menu_bar_title(&[next_day], now, true, false, None, &TrayLabels::default()),
+            None
         );
     }
 
@@ -629,21 +617,21 @@ mod tests {
     }
 
     #[test]
-    fn relabels_tomorrow_after_local_midnight() {
+    fn shows_an_event_only_once_its_day_has_begun() {
         let midnight = 2_000_000.0;
         let mut next_day = event("Morning sync", midnight + 60_000.0, None);
         next_day.day_start_ms = midnight;
         next_day.previous_day_start_ms = midnight - 86_400_000.0;
 
-        assert_eq!(
+        assert!(
             agenda_sections(
                 &[next_day.clone()],
                 midnight - 1.0,
                 true,
                 &TrayLabels::default()
-            )[0]
-            .label,
-            "Tomorrow"
+            )
+            .is_empty(),
+            "a minute before midnight the event still belongs to tomorrow"
         );
         assert_eq!(
             agenda_sections(&[next_day], midnight, true, &TrayLabels::default())[0].label,

@@ -71,7 +71,7 @@ remaining: string;
 /**
  * A meeting still ahead, e.g. `" • in {duration}"`.
  */
-upcoming: string; seconds: string; minutes: string; hours: string; today: string; tomorrow: string; agendaRecord: string; agendaJoinAndRecord: string; agendaPrepareNote: string; agendaOpenLink: string; openApp: string; startMeeting: string; newNote: string; settings: string; checkUpdates: string; downloadingUpdate: string; restartToApply: string; updateAvailable: string; updateFailed: string; updateCheckFailed: string; quitCompletelyTitle: string; updateReady: string; installFailed: string; downloadFailed: string; checkFailed: string; reportBug: string; suggestFeature: string; about: string; quit: string; quitCompletely: string }
+upcoming: string; seconds: string; minutes: string; hours: string; today: string; agendaRecord: string; agendaJoinAndRecord: string; agendaPrepareNote: string; agendaOpenLink: string; openApp: string; startMeeting: string; newNote: string; settings: string; checkUpdates: string; downloadingUpdate: string; restartToApply: string; updateAvailable: string; updateFailed: string; updateCheckFailed: string; quitCompletelyTitle: string; updateReady: string; installFailed: string; downloadFailed: string; checkFailed: string; reportBug: string; suggestFeature: string; about: string; quit: string; quitCompletely: string }
 export type TrayScheduleEvent = { id: string; title: string; meetingLink: string | null; startsAtMs: number; endsAtMs: number | null; dayStartMs: number; previousDayStartMs: number; timeLabel: string }
 
 /** tauri-specta globals **/
