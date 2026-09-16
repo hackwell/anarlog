@@ -156,6 +156,11 @@ fn resolve_meeting_link(location: Option<&str>, description: Option<&str>) -> Op
     location
         .and_then(crate::parse_meeting_link)
         .or_else(|| description.and_then(crate::parse_meeting_link))
+        // Last resort for a provider nobody here has heard of. Only the
+        // location earns it: that field is one line the organiser typed, so a
+        // URL in it is the meeting. An invitation body is markup, and its first
+        // URL is a namespace or a footer far more often than a join link.
+        .or_else(|| location.and_then(crate::first_url))
 }
 
 // Providers that hand out a join URL of their own (Teams, and whatever else an
@@ -199,5 +204,26 @@ mod meeting_link_tests {
             None
         );
         assert_eq!(resolve_meeting_link(None, None), None);
+    }
+
+    #[test]
+    fn an_unknown_provider_is_taken_from_the_location_only() {
+        let whereby = "https://whereby.com/flagbit-standup";
+
+        assert_eq!(
+            resolve_meeting_link(Some(whereby), None),
+            Some(whereby.to_string())
+        );
+        // The same URL buried in an invitation body proves nothing: the body is
+        // full of URLs that are not the meeting.
+        assert_eq!(resolve_meeting_link(Some("Room 4"), Some(whereby)), None);
+    }
+
+    #[test]
+    fn a_known_provider_in_the_body_beats_a_stray_url_in_the_location() {
+        assert_eq!(
+            resolve_meeting_link(Some("https://intranet.example/rooms/4"), Some(MEET_LINK)),
+            Some(MEET_LINK.to_string())
+        );
     }
 }
