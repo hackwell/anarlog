@@ -14,6 +14,31 @@ use anlg_transcribe_core::TARGET_SAMPLE_RATE;
 use super::super::BatchParams;
 use super::*;
 
+#[derive(Default)]
+struct RecordingRuntime {
+    events: std::sync::Mutex<Vec<crate::BatchEvent>>,
+}
+
+impl RecordingRuntime {
+    fn progress_percentages(&self) -> Vec<f64> {
+        self.events
+            .lock()
+            .unwrap()
+            .iter()
+            .filter_map(|event| match event {
+                crate::BatchEvent::BatchResponseStreamed { event, .. } => Some(event.percentage()),
+                _ => None,
+            })
+            .collect()
+    }
+}
+
+impl crate::BatchRuntime for RecordingRuntime {
+    fn emit(&self, event: crate::BatchEvent) {
+        self.events.lock().unwrap().push(event);
+    }
+}
+
 #[derive(Clone, Default)]
 struct HangingHttpAdapter;
 
@@ -303,8 +328,10 @@ async fn oversized_audio_is_uploaded_one_segment_at_a_time() {
         max_speakers: None,
     };
 
+    let runtime = Arc::new(RecordingRuntime::default());
     let output = run_direct_batch::<RecordingAdapter>(
         "recording",
+        runtime.clone(),
         params,
         owhisper_interface::ListenParams::default(),
         Some(owhisper_client::BatchUploadLimit {
@@ -314,6 +341,12 @@ async fn oversized_audio_is_uploaded_one_segment_at_a_time() {
     )
     .await
     .unwrap();
+
+    assert_eq!(
+        runtime.progress_percentages(),
+        vec![0.0, 1.0 / 3.0, 2.0 / 3.0, 1.0],
+        "segmenting claims progress up front, then reports each finished segment"
+    );
 
     let uploads = SEGMENT_UPLOADS.lock().unwrap().clone();
     assert_eq!(uploads.len(), 3, "3s of audio in 1s segments");

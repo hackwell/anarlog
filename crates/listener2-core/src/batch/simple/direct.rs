@@ -1,4 +1,5 @@
 use std::path::{Path, PathBuf};
+use std::sync::Arc;
 use std::time::Duration;
 
 use owhisper_client::{
@@ -16,6 +17,7 @@ use super::super::upload::{audio_duration, segment_plan, split_batch_upload};
 use super::super::{
     BatchParams, BatchRunMode, BatchRunOutput, format_user_friendly_error, session_span,
 };
+use crate::{BatchEvent, BatchRuntime};
 
 pub(super) const DIRECT_BATCH_TIMEOUT_FLOOR: Duration = Duration::from_secs(15 * 60);
 pub(super) const DIRECT_BATCH_TIMEOUT_CEILING: Duration = Duration::from_secs(6 * 60 * 60);
@@ -40,14 +42,20 @@ impl PreparedBatchUpload {
 }
 
 macro_rules! dispatch_batch {
-    ($ak:expr, $params:expr, $lp:expr, $limit:expr,
+    ($ak:expr, $runtime:expr, $params:expr, $lp:expr, $limit:expr,
      { $($var:ident => $adapter:ty),+ $(,)? },
      unsupported: [$($unsup:ident),* $(,)?]
     ) => {
         match $ak {
             $(AdapterKind::$var => {
-                run_direct_batch::<$adapter>(&AdapterKind::$var.to_string(), $params, $lp, $limit)
-                    .await
+                run_direct_batch::<$adapter>(
+                    &AdapterKind::$var.to_string(),
+                    $runtime,
+                    $params,
+                    $lp,
+                    $limit,
+                )
+                .await
             })+
             $(AdapterKind::$unsup => {
                 Err(crate::BatchFailure::DirectBatchUnsupported {
@@ -60,16 +68,17 @@ macro_rules! dispatch_batch {
 
 pub(in crate::batch) async fn run_direct_batch_for_adapter_kind(
     adapter_kind: AdapterKind,
+    runtime: Arc<dyn BatchRuntime>,
     params: BatchParams,
     listen_params: owhisper_interface::ListenParams,
 ) -> crate::Result<BatchRunOutput> {
     if adapter_kind == AdapterKind::Anarlog {
-        return run_anarlog_batch(params, listen_params).await;
+        return run_anarlog_batch(runtime, params, listen_params).await;
     }
 
     let limit = adapter_kind.batch_upload_limit();
 
-    dispatch_batch!(adapter_kind, params, listen_params, limit, {
+    dispatch_batch!(adapter_kind, runtime, params, listen_params, limit, {
         Argmax => ArgmaxAdapter,
         Cartesia => CartesiaAdapter,
         Deepgram => DeepgramAdapter,
@@ -99,6 +108,7 @@ pub(in crate::batch) async fn run_direct_batch_for_adapter_kind(
 }
 
 async fn run_anarlog_batch(
+    runtime: Arc<dyn BatchRuntime>,
     mut params: BatchParams,
     listen_params: owhisper_interface::ListenParams,
 ) -> crate::Result<BatchRunOutput> {
@@ -107,6 +117,7 @@ async fn run_anarlog_batch(
     params.file_path = upload.path().to_string_lossy().into_owned();
     run_direct_batch::<AnarlogAdapter>(
         &AdapterKind::Anarlog.to_string(),
+        runtime,
         params,
         listen_params,
         None,
@@ -193,6 +204,7 @@ pub(super) async fn prepare_anarlog_batch_upload(
 
 pub(super) async fn run_direct_batch<A: BatchSttAdapter>(
     provider: &str,
+    runtime: Arc<dyn BatchRuntime>,
     params: BatchParams,
     listen_params: owhisper_interface::ListenParams,
     limit: Option<BatchUploadLimit>,
@@ -202,8 +214,15 @@ pub(super) async fn run_direct_batch<A: BatchSttAdapter>(
 
     match segment_plan(&params.file_path, audio_duration, limit) {
         Some(segment_duration) => {
-            run_segmented_batch::<A>(provider, params, listen_params, segment_duration, timeout)
-                .await
+            run_segmented_batch::<A>(
+                provider,
+                runtime,
+                params,
+                listen_params,
+                segment_duration,
+                timeout,
+            )
+            .await
         }
         None => run_direct_batch_with_timeout::<A>(provider, params, listen_params, timeout).await,
     }
@@ -211,6 +230,7 @@ pub(super) async fn run_direct_batch<A: BatchSttAdapter>(
 
 async fn run_segmented_batch<A: BatchSttAdapter>(
     provider: &str,
+    runtime: Arc<dyn BatchRuntime>,
     params: BatchParams,
     mut listen_params: owhisper_interface::ListenParams,
     segment_duration: Duration,
@@ -219,8 +239,23 @@ async fn run_segmented_batch<A: BatchSttAdapter>(
     let segments = split_batch_upload(&params.file_path, segment_duration, provider).await?;
     listen_params.channels = 1;
 
-    let mut responses = Vec::with_capacity(segments.paths().len());
-    for path in segments.paths() {
+    let segment_count = segments.paths().len();
+    let emit_progress = |percentage: f64| {
+        runtime.emit(BatchEvent::BatchResponseStreamed {
+            session_id: params.session_id.clone(),
+            event: owhisper_interface::batch_stream::BatchStreamEvent::Progress {
+                percentage,
+                partial_text: None,
+            },
+        });
+    };
+
+    // Claim progress reporting before the first segment finishes, otherwise the
+    // UI keeps climbing its synthetic ramp and then jumps backwards to 1/n.
+    emit_progress(0.0);
+
+    let mut responses = Vec::with_capacity(segment_count);
+    for (index, path) in segments.paths().iter().enumerate() {
         let mut segment_params = params.clone();
         segment_params.file_path = path.to_string_lossy().into_owned();
 
@@ -232,6 +267,9 @@ async fn run_segmented_batch<A: BatchSttAdapter>(
         )
         .await?;
         responses.push(output.response);
+
+        // The merged response only lands once every segment is done.
+        emit_progress((index + 1) as f64 / segment_count as f64);
     }
 
     Ok(BatchRunOutput {

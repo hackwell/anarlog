@@ -80,7 +80,12 @@ export function TranscriptEmptyState({
             showWaveform ? "mb-7" : onStopTranscription && "mb-6",
           ])}
         >
-          <p className="text-base font-medium">
+          <p className="flex items-center justify-center gap-2 text-base font-medium">
+            {showWaveform && (
+              <span className="text-muted-foreground">
+                <Spinner size={16} />
+              </span>
+            )}
             {phase === "importing"
               ? t`Importing audio...`
               : t`Generating transcript...`}
