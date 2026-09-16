@@ -69,6 +69,47 @@ describe("scrubEvent", () => {
   });
 });
 
+describe("console context objects", () => {
+  it("keeps the title readable and leaves the arguments intact", () => {
+    __testing.resetRepeatWindow();
+
+    const event = __testing.scrubEvent({
+      type: undefined,
+      message: "[listener] post-stop transcript repair failed [object Object]",
+      extra: {
+        arguments: [
+          "[listener] post-stop transcript repair failed",
+          {
+            sessionId: "f615afbd",
+            reasons: ["live_transcription_unavailable"],
+          },
+        ],
+      },
+    } as never);
+
+    expect(event!.message).toBe(
+      "[listener] post-stop transcript repair failed",
+    );
+    expect(event!.extra?.arguments).toEqual([
+      "[listener] post-stop transcript repair failed",
+      { sessionId: "f615afbd", reasons: ["live_transcription_unavailable"] },
+    ]);
+  });
+
+  it("groups two reports of the same failure together", () => {
+    __testing.resetRepeatWindow();
+
+    const report = (sessionId: string) =>
+      __testing.scrubEvent({
+        type: undefined,
+        message: "[listener] repair failed [object Object]",
+        extra: { arguments: ["[listener] repair failed", { sessionId }] },
+      } as never);
+
+    expect(report("session-a")!.message).toBe(report("session-b")!.message);
+  });
+});
+
 describe("repeat throttling", () => {
   const failure = () =>
     __testing.scrubEvent({

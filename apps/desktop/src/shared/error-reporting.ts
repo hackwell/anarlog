@@ -58,6 +58,11 @@ export async function initErrorReporting() {
     // bodies, and every string that does go out is scrubbed first.
     sendDefaultPii: false,
     maxBreadcrumbs: 50,
+    // `console.error("...", { sessionId, reasons, error })` nests one level
+    // deeper than Sentry's default of 3 once it is wrapped in
+    // `extra.arguments`, so the context object's own arrays came back as
+    // "[Array]" — the part worth reading.
+    normalizeDepth: 5,
     integrations: [
       // The failures worth seeing here are handled ones — a transcription that
       // came back rejected, a transcript that would not parse. Those never
@@ -94,7 +99,19 @@ function isRepeat(event: Sentry.ErrorEvent): boolean {
   return previous.count > REPEATS_PER_WINDOW;
 }
 
+// `captureConsoleIntegration` builds the title by calling String() on every
+// argument, so a context object becomes "[object Object]" and the issue list
+// reads "post-stop transcript repair failed [object Object]". The arguments
+// themselves survive in full under `extra.arguments`, so dropping the
+// placeholder costs nothing and keeps the title stable for grouping — spelling
+// the object out instead would put a session id in the title and split one
+// issue into one per occurrence.
+function dropStringifiedObjects(message: string): string {
+  return message.replace(/\s*\[object \w+\]/g, "").trim();
+}
+
 function scrubEvent(event: Sentry.ErrorEvent): Sentry.ErrorEvent | null {
+  if (event.message) event.message = dropStringifiedObjects(event.message);
   if (isRepeat(event)) return null;
   if (event.message) event.message = scrubText(event.message);
   for (const exception of event.exception?.values ?? []) {

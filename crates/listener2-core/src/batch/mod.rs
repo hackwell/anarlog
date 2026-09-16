@@ -332,6 +332,9 @@ pub(super) fn format_user_friendly_error(error: &str) -> String {
     if error_lower.contains("connection refused")
         || error_lower.contains("failed to connect")
         || error_lower.contains("network")
+        || error_lower.contains("dns error")
+        || error_lower.contains("failed to lookup address")
+        || error_lower.contains("error sending request")
     {
         return "Could not connect to the transcription service. Please check your internet connection.".to_string();
     }
@@ -491,5 +494,14 @@ mod tests {
         );
 
         assert!(message.starts_with("This recording is too large"));
+    }
+
+    #[test]
+    fn dns_failures_are_explained_as_connectivity_problems() {
+        let message = format_user_friendly_error(
+            r#"HttpMiddleware(Reqwest(reqwest::Error { kind: Request, url: "https://api.openai.com/v1/audio/transcriptions", source: hyper_util::client::legacy::Error(Connect, ConnectError("dns error", Custom { kind: Uncategorized, error: "failed to lookup address information: nodename nor servname provided, or not known" })) }))"#,
+        );
+
+        assert!(message.starts_with("Could not connect"));
     }
 }
