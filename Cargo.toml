@@ -6,6 +6,22 @@ debug = true
 [profile.dev.package."*"]
 opt-level = 1
 debug = false
+# `debug = false` alone makes cargo pass `-C strip=debuginfo`, and a package
+# override outranks build-override, so the line below is what actually reaches a
+# proc macro. There is no debuginfo left to strip here anyway.
+strip = "none"
+
+# A proc macro is a dylib the compiler dlopens while it builds, never something
+# that ships, so stripping one saves nothing in the artifact and costs the
+# build: macOS 26 and later refuse the stripped result with "mis-aligned
+# LINKEDIT string pool", which rustc reports as the far less obvious "can't find
+# crate". build-override covers proc macros, build scripts and their
+# dependencies only, so shipped binaries keep their own strip setting.
+[profile.dev.build-override]
+strip = "none"
+
+[profile.release.build-override]
+strip = "none"
 
 [workspace]
 resolver = "2"
