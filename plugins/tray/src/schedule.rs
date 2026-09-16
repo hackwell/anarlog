@@ -40,6 +40,8 @@ pub struct TrayLabels {
     pub agenda_prepare_note: String,
     pub agenda_open_link: String,
     pub open_app: String,
+    /// The one-click join, e.g. `"Join {title}"`.
+    pub join_now: String,
     pub start_meeting: String,
     pub new_note: String,
     pub settings: String,
@@ -76,6 +78,7 @@ impl Default for TrayLabels {
             agenda_prepare_note: "Prepare Note".to_string(),
             agenda_open_link: "Open Meeting Link".to_string(),
             open_app: "Open {app}".to_string(),
+            join_now: "Join {title}".to_string(),
             start_meeting: "Start a new meeting".to_string(),
             new_note: "New Note".to_string(),
             settings: "Settings".to_string(),
@@ -123,6 +126,42 @@ pub struct TrayAgendaEvent {
 pub struct TrayAgendaSection {
     pub label: String,
     pub events: Vec<TrayAgendaEvent>,
+}
+
+/// Everything the tray menu is built from. The two travel together because the
+/// menu is rebuilt when either changes: a meeting starting alters the join item
+/// long before it alters the agenda.
+#[derive(Debug, Default, PartialEq)]
+pub struct TrayMenuModel {
+    pub sections: Vec<TrayAgendaSection>,
+    pub join_now: Option<TrayJoinNow>,
+}
+
+#[derive(Debug, PartialEq)]
+pub struct TrayJoinNow {
+    pub event_id: String,
+    pub label: String,
+}
+
+pub fn menu_model(
+    events: &[TrayScheduleEvent],
+    now_ms: f64,
+    show_events: bool,
+    labels: &TrayLabels,
+) -> TrayMenuModel {
+    TrayMenuModel {
+        sections: agenda_sections(events, now_ms, show_events, labels),
+        join_now: show_events
+            .then(|| join_now_target(events, now_ms))
+            .flatten()
+            .map(|event| TrayJoinNow {
+                event_id: event.id.clone(),
+                label: labels.join_now.replace(
+                    "{title}",
+                    &compact_title(&event.title, MAX_AGENDA_LABEL_WIDTH),
+                ),
+            }),
+    }
 }
 
 pub fn agenda_sections(
@@ -238,6 +277,8 @@ pub fn next_schedule_refresh_ms(
                 event.day_start_ms,
                 event.previous_day_start_ms,
                 event.starts_at_ms - DISPLAY_HORIZON_MS,
+                // The moment the join item is due to appear.
+                event.starts_at_ms - JOIN_LEAD_MS,
             ]
         })
         .filter(|deadline_ms| deadline_ms.is_finite() && *deadline_ms > now_ms)
@@ -264,9 +305,43 @@ pub fn next_schedule_refresh_ms(
     next_delay_ms.map(|delay| delay.ceil().max(1.0) as u64)
 }
 
-fn active_event(events: &[TrayScheduleEvent], now_ms: f64) -> Option<&TrayScheduleEvent> {
+/// How early a meeting that has not started yet is worth a one-click join.
+/// Wide enough to cover the walk to the desk, narrow enough that the item is
+/// not sitting there all morning for something at four.
+const JOIN_LEAD_MS: f64 = 15.0 * 60.0 * 1000.0;
+
+/// The meeting the tray offers to join outright: the one running now, else the
+/// one about to start. Same precedence the menu bar title uses, so the item and
+/// the title always name the same meeting.
+///
+/// A meeting with no link is not a candidate — it is skipped rather than
+/// blocking the one behind it, since an untracked daily should not hide the
+/// board meeting five minutes out.
+pub(crate) fn join_now_target(
+    events: &[TrayScheduleEvent],
+    now_ms: f64,
+) -> Option<&TrayScheduleEvent> {
+    let joinable = || {
+        events.iter().filter(|event| {
+            event
+                .meeting_link
+                .as_deref()
+                .is_some_and(|link| !link.trim().is_empty())
+        })
+    };
+
+    active_event(joinable(), now_ms).or_else(|| {
+        upcoming_event(joinable(), now_ms)
+            .filter(|event| event.starts_at_ms - now_ms <= JOIN_LEAD_MS)
+    })
+}
+
+fn active_event<'a>(
+    events: impl IntoIterator<Item = &'a TrayScheduleEvent>,
+    now_ms: f64,
+) -> Option<&'a TrayScheduleEvent> {
     events
-        .iter()
+        .into_iter()
         .filter(|event| {
             event.starts_at_ms.is_finite()
                 && event.starts_at_ms <= now_ms
@@ -281,9 +356,12 @@ fn active_event(events: &[TrayScheduleEvent], now_ms: f64) -> Option<&TraySchedu
         })
 }
 
-fn upcoming_event(events: &[TrayScheduleEvent], now_ms: f64) -> Option<&TrayScheduleEvent> {
+fn upcoming_event<'a>(
+    events: impl IntoIterator<Item = &'a TrayScheduleEvent>,
+    now_ms: f64,
+) -> Option<&'a TrayScheduleEvent> {
     events
-        .iter()
+        .into_iter()
         .filter(|event| {
             event.starts_at_ms.is_finite()
                 && event.starts_at_ms > now_ms
@@ -379,6 +457,61 @@ mod tests {
         }
     }
 
+    fn joinable(title: &str, starts_at_ms: f64, ends_at_ms: Option<f64>) -> TrayScheduleEvent {
+        TrayScheduleEvent {
+            meeting_link: Some("https://teams.microsoft.com/l/meetup-join/19%3ax".to_string()),
+            ..event(title, starts_at_ms, ends_at_ms)
+        }
+    }
+
+    const MIN: f64 = 60.0 * 1000.0;
+
+    #[test]
+    fn offers_the_running_meeting_before_the_next_one() {
+        let now = 1_000_000.0;
+        let events = vec![
+            joinable("Next up", now + 5.0 * MIN, Some(now + 35.0 * MIN)),
+            joinable("Under way", now - 5.0 * MIN, Some(now + 10.0 * MIN)),
+        ];
+
+        assert_eq!(
+            join_now_target(&events, now).map(|event| event.title.as_str()),
+            Some("Under way")
+        );
+    }
+
+    #[test]
+    fn offers_a_meeting_only_once_it_is_close() {
+        let now = 1_000_000.0;
+        let soon = vec![joinable("Standup", now + 14.0 * MIN, None)];
+        let later = vec![joinable("Retro", now + 16.0 * MIN, None)];
+
+        assert!(join_now_target(&soon, now).is_some());
+        assert!(join_now_target(&later, now).is_none());
+    }
+
+    #[test]
+    fn a_meeting_with_no_link_is_nothing_to_join() {
+        let now = 1_000_000.0;
+        let events = vec![event("Runprise Daily", now - MIN, Some(now + 10.0 * MIN))];
+
+        assert!(join_now_target(&events, now).is_none());
+    }
+
+    #[test]
+    fn a_running_meeting_with_no_link_does_not_hide_the_next_joinable_one() {
+        let now = 1_000_000.0;
+        let events = vec![
+            event("Runprise Daily", now - MIN, Some(now + 10.0 * MIN)),
+            joinable("Board Meeting", now + 5.0 * MIN, Some(now + 65.0 * MIN)),
+        ];
+
+        assert_eq!(
+            join_now_target(&events, now).map(|event| event.title.as_str()),
+            Some("Board Meeting")
+        );
+    }
+
     #[test]
     fn shows_the_nearest_event_within_a_day() {
         let now = 1_000_000.0;
@@ -404,6 +537,47 @@ mod tests {
             Some(751)
         );
         assert_eq!(next_schedule_refresh_ms(&events, now, false, false), None);
+    }
+
+    #[test]
+    fn the_menu_model_names_the_meeting_in_the_join_item() {
+        let now = 1_000_000.0;
+        let events = vec![joinable("Board Meeting", now - MIN, Some(now + 30.0 * MIN))];
+
+        let model = menu_model(&events, now, true, &TrayLabels::default());
+
+        assert_eq!(
+            model.join_now,
+            Some(TrayJoinNow {
+                event_id: "board-meeting".to_string(),
+                label: "Join Board Meeting".to_string(),
+            })
+        );
+    }
+
+    #[test]
+    fn hiding_the_schedule_hides_the_join_item_too() {
+        let now = 1_000_000.0;
+        let events = vec![joinable("Board Meeting", now - MIN, Some(now + 30.0 * MIN))];
+
+        let model = menu_model(&events, now, false, &TrayLabels::default());
+
+        assert!(model.join_now.is_none());
+        assert!(model.sections.is_empty());
+    }
+
+    #[test]
+    fn wakes_up_when_a_meeting_becomes_joinable() {
+        // Recording suppresses the countdown ticks, so this is the deadline the
+        // join item depends on and nothing else would supply it.
+        let now = 1_000_000.0;
+        let events = vec![joinable("Board Meeting", now + 25.0 * MIN, None)];
+
+        assert_eq!(
+            next_schedule_refresh_ms(&events, now, true, true),
+            Some((10.0 * MIN) as u64),
+            "should wake 15 minutes before the meeting starts"
+        );
     }
 
     #[test]

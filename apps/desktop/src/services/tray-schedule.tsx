@@ -179,6 +179,7 @@ export function TrayLabelsSync() {
       agendaPrepareNote: t`Prepare Note`,
       agendaOpenLink: t`Open Meeting Link`,
       openApp: t`Open ${"{app}"}`,
+      joinNow: t`Join ${"{title}"}`,
       startMeeting: t`Start a new meeting`,
       newNote: t`New Note`,
       settings: t`Settings`,

@@ -17,7 +17,7 @@ use tauri::{
 
 use crate::{
     schedule::{
-        TrayAgendaSection, TrayLabels, TrayScheduleEvent, agenda_sections, menu_bar_title,
+        TrayLabels, TrayMenuModel, TrayScheduleEvent, menu_bar_title, menu_model,
         next_schedule_refresh_ms,
     },
     tray_icon::{RECORDING_FRAMES, TrayIconState},
@@ -27,7 +27,7 @@ use crate::{
 use crate::menu_items::{AppInfo, AppNew, HelpReportBug, HelpSuggestFeature, TrayQuit};
 use crate::menu_items::{
     MenuItemHandler, TrayCheckUpdate, TrayOpen, TrayQuitCompletely, TraySettings, TrayStart,
-    build_agenda_item,
+    build_agenda_item, build_join_now_item,
 };
 
 const TRAY_ID: &str = "anlg-tray";
@@ -42,7 +42,7 @@ static SCHEDULE: Mutex<Vec<TrayScheduleEvent>> = Mutex::new(Vec::new());
 static SCHEDULE_TASK: Mutex<Option<JoinHandle<()>>> = Mutex::new(None);
 static MENU_BAR_TITLE: Mutex<Option<String>> = Mutex::new(None);
 static RECORDING_TITLE: Mutex<Option<String>> = Mutex::new(None);
-static AGENDA_SECTIONS: Mutex<Vec<TrayAgendaSection>> = Mutex::new(Vec::new());
+static MENU_MODEL: Mutex<Option<TrayMenuModel>> = Mutex::new(None);
 // muda 0.17 stores a raw MenuChild pointer on each NSMenuItem. Replacing the
 // tray menu while it is still visible frees those items and crashes on click
 // (HYPRNOTE2-2MTS). Defer set_menu until the next tray mouse-down instead.
@@ -190,9 +190,9 @@ impl<'a, M: tauri::Manager<tauri::Wry>> Tray<'a, tauri::Wry, M> {
             return Ok(());
         }
 
-        let agenda = Self::current_agenda_sections();
-        let menu = Self::build_tray_menu(app, &agenda)?;
-        *AGENDA_SECTIONS.lock().unwrap() = agenda;
+        let model = Self::current_menu_model();
+        let menu = Self::build_tray_menu(app, &model)?;
+        *MENU_MODEL.lock().unwrap() = Some(model);
         #[cfg(target_os = "macos")]
         MENU_BUILT_FOR_DARK.store(
             crate::menu_items::system_appearance_is_dark(),
@@ -351,20 +351,21 @@ impl<'a, M: tauri::Manager<tauri::Wry>> Tray<'a, tauri::Wry, M> {
         Ok(())
     }
 
-    fn current_agenda_sections() -> Vec<TrayAgendaSection> {
+    fn current_menu_model() -> TrayMenuModel {
         let now_ms = std::time::SystemTime::now()
             .duration_since(std::time::UNIX_EPOCH)
             .unwrap_or_default()
             .as_millis() as f64;
         let schedule = SCHEDULE.lock().unwrap();
         let show_events = SHOW_EVENTS.load(Ordering::SeqCst);
-        agenda_sections(&schedule, now_ms, show_events, &crate::schedule::labels())
+        menu_model(&schedule, now_ms, show_events, &crate::schedule::labels())
     }
 
     fn build_tray_menu(
         app: &AppHandle<tauri::Wry>,
-        agenda: &[TrayAgendaSection],
+        model: &TrayMenuModel,
     ) -> Result<Menu<tauri::Wry>> {
+        let agenda = &model.sections;
         let menu = Menu::new(app)?;
 
         for (section_index, section) in agenda.iter().enumerate() {
@@ -387,11 +388,20 @@ impl<'a, M: tauri::Manager<tauri::Wry>> Tray<'a, tauri::Wry, M> {
             menu.append(&PredefinedMenuItem::separator(app)?)?;
         }
 
+        let recording = START_DISABLED.load(Ordering::SeqCst);
+
         menu.append(&TrayOpen::build(app)?)?;
-        menu.append(&TrayStart::build_with_disabled(
-            app,
-            START_DISABLED.load(Ordering::SeqCst),
-        )?)?;
+        // The meeting under way, or the one about to start, is what the person
+        // came to the menu for. Reaching it should not cost a submenu.
+        if let Some(join_now) = &model.join_now {
+            menu.append(&build_join_now_item(
+                app,
+                &join_now.event_id,
+                &join_now.label,
+                !recording,
+            )?)?;
+        }
+        menu.append(&TrayStart::build_with_disabled(app, recording)?)?;
         menu.append(&TraySettings::build_for_tray(app)?)?;
         menu.append(&PredefinedMenuItem::separator(app)?)?;
         // Checking for updates lives in Settings; the tray only surfaces an
@@ -419,11 +429,11 @@ impl<'a, M: tauri::Manager<tauri::Wry>> Tray<'a, tauri::Wry, M> {
     }
 
     fn install_menu(app: &AppHandle<tauri::Wry>) -> Result<()> {
-        let agenda = Self::current_agenda_sections();
+        let model = Self::current_menu_model();
         if let Some(tray) = app.tray_by_id(TRAY_ID) {
-            tray.set_menu(Some(Self::build_tray_menu(app, &agenda)?))?;
+            tray.set_menu(Some(Self::build_tray_menu(app, &model)?))?;
         }
-        *AGENDA_SECTIONS.lock().unwrap() = agenda;
+        *MENU_MODEL.lock().unwrap() = Some(model);
         #[cfg(target_os = "macos")]
         {
             MENU_BUILT_FOR_DARK.store(
@@ -444,14 +454,14 @@ impl<'a, M: tauri::Manager<tauri::Wry>> Tray<'a, tauri::Wry, M> {
     }
 
     fn refresh_menu_if_agenda_changed(app: &AppHandle<tauri::Wry>) -> Result<()> {
-        let agenda = Self::current_agenda_sections();
-        if *AGENDA_SECTIONS.lock().unwrap() == agenda {
+        let model = Self::current_menu_model();
+        if MENU_MODEL.lock().unwrap().as_ref() == Some(&model) {
             return Ok(());
         }
 
         #[cfg(target_os = "macos")]
         {
-            *AGENDA_SECTIONS.lock().unwrap() = agenda;
+            *MENU_MODEL.lock().unwrap() = Some(model);
             MENU_DIRTY.store(true, Ordering::SeqCst);
             return Ok(());
         }

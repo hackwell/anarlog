@@ -101,6 +101,27 @@ pub fn build_agenda_item(
     Ok(MenuItemKind::Submenu(submenu))
 }
 
+/// The same join-and-record action as the event's submenu, lifted to the top of
+/// the menu for the meeting that is under way or about to be.
+///
+/// It carries the submenu's id on purpose: `handle_agenda_menu_event` already
+/// knows what to do with it, so the shortcut cannot drift away from the action
+/// it is a shortcut for.
+pub fn build_join_now_item(
+    app: &AppHandle<tauri::Wry>,
+    event_id: &str,
+    label: &str,
+    enabled: bool,
+) -> Result<MenuItemKind<tauri::Wry>> {
+    Ok(MenuItemKind::Icon(icon_item(
+        app,
+        item_id(AgendaAction::JoinAndRecord, event_id),
+        label,
+        enabled,
+        AgendaAction::JoinAndRecord.icon(),
+    )?))
+}
+
 pub fn handle_agenda_menu_event(app: &AppHandle<tauri::Wry>, id: &MenuId) -> bool {
     let Some((action, event_id)) = parse_item_id(&id.0) else {
         return false;

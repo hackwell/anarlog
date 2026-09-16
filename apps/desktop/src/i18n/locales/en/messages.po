@@ -1630,6 +1630,11 @@ msgstr "Intelligence"
 msgid "Job Title"
 msgstr "Job Title"
 
+#. placeholder {0}: "{title}"
+#: src/services/tray-schedule.tsx
+msgid "Join {0}"
+msgstr "Join {0}"
+
 #: src/session/components/outer-header/index.tsx
 msgid "Join & record"
 msgstr "Join & record"
