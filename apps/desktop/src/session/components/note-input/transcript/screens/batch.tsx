@@ -67,8 +67,14 @@ function degradedMessage(error: DegradedError): string {
       return error.message;
     case "connection_timeout":
       return "Transcription connection timed out";
+    // Not every 4xx is a misconfiguration — OpenAI returns 400 with "Your
+    // session hit the maximum duration of 60 minutes", and calling that a
+    // misconfiguration sends the user looking for a setting that is fine.
+    // The provider says what happened; prefer its wording over the guess.
     case "provider_configuration":
-      return `Transcription provider is misconfigured (${error.provider})`;
+      return error.message.trim()
+        ? `${error.message} (${error.provider})`
+        : `Transcription provider is misconfigured (${error.provider})`;
     case "stream_error":
       return "Transcription stream error";
   }

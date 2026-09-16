@@ -66,6 +66,38 @@ describe("BatchState", () => {
 
     expect(screen.getByText("Live transcription stopped")).not.toBeNull();
     expect(screen.queryByText(/while we reconnect/)).toBeNull();
+    expect(screen.getByText(/invalid endpoint/)).not.toBeNull();
+  });
+
+  it("reports a provider session limit in the provider's own words", () => {
+    render(
+      <BatchState
+        requestedLiveTranscription
+        error={{
+          type: "provider_configuration",
+          provider: "openai",
+          message:
+            "invalid_request_error: Your session hit the maximum duration of 60 minutes.",
+        }}
+      />,
+    );
+
+    expect(screen.getByText(/maximum duration of 60 minutes/)).not.toBeNull();
+    expect(screen.queryByText(/misconfigured/)).toBeNull();
+  });
+
+  it("falls back to the generic wording when the provider said nothing", () => {
+    render(
+      <BatchState
+        requestedLiveTranscription
+        error={{
+          type: "provider_configuration",
+          provider: "Deepgram",
+          message: "",
+        }}
+      />,
+    );
+
     expect(screen.getByText(/provider is misconfigured/)).not.toBeNull();
   });
 });
