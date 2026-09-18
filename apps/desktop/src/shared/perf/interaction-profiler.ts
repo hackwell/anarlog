@@ -66,13 +66,26 @@ function reportLongAnimationFrames(entries: PerformanceEntry[]) {
   }
 }
 
+// A DOM node reaches the console as a cyclic structure — parentNode points back
+// at a child — and anything that walks it to serialize the log throws on the
+// cycle. The selector says which element it was without carrying the tree.
+function describeTarget(target: Node | null): string {
+  if (!(target instanceof Element)) return "unknown target";
+
+  const id = target.id ? `#${target.id}` : "";
+  const classes = target.classList.length
+    ? `.${Array.from(target.classList).join(".")}`
+    : "";
+  return `${target.tagName.toLowerCase()}${id}${classes}`;
+}
+
 function reportSlowEvents(entries: PerformanceEntry[]) {
   for (const entry of entries as PerformanceEventTiming[]) {
     console.warn(
-      `[perf] slow ${entry.name}: total ${Math.round(entry.duration)}ms, ` +
+      `[perf] slow ${entry.name} on ${describeTarget(entry.target)}: ` +
+        `total ${Math.round(entry.duration)}ms, ` +
         `handlers ${Math.round(entry.processingEnd - entry.processingStart)}ms, ` +
         `input delay ${Math.round(entry.processingStart - entry.startTime)}ms`,
-      entry.target,
     );
   }
 }
