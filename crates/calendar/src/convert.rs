@@ -171,7 +171,9 @@ pub(crate) fn resolve_provider_meeting_link(
     location: Option<&str>,
     description: Option<&str>,
 ) -> Option<String> {
-    provider_link.or_else(|| resolve_meeting_link(location, description))
+    provider_link
+        .filter(|link| !link.trim().is_empty())
+        .or_else(|| resolve_meeting_link(location, description))
 }
 
 #[cfg(test)]
@@ -204,6 +206,21 @@ mod meeting_link_tests {
             None
         );
         assert_eq!(resolve_meeting_link(None, None), None);
+    }
+
+    #[test]
+    fn an_empty_provider_link_does_not_shadow_the_body() {
+        // Graph sends onlineMeetingUrl as "" rather than omitting it for a
+        // meeting it does not consider an online meeting, and Some("") was
+        // winning over a perfectly good link further down the invitation.
+        assert_eq!(
+            resolve_provider_meeting_link(Some(String::new()), None, Some(MEET_LINK)),
+            Some(MEET_LINK.to_string())
+        );
+        assert_eq!(
+            resolve_provider_meeting_link(Some("   ".to_string()), None, Some(MEET_LINK)),
+            Some(MEET_LINK.to_string())
+        );
     }
 
     #[test]
