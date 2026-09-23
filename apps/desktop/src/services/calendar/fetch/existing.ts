@@ -5,9 +5,11 @@ import type { ExistingEvent, IncomingEvent } from "./types";
 export function fetchExistingEvents(
   ctx: Ctx,
   incoming: IncomingEvent[],
+  skipCalendarIds: ReadonlySet<string> = new Set(),
 ): Promise<ExistingEvent[]> {
   return loadEventsForSync(
     ctx,
     incoming.map((event) => event.tracking_id_event),
+    skipCalendarIds,
   );
 }

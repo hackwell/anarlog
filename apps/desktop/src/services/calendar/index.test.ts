@@ -77,6 +77,9 @@ describe("syncCalendarEventsForRange", () => {
     fetchMocks.fetchIncomingEvents.mockResolvedValue({
       events: [],
       participants: new Map(),
+      failedCalendarIds: new Set(),
+      failures: [],
+      allCalendarsFailed: false,
     });
     processMocks.syncEvents.mockReturnValue({
       toAdd: [],
@@ -463,6 +466,9 @@ describe("syncCalendarEventsForRange", () => {
     fetchMocks.fetchIncomingEvents.mockResolvedValue({
       events: incoming,
       participants: incomingParticipants,
+      failedCalendarIds: new Set(),
+      failures: [],
+      allCalendarsFailed: false,
     });
     processMocks.syncEvents.mockReturnValue(events);
     processMocks.syncSessionEmbeddedEvents.mockReturnValue(sessionUpdates);
@@ -470,7 +476,11 @@ describe("syncCalendarEventsForRange", () => {
 
     await syncCalendarEventsForRange({ from: ctx.from, to: ctx.to });
 
-    expect(fetchMocks.fetchExistingEvents).toHaveBeenCalledWith(ctx, incoming);
+    expect(fetchMocks.fetchExistingEvents).toHaveBeenCalledWith(
+      ctx,
+      incoming,
+      new Set(),
+    );
     expect(storageMocks.loadSessionsForTrackingIds).toHaveBeenCalledWith([
       "event-1",
     ]);
@@ -484,5 +494,45 @@ describe("syncCalendarEventsForRange", () => {
       "calendar-sync",
       expect.any(Function),
     );
+  });
+
+  test("keeps a calendar that did not answer out of the deletion scope", async () => {
+    fetchMocks.fetchIncomingEvents.mockResolvedValue({
+      events: [],
+      participants: new Map(),
+      failedCalendarIds: new Set(["cal-2"]),
+      failures: [
+        { calendarTrackingId: "shared", cause: "network unreachable" },
+      ],
+      allCalendarsFailed: false,
+    });
+
+    await syncCalendarEventsForRange({ from: ctx.from, to: ctx.to });
+
+    // Without the third argument the sync would load that calendar's stored
+    // events, find no incoming match, and delete every one of them.
+    expect(fetchMocks.fetchExistingEvents).toHaveBeenCalledWith(
+      ctx,
+      [],
+      new Set(["cal-2"]),
+    );
+    expect(storageMocks.applyConnectionSync).toHaveBeenCalled();
+  });
+
+  test("skips the sync when no calendar answered", async () => {
+    fetchMocks.fetchIncomingEvents.mockResolvedValue({
+      events: [],
+      participants: new Map(),
+      failedCalendarIds: new Set(["cal-1"]),
+      failures: [
+        { calendarTrackingId: "primary", cause: "network unreachable" },
+      ],
+      allCalendarsFailed: true,
+    });
+
+    await syncCalendarEventsForRange({ from: ctx.from, to: ctx.to });
+
+    expect(fetchMocks.fetchExistingEvents).not.toHaveBeenCalled();
+    expect(storageMocks.applyConnectionSync).not.toHaveBeenCalled();
   });
 });

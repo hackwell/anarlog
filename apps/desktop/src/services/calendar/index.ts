@@ -6,11 +6,7 @@ import {
   getProviderConnections,
   syncCalendars,
 } from "./ctx";
-import {
-  CalendarFetchError,
-  fetchExistingEvents,
-  fetchIncomingEvents,
-} from "./fetch";
+import { fetchExistingEvents, fetchIncomingEvents } from "./fetch";
 import {
   syncEvents,
   syncSessionEmbeddedEvents,
@@ -157,26 +153,39 @@ async function runForConnection(
   const ctx = await createCtx(provider, connectionId, range);
   if (shouldStop()) return;
 
-  let incoming;
-  let incomingParticipants;
+  const {
+    events: incoming,
+    participants: incomingParticipants,
+    failedCalendarIds,
+    failures,
+    allCalendarsFailed,
+  } = await fetchIncomingEvents(ctx);
 
-  try {
-    const result = await fetchIncomingEvents(ctx);
-    incoming = result.events;
-    incomingParticipants = result.participants;
-  } catch (error) {
-    if (error instanceof CalendarFetchError) {
-      console.error(
-        `[calendar-sync] Aborting ${provider} sync due to fetch error: ${error.message}`,
-      );
-      return;
-    }
-    throw error;
+  if (allCalendarsFailed) {
+    // Nothing answered, so there is nothing to reconcile against. Keep the ids
+    // and the request URL out of the message: they change per calendar and per
+    // day, and Sentry groups by message, so they turn one recurring problem
+    // into a fresh issue every morning.
+    console.error(
+      `[calendar-sync] ${provider}: no calendar answered, skipping this run`,
+      { connectionId, failures },
+    );
+    return;
+  }
+
+  if (failures.length > 0) {
+    // A laptop waking before the network is up loses a calendar or two. The
+    // rest still synced, and the missing ones are excluded below rather than
+    // read as emptied.
+    console.warn(
+      `[calendar-sync] ${provider}: ${failures.length} calendar(s) did not answer, syncing the rest`,
+      { connectionId, failures },
+    );
   }
 
   if (shouldStop()) return;
 
-  const existing = await fetchExistingEvents(ctx, incoming);
+  const existing = await fetchExistingEvents(ctx, incoming, failedCalendarIds);
   if (shouldStop()) return;
 
   const events = syncEvents(ctx, {

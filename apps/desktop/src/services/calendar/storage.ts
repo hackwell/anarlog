@@ -307,8 +307,14 @@ export async function tombstoneCalendarConnection(
 export async function loadEventsForSync(
   ctx: Ctx,
   incomingTrackingIds: Iterable<string>,
+  // A calendar whose fetch failed has no incoming events, which the diff would
+  // read as "emptied" and delete everything it holds. Leaving it out of the
+  // scope entirely is what keeps those events alive.
+  skipCalendarIds: ReadonlySet<string> = new Set(),
 ): Promise<ExistingEvent[]> {
-  const calendarIds = Array.from(ctx.calendarIds);
+  const calendarIds = Array.from(ctx.calendarIds).filter(
+    (id) => !skipCalendarIds.has(id),
+  );
   if (calendarIds.length === 0) return [];
 
   const trackingIds = Array.from(new Set(incomingTrackingIds));

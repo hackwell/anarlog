@@ -20,13 +20,22 @@ export class CalendarFetchError extends Error {
   }
 }
 
+// One calendar that does not answer used to reject the whole fetch, so a single
+// unreachable calendar — a laptop waking before the network is up — discarded
+// the answers every other calendar had already given, and nothing synced.
+// Failures are reported by store id because that is what the deletion scope is
+// keyed by: the caller has to keep those calendars out of it, or the sync reads
+// their absence as "this calendar is empty now" and deletes their events.
 export async function fetchIncomingEvents(ctx: Ctx): Promise<{
   events: IncomingEvent[];
   participants: IncomingParticipants;
+  failedCalendarIds: Set<string>;
+  failures: CalendarFetchError[];
+  allCalendarsFailed: boolean;
 }> {
   const trackingIds = Array.from(ctx.calendarTrackingIdToId.keys());
 
-  const results = await Promise.all(
+  const settled = await Promise.all(
     trackingIds.map(async (trackingId) => {
       const result = await calendarCommands.listEvents(
         ctx.provider,
@@ -38,15 +47,30 @@ export async function fetchIncomingEvents(ctx: Ctx): Promise<{
         },
       );
 
-      if (result.status === "error") {
-        throw new CalendarFetchError(trackingId, result.error);
-      }
-
-      return result.data;
+      return result.status === "error"
+        ? ({
+            ok: false,
+            trackingId,
+            failure: new CalendarFetchError(trackingId, result.error),
+          } as const)
+        : ({ ok: true, data: result.data } as const);
     }),
   );
 
-  const calendarEvents = results.flat();
+  const failedCalendarIds = new Set<string>();
+  const failures: CalendarFetchError[] = [];
+  const calendarEvents: CalendarEvent[] = [];
+
+  for (const outcome of settled) {
+    if (outcome.ok) {
+      calendarEvents.push(...outcome.data);
+      continue;
+    }
+    failures.push(outcome.failure);
+    const calendarId = ctx.calendarTrackingIdToId.get(outcome.trackingId);
+    if (calendarId) failedCalendarIds.add(calendarId);
+  }
+
   const events: IncomingEvent[] = [];
   const participants: IncomingParticipants = new Map();
 
@@ -64,7 +88,14 @@ export async function fetchIncomingEvents(ctx: Ctx): Promise<{
     participants.set(event.tracking_id_event, eventParticipants);
   }
 
-  return { events, participants };
+  return {
+    events,
+    participants,
+    failedCalendarIds,
+    failures,
+    allCalendarsFailed:
+      trackingIds.length > 0 && failures.length === trackingIds.length,
+  };
 }
 
 // Meeting links are fully resolved on the Rust side during provider
